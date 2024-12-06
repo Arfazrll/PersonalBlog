@@ -12,19 +12,7 @@
 
 ### ✍️ Random Dev Quote
 ![](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=dark)
-
-![Alt text](https://spotify-recently-played-readme.vercel.app/api?user=f2k7ierczyo71rybggr4blntw&unique={true|1|on|yes})
-
-<br clear="both">
-
-<img src="https://raw.githubusercontent.com/arfazrll/arfazrll/output/snake.svg" alt="Snake animation" />
-
-###
-
-
-
-
 ---
 [![](https://visitcount.itsvg.in/api?id=arfazrll&icon=2&color=0)](https://visitcount.itsvg.in)
 
-<!-- Proudly created with GPRM ( https://gprm.itsvg.in ) -->
+
