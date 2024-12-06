@@ -15,7 +15,11 @@
 
 ![Alt text](https://spotify-recently-played-readme.vercel.app/api?user=f2k7ierczyo71rybggr4blntw&unique={true|1|on|yes})
 
+<br clear="both">
 
+<img src="https://raw.githubusercontent.com/arfazrll/arfazrll/output/snake.svg" alt="Snake animation" />
+
+###
 
 
 
