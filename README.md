@@ -1,4 +1,4 @@
-# 💫 About Me:
+# 💫 About Me
 🛰️ I’m currently working on:<br>Exploring Machine Learning projects and building data-driven solutions.<br><br>🤝 I’m looking to collaborate on:<br>Open-source projects in AI, Machine Learning, or Data Science.<br><br>🌟 I’m looking for help with:<br>Improving my skills in Deep Learning and Data.<br><br>🌱 I’m currently learning:<br>Advanced Machine Learning algorithms, Python frameworks like TensorFlow and PyTorch, and Model Deployment.<br><br>💬 Ask me about:<br>Machine Learning, Python, and any tips for beginners getting started in AI.<br><br>⚡ Fun fact:<br>Sometimes I need coffee to write and debug code! <br><br>
 
 
