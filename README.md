@@ -6,7 +6,7 @@
 
  🌟 I’m looking for help with: Improving my skills in Deep Learning and Data.
 
- 🌱 I’m currently learning: Advanced Machine Learning algorithms, Python frameworks like TensorFlow and PyTorch, and Model Deployment.
+ 🌱 I’m currently learning: Machine Learning algorithms, Python frameworks like TensorFlow and Model Deployment.
 
  💬 Ask me about: Machine Learning, Python, and any tips for beginners getting started in AI.
 
