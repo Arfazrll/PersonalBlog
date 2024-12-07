@@ -2,7 +2,7 @@
 
 🛰️ I’m currently working on: Exploring Machine Learning projects and building data-driven solutions.
   
- 🤝 I’m looking to collaborate on: Open-source projects in AI, Machine Learning, or Data Science.
+ 🤝 I’m looking to collaborate on: Open-source projects in AI, Machine Learning, or Data.
 
  🌟 I’m looking for help with: Improving my skills in Deep Learning and Data.
 
