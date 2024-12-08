@@ -1,5 +1,7 @@
 [![](https://visitcount.itsvg.in/api?id=arfazrll&icon=2&color=0)](https://visitcount.itsvg.in)
 
+![Animasi GIF](https://i.gifer.com/obR.gif)
+
 # 💫 About Me
 
 🛰️ I’m currently working on: Exploring Machine Learning projects and building data-driven solutions.<br>
