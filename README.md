@@ -13,6 +13,22 @@
  ⚡ Fun fact: Sometimes I need coffee to write and debug code!
 
 
+<!-- snake graph -->
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Arfazrll/Arfazrll/blob/main/github-contribution-grid-snake-dark.svg" />
+    <source media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" srcset="https://github.com/Arfazrll/Arfazrll/blob/main/github-contribution-grid-snake.svg" />
+    <img src="https://github.com/Arfazrll/Arfazrll/blob/main/github-contribution-grid-snake.svg" alt="github-snake" />
+  </picture>
+<!-- <h4> _generated with [Platane/snk](https://platane.me/snk/)_</h4> -->
+</div>
+<br>
+<div align="left">
+<!--   <img src="https://github-readme-activity-graph.vercel.app/graph?username=fatkhurrhn&radius=16&theme=react&area=true&order=5" height="auto" alt="by fatkhurhhn"/> -->
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=Arfazrll&theme=github-compact&radius=16" height="auto" alt="by Arfazrll"/>
+</div>
+
+
 ## 🌐 Socials:
 [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/arfazrl09_) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/www.linkedin.com/in/syahril-arfian-almazril-215a12231) 
 
