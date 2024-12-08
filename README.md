@@ -1,6 +1,6 @@
 [![](https://visitcount.itsvg.in/api?id=arfazrll&icon=2&color=0)](https://visitcount.itsvg.in)
 
-![Animasi GIF](https://i.gifer.com/obR.gif)
+![Animasi GIF](https://images.app.goo.gl/NhwbYcfodRBXeUTq6.gif)
 
 # 💫 About Me
 
