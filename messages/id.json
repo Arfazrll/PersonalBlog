@@ -29,6 +29,7 @@
     "projects": {
         "title": "Proyek",
         "subtitle": "Showcase karya kreatif dan teknis saya",
+        "search": "Cari proyek...",
         "viewAll": "Lihat Semua Proyek",
         "viewProject": "Lihat Proyek",
         "liveDemo": "Demo Langsung",
@@ -41,6 +42,11 @@
             "completed": "Selesai",
             "ongoing": "Sedang Berjalan",
             "planned": "Direncanakan"
+        },
+        "filters": {
+            "all": "Semua",
+            "ongoing": "Sedang Berjalan",
+            "completed": "Selesai"
         }
     },
     "experience": {
@@ -54,6 +60,15 @@
             "part-time": "Paruh Waktu",
             "internship": "Magang",
             "freelance": "Freelance"
+        },
+        "filters": {
+            "all": "Semua",
+            "latest": "Terbaru",
+            "oldest": "Terlama",
+            "ongoing": "Sedang Berjalan"
+        },
+        "education": {
+            "title": "Pendidikan"
         }
     },
     "skills": {
@@ -88,9 +103,16 @@
             "subject": "Subjek",
             "message": "Pesan Anda",
             "send": "Kirim Pesan",
+            "submit": "Kirim Pesan",
             "sending": "Mengirim...",
             "success": "Pesan berhasil dikirim!",
             "error": "Terjadi kesalahan. Silakan coba lagi."
+        },
+        "social": {
+            "title": "Terhubung di Media Sosial"
+        },
+        "faq": {
+            "title": "Pertanyaan yang Sering Diajukan"
         },
         "info": {
             "email": "Email",
