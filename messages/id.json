@@ -8,101 +8,110 @@
         "contact": "Kontak"
     },
     "hero": {
-        "greeting": "Halo, Saya",
-        "name": "Nama Anda",
-        "title": "Full Stack Developer",
-        "subtitle": "Membangun pengalaman digital yang menginspirasi",
+        "greeting": "Selamat datang di ruang digital saya",
+        "subtitle": "Full Stack Developer • AI Engineer • Data Scientist",
         "cta": {
-            "primary": "Lihat Proyek",
+            "primary": "Jelajahi Proyek",
             "secondary": "Hubungi Saya"
         }
     },
     "about": {
         "title": "Tentang Saya",
-        "description": "Developer yang bersemangat menciptakan solusi inovatif"
-    },
-    "experience": {
-        "title": "Pengalaman",
-        "subtitle": "Perjalanan profesional saya",
-        "filters": {
-            "all": "Semua",
-            "latest": "Terbaru",
-            "oldest": "Terlama",
-            "ongoing": "Berlangsung"
-        },
-        "education": {
-            "title": "Pendidikan"
+        "subtitle": "Tech Explorer & Problem Solver",
+        "description": "Seorang tech explorer yang bersemangat dengan spesialisasi dalam Full Stack Development, Artificial Intelligence, dan Data Science. Saat ini sedang mendalami AI Agents dan teknologi Blockchain.",
+        "stats": {
+            "experience": "Tahun Belajar",
+            "projects": "Proyek Selesai",
+            "certifications": "Sertifikasi",
+            "competitions": "Kompetisi"
         }
-    },
-    "skills": {
-        "title": "Keahlian & Tech Stack",
-        "subtitle": "Teknologi yang saya gunakan",
-        "hard": "Hard Skills",
-        "soft": "Soft Skills",
-        "tools": "Alat & Software"
     },
     "projects": {
         "title": "Proyek",
-        "subtitle": "Karya unggulan",
-        "filters": {
-            "all": "Semua",
-            "ongoing": "Berlangsung",
-            "completed": "Selesai"
-        },
-        "search": "Cari proyek...",
+        "subtitle": "Showcase karya kreatif dan teknis saya",
+        "viewAll": "Lihat Semua Proyek",
         "viewProject": "Lihat Proyek",
         "liveDemo": "Demo Langsung",
-        "sourceCode": "Kode Sumber"
+        "sourceCode": "Kode Sumber",
+        "techStack": "Tech Stack",
+        "tools": "Tools yang Digunakan",
+        "highlights": "Highlights",
+        "challenges": "Tantangan",
+        "status": {
+            "completed": "Selesai",
+            "ongoing": "Sedang Berjalan",
+            "planned": "Direncanakan"
+        }
+    },
+    "experience": {
+        "title": "Pengalaman",
+        "subtitle": "Perjalanan profesional dan perkembangan saya",
+        "present": "Sekarang",
+        "responsibilities": "Tanggung Jawab",
+        "skills": "Keahlian yang Digunakan",
+        "type": {
+            "full-time": "Penuh Waktu",
+            "part-time": "Paruh Waktu",
+            "internship": "Magang",
+            "freelance": "Freelance"
+        }
+    },
+    "skills": {
+        "title": "Keahlian & Tools",
+        "subtitle": "Teknologi dan tools yang saya gunakan",
+        "hard": "Keahlian Teknis",
+        "soft": "Soft Skills",
+        "tools": "Tools & Software",
+        "level": {
+            "beginner": "Pemula",
+            "intermediate": "Menengah",
+            "advanced": "Mahir",
+            "expert": "Ahli"
+        }
     },
     "achievements": {
         "title": "Pencapaian",
-        "subtitle": "Sertifikasi dan penghargaan",
-        "search": "Cari pencapaian...",
-        "sort": {
-            "newest": "Terbaru",
-            "oldest": "Terlama"
+        "subtitle": "Sertifikasi, penghargaan, dan milestone",
+        "viewCredential": "Lihat Kredensial",
+        "category": {
+            "certification": "Sertifikasi",
+            "award": "Penghargaan",
+            "publication": "Publikasi"
         }
     },
     "contact": {
         "title": "Hubungi Saya",
-        "subtitle": "Mari bekerja sama",
+        "subtitle": "Mari membangun sesuatu yang luar biasa bersama",
         "form": {
-            "name": "Nama",
-            "email": "Email",
+            "name": "Nama Anda",
+            "email": "Email Anda",
             "subject": "Subjek",
-            "message": "Pesan",
-            "submit": "Kirim Pesan",
+            "message": "Pesan Anda",
+            "send": "Kirim Pesan",
             "sending": "Mengirim...",
             "success": "Pesan berhasil dikirim!",
-            "error": "Gagal mengirim pesan. Silakan coba lagi."
+            "error": "Terjadi kesalahan. Silakan coba lagi."
         },
-        "social": {
-            "title": "Terhubung dengan saya"
-        },
-        "faq": {
-            "title": "Pertanyaan yang Sering Diajukan"
+        "info": {
+            "email": "Email",
+            "phone": "Telepon",
+            "location": "Lokasi",
+            "availability": "Terbuka untuk kesempatan"
         }
     },
     "footer": {
         "copyright": "Hak cipta dilindungi.",
-        "madeWith": "Dibuat dengan penuh semangat"
+        "madeWith": "Dibuat dengan"
     },
     "common": {
         "loading": "Memuat...",
+        "error": "Terjadi kesalahan",
+        "notFound": "Halaman tidak ditemukan",
+        "backHome": "Kembali ke Beranda",
+        "viewMore": "Lihat Selengkapnya",
         "readMore": "Baca Selengkapnya",
         "close": "Tutup",
-        "back": "Kembali",
-        "next": "Selanjutnya",
-        "previous": "Sebelumnya"
-    },
-    "theme": {
-        "toggle": "Ganti tema",
-        "dark": "Gelap",
-        "light": "Terang"
-    },
-    "language": {
-        "toggle": "Ganti bahasa",
-        "en": "Inggris",
-        "id": "Indonesia"
+        "download": "Unduh",
+        "share": "Bagikan"
     }
 }

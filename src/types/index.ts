@@ -6,7 +6,7 @@ export interface Project {
     image: string;
     techStack: string[];
     tools: string[];
-    status: 'ongoing' | 'completed';
+    status: 'ongoing' | 'completed' | 'planned';
     demoUrl?: string;
     repoUrl?: string;
     startDate: string;
@@ -51,13 +51,14 @@ export interface Achievement {
     description?: string;
     image?: string;
     credentialUrl?: string;
+    credentialId?: string;
     category: 'certification' | 'award' | 'recognition' | 'publication';
 }
 
 export interface Skill {
     name: string;
     level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-    category: 'frontend' | 'backend' | 'database' | 'devops' | 'mobile' | 'other';
+    category: 'frontend' | 'backend' | 'database' | 'devops' | 'mobile' | 'ai' | 'data' | 'blockchain' | 'other';
 }
 
 export interface TechStack {
@@ -87,6 +88,11 @@ export interface SocialLink {
     username?: string;
 }
 
+export interface Language {
+    name: string;
+    level: 'Native' | 'Fluent' | 'Professional' | 'Limited Working' | 'Elementary';
+}
+
 export interface FAQ {
     question: string;
     answer: string;
@@ -100,7 +106,10 @@ export interface PersonalInfo {
     avatar: string;
     location: string;
     email: string;
+    phone?: string;
+    website?: string;
     resumeUrl?: string;
+    languages?: Language[];
     socialLinks: SocialLink[];
 }
 
