@@ -1,0 +1,108 @@
+{
+    "navigation": {
+        "home": "Home",
+        "projects": "Projects",
+        "experience": "Experience",
+        "skills": "Skills",
+        "achievements": "Achievements",
+        "contact": "Contact"
+    },
+    "hero": {
+        "greeting": "Hello, I'm",
+        "name": "Your Name",
+        "title": "Full Stack Developer",
+        "subtitle": "Building digital experiences that inspire",
+        "cta": {
+            "primary": "View Projects",
+            "secondary": "Get in Touch"
+        }
+    },
+    "about": {
+        "title": "About Me",
+        "description": "A passionate developer crafting innovative solutions"
+    },
+    "experience": {
+        "title": "Experience",
+        "subtitle": "My professional journey",
+        "filters": {
+            "all": "All",
+            "latest": "Latest",
+            "oldest": "Oldest",
+            "ongoing": "Ongoing"
+        },
+        "education": {
+            "title": "Education"
+        }
+    },
+    "skills": {
+        "title": "Skills & Tech Stack",
+        "subtitle": "Technologies I work with",
+        "hard": "Hard Skills",
+        "soft": "Soft Skills",
+        "tools": "Tools & Software"
+    },
+    "projects": {
+        "title": "Projects",
+        "subtitle": "Featured work",
+        "filters": {
+            "all": "All",
+            "ongoing": "Ongoing",
+            "completed": "Completed"
+        },
+        "search": "Search projects...",
+        "viewProject": "View Project",
+        "liveDemo": "Live Demo",
+        "sourceCode": "Source Code"
+    },
+    "achievements": {
+        "title": "Achievements",
+        "subtitle": "Certifications and awards",
+        "search": "Search achievements...",
+        "sort": {
+            "newest": "Newest",
+            "oldest": "Oldest"
+        }
+    },
+    "contact": {
+        "title": "Get in Touch",
+        "subtitle": "Let's work together",
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "subject": "Subject",
+            "message": "Message",
+            "submit": "Send Message",
+            "sending": "Sending...",
+            "success": "Message sent successfully!",
+            "error": "Failed to send message. Please try again."
+        },
+        "social": {
+            "title": "Connect with me"
+        },
+        "faq": {
+            "title": "Frequently Asked Questions"
+        }
+    },
+    "footer": {
+        "copyright": "All rights reserved.",
+        "madeWith": "Made with passion"
+    },
+    "common": {
+        "loading": "Loading...",
+        "readMore": "Read More",
+        "close": "Close",
+        "back": "Back",
+        "next": "Next",
+        "previous": "Previous"
+    },
+    "theme": {
+        "toggle": "Toggle theme",
+        "dark": "Dark",
+        "light": "Light"
+    },
+    "language": {
+        "toggle": "Change language",
+        "en": "English",
+        "id": "Indonesian"
+    }
+}

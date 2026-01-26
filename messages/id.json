@@ -1,0 +1,108 @@
+{
+    "navigation": {
+        "home": "Beranda",
+        "projects": "Proyek",
+        "experience": "Pengalaman",
+        "skills": "Keahlian",
+        "achievements": "Pencapaian",
+        "contact": "Kontak"
+    },
+    "hero": {
+        "greeting": "Halo, Saya",
+        "name": "Nama Anda",
+        "title": "Full Stack Developer",
+        "subtitle": "Membangun pengalaman digital yang menginspirasi",
+        "cta": {
+            "primary": "Lihat Proyek",
+            "secondary": "Hubungi Saya"
+        }
+    },
+    "about": {
+        "title": "Tentang Saya",
+        "description": "Developer yang bersemangat menciptakan solusi inovatif"
+    },
+    "experience": {
+        "title": "Pengalaman",
+        "subtitle": "Perjalanan profesional saya",
+        "filters": {
+            "all": "Semua",
+            "latest": "Terbaru",
+            "oldest": "Terlama",
+            "ongoing": "Berlangsung"
+        },
+        "education": {
+            "title": "Pendidikan"
+        }
+    },
+    "skills": {
+        "title": "Keahlian & Tech Stack",
+        "subtitle": "Teknologi yang saya gunakan",
+        "hard": "Hard Skills",
+        "soft": "Soft Skills",
+        "tools": "Alat & Software"
+    },
+    "projects": {
+        "title": "Proyek",
+        "subtitle": "Karya unggulan",
+        "filters": {
+            "all": "Semua",
+            "ongoing": "Berlangsung",
+            "completed": "Selesai"
+        },
+        "search": "Cari proyek...",
+        "viewProject": "Lihat Proyek",
+        "liveDemo": "Demo Langsung",
+        "sourceCode": "Kode Sumber"
+    },
+    "achievements": {
+        "title": "Pencapaian",
+        "subtitle": "Sertifikasi dan penghargaan",
+        "search": "Cari pencapaian...",
+        "sort": {
+            "newest": "Terbaru",
+            "oldest": "Terlama"
+        }
+    },
+    "contact": {
+        "title": "Hubungi Saya",
+        "subtitle": "Mari bekerja sama",
+        "form": {
+            "name": "Nama",
+            "email": "Email",
+            "subject": "Subjek",
+            "message": "Pesan",
+            "submit": "Kirim Pesan",
+            "sending": "Mengirim...",
+            "success": "Pesan berhasil dikirim!",
+            "error": "Gagal mengirim pesan. Silakan coba lagi."
+        },
+        "social": {
+            "title": "Terhubung dengan saya"
+        },
+        "faq": {
+            "title": "Pertanyaan yang Sering Diajukan"
+        }
+    },
+    "footer": {
+        "copyright": "Hak cipta dilindungi.",
+        "madeWith": "Dibuat dengan penuh semangat"
+    },
+    "common": {
+        "loading": "Memuat...",
+        "readMore": "Baca Selengkapnya",
+        "close": "Tutup",
+        "back": "Kembali",
+        "next": "Selanjutnya",
+        "previous": "Sebelumnya"
+    },
+    "theme": {
+        "toggle": "Ganti tema",
+        "dark": "Gelap",
+        "light": "Terang"
+    },
+    "language": {
+        "toggle": "Ganti bahasa",
+        "en": "Inggris",
+        "id": "Indonesia"
+    }
+}
