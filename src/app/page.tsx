@@ -1,67 +1,233 @@
 'use client';
 
-import { useEffect, useRef, useState, Suspense, lazy } from 'react';
-import { motion, useScroll, useTransform, useSpring, useInView, AnimatePresence } from 'framer-motion';
+import { useEffect, useRef, useState, Suspense, lazy, useCallback, useMemo } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, useSpring } from 'framer-motion';
+import { useSpring as useReactSpring, animated, config } from '@react-spring/web';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { TextPlugin } from 'gsap/TextPlugin';
+import Particles, { initParticlesEngine } from '@tsparticles/react';
+import { loadSlim } from '@tsparticles/slim';
+import type {
+    ISourceOptions
+
+} from '@tsparticles/engine';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { ArrowDown, Sparkles, MousePointer2, Zap, Code2, Palette, Rocket, Star, Heart, Coffee, Globe, Terminal, Layers, Play } from 'lucide-react';
+import {
+    Sparkles, Zap, Code2, Rocket, Star, Heart,
+    Coffee, Globe, Terminal, Layers, Brain, Database, Cpu,
+    ChevronDown, Award, Briefcase, GraduationCap,
+    Mail, MapPin, ExternalLink, ArrowRight, Play
+} from 'lucide-react';
 import { LoadingScreen } from '@/components/layout';
 import { portfolioData } from '@/data/portfolio';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger, TextPlugin);
+    gsap.registerPlugin(ScrollTrigger);
 }
 
 // Lazy load 3D scene
 const Scene3D = lazy(() => import('@/components/three/Scene3D').then(mod => ({ default: mod.Scene3D })));
 
-// ==================== INTRO SECTION ====================
-function IntroSection() {
-    const sectionRef = useRef<HTMLElement>(null);
-    const titleRef = useRef<HTMLHeadingElement>(null);
-    const subtitleRef = useRef<HTMLParagraphElement>(null);
-    const badgeRef = useRef<HTMLSpanElement>(null);
-    const t = useTranslations('hero');
+// ==================== PARTICLES CONFIG ====================
+const particlesOptions: ISourceOptions = {
+    background: { color: { value: 'transparent' } },
+    fpsLimit: 60,
+    particles: {
+        color: { value: ['#3b82f6', '#8b5cf6', '#06b6d4'] },
+        links: {
+            color: '#ffffff',
+            distance: 150,
+            enable: true,
+            opacity: 0.1,
+            width: 1,
+        },
+        move: {
+            enable: true,
+            speed: 1,
+            direction: 'none',
+            random: true,
+            straight: false,
+            outModes: { default: 'out' },
+        },
+        number: { density: { enable: true }, value: 60 },
+        opacity: { value: { min: 0.1, max: 0.4 } },
+        size: { value: { min: 1, max: 3 } },
+    },
+    detectRetina: true,
+};
+
+// ==================== ANIMATED BACKGROUND ====================
+function AnimatedBackground() {
+    const [particlesReady, setParticlesReady] = useState(false);
 
     useEffect(() => {
-        if (!sectionRef.current) return;
+        initParticlesEngine(async (engine) => {
+            await loadSlim(engine);
+        }).then(() => setParticlesReady(true));
+    }, []);
+
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Particles */}
+            {particlesReady && (
+                <Particles
+                    id="hero-particles"
+                    options={particlesOptions}
+                    className="absolute inset-0"
+                />
+            )}
+
+            {/* Gradient orbs */}
+            <motion.div
+                className="absolute w-[600px] h-[600px] rounded-full opacity-20 blur-[100px]"
+                style={{
+                    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, transparent 70%)',
+                    top: '10%',
+                    left: '-10%',
+                }}
+                animate={{
+                    x: [0, 30, 0],
+                    y: [0, 20, 0],
+                    scale: [1, 1.1, 1],
+                }}
+                transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+                className="absolute w-[500px] h-[500px] rounded-full opacity-15 blur-[80px]"
+                style={{
+                    background: 'radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, transparent 70%)',
+                    bottom: '20%',
+                    right: '-5%',
+                }}
+                animate={{
+                    x: [0, -25, 0],
+                    y: [0, -30, 0],
+                }}
+                transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+            />
+
+            {/* Grid pattern */}
+            <div
+                className="absolute inset-0 opacity-[0.02]"
+                style={{
+                    backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+          `,
+                    backgroundSize: '80px 80px',
+                }}
+            />
+        </div>
+    );
+}
+
+// ==================== SCROLL INDICATOR ====================
+function ScrollIndicator() {
+    return (
+        <motion.div
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.5, duration: 0.8 }}
+        >
+            <motion.div
+                className="flex flex-col items-center gap-4 cursor-pointer group"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+            >
+                <div className="flex flex-col items-center">
+                    <motion.div
+                        className="w-8 h-14 rounded-full border-2 border-primary/30 flex flex-col items-center justify-start p-1 backdrop-blur-sm"
+                        whileHover={{ borderColor: 'rgba(59, 130, 246, 0.6)' }}
+                    >
+                        <motion.div
+                            className="flex flex-col items-center gap-1"
+                            animate={{ y: [0, 20, 0] }}
+                            transition={{ duration: 1.8, repeat: Infinity }}
+                        >
+                            <ChevronDown className="w-4 h-4 text-primary" />
+                            <ChevronDown className="w-4 h-4 text-primary/50 -mt-2" />
+                        </motion.div>
+                    </motion.div>
+                </div>
+                <span className="text-xs text-muted-foreground uppercase tracking-[0.2em] group-hover:text-foreground transition-colors">
+                    Scroll Down
+                </span>
+            </motion.div>
+        </motion.div>
+    );
+}
+
+// ==================== HERO INTRO SECTION ====================
+function HeroIntro() {
+    const containerRef = useRef<HTMLElement>(null);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const t = useTranslations('hero');
+
+    // React Spring for smooth mouse following
+    const [springProps, setSpringProps] = useReactSpring(() => ({
+        xy: [0, 0],
+        config: config.gentle,
+    }));
+
+    const handleMouseMove = useCallback((e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        const x = (clientX - innerWidth / 2) / 40;
+        const y = (clientY - innerHeight / 2) / 40;
+        setSpringProps({ xy: [x, y] });
+        setMousePosition({ x, y });
+    }, [setSpringProps]);
+
+    useEffect(() => {
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, [handleMouseMove]);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
 
         const ctx = gsap.context(() => {
-            // Animate badge
-            gsap.fromTo(badgeRef.current,
-                { y: 30, opacity: 0, scale: 0.8 },
-                { y: 0, opacity: 1, scale: 1, duration: 1, ease: 'elastic.out(1, 0.5)', delay: 0.5 }
-            );
+            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
-            // Animate title with split text effect
-            if (titleRef.current) {
-                const chars = titleRef.current.querySelectorAll('.char');
-                gsap.fromTo(chars,
-                    { y: 100, opacity: 0, rotateX: -90 },
-                    {
-                        y: 0,
-                        opacity: 1,
-                        rotateX: 0,
-                        duration: 1.2,
-                        ease: 'power4.out',
-                        stagger: 0.03,
-                        delay: 0.8
-                    }
+            tl.fromTo('.hero-badge',
+                { y: 60, opacity: 0, scale: 0.8 },
+                { y: 0, opacity: 1, scale: 1, duration: 1.2 }
+            )
+                .fromTo('.hero-title-line',
+                    { y: 150, opacity: 0, rotationX: -60 },
+                    { y: 0, opacity: 1, rotationX: 0, duration: 1.4, stagger: 0.2 },
+                    '-=0.6'
+                )
+                .fromTo('.hero-subtitle',
+                    { y: 50, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 1 },
+                    '-=0.8'
+                )
+                .fromTo('.hero-cta',
+                    { y: 40, opacity: 0, scale: 0.9 },
+                    { y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.15 },
+                    '-=0.5'
                 );
-            }
 
-            // Animate subtitle
-            gsap.fromTo(subtitleRef.current,
-                { y: 50, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 1.5 }
-            );
-        }, sectionRef);
+            // Scroll-triggered parallax
+            gsap.to('.hero-content', {
+                y: 150,
+                opacity: 0,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: containerRef.current,
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1,
+                },
+            });
+        }, containerRef);
 
         return () => ctx.revert();
     }, []);
@@ -71,290 +237,269 @@ function IntroSection() {
 
     return (
         <section
-            ref={sectionRef}
-            className="relative min-h-screen flex items-center justify-center overflow-hidden"
+            ref={containerRef}
+            className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24"
         >
-            {/* Animated gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-muted/20" />
+            <AnimatedBackground />
 
-            {/* Floating particles */}
-            <div className="absolute inset-0 overflow-hidden">
-                {[...Array(30)].map((_, i) => (
-                    <motion.div
-                        key={i}
-                        className="absolute w-1 h-1 rounded-full bg-primary/30"
-                        style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                        }}
-                        animate={{
-                            y: [0, -100, 0],
-                            opacity: [0, 1, 0],
-                        }}
-                        transition={{
-                            duration: 3 + Math.random() * 3,
-                            repeat: Infinity,
-                            delay: Math.random() * 3,
-                            ease: 'linear',
-                        }}
-                    />
-                ))}
-            </div>
-
-            {/* 3D Scene Background */}
+            {/* 3D Scene */}
             <Suspense fallback={null}>
-                <Scene3D className="opacity-40" />
+                <Scene3D className="opacity-20" />
             </Suspense>
 
-            {/* Content */}
-            <div className="relative z-10 container-creative text-center">
-                {/* Badge */}
-                <span
-                    ref={badgeRef}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full glass-card text-sm font-medium mb-8 opacity-0"
+            {/* Main Content */}
+            <animated.div
+                className="hero-content relative z-10 container-creative text-center px-4"
+                style={{
+                    transform: springProps.xy.to((x, y) => `translate3d(${x}px, ${y}px, 0)`),
+                }}
+            >
+                {/* Badge - with more top margin to avoid navbar */}
+                <motion.div
+                    className="hero-badge inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-card text-sm font-medium mb-10 mt-8"
                 >
+                    <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+                    </span>
+                    <span>Available for opportunities</span>
                     <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-                    <span>{t('greeting')}</span>
-                    <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-                </span>
+                </motion.div>
+
+                {/* Name */}
+                <div className="perspective-deep mb-8">
+                    <h1 className="leading-[0.9]">
+                        <span className="hero-title-line block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[10rem] font-black tracking-tighter">
+                            {firstName}
+                        </span>
+                        <span className="hero-title-line block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[10rem] font-black tracking-tighter text-gradient">
+                            {lastName || 'Almazril'}
+                        </span>
+                    </h1>
+                </div>
 
                 {/* Title */}
-                <h1
-                    ref={titleRef}
-                    className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[12rem] font-black tracking-tighter leading-none mb-6"
-                    style={{ perspective: '1000px' }}
-                >
-                    <span className="block overflow-hidden">
-                        {firstName.split('').map((char, i) => (
-                            <span key={i} className="char inline-block" style={{ transformStyle: 'preserve-3d' }}>
-                                {char}
-                            </span>
-                        ))}
-                    </span>
-                    <span className="block overflow-hidden text-gradient">
-                        {(lastName || portfolioData.personal.title).split('').map((char, i) => (
-                            <span key={i} className="char inline-block" style={{ transformStyle: 'preserve-3d' }}>
-                                {char === ' ' ? '\u00A0' : char}
-                            </span>
-                        ))}
-                    </span>
-                </h1>
+                <motion.p className="hero-subtitle text-xl md:text-2xl lg:text-3xl text-muted-foreground font-medium mb-3">
+                    {portfolioData.personal.title}
+                </motion.p>
 
                 {/* Subtitle */}
-                <p
-                    ref={subtitleRef}
-                    className="text-xl md:text-2xl lg:text-3xl text-muted-foreground font-light max-w-3xl mx-auto mb-12 opacity-0"
-                >
-                    {portfolioData.personal.subtitle}
+                <p className="hero-subtitle text-base md:text-lg text-muted-foreground/70 max-w-xl mx-auto mb-12">
+                    AI Engineer • Full Stack Developer • Blockchain Enthusiast
                 </p>
 
                 {/* CTA Buttons */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 2, duration: 0.8 }}
-                    className="flex flex-col sm:flex-row items-center justify-center gap-4"
-                >
-                    <Link href="/projects" className="btn-creative group">
-                        <span className="flex items-center gap-2">
-                            Explore My Work
-                            <motion.span
-                                animate={{ x: [0, 5, 0] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                            >
-                                →
-                            </motion.span>
-                        </span>
-                    </Link>
-                    <Link href="/contact" className="btn-outline-creative flex items-center gap-2">
-                        <Coffee className="w-4 h-4" />
-                        Let's Chat
-                    </Link>
-                </motion.div>
-            </div>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <motion.div className="hero-cta" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link href="/projects" className="btn-creative group inline-flex items-center gap-3 text-base">
+                            <span>Explore My Work</span>
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </motion.div>
+                    <motion.div className="hero-cta" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link href="/contact" className="btn-outline-creative inline-flex items-center gap-2 text-base">
+                            <Mail className="w-4 h-4" />
+                            <span>Get in Touch</span>
+                        </Link>
+                    </motion.div>
+                </div>
+            </animated.div>
 
-            {/* Scroll Indicator */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2.5 }}
-                className="absolute bottom-8 left-1/2 -translate-x-1/2"
-            >
-                <motion.div
-                    animate={{ y: [0, 15, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                    className="flex flex-col items-center gap-3 cursor-pointer group"
-                >
-                    <span className="text-xs text-muted-foreground uppercase tracking-[0.3em] group-hover:text-foreground transition-colors">
-                        Scroll to explore
-                    </span>
-                    <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/50 flex justify-center p-2 group-hover:border-foreground transition-colors">
-                        <motion.div
-                            animate={{ y: [0, 8, 0], opacity: [0.5, 1, 0.5] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                            className="w-1 h-2 rounded-full bg-muted-foreground group-hover:bg-foreground"
-                        />
-                    </div>
-                </motion.div>
-            </motion.div>
+            <ScrollIndicator />
         </section>
     );
 }
 
-// ==================== ABOUT ME SECTION ====================
+// ==================== ABOUT SECTION ====================
 function AboutSection() {
     const sectionRef = useRef<HTMLElement>(null);
-    const imageRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: sectionRef,
         offset: ['start end', 'end start'],
     });
 
-    const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-    const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
-    const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
-    const rotate = useTransform(scrollYProgress, [0, 1], [5, -5]);
+    const y = useTransform(scrollYProgress, [0, 1], [80, -80]);
+    const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
     useEffect(() => {
-        AOS.refresh();
+        if (!sectionRef.current) return;
+
+        const ctx = gsap.context(() => {
+            // Animate stats on scroll
+            gsap.fromTo('.stat-card',
+                { y: 60, opacity: 0, scale: 0.9 },
+                {
+                    y: 0,
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.8,
+                    stagger: 0.15,
+                    scrollTrigger: {
+                        trigger: '.stats-grid',
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+
+            // Animate avatar badges
+            gsap.fromTo('.floating-badge',
+                { scale: 0, opacity: 0 },
+                {
+                    scale: 1,
+                    opacity: 1,
+                    duration: 0.6,
+                    stagger: 0.1,
+                    scrollTrigger: {
+                        trigger: '.avatar-container',
+                        start: 'top 70%',
+                    },
+                }
+            );
+        }, sectionRef);
+
+        return () => ctx.revert();
     }, []);
 
-    const highlights = [
-        { icon: Code2, label: 'Clean Code', value: '100%' },
-        { icon: Rocket, label: 'Projects', value: '50+' },
-        { icon: Coffee, label: 'Coffee Cups', value: '∞' },
-        { icon: Heart, label: 'Passion', value: '❤️' },
+    const stats = [
+        { icon: Briefcase, value: '15+', label: 'Experiences', color: 'text-blue-500' },
+        { icon: Code2, value: '10+', label: 'Projects', color: 'text-purple-500' },
+        { icon: Award, value: '10+', label: 'Certifications', color: 'text-green-500' },
+        { icon: Star, value: '3+', label: 'Years Learning', color: 'text-orange-500' },
     ];
 
     return (
-        <section
-            ref={sectionRef}
-            className="relative min-h-screen py-32 overflow-hidden"
-        >
-            {/* Background decoration */}
-            <motion.div
-                style={{ y, opacity }}
-                className="absolute inset-0 pointer-events-none"
-            >
-                <div className="absolute top-1/4 left-10 w-72 h-72 rounded-full bg-primary/5 blur-3xl" />
-                <div className="absolute bottom-1/4 right-10 w-96 h-96 rounded-full bg-secondary/5 blur-3xl" />
+        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden">
+            {/* Background */}
+            <motion.div style={{ y, opacity }} className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/4 left-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[100px]" />
+                <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[80px]" />
             </motion.div>
 
             <div className="container-creative relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    {/* Image Side */}
-                    <motion.div
-                        ref={imageRef}
-                        style={{ scale, rotate }}
-                        className="relative"
-                        data-aos="fade-right"
-                        data-aos-duration="1000"
-                    >
-                        <div className="relative aspect-square max-w-lg mx-auto">
-                            {/* Decorative rings */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                    {/* Avatar Side */}
+                    <div className="relative order-2 lg:order-1 avatar-container" data-aos="fade-right" data-aos-duration="1200">
+                        <div className="relative max-w-md mx-auto">
+                            {/* Rotating rings */}
                             <motion.div
                                 className="absolute inset-0 rounded-full border-2 border-dashed border-primary/20"
                                 animate={{ rotate: 360 }}
-                                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                                transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
                             />
                             <motion.div
-                                className="absolute inset-4 rounded-full border-2 border-dotted border-secondary/20"
+                                className="absolute inset-8 rounded-full border-2 border-dotted border-secondary/20"
                                 animate={{ rotate: -360 }}
-                                transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+                                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
                             />
 
-                            {/* Main image container */}
-                            <div className="absolute inset-8 rounded-3xl glass-card overflow-hidden">
+                            {/* Avatar */}
+                            <div className="relative m-16 aspect-square rounded-3xl glass-card overflow-hidden shadow-2xl">
                                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-[200px] font-black text-muted/20">
+                                    <span className="text-[160px] font-black text-muted/20 select-none">
                                         {portfolioData.personal.name.charAt(0)}
                                     </span>
                                 </div>
                             </div>
 
                             {/* Floating badges */}
-                            {highlights.map((item, i) => (
+                            {stats.map((stat, i) => (
                                 <motion.div
-                                    key={item.label}
-                                    className="absolute glass-card px-4 py-2 rounded-2xl"
+                                    key={stat.label}
+                                    className="floating-badge absolute glass-card px-4 py-3 rounded-2xl shadow-lg"
                                     style={{
-                                        top: `${20 + i * 20}%`,
-                                        [i % 2 === 0 ? 'left' : 'right']: '-20%',
+                                        top: `${10 + i * 23}%`,
+                                        [i % 2 === 0 ? 'left' : 'right']: '-10%',
                                     }}
-                                    animate={{
-                                        y: [0, -10, 0],
-                                    }}
-                                    transition={{
-                                        duration: 3,
-                                        repeat: Infinity,
-                                        delay: i * 0.5,
-                                    }}
+                                    animate={{ y: [0, -6, 0] }}
+                                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.4 }}
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <item.icon className="w-4 h-4 text-primary" />
-                                        <span className="text-sm font-medium">{item.value}</span>
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2 rounded-xl bg-muted ${stat.color}`}>
+                                            <stat.icon className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <span className="text-xl font-bold">{stat.value}</span>
+                                            <p className="text-xs text-muted-foreground">{stat.label}</p>
+                                        </div>
                                     </div>
-                                    <span className="text-xs text-muted-foreground">{item.label}</span>
                                 </motion.div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Content Side */}
-                    <div className="space-y-8">
-                        <div data-aos="fade-up" data-aos-delay="100">
-                            <span className="text-sm text-primary font-medium uppercase tracking-widest">
+                    <div ref={contentRef} className="space-y-8 order-1 lg:order-2">
+                        <div data-aos="fade-up">
+                            <motion.span
+                                className="inline-block text-sm text-primary font-semibold uppercase tracking-widest mb-4"
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                            >
                                 About Me
-                            </span>
-                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mt-4 leading-tight">
-                                Crafting Digital
-                                <span className="text-gradient"> Experiences</span>
+                            </motion.span>
+                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
+                                Building the
+                                <span className="text-gradient"> Future</span>
+                                <br />with Code
                             </h2>
                         </div>
 
-                        <p
+                        <motion.p
                             className="text-lg text-muted-foreground leading-relaxed"
-                            data-aos="fade-up"
-                            data-aos-delay="200"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2 }}
                         >
                             {portfolioData.personal.bio}
-                        </p>
+                        </motion.p>
 
-                        <div
-                            className="grid grid-cols-2 gap-4"
-                            data-aos="fade-up"
-                            data-aos-delay="300"
-                        >
-                            {[
-                                { label: 'Years Experience', value: '5+' },
-                                { label: 'Happy Clients', value: '30+' },
-                                { label: 'Projects Done', value: '50+' },
-                                { label: 'Awards', value: '12' },
-                            ].map((stat) => (
-                                <div key={stat.label} className="glass-card p-6 rounded-2xl text-center">
-                                    <span className="text-3xl md:text-4xl font-black text-gradient">{stat.value}</span>
-                                    <p className="text-sm text-muted-foreground mt-2">{stat.label}</p>
+                        {/* Info cards */}
+                        <div className="space-y-4" data-aos="fade-up" data-aos-delay="200">
+                            <motion.div
+                                className="flex items-center gap-4 p-5 rounded-2xl glass-card hover:bg-muted/50 transition-colors"
+                                whileHover={{ x: 10, scale: 1.02 }}
+                            >
+                                <div className="p-3 rounded-xl bg-primary/10">
+                                    <MapPin className="w-5 h-5 text-primary" />
                                 </div>
-                            ))}
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Location</p>
+                                    <p className="font-semibold">{portfolioData.personal.location}</p>
+                                </div>
+                            </motion.div>
+                            <motion.div
+                                className="flex items-center gap-4 p-5 rounded-2xl glass-card hover:bg-muted/50 transition-colors"
+                                whileHover={{ x: 10, scale: 1.02 }}
+                            >
+                                <div className="p-3 rounded-xl bg-secondary/10">
+                                    <GraduationCap className="w-5 h-5 text-secondary" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Education</p>
+                                    <p className="font-semibold">Telkom University - Information Technology</p>
+                                </div>
+                            </motion.div>
                         </div>
 
-                        <motion.div
-                            data-aos="fade-up"
-                            data-aos-delay="400"
-                            className="flex items-center gap-4"
-                        >
-                            <Link href="/experience" className="btn-creative">
-                                View My Journey
-                            </Link>
-                            <Link
-                                href={portfolioData.personal.resumeUrl || '#'}
-                                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-                            >
-                                <Play className="w-4 h-4" />
-                                Download CV
-                            </Link>
-                        </motion.div>
+                        <div className="flex flex-wrap gap-4 pt-4" data-aos="fade-up" data-aos-delay="300">
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Link href="/experience" className="btn-creative inline-flex items-center gap-2">
+                                    <Briefcase className="w-4 h-4" />
+                                    View Experience
+                                </Link>
+                            </motion.div>
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Link href={portfolioData.personal.resumeUrl || '#'} className="btn-outline-creative inline-flex items-center gap-2">
+                                    <Play className="w-4 h-4" />
+                                    Download CV
+                                </Link>
+                            </motion.div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -362,98 +507,116 @@ function AboutSection() {
     );
 }
 
-// ==================== WHAT I DO SECTION ====================
-function WhatIDoSection() {
-    const services = [
+// ==================== EXPERTISE SECTION ====================
+function ExpertiseSection() {
+    const sectionRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        if (!sectionRef.current) return;
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.expertise-card',
+                { y: 80, opacity: 0, rotateY: -15 },
+                {
+                    y: 0,
+                    opacity: 1,
+                    rotateY: 0,
+                    duration: 1,
+                    stagger: 0.2,
+                    scrollTrigger: {
+                        trigger: '.expertise-grid',
+                        start: 'top 75%',
+                    },
+                }
+            );
+        }, sectionRef);
+
+        return () => ctx.revert();
+    }, []);
+
+    const expertise = [
         {
-            icon: Terminal,
-            title: 'Web Development',
-            description: 'Building modern, responsive websites with cutting-edge technologies',
-            gradient: 'from-blue-500 to-cyan-500',
-        },
-        {
-            icon: Palette,
-            title: 'UI/UX Design',
-            description: 'Creating beautiful and intuitive user interfaces',
+            icon: Brain,
+            title: 'AI & Machine Learning',
+            description: 'Deep Learning, Computer Vision, NLP, TensorFlow, PyTorch',
             gradient: 'from-purple-500 to-pink-500',
         },
         {
-            icon: Globe,
-            title: 'Full Stack',
-            description: 'End-to-end development from frontend to backend',
+            icon: Code2,
+            title: 'Full Stack Development',
+            description: 'React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB',
+            gradient: 'from-blue-500 to-cyan-500',
+        },
+        {
+            icon: Database,
+            title: 'Data Science',
+            description: 'Data Analysis, Visualization, Pandas, Scikit-learn, Statistics',
             gradient: 'from-green-500 to-emerald-500',
         },
         {
-            icon: Layers,
-            title: 'System Architecture',
-            description: 'Designing scalable and maintainable systems',
+            icon: Cpu,
+            title: 'Blockchain & Web3',
+            description: 'Solidity, Smart Contracts, DApps, Ethereum, Web3.js',
             gradient: 'from-orange-500 to-red-500',
         },
     ];
 
     return (
-        <section className="relative min-h-screen py-32 overflow-hidden bg-muted/30">
+        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden bg-muted/30">
             {/* Background pattern */}
-            <div className="absolute inset-0 opacity-30">
-                <div className="absolute inset-0" style={{
-                    backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-                    backgroundSize: '40px 40px',
-                }} />
+            <div className="absolute inset-0">
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
+                        backgroundSize: '60px 60px',
+                        opacity: 0.02,
+                    }}
+                />
             </div>
 
             <div className="container-creative relative z-10">
                 <div className="text-center mb-20" data-aos="fade-up">
-                    <span className="text-sm text-primary font-medium uppercase tracking-widest">
-                        Services
+                    <span className="text-sm text-primary font-semibold uppercase tracking-widest">
+                        What I Do
                     </span>
                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mt-4">
-                        What I <span className="text-gradient">Do</span>
+                        My <span className="text-gradient">Expertise</span>
                     </h2>
-                    <p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto">
-                        I specialize in creating exceptional digital experiences that combine creativity with technical excellence
+                    <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
+                        Specialized in cutting-edge technologies that power the future
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {services.map((service, index) => (
+                <div className="expertise-grid grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                    {expertise.map((item) => (
                         <motion.div
-                            key={service.title}
-                            className="relative group"
-                            data-aos="fade-up"
-                            data-aos-delay={index * 100}
-                            whileHover={{ y: -10 }}
+                            key={item.title}
+                            className="expertise-card group relative"
+                            whileHover={{ y: -10, scale: 1.02 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <div className="glass-card p-8 rounded-3xl h-full overflow-hidden">
-                                {/* Gradient overlay on hover */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
+                            <div className="glass-card p-8 lg:p-10 rounded-3xl h-full overflow-hidden">
+                                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
 
                                 <div className="relative z-10">
-                                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-6`}>
-                                        <service.icon className="w-8 h-8 text-white" />
-                                    </div>
-
-                                    <h3 className="text-2xl font-bold mb-4 group-hover:text-gradient transition-all duration-300">
-                                        {service.title}
-                                    </h3>
-
-                                    <p className="text-muted-foreground leading-relaxed">
-                                        {service.description}
-                                    </p>
-
-                                    {/* Arrow indicator */}
                                     <motion.div
-                                        className="mt-6 flex items-center gap-2 text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-6`}
+                                        whileHover={{ rotate: 10, scale: 1.1 }}
+                                    >
+                                        <item.icon className="w-8 h-8 text-white" />
+                                    </motion.div>
+
+                                    <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
+                                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+
+                                    <motion.div
+                                        className="mt-8 flex items-center gap-2 text-primary opacity-0 group-hover:opacity-100 transition-opacity"
                                         initial={{ x: -10 }}
                                         whileHover={{ x: 0 }}
                                     >
-                                        <span className="text-sm font-medium">Learn more</span>
-                                        <motion.span
-                                            animate={{ x: [0, 5, 0] }}
-                                            transition={{ duration: 1, repeat: Infinity }}
-                                        >
-                                            →
-                                        </motion.span>
+                                        <span className="text-sm font-semibold">Explore projects</span>
+                                        <ArrowRight className="w-4 h-4" />
                                     </motion.div>
                                 </div>
                             </div>
@@ -465,67 +628,69 @@ function WhatIDoSection() {
     );
 }
 
-// ==================== PHILOSOPHY SECTION ====================
-function PhilosophySection() {
+// ==================== CURRENT FOCUS SECTION ====================
+function CurrentFocusSection() {
     const sectionRef = useRef<HTMLElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ['start end', 'end start'],
-    });
 
-    const x = useTransform(scrollYProgress, [0, 1], ['-50%', '50%']);
+    useEffect(() => {
+        if (!sectionRef.current) return;
 
-    const philosophies = [
-        { icon: Star, text: 'Clean Code', emphasis: 'Always' },
-        { icon: Zap, text: 'Fast Performance', emphasis: 'Essential' },
-        { icon: Heart, text: 'User First', emphasis: 'Priority' },
-        { icon: Rocket, text: 'Innovation', emphasis: 'Constant' },
-        { icon: Code2, text: 'Best Practices', emphasis: 'Standard' },
-        { icon: Globe, text: 'Accessibility', emphasis: 'Inclusive' },
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.focus-card',
+                { scale: 0.8, opacity: 0 },
+                {
+                    scale: 1,
+                    opacity: 1,
+                    duration: 0.6,
+                    stagger: 0.1,
+                    scrollTrigger: {
+                        trigger: '.focus-grid',
+                        start: 'top 80%',
+                    },
+                }
+            );
+        }, sectionRef);
+
+        return () => ctx.revert();
+    }, []);
+
+    const focuses = [
+        { icon: Brain, label: 'AI Agents', description: 'Autonomous systems', color: 'from-purple-500 to-pink-500' },
+        { icon: Cpu, label: 'Blockchain', description: 'Smart Contracts', color: 'from-orange-500 to-red-500' },
+        { icon: Database, label: 'MLOps', description: 'Production ML', color: 'from-blue-500 to-cyan-500' },
+        { icon: Globe, label: 'Web3', description: 'Decentralized apps', color: 'from-green-500 to-emerald-500' },
     ];
 
     return (
-        <section ref={sectionRef} className="relative py-32 overflow-hidden">
-            <div className="container-creative text-center mb-16" data-aos="fade-up">
-                <span className="text-sm text-primary font-medium uppercase tracking-widest">
-                    Philosophy
-                </span>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mt-4">
-                    My <span className="text-gradient">Principles</span>
-                </h2>
-            </div>
+        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden">
+            <div className="container-creative">
+                <div className="text-center mb-16" data-aos="fade-up">
+                    <span className="text-sm text-primary font-semibold uppercase tracking-widest">
+                        Currently Exploring
+                    </span>
+                    <h2 className="text-4xl md:text-5xl font-black mt-4">
+                        Tech I'm <span className="text-gradient">Learning</span>
+                    </h2>
+                </div>
 
-            {/* Horizontal scrolling text */}
-            <div className="relative py-8 overflow-hidden">
-                <motion.div
-                    style={{ x }}
-                    className="flex gap-16 whitespace-nowrap"
-                >
-                    {[...philosophies, ...philosophies].map((item, i) => (
-                        <div key={i} className="flex items-center gap-4 text-6xl md:text-8xl font-black text-muted/20">
-                            <item.icon className="w-12 h-12 md:w-16 md:h-16" />
-                            <span>{item.text}</span>
-                            <span className="text-primary">•</span>
-                        </div>
-                    ))}
-                </motion.div>
-            </div>
-
-            {/* Philosophy cards */}
-            <div className="container-creative mt-16">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    {philosophies.map((item, index) => (
+                <div className="focus-grid grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    {focuses.map((focus, idx) => (
                         <motion.div
-                            key={item.text}
-                            className="glass-card p-6 rounded-2xl text-center"
-                            data-aos="zoom-in"
-                            data-aos-delay={index * 50}
-                            whileHover={{ scale: 1.05, rotateY: 10 }}
-                            style={{ transformStyle: 'preserve-3d' }}
+                            key={focus.label}
+                            className="focus-card text-center"
+                            whileHover={{ y: -8, scale: 1.05 }}
                         >
-                            <item.icon className="w-8 h-8 mx-auto mb-3 text-primary" />
-                            <p className="font-bold text-sm">{item.text}</p>
-                            <span className="text-xs text-muted-foreground">{item.emphasis}</span>
+                            <div className="glass-card p-8 rounded-3xl h-full">
+                                <motion.div
+                                    className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${focus.color} flex items-center justify-center`}
+                                    animate={{ rotate: [0, 5, -5, 0] }}
+                                    transition={{ duration: 6, repeat: Infinity, delay: idx * 0.5 }}
+                                >
+                                    <focus.icon className="w-10 h-10 text-white" />
+                                </motion.div>
+                                <h3 className="text-xl font-bold mb-2">{focus.label}</h3>
+                                <p className="text-sm text-muted-foreground">{focus.description}</p>
+                            </div>
                         </motion.div>
                     ))}
                 </div>
@@ -536,93 +701,112 @@ function PhilosophySection() {
 
 // ==================== CTA SECTION ====================
 function CTASection() {
-    const words = ["Amazing", "Creative", "Innovative", "Stunning"];
+    const sectionRef = useRef<HTMLElement>(null);
+    const words = ['Amazing', 'Innovative', 'Intelligent', 'Creative'];
     const [currentWord, setCurrentWord] = useState(0);
 
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentWord((prev) => (prev + 1) % words.length);
-        }, 2000);
+        }, 2500);
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        if (!sectionRef.current) return;
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.cta-content',
+                { y: 80, opacity: 0 },
+                {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: 'top 70%',
+                    },
+                }
+            );
+        }, sectionRef);
+
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <section className="relative min-h-[80vh] flex items-center justify-center py-32 overflow-hidden">
+        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden">
             {/* Animated background */}
-            <div className="absolute inset-0">
-                <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10"
-                    animate={{
-                        backgroundPosition: ['0% 0%', '100% 100%'],
-                    }}
-                    transition={{
-                        duration: 20,
-                        repeat: Infinity,
-                        repeatType: 'reverse',
-                    }}
-                />
-            </div>
+            <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5"
+                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 8, repeat: Infinity }}
+            />
 
-            <div className="container-creative relative z-10 text-center">
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <h2 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight">
-                        Ready to build something
-                        <br />
-                        <AnimatePresence mode="wait">
-                            <motion.span
-                                key={words[currentWord]}
-                                initial={{ y: 50, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: -50, opacity: 0 }}
-                                transition={{ duration: 0.5 }}
-                                className="inline-block text-gradient"
-                            >
-                                {words[currentWord]}
-                            </motion.span>
-                        </AnimatePresence>
-                        ?
-                    </h2>
+            <div className="container-creative relative z-10 text-center cta-content">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-8">
+                    Let's Build Something
+                    <br />
+                    <AnimatePresence mode="wait">
+                        <motion.span
+                            key={words[currentWord]}
+                            initial={{ y: 60, opacity: 0, rotateX: -60 }}
+                            animate={{ y: 0, opacity: 1, rotateX: 0 }}
+                            exit={{ y: -60, opacity: 0, rotateX: 60 }}
+                            transition={{ duration: 0.5 }}
+                            className="inline-block text-gradient"
+                        >
+                            {words[currentWord]}
+                        </motion.span>
+                    </AnimatePresence>
+                    {' '}Together
+                </h2>
 
-                    <p className="text-xl text-muted-foreground mt-8 max-w-2xl mx-auto">
-                        Let's collaborate and bring your ideas to life with modern technologies and creative solutions.
-                    </p>
+                <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12">
+                    Ready to collaborate on AI, Web Development, or Blockchain projects? Let's make it happen.
+                </p>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
-                        <Link href="/contact" className="btn-creative text-lg px-10 py-5">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link href="/contact" className="btn-creative text-lg px-10 py-5 inline-flex items-center gap-3">
+                            <Mail className="w-5 h-5" />
                             Start a Project
                         </Link>
-                        <Link href="/projects" className="btn-outline-creative text-lg px-10 py-5">
-                            View Portfolio
+                    </motion.div>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link href="/projects" className="btn-outline-creative text-lg px-10 py-5 inline-flex items-center gap-3">
+                            <Layers className="w-5 h-5" />
+                            View My Work
                         </Link>
-                    </div>
-                </motion.div>
+                    </motion.div>
+                </div>
             </div>
         </section>
     );
 }
 
-// ==================== MAIN PAGE COMPONENT ====================
+// ==================== MAIN PAGE ====================
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Initialize AOS
+        // Initialize AOS with more options
         AOS.init({
-            duration: 800,
+            duration: 1000,
             easing: 'ease-out-cubic',
-            once: true,
-            offset: 50,
+            once: false, // Allow animations to replay
+            offset: 100,
+            mirror: true, // Animate out when scrolling past
         });
 
         const hasLoaded = sessionStorage.getItem('portfolioLoaded');
         if (hasLoaded) {
             setIsLoading(false);
         }
+
+        // Refresh AOS on route change
+        return () => {
+            AOS.refresh();
+        };
     }, []);
 
     const handleLoadingComplete = () => {
@@ -633,11 +817,11 @@ export default function HomePage() {
     return (
         <>
             {isLoading && <LoadingScreen onComplete={handleLoadingComplete} duration={2500} />}
-            <main className="relative">
-                <IntroSection />
+            <main className="relative overflow-x-hidden">
+                <HeroIntro />
                 <AboutSection />
-                <WhatIDoSection />
-                <PhilosophySection />
+                <ExpertiseSection />
+                <CurrentFocusSection />
                 <CTASection />
             </main>
         </>

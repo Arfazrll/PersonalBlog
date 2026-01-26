@@ -1,128 +1,239 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
+import Particles, { initParticlesEngine } from '@tsparticles/react';
+import { loadSlim } from '@tsparticles/slim';
+import type { ISourceOptions } from '@tsparticles/engine';
+import { Code2, Brain, Check, Terminal, Database, Box } from 'lucide-react';
 
 interface LoadingScreenProps {
     onComplete?: () => void;
     duration?: number;
 }
 
-export function LoadingScreen({ onComplete, duration = 2000 }: LoadingScreenProps) {
-    const [isLoading, setIsLoading] = useState(true);
-    const [progress, setProgress] = useState(0);
-    const { resolvedTheme } = useTheme();
-    const isDark = resolvedTheme === 'dark';
+// ==================== MATRIX CODE RAIN EFFECT ====================
+const CodeRain = ({ theme }: { theme?: string }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Set canvas sizing
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = Math.ceil(canvas.width / fontSize);
+
+        const drops: number[] = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100; // Staggered start
+        }
+
+        const isDark = theme === 'dark' || theme === undefined; // Default to dark if undefined
+        const bgColor = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
+        const primaryColor = isDark ? '#0F0' : '#059669'; // Green matrix
+        const secondaryColor = isDark ? '#0ea5e9' : '#2563eb'; // Blue highlight
+        const highlightColor = isDark ? '#FFF' : '#1e293b';
+
+        const draw = () => {
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+
+                // Randomly switch colors
+                const random = Math.random();
+                if (random > 0.95) ctx.fillStyle = highlightColor;
+                else if (random > 0.9) ctx.fillStyle = secondaryColor;
+                else ctx.fillStyle = primaryColor;
+
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        };
+
+        const interval = setInterval(draw, 33);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('resize', resizeCanvas);
+        };
+    }, [theme]);
+
+    return <canvas ref={canvasRef} className="absolute inset-0 opacity-10" />;
+};
+
+export function LoadingScreen({ onComplete, duration = 3000 }: LoadingScreenProps) {
+    const [isLoading, setIsLoading] = useState(true);
+    const [progress, setProgress] = useState(0);
+    const [currentStep, setCurrentStep] = useState(0);
+    const { resolvedTheme } = useTheme();
+    const [particlesReady, setParticlesReady] = useState(false);
+
+    useEffect(() => {
+        initParticlesEngine(async (engine) => {
+            await loadSlim(engine);
+        }).then(() => setParticlesReady(true));
+    }, []);
+
+    const steps = [
+        { text: 'Initializing Neural Network...', icon: Brain },
+        { text: 'Loading Portfolio Data...', icon: Database },
+        { text: 'Compiling 3D Assets...', icon: Box },
+        { text: 'System Ready', icon: Check },
+    ];
+
+    useEffect(() => {
+        // Progress timer - slightly faster to ensure it hits 100 before duration
         const interval = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
                     clearInterval(interval);
                     return 100;
                 }
-                return prev + 4;
+                return prev + 2;
             });
-        }, duration / 25);
+        }, duration / 55);
+
+        // Step timer
+        const stepInterval = setInterval(() => {
+            setCurrentStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
+        }, duration / steps.length);
 
         const timer = setTimeout(() => {
             setIsLoading(false);
-            onComplete?.();
+            // Wait for exit animation to finish before calling onComplete
+            setTimeout(() => {
+                onComplete?.();
+            }, 800);
         }, duration);
 
         return () => {
             clearInterval(interval);
+            clearInterval(stepInterval);
             clearTimeout(timer);
         };
-    }, [duration, onComplete]);
+    }, [duration, onComplete, steps.length]);
+
+    // Force strict dark mode on first load / flash prevention
+    // But since user wants it to work with light mode too, we use theme-aware classes
 
     return (
         <AnimatePresence>
             {isLoading && (
                 <motion.div
                     initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, transition: { duration: 0.6, ease: 'easeOut' } }}
-                    className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-background"
+                    exit={{
+                        opacity: 0,
+                        scale: 1.1,
+                        filter: "blur(20px)",
+                        transition: { duration: 0.8, ease: "easeInOut" }
+                    }}
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-background overflow-hidden font-mono"
                 >
-                    <div
-                        className="absolute inset-0 opacity-30"
-                        style={{
-                            background: isDark
-                                ? 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 50%), radial-gradient(circle at 70% 70%, rgba(148, 163, 184, 0.05) 0%, transparent 50%)'
-                                : 'radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 70%, rgba(14, 165, 233, 0.1) 0%, transparent 50%)'
-                        }}
-                    />
+                    <CodeRain theme={resolvedTheme} />
 
-                    <div className="relative flex flex-col items-center">
+                    {/* Center Content */}
+                    <div className="relative z-10 w-full max-w-md p-8">
+                        {/* Terminal Window */}
                         <motion.div
-                            className="relative w-40 h-40 mb-12"
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.6 }}
-                        >
-                            <motion.div
-                                className="absolute inset-0 rounded-full"
-                                style={{
-                                    background: isDark
-                                        ? 'conic-gradient(from 0deg, #ffffff, #94a3b8, #64748b, #ffffff)'
-                                        : 'conic-gradient(from 0deg, #3b82f6, #0ea5e9, #06b6d4, #3b82f6)',
-                                    filter: 'blur(20px)',
-                                }}
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                            />
-                            <motion.div
-                                className="absolute inset-4 rounded-full bg-background"
-                            />
-                            <motion.div
-                                className="absolute inset-8 rounded-full"
-                                style={{
-                                    background: isDark
-                                        ? 'linear-gradient(135deg, #ffffff 0%, #94a3b8 100%)'
-                                        : 'linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%)',
-                                }}
-                                animate={{ scale: [1, 1.1, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                            />
-                            <motion.div
-                                className="absolute inset-0 flex items-center justify-center text-4xl font-black"
-                                style={{ color: isDark ? '#0a0a0a' : '#ffffff' }}
-                                animate={{ opacity: [0.5, 1, 0.5] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                            >
-                                {Math.round(progress)}
-                            </motion.div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="text-center"
-                        >
-                            <motion.h2
-                                className="text-2xl font-black text-gradient mb-2"
-                                animate={{ opacity: [0.7, 1, 0.7] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                            >
-                                LOADING
-                            </motion.h2>
-                            <p className="text-sm text-muted-foreground">Preparing your experience...</p>
-                        </motion.div>
-                    </div>
-
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-muted">
-                        <motion.div
-                            className="h-full"
-                            style={{
-                                background: isDark
-                                    ? 'linear-gradient(90deg, #ffffff, #94a3b8, #64748b)'
-                                    : 'linear-gradient(90deg, #3b82f6, #0ea5e9, #06b6d4)',
+                            exit={{
+                                scale: 0.9,
+                                opacity: 0,
+                                y: -20,
+                                transition: { duration: 0.5 }
                             }}
-                            initial={{ width: '0%' }}
-                            animate={{ width: `${progress}%` }}
-                        />
+                            transition={{ duration: 0.5 }}
+                            className="bg-background/80 backdrop-blur-md border border-border rounded-lg overflow-hidden shadow-2xl"
+                        >
+                            {/* Terminal Header */}
+                            <div className="flex items-center gap-2 px-4 py-3 bg-muted/50 border-b border-border">
+                                <div className="w-3 h-3 rounded-full bg-red-500" />
+                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                                <div className="w-3 h-3 rounded-full bg-green-500" />
+                                <span className="ml-2 text-xs text-muted-foreground font-mono">arfazrll@portfolio:~</span>
+                            </div>
+
+                            {/* Terminal Body */}
+                            <div className="p-6 space-y-4">
+                                <div className="flex items-center gap-3 text-primary mb-6">
+                                    <Terminal className="w-5 h-5" />
+                                    <span className="text-sm font-semibold font-mono">System Initialization</span>
+                                </div>
+
+                                {/* Steps */}
+                                <div className="space-y-3 font-mono">
+                                    {steps.map((step, index) => (
+                                        <motion.div
+                                            key={index}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{
+                                                opacity: index <= currentStep ? 1 : 0.3,
+                                                x: index <= currentStep ? 0 : -10
+                                            }}
+                                            className={`flex items-center gap-3 text-sm font-medium ${index === currentStep ? 'text-blue-500' :
+                                                    index < currentStep ? 'text-green-500' : 'text-muted-foreground'
+                                                }`}
+                                        >
+                                            {index < currentStep ? (
+                                                <Check className="w-4 h-4" />
+                                            ) : (
+                                                <step.icon className={`w-4 h-4 ${index === currentStep ? 'animate-pulse' : ''}`} />
+                                            )}
+                                            <span>{step.text}</span>
+                                            {index === currentStep && (
+                                                <motion.span
+                                                    animate={{ opacity: [0, 1, 0] }}
+                                                    transition={{ repeat: Infinity, duration: 0.8 }}
+                                                >
+                                                    _
+                                                </motion.span>
+                                            )}
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                {/* Progress Bar */}
+                                <div className="mt-8 font-mono">
+                                    <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                                        <span>PROGRESS</span>
+                                        <span>{progress}%</span>
+                                    </div>
+                                    <div className="h-1 bg-muted rounded-full overflow-hidden">
+                                        <motion.div
+                                            className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${progress}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
                 </motion.div>
             )}

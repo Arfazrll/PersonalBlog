@@ -9,6 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@react-spring/web": "^10.0.3",
         "@react-three/drei": "^9.92.0",
         "@react-three/fiber": "^8.15.0",
         "@tsparticles/react": "^3.0.0",
@@ -25,7 +26,8 @@
         "react-dom": "^18.2.0",
         "react-icons": "^5.5.0",
         "tailwind-merge": "^3.4.0",
-        "three": "^0.160.0"
+        "three": "^0.160.0",
+        "tsparticles": "^3.9.1"
     },
     "devDependencies": {
         "@types/aos": "^3.0.7",
