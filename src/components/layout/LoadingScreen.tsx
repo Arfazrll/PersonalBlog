@@ -21,8 +21,11 @@ const CodeRain = ({ theme }: { theme?: string }) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) return;
+
+        let animationFrameId: number;
+        let timeoutId: NodeJS.Timeout;
 
         // Set canvas sizing
         const resizeCanvas = () => {
@@ -30,7 +33,14 @@ const CodeRain = ({ theme }: { theme?: string }) => {
             canvas.height = window.innerHeight;
         };
         resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+
+        // Debounce resize
+        const handleResize = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(resizeCanvas, 100);
+        };
+
+        window.addEventListener('resize', handleResize);
 
         const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
         const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -45,13 +55,16 @@ const CodeRain = ({ theme }: { theme?: string }) => {
             drops[i] = Math.random() * -100; // Staggered start
         }
 
-        const isDark = theme === 'dark' || theme === undefined; // Default to dark if undefined
+        const isDark = theme === 'dark' || theme === undefined;
         const bgColor = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
-        const primaryColor = isDark ? '#0F0' : '#059669'; // Green matrix
-        const secondaryColor = isDark ? '#0ea5e9' : '#2563eb'; // Blue highlight
+        const primaryColor = isDark ? '#0F0' : '#059669';
+        const secondaryColor = isDark ? '#0ea5e9' : '#2563eb';
         const highlightColor = isDark ? '#FFF' : '#1e293b';
 
         const draw = () => {
+            // Check if context is valid
+            if (!ctx || !canvas) return;
+
             ctx.fillStyle = bgColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -60,7 +73,6 @@ const CodeRain = ({ theme }: { theme?: string }) => {
             for (let i = 0; i < drops.length; i++) {
                 const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
 
-                // Randomly switch colors
                 const random = Math.random();
                 if (random > 0.95) ctx.fillStyle = highlightColor;
                 else if (random > 0.9) ctx.fillStyle = secondaryColor;
@@ -73,13 +85,17 @@ const CodeRain = ({ theme }: { theme?: string }) => {
                 }
                 drops[i]++;
             }
+
+            // Use setTimeout for roughly 30fps to save resources instead of RAF
+            animationFrameId = window.setTimeout(draw, 33) as unknown as number;
         };
 
-        const interval = setInterval(draw, 33);
+        draw();
 
         return () => {
-            clearInterval(interval);
-            window.removeEventListener('resize', resizeCanvas);
+            clearTimeout(animationFrameId);
+            clearTimeout(timeoutId);
+            window.removeEventListener('resize', handleResize);
         };
     }, [theme]);
 
@@ -197,7 +213,7 @@ export function LoadingScreen({ onComplete, duration = 3000 }: LoadingScreenProp
                                                 x: index <= currentStep ? 0 : -10
                                             }}
                                             className={`flex items-center gap-3 text-sm font-medium ${index === currentStep ? 'text-blue-500' :
-                                                    index < currentStep ? 'text-green-500' : 'text-muted-foreground'
+                                                index < currentStep ? 'text-green-500' : 'text-muted-foreground'
                                                 }`}
                                         >
                                             {index < currentStep ? (

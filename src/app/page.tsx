@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState, Suspense, lazy, useCallback, useMemo } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useSpring as useReactSpring, animated, config } from '@react-spring/web';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
@@ -19,10 +20,12 @@ import {
     Sparkles, Zap, Code2, Rocket, Star, Heart,
     Coffee, Globe, Terminal, Layers, Brain, Database, Cpu,
     ChevronDown, Award, Briefcase, GraduationCap,
-    Mail, MapPin, ExternalLink, ArrowRight, Play
+    Mail, MapPin, ExternalLink, ArrowRight, Play, Activity
 } from 'lucide-react';
 import { LoadingScreen } from '@/components/layout';
 import { portfolioData } from '@/data/portfolio';
+import { GitHubStats } from '@/components/stats/GitHubStats';
+import WakaTimeStats from '@/components/stats/WakaTimeStats';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -170,7 +173,7 @@ function HeroIntro() {
     const t = useTranslations('hero');
 
     // React Spring for smooth mouse following
-    const [springProps, setSpringProps] = useReactSpring(() => ({
+    const [springProps, api] = useReactSpring(() => ({
         xy: [0, 0],
         config: config.gentle,
     }));
@@ -180,9 +183,9 @@ function HeroIntro() {
         const { innerWidth, innerHeight } = window;
         const x = (clientX - innerWidth / 2) / 40;
         const y = (clientY - innerHeight / 2) / 40;
-        setSpringProps({ xy: [x, y] });
+        api.start({ xy: [x, y] });
         setMousePosition({ x, y });
-    }, [setSpringProps]);
+    }, [api]);
 
     useEffect(() => {
         window.addEventListener('mousemove', handleMouseMove);
@@ -254,9 +257,11 @@ function HeroIntro() {
                     transform: springProps.xy.to((x, y) => `translate3d(${x}px, ${y}px, 0)`),
                 }}
             >
+
+
                 {/* Badge - with more top margin to avoid navbar */}
                 <motion.div
-                    className="hero-badge inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-card text-sm font-medium mb-10 mt-8"
+                    className="hero-badge inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-card text-sm font-medium mb-10"
                 >
                     <span className="relative flex h-2.5 w-2.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
@@ -311,196 +316,201 @@ function HeroIntro() {
 }
 
 // ==================== ABOUT SECTION ====================
+// ==================== ABOUT SECTION ====================
 function AboutSection() {
     const sectionRef = useRef<HTMLElement>(null);
-    const contentRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ['start end', 'end start'],
-    });
+    const containerRef = useRef<HTMLDivElement>(null);
+    const t = useTranslations('hero'); // Using hero translations for now or generic
 
-    const y = useTransform(scrollYProgress, [0, 1], [80, -80]);
-    const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+    // Scifi-style stats
+    const stats = [
+        { label: 'System Uptime', value: '3+ Yrs', icon: Activity, color: '#3b82f6' },
+        { label: 'Projects Compiled', value: '10+', icon: Database, color: '#8b5cf6' },
+        { label: 'Certifications', value: '10+', icon: Award, color: '#10b981' },
+    ];
 
     useEffect(() => {
         if (!sectionRef.current) return;
 
         const ctx = gsap.context(() => {
-            // Animate stats on scroll
-            gsap.fromTo('.stat-card',
-                { y: 60, opacity: 0, scale: 0.9 },
+            // Holographic entrance
+            gsap.fromTo('.holo-card',
+                { opacity: 0, scale: 0.9, y: 50, filter: 'blur(10px)' },
                 {
-                    y: 0,
                     opacity: 1,
                     scale: 1,
-                    duration: 0.8,
-                    stagger: 0.15,
+                    y: 0,
+                    filter: 'blur(0px)',
+                    duration: 1,
+                    stagger: 0.2,
                     scrollTrigger: {
-                        trigger: '.stats-grid',
-                        start: 'top 80%',
-                        toggleActions: 'play none none reverse',
-                    },
+                        trigger: sectionRef.current,
+                        start: 'top 60%',
+                        toggleActions: 'play none none reverse'
+                    }
                 }
             );
 
-            // Animate avatar badges
-            gsap.fromTo('.floating-badge',
-                { scale: 0, opacity: 0 },
-                {
-                    scale: 1,
-                    opacity: 1,
-                    duration: 0.6,
-                    stagger: 0.1,
-                    scrollTrigger: {
-                        trigger: '.avatar-container',
-                        start: 'top 70%',
-                    },
-                }
-            );
+            // Matrix-like text decode effect could go here
         }, sectionRef);
 
         return () => ctx.revert();
     }, []);
 
-    const stats = [
-        { icon: Briefcase, value: '15+', label: 'Experiences', color: 'text-blue-500' },
-        { icon: Code2, value: '10+', label: 'Projects', color: 'text-purple-500' },
-        { icon: Award, value: '10+', label: 'Certifications', color: 'text-green-500' },
-        { icon: Star, value: '3+', label: 'Years Learning', color: 'text-orange-500' },
-    ];
-
     return (
-        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden">
-            {/* Background */}
-            <motion.div style={{ y, opacity }} className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/4 left-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[100px]" />
-                <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[80px]" />
-            </motion.div>
+        <section ref={sectionRef} className="relative py-32 overflow-hidden">
+            {/* Tech Background Grid */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{
+                    backgroundImage: `linear-gradient(#4f46e5 1px, transparent 1px), linear-gradient(90deg, #4f46e5 1px, transparent 1px)`,
+                    backgroundSize: '50px 50px'
+                }}
+            />
 
-            <div className="container-creative relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-                    {/* Avatar Side */}
-                    <div className="relative order-2 lg:order-1 avatar-container" data-aos="fade-right" data-aos-duration="1200">
-                        <div className="relative max-w-md mx-auto">
-                            {/* Rotating rings */}
-                            <motion.div
-                                className="absolute inset-0 rounded-full border-2 border-dashed border-primary/20"
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-                            />
-                            <motion.div
-                                className="absolute inset-8 rounded-full border-2 border-dotted border-secondary/20"
-                                animate={{ rotate: -360 }}
-                                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                            />
+            <div className="container-creative relative z-10 px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
 
-                            {/* Avatar */}
-                            <div className="relative m-16 aspect-square rounded-3xl glass-card overflow-hidden shadow-2xl">
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-[160px] font-black text-muted/20 select-none">
-                                        {portfolioData.personal.name.charAt(0)}
-                                    </span>
+                    {/* Left Col: The Data Stream (Content) */}
+                    <div className="lg:col-span-7 space-y-8 order-2 lg:order-1" ref={containerRef}>
+                        <div className="holo-card">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="flex gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary/20" />
                                 </div>
+                                <span className="text-xs font-mono text-primary tracking-[0.2em] uppercase">Identity Link Established</span>
                             </div>
 
-                            {/* Floating badges */}
-                            {stats.map((stat, i) => (
-                                <motion.div
-                                    key={stat.label}
-                                    className="floating-badge absolute glass-card px-4 py-3 rounded-2xl shadow-lg"
-                                    style={{
-                                        top: `${10 + i * 23}%`,
-                                        [i % 2 === 0 ? 'left' : 'right']: '-10%',
-                                    }}
-                                    animate={{ y: [0, -6, 0] }}
-                                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.4 }}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-xl bg-muted ${stat.color}`}>
-                                            <stat.icon className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <span className="text-xl font-bold">{stat.value}</span>
-                                            <p className="text-xs text-muted-foreground">{stat.label}</p>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Content Side */}
-                    <div ref={contentRef} className="space-y-8 order-1 lg:order-2">
-                        <div data-aos="fade-up">
-                            <motion.span
-                                className="inline-block text-sm text-primary font-semibold uppercase tracking-widest mb-4"
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                            >
-                                About Me
-                            </motion.span>
-                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
-                                Building the
-                                <span className="text-gradient"> Future</span>
-                                <br />with Code
+                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[0.9] tracking-tight mb-6 text-foreground">
+                                Architecting <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 animate-gradient-x">
+                                    Digital Reality
+                                </span>
                             </h2>
                         </div>
 
-                        <motion.p
-                            className="text-lg text-muted-foreground leading-relaxed"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.2 }}
-                        >
-                            {portfolioData.personal.bio}
-                        </motion.p>
+                        <div className="holo-card p-6 md:p-8 rounded-[2rem] bg-white/80 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-sm relative overflow-hidden group shadow-lg dark:shadow-none">
+                            {/* Decorative Corner Accents */}
+                            <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-primary/20 rounded-tl-2xl" />
+                            <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-primary/20 rounded-br-2xl" />
 
-                        {/* Info cards */}
-                        <div className="space-y-4" data-aos="fade-up" data-aos-delay="200">
-                            <motion.div
-                                className="flex items-center gap-4 p-5 rounded-2xl glass-card hover:bg-muted/50 transition-colors"
-                                whileHover={{ x: 10, scale: 1.02 }}
-                            >
-                                <div className="p-3 rounded-xl bg-primary/10">
-                                    <MapPin className="w-5 h-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Location</p>
-                                    <p className="font-semibold">{portfolioData.personal.location}</p>
-                                </div>
-                            </motion.div>
-                            <motion.div
-                                className="flex items-center gap-4 p-5 rounded-2xl glass-card hover:bg-muted/50 transition-colors"
-                                whileHover={{ x: 10, scale: 1.02 }}
-                            >
-                                <div className="p-3 rounded-xl bg-secondary/10">
-                                    <GraduationCap className="w-5 h-5 text-secondary" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Education</p>
-                                    <p className="font-semibold">Telkom University - Information Technology</p>
-                                </div>
-                            </motion.div>
+                            <div className="absolute top-6 right-8 p-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
+                                <Cpu className="w-32 h-32 -rotate-12 text-primary" />
+                            </div>
+
+                            <p className="text-lg md:text-xl text-justify text-muted-foreground leading-relaxed relative z-10 font-light">
+                                <span className="text-primary font-bold text-2xl mr-2">"</span>
+                                {portfolioData.personal.bio}
+                                <span className="text-primary font-bold text-2xl ml-2">"</span>
+                            </p>
                         </div>
 
-                        <div className="flex flex-wrap gap-4 pt-4" data-aos="fade-up" data-aos-delay="300">
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Link href="/experience" className="btn-creative inline-flex items-center gap-2">
-                                    <Briefcase className="w-4 h-4" />
-                                    View Experience
-                                </Link>
-                            </motion.div>
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Link href={portfolioData.personal.resumeUrl || '#'} className="btn-outline-creative inline-flex items-center gap-2">
-                                    <Play className="w-4 h-4" />
-                                    Download CV
-                                </Link>
-                            </motion.div>
+                        <div className="holo-card flex flex-wrap gap-5 pt-2">
+                            <Link href="/experience" className="group relative px-8 py-4 bg-primary text-primary-foreground font-bold rounded-xl overflow-hidden shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:-translate-y-1">
+                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                <span className="relative flex items-center gap-3">
+                                    Initiate Protocol: Experience <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </span>
+                            </Link>
+
+                            <Link href="/contact" className="group px-8 py-4 bg-white/80 dark:bg-white/5 border border-black/5 dark:border-white/10 hover:bg-white/90 dark:hover:bg-white/10 text-foreground font-semibold rounded-xl transition-all hover:-translate-y-1 flex items-center gap-3 backdrop-blur-md shadow-sm dark:shadow-none">
+                                <Terminal className="w-5 h-5 text-secondary" />
+                                <span>Execute: Contact</span>
+                            </Link>
                         </div>
                     </div>
+
+                    {/* Right Col: The Holographic Persona (Visuals) */}
+                    <div className="lg:col-span-5 relative h-[600px] flex items-center justify-center perspective-deep lg:pl-10 order-1 lg:order-2">
+                        {/* Dynamic Background Aura */}
+                        <div className="absolute inset-0 bg-gradient-radial from-primary/20 via-transparent to-transparent blur-[80px] opacity-40 animate-pulse-slow" />
+
+                        {/* Tech Ring Background - Subtle */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <motion.div
+                                className="w-[500px] h-[500px] border border-white/5 rounded-full"
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 60, ease: "linear", repeat: Infinity }}
+                            />
+                            <motion.div
+                                className="absolute w-[350px] h-[350px] border border-dashed border-white/10 rounded-full"
+                                animate={{ rotate: -360 }}
+                                transition={{ duration: 40, ease: "linear", repeat: Infinity }}
+                            />
+                        </div>
+
+                        {/* Image Container with Blending */}
+                        <div className="relative w-full h-full max-w-[420px] mx-auto z-10">
+                            <div className="relative w-full h-full">
+                                <Image
+                                    src={portfolioData.personal.avatar}
+                                    alt="Holographic Identity"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover object-top transition-all duration-700 hover:scale-105 hover:sepia-[.2] z-10"
+                                    style={{
+                                        maskImage: 'linear-gradient(to bottom, black 50%, transparent 95%)',
+                                        WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 95%)'
+                                    }}
+                                    priority
+                                />
+                            </div>
+
+                            {/* Floating Orbital Stats - Positioned cleanly AROUND the subject */}
+                            <div className="absolute inset-0 pointer-events-none z-20">
+                                {/* Top Right - System Uptime */}
+                                <motion.div
+                                    className="absolute top-[15%] -right-4 md:-right-12 pointer-events-auto"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                >
+                                    <div className="glass-card backdrop-blur-md px-4 py-2 border-l-2 border-blue-500 rounded-r-xl flex items-center gap-3 shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:scale-110 transition-transform cursor-default">
+                                        <Activity className="w-4 h-4 text-blue-400" />
+                                        <div>
+                                            <div className="text-[10px] text-blue-200/70 tracking-wider">UPTIME</div>
+                                            <div className="font-mono text-sm font-bold text-white">3+ YEARS</div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+
+                                {/* Bottom Right - Projects */}
+                                <motion.div
+                                    className="absolute bottom-[25%] -right-2 md:-right-8 pointer-events-auto"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.4 }}
+                                >
+                                    <div className="glass-card backdrop-blur-md px-4 py-2 border-l-2 border-purple-500 rounded-r-xl flex items-center gap-3 shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:scale-110 transition-transform cursor-default">
+                                        <Database className="w-4 h-4 text-purple-400" />
+                                        <div>
+                                            <div className="text-[10px] text-purple-200/70 tracking-wider">PROJECTS</div>
+                                            <div className="font-mono text-sm font-bold text-white">10+ SHIPPED</div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+
+                                {/* Bottom Left - Certifications (Floating lower) */}
+                                <motion.div
+                                    className="absolute bottom-[15%] left-0 md:-left-8 pointer-events-auto"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.6 }}
+                                >
+                                    <div className="glass-card backdrop-blur-md px-4 py-2 border-r-2 border-emerald-500 rounded-l-xl flex flex-row-reverse items-center gap-3 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:scale-110 transition-transform cursor-default text-right">
+                                        <Award className="w-4 h-4 text-emerald-400" />
+                                        <div>
+                                            <div className="text-[10px] text-emerald-200/70 tracking-wider">SKILLS</div>
+                                            <div className="font-mono text-sm font-bold text-white">CERTIFIED</div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -511,116 +521,87 @@ function AboutSection() {
 function ExpertiseSection() {
     const sectionRef = useRef<HTMLElement>(null);
 
-    useEffect(() => {
-        if (!sectionRef.current) return;
-
-        const ctx = gsap.context(() => {
-            gsap.fromTo('.expertise-card',
-                { y: 80, opacity: 0, rotateY: -15 },
-                {
-                    y: 0,
-                    opacity: 1,
-                    rotateY: 0,
-                    duration: 1,
-                    stagger: 0.2,
-                    scrollTrigger: {
-                        trigger: '.expertise-grid',
-                        start: 'top 75%',
-                    },
-                }
-            );
-        }, sectionRef);
-
-        return () => ctx.revert();
-    }, []);
-
     const expertise = [
         {
-            icon: Brain,
             title: 'AI & Machine Learning',
-            description: 'Deep Learning, Computer Vision, NLP, TensorFlow, PyTorch',
-            gradient: 'from-purple-500 to-pink-500',
+            icon: Brain,
+            desc: 'Deep Learning, Computer Vision, NLP, TensorFlow, PyTorch',
+            color: 'from-pink-500 to-rose-500',
         },
         {
-            icon: Code2,
             title: 'Full Stack Development',
-            description: 'React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB',
-            gradient: 'from-blue-500 to-cyan-500',
+            icon: Code2,
+            desc: 'React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB',
+            color: 'from-blue-500 to-cyan-500',
         },
         {
-            icon: Database,
             title: 'Data Science',
-            description: 'Data Analysis, Visualization, Pandas, Scikit-learn, Statistics',
-            gradient: 'from-green-500 to-emerald-500',
+            icon: Database,
+            desc: 'Data Analysis, Visualization, Pandas, Scikit-learn, Statistics',
+            color: 'from-emerald-500 to-green-500',
         },
         {
-            icon: Cpu,
             title: 'Blockchain & Web3',
-            description: 'Solidity, Smart Contracts, DApps, Ethereum, Web3.js',
-            gradient: 'from-orange-500 to-red-500',
-        },
+            icon: Cpu, // Changed from Cube to Cpu for available icon
+            desc: 'Solidity, Smart Contracts, DApps, Ethereum, Web3.js',
+            color: 'from-orange-500 to-amber-500',
+        }
     ];
 
     return (
-        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden bg-muted/30">
-            {/* Background pattern */}
-            <div className="absolute inset-0">
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
-                        backgroundSize: '60px 60px',
-                        opacity: 0.02,
-                    }}
-                />
-            </div>
+        <section ref={sectionRef} className="relative py-32 overflow-hidden bg-gray-50 dark:bg-black/50 transition-colors duration-500">
+            {/* Background Texture */}
+            <div className="absolute inset-0 opacity-20 pointer-events-none"
+                style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(100,100,100,0.15) 1px, transparent 0)', backgroundSize: '40px 40px' }}
+            />
 
-            <div className="container-creative relative z-10">
-                <div className="text-center mb-20" data-aos="fade-up">
-                    <span className="text-sm text-primary font-semibold uppercase tracking-widest">
-                        What I Do
-                    </span>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mt-4">
-                        My <span className="text-gradient">Expertise</span>
-                    </h2>
-                    <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-                        Specialized in cutting-edge technologies that power the future
-                    </p>
+            <div className="container-creative relative z-10 px-6">
+                <div className="text-center mb-20">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="inline-block relative"
+                    >
+                        <span className="text-sm font-mono text-primary tracking-[0.3em] uppercase mb-4 block">System Capabilities</span>
+                        <h2 className="text-5xl md:text-7xl font-black tracking-tight text-foreground">
+                            Elite <span className="text-primary">Expertise</span>
+                        </h2>
+                        {/* Glitch underline */}
+                        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-primary shadow-[0_0_20px_#3b82f6] animate-pulse" />
+                    </motion.div>
                 </div>
 
-                <div className="expertise-grid grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                    {expertise.map((item) => (
-                        <motion.div
-                            key={item.title}
-                            className="expertise-card group relative"
-                            whileHover={{ y: -10, scale: 1.02 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <div className="glass-card p-8 lg:p-10 rounded-3xl h-full overflow-hidden">
-                                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                    {expertise.map((item, idx) => (
+                        <SpotlightCard key={idx} className="h-full">
+                            <div className="relative z-10 p-8 h-full flex flex-col justify-between group-hover:translate-x-1 transition-transform duration-300">
+                                <div>
+                                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} p-0.5 mb-6 group-hover:scale-110 transition-transform duration-500`}>
+                                        <div className="w-full h-full bg-white/90 dark:bg-black/90 rounded-2xl flex items-center justify-center backdrop-blur-xl">
+                                            <item.icon className="w-7 h-7 text-primary dark:text-white" />
+                                        </div>
+                                    </div>
 
-                                <div className="relative z-10">
-                                    <motion.div
-                                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-6`}
-                                        whileHover={{ rotate: 10, scale: 1.1 }}
-                                    >
-                                        <item.icon className="w-8 h-8 text-white" />
-                                    </motion.div>
+                                    <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors flex items-center gap-2 text-foreground">
+                                        {item.title}
+                                        <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-primary" />
+                                    </h3>
+                                    <p className="text-muted-foreground font-mono text-sm leading-relaxed">
+                                        {item.desc}
+                                    </p>
+                                </div>
 
-                                    <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
-                                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
-
-                                    <motion.div
-                                        className="mt-8 flex items-center gap-2 text-primary opacity-0 group-hover:opacity-100 transition-opacity"
-                                        initial={{ x: -10 }}
-                                        whileHover={{ x: 0 }}
-                                    >
-                                        <span className="text-sm font-semibold">Explore projects</span>
-                                        <ArrowRight className="w-4 h-4" />
-                                    </motion.div>
+                                <div className="mt-8 pt-8 border-t border-black/5 dark:border-white/5 flex justify-between items-center opacity-60 group-hover:opacity-100 transition-opacity">
+                                    <span className="text-xs font-mono tracking-widest uppercase text-muted-foreground">Explore Module</span>
+                                    <div className="flex gap-1">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors delay-100" />
+                                        <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors delay-200" />
+                                        <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors delay-300" />
+                                    </div>
                                 </div>
                             </div>
-                        </motion.div>
+                        </SpotlightCard>
                     ))}
                 </div>
             </div>
@@ -628,71 +609,77 @@ function ExpertiseSection() {
     );
 }
 
-// ==================== CURRENT FOCUS SECTION ====================
-function CurrentFocusSection() {
-    const sectionRef = useRef<HTMLElement>(null);
+// Helper Component for Spotlight Effect
+function SpotlightCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
 
-    useEffect(() => {
-        if (!sectionRef.current) return;
-
-        const ctx = gsap.context(() => {
-            gsap.fromTo('.focus-card',
-                { scale: 0.8, opacity: 0 },
-                {
-                    scale: 1,
-                    opacity: 1,
-                    duration: 0.6,
-                    stagger: 0.1,
-                    scrollTrigger: {
-                        trigger: '.focus-grid',
-                        start: 'top 80%',
-                    },
-                }
-            );
-        }, sectionRef);
-
-        return () => ctx.revert();
-    }, []);
-
-    const focuses = [
-        { icon: Brain, label: 'AI Agents', description: 'Autonomous systems', color: 'from-purple-500 to-pink-500' },
-        { icon: Cpu, label: 'Blockchain', description: 'Smart Contracts', color: 'from-orange-500 to-red-500' },
-        { icon: Database, label: 'MLOps', description: 'Production ML', color: 'from-blue-500 to-cyan-500' },
-        { icon: Globe, label: 'Web3', description: 'Decentralized apps', color: 'from-green-500 to-emerald-500' },
-    ];
+    function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+        const { left, top } = currentTarget.getBoundingClientRect();
+        mouseX.set(clientX - left);
+        mouseY.set(clientY - top);
+    }
 
     return (
-        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden">
-            <div className="container-creative">
-                <div className="text-center mb-16" data-aos="fade-up">
+        <div
+            className={`group relative border border-black/5 dark:border-white/10 bg-white dark:bg-gray-900/40 overflow-hidden rounded-3xl shadow-sm dark:shadow-none ${className}`}
+            onMouseMove={handleMouseMove}
+        >
+            <motion.div
+                className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
+                style={{
+                    background: useMotionTemplate`
+                        radial-gradient(
+                          650px circle at ${mouseX}px ${mouseY}px,
+                          rgba(59, 130, 246, 0.05),
+                          transparent 80%
+                        )
+                      `,
+                }}
+            />
+            {children}
+
+            {/* Holographic Border Effect */}
+            <motion.div
+                className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
+                style={{
+                    background: useMotionTemplate`
+                        radial-gradient(
+                          400px circle at ${mouseX}px ${mouseY}px,
+                          rgba(59, 130, 246, 0.1),
+                          transparent 40%
+                        )
+                      `,
+                    maskImage: useMotionTemplate`
+                        radial-gradient(
+                          200px circle at ${mouseX}px ${mouseY}px,
+                          black,
+                          transparent
+                        )
+                      `,
+                }}
+            />
+        </div>
+    );
+}
+
+// ==================== STATS SECTION ====================
+function StatsSection() {
+    return (
+        <section className="relative py-32 lg:py-40 overflow-hidden">
+            <div className="container-creative relative z-10">
+                <div className="text-center mb-16">
                     <span className="text-sm text-primary font-semibold uppercase tracking-widest">
-                        Currently Exploring
+                        Coding Activity
                     </span>
-                    <h2 className="text-4xl md:text-5xl font-black mt-4">
-                        Tech I'm <span className="text-gradient">Learning</span>
+                    <h2 className="text-4xl md:text-5xl font-black mt-4 text-foreground">
+                        My <span className="text-gradient">Dev Stats</span>
                     </h2>
                 </div>
 
-                <div className="focus-grid grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    {focuses.map((focus, idx) => (
-                        <motion.div
-                            key={focus.label}
-                            className="focus-card text-center"
-                            whileHover={{ y: -8, scale: 1.05 }}
-                        >
-                            <div className="glass-card p-8 rounded-3xl h-full">
-                                <motion.div
-                                    className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${focus.color} flex items-center justify-center`}
-                                    animate={{ rotate: [0, 5, -5, 0] }}
-                                    transition={{ duration: 6, repeat: Infinity, delay: idx * 0.5 }}
-                                >
-                                    <focus.icon className="w-10 h-10 text-white" />
-                                </motion.div>
-                                <h3 className="text-xl font-bold mb-2">{focus.label}</h3>
-                                <p className="text-sm text-muted-foreground">{focus.description}</p>
-                            </div>
-                        </motion.div>
-                    ))}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[500px] md:h-[400px]">
+                    <GitHubStats />
+                    <WakaTimeStats />
                 </div>
             </div>
         </section>
@@ -821,7 +808,7 @@ export default function HomePage() {
                 <HeroIntro />
                 <AboutSection />
                 <ExpertiseSection />
-                <CurrentFocusSection />
+                <StatsSection />
                 <CTASection />
             </main>
         </>
