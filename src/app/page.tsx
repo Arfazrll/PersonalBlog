@@ -23,6 +23,9 @@ import {
     Mail, MapPin, ExternalLink, ArrowRight, Play, Activity
 } from 'lucide-react';
 import { LoadingScreen } from '@/components/layout';
+import { Lens } from '@/components/ui/Lens';
+import { TextPressure } from '@/components/ui/TextPressure';
+import { CircularGallery } from '@/components/ui/CircularGallery';
 import { portfolioData } from '@/data/portfolio';
 import { GitHubStats } from '@/components/stats/GitHubStats';
 import WakaTimeStats from '@/components/stats/WakaTimeStats';
@@ -86,9 +89,9 @@ function AnimatedBackground() {
 
             {/* Gradient orbs */}
             <motion.div
-                className="absolute w-[600px] h-[600px] rounded-full opacity-20 blur-[100px]"
+                className="absolute w-[600px] h-[600px] rounded-full blur-[100px]"
                 style={{
-                    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, transparent 70%)',
+                    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%)',
                     top: '10%',
                     left: '-10%',
                 }}
@@ -100,9 +103,9 @@ function AnimatedBackground() {
                 transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
             />
             <motion.div
-                className="absolute w-[500px] h-[500px] rounded-full opacity-15 blur-[80px]"
+                className="absolute w-[500px] h-[500px] rounded-full blur-[80px]"
                 style={{
-                    background: 'radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, transparent 70%)',
+                    background: 'radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, transparent 70%)',
                     bottom: '20%',
                     right: '-5%',
                 }}
@@ -113,13 +116,13 @@ function AnimatedBackground() {
                 transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
             />
 
-            {/* Grid pattern */}
+            {/* Grid pattern - works for both light and dark */}
             <div
-                className="absolute inset-0 opacity-[0.02]"
+                className="absolute inset-0 opacity-[0.04] dark:opacity-[0.02]"
                 style={{
                     backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+            linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.15) 1px, transparent 1px)
           `,
                     backgroundSize: '80px 80px',
                 }}
@@ -170,6 +173,7 @@ function ScrollIndicator() {
 function HeroIntro() {
     const containerRef = useRef<HTMLElement>(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [isDarkMode, setIsDarkMode] = useState(true);
     const t = useTranslations('hero');
 
     // React Spring for smooth mouse following
@@ -192,6 +196,19 @@ function HeroIntro() {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, [handleMouseMove]);
 
+    // Detect theme changes
+    useEffect(() => {
+        const checkTheme = () => {
+            setIsDarkMode(document.documentElement.classList.contains('dark'));
+        };
+        checkTheme();
+
+        const observer = new MutationObserver(checkTheme);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+        return () => observer.disconnect();
+    }, []);
+
     useEffect(() => {
         if (!containerRef.current) return;
 
@@ -202,9 +219,9 @@ function HeroIntro() {
                 { y: 60, opacity: 0, scale: 0.8 },
                 { y: 0, opacity: 1, scale: 1, duration: 1.2 }
             )
-                .fromTo('.hero-title-line',
-                    { y: 150, opacity: 0, rotationX: -60 },
-                    { y: 0, opacity: 1, rotationX: 0, duration: 1.4, stagger: 0.2 },
+                .fromTo('.hero-name',
+                    { y: 100, opacity: 0, scale: 0.95 },
+                    { y: 0, opacity: 1, scale: 1, duration: 1.4 },
                     '-=0.6'
                 )
                 .fromTo('.hero-subtitle',
@@ -252,65 +269,69 @@ function HeroIntro() {
 
             {/* Main Content */}
             <animated.div
-                className="hero-content relative z-10 container-creative text-center px-4"
+                className="hero-content relative z-10 container-creative text-center px-4 max-w-5xl mx-auto"
                 style={{
                     transform: springProps.xy.to((x, y) => `translate3d(${x}px, ${y}px, 0)`),
                 }}
             >
-
-
-                {/* Badge - with more top margin to avoid navbar */}
+                {/* Badge */}
                 <motion.div
-                    className="hero-badge inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-card text-sm font-medium mb-10"
+                    className="hero-badge inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-card text-sm font-medium mb-10 border-primary/20 backdrop-blur-xl"
                 >
                     <span className="relative flex h-2.5 w-2.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                         <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
                     </span>
-                    <span>Available for opportunities</span>
+                    <span className="tracking-wide text-foreground/80">Available for opportunities</span>
                     <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                 </motion.div>
 
-                {/* Name */}
-                <div className="perspective-deep mb-8">
-                    <h1 className="leading-[0.9]">
-                        <span className="hero-title-line block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[10rem] font-black tracking-tighter">
-                            {firstName}
-                        </span>
-                        <span className="hero-title-line block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[10rem] font-black tracking-tighter text-gradient">
-                            {lastName || 'Almazril'}
-                        </span>
-                    </h1>
+                {/* Name with TextPressure Animation - Centered, Large */}
+                <div className="hero-name mb-6 w-full max-w-6xl mx-auto h-[100px] sm:h-[120px] md:h-[150px] lg:h-[180px] xl:h-[220px] flex items-center justify-center">
+                    <TextPressure
+                        text="Syahril Arfian Almazril"
+                        flex={false}
+                        alpha={false}
+                        stroke={false}
+                        width={true}
+                        weight={true}
+                        italic={true}
+                        textColor={isDarkMode ? "#ffffff" : "#0f172a"}
+                        minFontSize={72}
+                        className="w-full h-full flex items-center justify-center"
+                    />
                 </div>
 
                 {/* Title */}
-                <motion.p className="hero-subtitle text-xl md:text-2xl lg:text-3xl text-muted-foreground font-medium mb-3">
-                    {portfolioData.personal.title}
-                </motion.p>
+                <motion.div className="hero-subtitle mb-8 flex flex-col items-center gap-2">
+                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+                    <p className="text-xl md:text-2xl lg:text-3xl text-foreground/80 font-medium tracking-wide">
+                        {portfolioData.personal.title} <span className="text-primary mx-2">•</span> Creative Developer
+                    </p>
+                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+                </motion.div>
 
                 {/* Subtitle */}
-                <p className="hero-subtitle text-base md:text-lg text-muted-foreground/70 max-w-xl mx-auto mb-12">
-                    AI Engineer • Full Stack Developer • Blockchain Enthusiast
+                <p className="hero-subtitle text-base md:text-lg text-muted-foreground/70 max-w-2xl mx-auto mb-12 leading-relaxed">
+                    Crafting immersive digital experiences at the intersection of <span className="text-primary font-semibold">AI</span>, <span className="text-secondary font-semibold">Design</span>, and <span className="text-accent font-semibold">Performance</span>.
                 </p>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <motion.div className="hero-cta" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link href="/projects" className="btn-creative group inline-flex items-center gap-3 text-base">
-                            <span>Explore My Work</span>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <motion.div className="hero-cta w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link href="/projects" className="btn-creative group inline-flex items-center justify-center gap-3 text-base w-full sm:w-auto min-w-[180px]">
+                            <span>Explore Radius</span>
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </motion.div>
-                    <motion.div className="hero-cta" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link href="/contact" className="btn-outline-creative inline-flex items-center gap-2 text-base">
+                    <motion.div className="hero-cta w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link href="/contact" className="btn-outline-creative inline-flex items-center justify-center gap-2 text-base w-full sm:w-auto min-w-[180px]">
                             <Mail className="w-4 h-4" />
-                            <span>Get in Touch</span>
+                            <span>Initialize Contact</span>
                         </Link>
                     </motion.div>
                 </div>
             </animated.div>
-
-            <ScrollIndicator />
         </section>
     );
 }
@@ -443,18 +464,20 @@ function AboutSection() {
                         {/* Image Container with Blending */}
                         <div className="relative w-full h-full max-w-[420px] mx-auto z-10">
                             <div className="relative w-full h-full">
-                                <Image
-                                    src={portfolioData.personal.avatar}
-                                    alt="Holographic Identity"
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    className="object-cover object-top transition-all duration-700 hover:scale-105 hover:sepia-[.2] z-10"
-                                    style={{
-                                        maskImage: 'linear-gradient(to bottom, black 50%, transparent 95%)',
-                                        WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 95%)'
-                                    }}
-                                    priority
-                                />
+                                <Lens zoomFactor={2} lensSize={200} isStatic={false} className="w-full h-full">
+                                    <Image
+                                        src={portfolioData.personal.avatar}
+                                        alt="Holographic Identity"
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        className="object-cover object-top transition-all duration-700 hover:scale-105 hover:sepia-[.2] z-10"
+                                        style={{
+                                            maskImage: 'linear-gradient(to bottom, black 50%, transparent 95%)',
+                                            WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 95%)'
+                                        }}
+                                        priority
+                                    />
+                                </Lens>
                             </div>
 
                             {/* Floating Orbital Stats - Positioned cleanly AROUND the subject */}
@@ -517,93 +540,103 @@ function AboutSection() {
     );
 }
 
-// ==================== EXPERTISE SECTION ====================
+// ==================== CREATIVE EXPERTISE SECTION with 3D Gallery ====================
 function ExpertiseSection() {
     const sectionRef = useRef<HTMLElement>(null);
+    const [isDarkMode, setIsDarkMode] = useState(true);
 
-    const expertise = [
-        {
-            title: 'AI & Machine Learning',
-            icon: Brain,
-            desc: 'Deep Learning, Computer Vision, NLP, TensorFlow, PyTorch',
-            color: 'from-pink-500 to-rose-500',
-        },
-        {
-            title: 'Full Stack Development',
-            icon: Code2,
-            desc: 'React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB',
-            color: 'from-blue-500 to-cyan-500',
-        },
-        {
-            title: 'Data Science',
-            icon: Database,
-            desc: 'Data Analysis, Visualization, Pandas, Scikit-learn, Statistics',
-            color: 'from-emerald-500 to-green-500',
-        },
-        {
-            title: 'Blockchain & Web3',
-            icon: Cpu, // Changed from Cube to Cpu for available icon
-            desc: 'Solidity, Smart Contracts, DApps, Ethereum, Web3.js',
-            color: 'from-orange-500 to-amber-500',
-        }
+    // Detect theme changes
+    useEffect(() => {
+        const checkTheme = () => {
+            setIsDarkMode(document.documentElement.classList.contains('dark'));
+        };
+        checkTheme();
+
+        const observer = new MutationObserver(checkTheme);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+        return () => observer.disconnect();
+    }, []);
+
+    const galleryItems = [
+        { image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop', text: 'AI & Machine Learning' },
+        { image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=600&fit=crop', text: 'Full Stack Development' },
+        { image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop', text: 'Data Science' },
+        { image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=600&fit=crop', text: 'Web3 & Blockchain' },
+        { image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop', text: 'Cloud Computing' },
+        { image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop', text: 'Cybersecurity' },
     ];
 
     return (
-        <section ref={sectionRef} className="relative py-32 overflow-hidden bg-gray-50 dark:bg-black/50 transition-colors duration-500">
-            {/* Background Texture */}
-            <div className="absolute inset-0 opacity-20 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(100,100,100,0.15) 1px, transparent 0)', backgroundSize: '40px 40px' }}
+        <section ref={sectionRef} className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-b from-background via-muted to-background">
+            {/* Animated Background */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px] animate-pulse delay-1000" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[150px]" />
+            </div>
+
+            {/* Grid Pattern */}
+            <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.03]"
+                style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)', backgroundSize: '60px 60px' }}
             />
 
             <div className="container-creative relative z-10 px-6">
-                <div className="text-center mb-20">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="inline-block relative"
-                    >
-                        <span className="text-sm font-mono text-primary tracking-[0.3em] uppercase mb-4 block">System Capabilities</span>
-                        <h2 className="text-5xl md:text-7xl font-black tracking-tight text-foreground">
-                            Elite <span className="text-primary">Expertise</span>
-                        </h2>
-                        {/* Glitch underline */}
-                        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-primary shadow-[0_0_20px_#3b82f6] animate-pulse" />
-                    </motion.div>
-                </div>
+                {/* Creative Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center mb-12"
+                >
+                    <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/5 border border-primary/20 backdrop-blur-sm mb-8">
+                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                        <span className="text-xs font-mono text-primary tracking-[0.2em] uppercase">Core Capabilities</span>
+                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                    {expertise.map((item, idx) => (
-                        <SpotlightCard key={idx} className="h-full">
-                            <div className="relative z-10 p-8 h-full flex flex-col justify-between group-hover:translate-x-1 transition-transform duration-300">
-                                <div>
-                                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} p-0.5 mb-6 group-hover:scale-110 transition-transform duration-500`}>
-                                        <div className="w-full h-full bg-white/90 dark:bg-black/90 rounded-2xl flex items-center justify-center backdrop-blur-xl">
-                                            <item.icon className="w-7 h-7 text-primary dark:text-white" />
-                                        </div>
-                                    </div>
+                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6">
+                        <span className="text-foreground">Tech</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-500 to-purple-500 ml-4">Arsenal</span>
+                    </h2>
 
-                                    <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors flex items-center gap-2 text-foreground">
-                                        {item.title}
-                                        <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-primary" />
-                                    </h3>
-                                    <p className="text-muted-foreground font-mono text-sm leading-relaxed">
-                                        {item.desc}
-                                    </p>
-                                </div>
+                    <p className="text-lg text-muted-foreground max-w-xl mx-auto font-light">
+                        Specialized in cutting-edge technologies that power modern digital experiences
+                    </p>
+                </motion.div>
 
-                                <div className="mt-8 pt-8 border-t border-black/5 dark:border-white/5 flex justify-between items-center opacity-60 group-hover:opacity-100 transition-opacity">
-                                    <span className="text-xs font-mono tracking-widest uppercase text-muted-foreground">Explore Module</span>
-                                    <div className="flex gap-1">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors delay-100" />
-                                        <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors delay-200" />
-                                        <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors delay-300" />
-                                    </div>
-                                </div>
-                            </div>
-                        </SpotlightCard>
-                    ))}
-                </div>
+                {/* Circular Gallery 3D */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="h-[400px] md:h-[500px] rounded-3xl overflow-hidden"
+                >
+                    <CircularGallery
+                        items={galleryItems}
+                        bend={3}
+                        textColor={isDarkMode ? "#ffffff" : "#0f172a"}
+                        borderRadius={0.08}
+                        font="bold 24px Inter, sans-serif"
+                        scrollSpeed={3}
+                        scrollEase={0.06}
+                    />
+                </motion.div>
+
+                {/* Drag hint */}
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.5 }}
+                    className="text-center text-sm text-muted-foreground/60 font-mono mt-8 flex items-center justify-center gap-2"
+                >
+                    <span className="inline-block w-8 h-[1px] bg-border" />
+                    Drag or scroll to explore
+                    <span className="inline-block w-8 h-[1px] bg-border" />
+                </motion.p>
             </div>
         </section>
     );

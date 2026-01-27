@@ -11,10 +11,12 @@ import {
     Twitter,
     Instagram,
     Mail,
-    MapPin,
     Heart,
-    ArrowUpRight,
-    X
+    Copy,
+    Check,
+    X,
+    Gamepad2,
+    Music
 } from 'lucide-react';
 import { portfolioData } from '@/data/portfolio';
 
@@ -23,21 +25,73 @@ const socialIcons: Record<string, React.ElementType> = {
     linkedin: Linkedin,
     twitter: Twitter,
     instagram: Instagram,
+    discord: Gamepad2,
+    spotify: Music,
 };
 
-const quickLinks = [
-    { href: '/', key: 'home' },
-    { href: '/projects', key: 'projects' },
-    { href: '/experience', key: 'experience' },
-    { href: '/skills', key: 'skills' },
-    { href: '/achievements', key: 'achievements' },
-    { href: '/contact', key: 'contact' },
+const marqueeItems = [
+    "Open to Opportunities",
+    "Frontend Development",
+    "Backend Architecture",
+    "UI/UX Design",
+    "Creative Coding",
+    "System Optimization"
 ];
+
+function Marquee() {
+    return (
+        <div className="relative flex overflow-hidden py-4 bg-muted/30 border-y border-white/5 backdrop-blur-sm">
+            <motion.div
+                className="flex gap-12 whitespace-nowrap"
+                animate={{ x: [0, -1000] }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            >
+                {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
+                    <div key={i} className="flex items-center gap-4 text-sm font-mono tracking-widest uppercase text-muted-foreground/80">
+                        <span>{item}</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
+                    </div>
+                ))}
+            </motion.div>
+
+            <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
+            <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent z-10" />
+        </div>
+    );
+}
+
+function SocialCard({ social }: { social: any }) {
+    const Icon = socialIcons[social.icon] || Github;
+
+    return (
+        <motion.a
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-primary/50 overflow-hidden transition-colors"
+            whileHover={{ y: -5 }}
+        >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10 flex flex-col items-center gap-4">
+                <div className="p-4 rounded-2xl bg-white/5 group-hover:bg-primary/20 transition-colors duration-300">
+                    <Icon className="w-8 h-8 text-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                    {social.platform}
+                </span>
+            </div>
+        </motion.a>
+    );
+}
 
 export function Footer() {
     const t = useTranslations('navigation');
     const tFooter = useTranslations('footer');
     const [isExpanded, setIsExpanded] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const currentYear = new Date().getFullYear();
 
     // Lock body scroll when footer is expanded
     useEffect(() => {
@@ -59,21 +113,16 @@ export function Footer() {
         setIsExpanded(false);
     }, []);
 
-    const currentYear = new Date().getFullYear();
+    const handleCopyEmail = () => {
+        navigator.clipboard.writeText(portfolioData.personal.email);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     // Animation variants
     const overlayVariants = {
         closed: { opacity: 0 },
         open: { opacity: 1 }
-    };
-
-    const contentVariants = {
-        closed: { opacity: 0, y: 50 },
-        open: (i: number) => ({
-            opacity: 1,
-            y: 0,
-            transition: { delay: 0.1 + i * 0.1, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }
-        })
     };
 
     return (
@@ -133,7 +182,7 @@ export function Footer() {
                 </div>
             </footer>
 
-            {/* Expanded Footer Overlay - Portal-like behavior */}
+            {/* Expanded Footer Overlay */}
             <AnimatePresence>
                 {isExpanded && (
                     <motion.div
@@ -142,22 +191,12 @@ export function Footer() {
                         animate="open"
                         exit="closed"
                         transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-[100]"
-                        style={{ pointerEvents: 'auto' }}
+                        className="fixed inset-0 z-[100] overflow-y-auto bg-background/95 backdrop-blur-xl"
                     >
-                        {/* Background */}
-                        <motion.div
-                            className="absolute inset-0 bg-background"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={closeExpanded}
-                        />
-
                         {/* Close Button */}
                         <motion.button
                             onClick={closeExpanded}
-                            className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-10 hover:bg-muted transition-colors"
+                            className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-50 hover:bg-muted transition-colors"
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
@@ -168,128 +207,73 @@ export function Footer() {
                             <X className="w-5 h-5 md:w-6 md:h-6" />
                         </motion.button>
 
-                        {/* Content */}
-                        <div className="relative h-full overflow-y-auto">
-                            <div className="min-h-full flex flex-col">
-                                <div className="flex-1 container-creative py-20 md:py-24">
-                                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16">
-                                        {/* Connect Section */}
-                                        <motion.div
-                                            custom={0}
-                                            variants={contentVariants}
-                                            initial="closed"
-                                            animate="open"
-                                            exit="closed"
-                                            className="lg:col-span-5"
-                                        >
-                                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gradient mb-6">
-                                                Let's Connect
-                                            </h2>
-                                            <p className="text-base md:text-lg text-muted-foreground mb-8 leading-relaxed">
-                                                {portfolioData.personal.bio}
-                                            </p>
-                                            <div className="space-y-4">
-                                                <a
-                                                    href={`mailto:${portfolioData.personal.email}`}
-                                                    className="flex items-center gap-4 p-4 rounded-2xl glass-card group hover:bg-muted/50 transition-all"
-                                                >
-                                                    <div className="p-3 rounded-xl bg-primary/10">
-                                                        <Mail className="w-5 h-5 text-primary" />
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-sm text-muted-foreground">Email</p>
-                                                        <p className="font-medium truncate">{portfolioData.personal.email}</p>
-                                                    </div>
-                                                    <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0" />
-                                                </a>
-                                                <div className="flex items-center gap-4 p-4 rounded-2xl glass-card">
-                                                    <div className="p-3 rounded-xl bg-secondary/10">
-                                                        <MapPin className="w-5 h-5 text-secondary" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm text-muted-foreground">Location</p>
-                                                        <p className="font-medium">{portfolioData.personal.location}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </motion.div>
+                        <div className="min-h-screen flex flex-col pt-20">
+                            <Marquee />
 
-                                        {/* Navigation Section */}
-                                        <motion.div
-                                            custom={1}
-                                            variants={contentVariants}
-                                            initial="closed"
-                                            animate="open"
-                                            exit="closed"
-                                            className="lg:col-span-3"
+                            <div className="flex-1 container-creative flex flex-col justify-center py-12 md:py-24">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-16">
+                                    {/* Left Column - CTA */}
+                                    <div>
+                                        <motion.h2
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.2 }}
+                                            className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.9]"
                                         >
-                                            <h3 className="text-xl font-bold mb-6">Navigation</h3>
-                                            <nav className="space-y-3">
-                                                {quickLinks.map((link) => (
-                                                    <Link
-                                                        key={link.key}
-                                                        href={link.href}
-                                                        onClick={closeExpanded}
-                                                        className="block text-lg text-muted-foreground hover:text-foreground hover:translate-x-2 transition-all duration-300"
-                                                    >
-                                                        {t(link.key)}
-                                                    </Link>
-                                                ))}
-                                            </nav>
-                                        </motion.div>
+                                            Let's Work <br />
+                                            <span className="text-gradient">Together</span>
+                                        </motion.h2>
 
-                                        {/* Social Section */}
-                                        <motion.div
-                                            custom={2}
-                                            variants={contentVariants}
-                                            initial="closed"
-                                            animate="open"
-                                            exit="closed"
-                                            className="lg:col-span-4"
+                                        <motion.p
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.3 }}
+                                            className="text-xl text-muted-foreground max-w-lg mb-12"
                                         >
-                                            <h3 className="text-xl font-bold mb-6">Social</h3>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                {portfolioData.personal.socialLinks.map((social) => {
-                                                    const Icon = socialIcons[social.icon];
-                                                    return (
-                                                        <motion.a
-                                                            key={social.platform}
-                                                            href={social.url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="flex items-center gap-3 p-4 rounded-xl glass-card hover:bg-muted/50 transition-all group"
-                                                            whileHover={{ scale: 1.02 }}
-                                                            whileTap={{ scale: 0.98 }}
-                                                        >
-                                                            {Icon && <Icon className="w-5 h-5" />}
-                                                            <span className="font-medium">{social.platform}</span>
-                                                        </motion.a>
-                                                    );
-                                                })}
-                                            </div>
+                                            Have a project in mind? Let's build something extraordinary that solves real problems.
+                                        </motion.p>
+
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.4 }}
+                                            className="flex flex-col sm:flex-row gap-4"
+                                        >
+                                            <button
+                                                onClick={handleCopyEmail}
+                                                className="group flex items-center gap-3 px-6 py-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors w-fit"
+                                            >
+                                                <Mail className="w-5 h-5 text-primary" />
+                                                <span className="font-mono">{portfolioData.personal.email}</span>
+                                                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />}
+                                            </button>
                                         </motion.div>
+                                    </div>
+
+                                    {/* Right Column - Social Grid */}
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 content-center">
+                                        {portfolioData.personal.socialLinks.map((social, i) => (
+                                            <motion.div
+                                                key={social.platform}
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ delay: 0.4 + (0.1 * i) }}
+                                            >
+                                                <SocialCard social={social} />
+                                            </motion.div>
+                                        ))}
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Bottom Bar */}
-                                <motion.div
-                                    custom={3}
-                                    variants={contentVariants}
-                                    initial="closed"
-                                    animate="open"
-                                    exit="closed"
-                                    className="border-t border-border py-6"
-                                >
-                                    <div className="container-creative flex flex-col sm:flex-row items-center justify-between gap-4">
-                                        <p className="text-sm text-muted-foreground text-center sm:text-left">
-                                            © {currentYear} {portfolioData.personal.name}. {tFooter('copyright')}
-                                        </p>
-                                        <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            {tFooter('madeWith')}
-                                            <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" />
-                                        </p>
-                                    </div>
-                                </motion.div>
+                            {/* Bottom Bar in Overlay */}
+                            <div className="container-creative py-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+                                <p className="text-sm text-muted-foreground">
+                                    © {currentYear} {portfolioData.personal.name}. All rights reserved.
+                                </p>
+                                <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    Made with <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" /> using Next.js
+                                </p>
                             </div>
                         </div>
                     </motion.div>

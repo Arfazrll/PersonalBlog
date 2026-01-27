@@ -42,6 +42,18 @@ export const portfolioData: PortfolioData = {
                 icon: 'instagram',
                 username: 'arfazrll',
             },
+            {
+                platform: 'Discord',
+                url: 'https://discord.com/users/arfazrll',
+                icon: 'discord',
+                username: 'arfazrll',
+            },
+            {
+                platform: 'Spotify',
+                url: 'https://open.spotify.com/user/arfazrll',
+                icon: 'spotify',
+                username: 'arfazrll',
+            },
         ],
     },
     projects: [

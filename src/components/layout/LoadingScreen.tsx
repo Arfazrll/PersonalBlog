@@ -3,9 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import Particles, { initParticlesEngine } from '@tsparticles/react';
-import { loadSlim } from '@tsparticles/slim';
-import type { ISourceOptions } from '@tsparticles/engine';
 import { Code2, Brain, Check, Terminal, Database, Box } from 'lucide-react';
 
 interface LoadingScreenProps {
@@ -107,13 +104,6 @@ export function LoadingScreen({ onComplete, duration = 3000 }: LoadingScreenProp
     const [progress, setProgress] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const { resolvedTheme } = useTheme();
-    const [particlesReady, setParticlesReady] = useState(false);
-
-    useEffect(() => {
-        initParticlesEngine(async (engine) => {
-            await loadSlim(engine);
-        }).then(() => setParticlesReady(true));
-    }, []);
 
     const steps = [
         { text: 'Initializing Neural Network...', icon: Brain },
