@@ -1,259 +1,269 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Search, SortAsc, SortDesc, ExternalLink, X, Calendar, Building2, Trophy, Medal, Star, Sparkles, Award, Target } from 'lucide-react';
+import { Search, SortAsc, SortDesc, ExternalLink, X, Calendar, Building2, Trophy, Medal, Award, Target, ChevronRight, MousePointer2, Eye, Share2 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import { Achievement } from '@/types';
+import FallingText from '@/components/effects/FallingText';
 
-// --- Visual Components ---
+const staggerContainer = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 }
+    }
+};
 
-function FloatingOrb({ className, gradient, delay = 0 }: { className?: string; gradient: string; delay?: number }) {
-    return (
-        <motion.div
-            className={`absolute rounded-full blur-3xl opacity-30 pointer-events-none ${className}`}
-            style={{ background: gradient }}
-            animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{ duration: 8, repeat: Infinity, delay, ease: "easeInOut" }}
-        />
-    );
-}
+const staggerItem = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+};
 
-function StatsPill({ icon: Icon, label, value, gradient }: { icon: any, label: string, value: number, gradient: string }) {
-    return (
-        <motion.div
-            whileHover={{ scale: 1.05, y: -2 }}
-            className="relative group"
-        >
-            <div className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 rounded-full`} />
-            <div className="relative flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] hover:border-white/20 transition-all backdrop-blur-sm">
-                <div className={`p-1.5 rounded-lg bg-gradient-to-br ${gradient}`}>
-                    <Icon className="w-3.5 h-3.5 text-white" />
-                </div>
-                <div className="flex items-baseline gap-1.5">
-                    <span className="text-lg font-black">{value}</span>
-                    <span className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-bold">{label}</span>
-                </div>
-            </div>
-        </motion.div>
-    );
-}
+const AchievementCard = React.forwardRef<HTMLDivElement, { achievement: Achievement; onClick: () => void; index: number }>(
+    ({ achievement, onClick, index }, ref) => {
+        const categoryConfig: Record<string, { gradient: string; icon: typeof Trophy }> = {
+            certification: { gradient: 'from-zinc-700 via-zinc-600 to-zinc-500', icon: Award },
+            award: { gradient: 'from-neutral-800 via-neutral-700 to-neutral-600', icon: Trophy },
+            recognition: { gradient: 'from-stone-700 via-stone-600 to-stone-500', icon: Medal },
+            publication: { gradient: 'from-slate-700 via-slate-600 to-slate-500', icon: Award },
+            competition: { gradient: 'from-gray-700 via-gray-600 to-gray-500', icon: Target }
+        };
 
-function AchievementCard({ achievement, onClick, index }: { achievement: Achievement; onClick: () => void; index: number }) {
-    // Use only blue-based gradients for dark mode compatibility
-    const categoryColors: Record<string, string> = {
-        certification: 'from-blue-600 via-blue-700 to-blue-800',
-        award: 'from-blue-500 via-blue-600 to-blue-700',
-        recognition: 'from-slate-600 via-slate-700 to-slate-800',
-        publication: 'from-gray-600 via-gray-700 to-gray-800',
-        competition: 'from-blue-400 via-blue-500 to-blue-600'
-    };
+        const config = categoryConfig[achievement.category.toLowerCase()] || categoryConfig.award;
+        const IconComponent = config.icon;
 
-    const gradient = categoryColors[achievement.category.toLowerCase()] || 'from-gray-600 via-slate-700 to-gray-800';
+        return (
+            <motion.div
+                ref={ref}
+                layout
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ delay: index * 0.05, duration: 0.5, type: "spring", stiffness: 100 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onClick}
+                className="group relative cursor-pointer"
+            >
+                <motion.div
+                    className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 blur-xl bg-foreground/5"
+                />
 
-    return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ delay: index * 0.03, duration: 0.4, type: "spring" }}
-            whileHover={{ y: -4 }}
-            onClick={onClick}
-            className="group relative cursor-pointer"
-        >
-            {/* Glow effect on hover */}
-            <div className={`absolute -inset-0.5 bg-gradient-to-r ${gradient} opacity-0 group-hover:opacity-30 blur-xl transition-all duration-500 rounded-2xl`} />
+                <div className="relative bg-card/90 dark:bg-card/70 backdrop-blur-xl rounded-2xl overflow-hidden border border-border/40 group-hover:border-foreground/20 transition-all duration-500 shadow-lg group-hover:shadow-2xl">
 
-            <div className="relative glass-card border border-white/10 rounded-xl overflow-hidden transition-all duration-300 group-hover:border-white/30 group-hover:shadow-2xl backdrop-blur-md">
-                {/* Image Area */}
-                <div className={`relative h-40 w-full overflow-hidden bg-gradient-to-br ${gradient}`}>
-                    <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-                    {/* Animated gradient overlay */}
-                    <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    />
-
-                    {/* Category Tag */}
-                    <motion.div
-                        className="absolute top-3 right-3"
-                        whileHover={{ scale: 1.1 }}
-                    >
-                        <span className="px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest bg-black/50 backdrop-blur-md border border-white/20 text-white shadow-lg">
-                            {achievement.category}
-                        </span>
-                    </motion.div>
-
-                    {/* Big Letter Icon */}
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className={`relative h-32 w-full overflow-hidden bg-gradient-to-br ${config.gradient}`}>
                         <motion.div
-                            className="text-white/10 font-black text-8xl select-none"
-                            whileHover={{ scale: 1.1, rotate: 5 }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                        >
-                            {achievement.title.charAt(0)}
-                        </motion.div>
-                    </div>
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                            initial={{ x: '-100%' }}
+                            whileHover={{ x: '100%' }}
+                            transition={{ duration: 0.6 }}
+                        />
 
-                    {/* Date Badge */}
-                    <div className="absolute bottom-2 left-3 flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/40 backdrop-blur-sm border border-white/10">
-                        <Calendar className="w-2.5 h-2.5 text-white/80" />
-                        <span className="text-[9px] text-white/90 font-semibold">{formatDate(achievement.date)}</span>
-                    </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-4 bg-gradient-to-b from-background/95 to-background">
-                    <h3 className="text-base font-bold leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2 min-h-[2.5rem]">
-                        {achievement.title}
-                    </h3>
-                    <div className="flex items-center gap-1.5 mb-3">
-                        <Building2 className="w-3 h-3 text-muted-foreground shrink-0" />
-                        <span className="text-[11px] text-muted-foreground line-clamp-1 font-medium">{achievement.issuer}</span>
-                    </div>
-
-                    <div className="pt-2.5 border-t border-white/5 flex items-center justify-between">
-                        <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">View Details</span>
                         <motion.div
-                            animate={{ x: [0, 3, 0] }}
-                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute top-3 right-3 p-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20"
+                            whileHover={{ rotate: 15, scale: 1.1 }}
                         >
-                            <Sparkles className="w-3.5 h-3.5 text-primary" />
+                            <IconComponent className="w-4 h-4 text-white" />
                         </motion.div>
+
+                        <div className="absolute top-3 left-3">
+                            <span className="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider bg-black/30 backdrop-blur-md border border-white/20 text-white">
+                                {achievement.category}
+                            </span>
+                        </div>
+
+                        <div className="absolute -bottom-2 -right-1 opacity-10">
+                            <span className="text-7xl font-black text-white leading-none select-none">
+                                {achievement.title.charAt(0)}
+                            </span>
+                        </div>
+
+                        <div className="absolute bottom-2 left-3 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm border border-white/10">
+                            <Calendar className="w-2.5 h-2.5 text-white/80" />
+                            <span className="text-[9px] text-white/90 font-semibold">{formatDate(achievement.date)}</span>
+                        </div>
+                    </div>
+
+                    <div className="p-4">
+                        <h3 className="text-sm font-bold leading-snug mb-2 group-hover:text-foreground transition-colors line-clamp-2 min-h-[2.5rem]">
+                            {achievement.title}
+                        </h3>
+
+                        <div className="flex items-center gap-1.5 mb-3">
+                            <Building2 className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-[10px] text-muted-foreground line-clamp-1 font-medium">{achievement.issuer}</span>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-3 border-t border-border/30">
+                            <div className="flex items-center gap-1.5">
+                                <Eye className="w-3 h-3 text-muted-foreground/50" />
+                                <span className="text-[9px] text-muted-foreground/60 font-medium">View Details</span>
+                            </div>
+                            <motion.div
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                animate={{ x: [0, 4, 0] }}
+                                transition={{ duration: 1.2, repeat: Infinity }}
+                            >
+                                <ChevronRight className="w-3.5 h-3.5 text-foreground/70" />
+                            </motion.div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </motion.div>
-    );
-}
+            </motion.div>
+        );
+    }
+);
 
-function NavItem({ label, active, onClick, count }: { label: string, active: boolean, onClick: () => void, count: number }) {
+AchievementCard.displayName = 'AchievementCard';
+
+function NavItem({ label, active, onClick, count }: { label: string; active: boolean; onClick: () => void; count: number }) {
     return (
         <motion.button
             onClick={onClick}
-            whileHover={{ x: 4 }}
+            whileHover={{ x: 6 }}
+            whileTap={{ scale: 0.98 }}
             className={cn(
-                "group relative w-full text-left py-5 px-6 border-b border-white/5 transition-all duration-300",
-                active ? "bg-white/[0.05]" : "hover:bg-white/[0.02]"
+                "group relative w-full text-left py-5 lg:py-6 px-6 lg:px-8 transition-all duration-300",
+                active ? "bg-foreground/[0.03]" : "hover:bg-foreground/[0.015]"
             )}
         >
             <div className="flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-3">
-                    <motion.div
-                        animate={{ rotate: active ? 360 : 0 }}
-                        transition={{ duration: 0.5 }}
-                        className={cn(
-                            "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                            active ? "bg-primary scale-150" : "bg-muted-foreground/20"
-                        )}
-                    />
+                    <div className={cn(
+                        "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                        active ? "bg-foreground scale-150" : "bg-muted-foreground/20"
+                    )} />
                     <span className={cn(
-                        "text-2xl md:text-3xl lg:text-4xl font-black tracking-tight transition-all duration-300",
-                        active ? "text-foreground" : "text-muted-foreground/30 group-hover:text-muted-foreground/60"
+                        "text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight transition-all duration-300",
+                        active ? "text-foreground" : "text-muted-foreground/25 group-hover:text-muted-foreground/50"
                     )}>
                         {label}
                     </span>
                 </div>
-                <div className="flex items-center gap-3">
-                    <span className={cn(
-                        "text-xs font-bold transition-colors duration-300 tabular-nums",
-                        active ? "text-primary" : "text-muted-foreground/20 group-hover:text-muted-foreground/40"
-                    )}>
-                        {count.toString().padStart(2, '0')}
-                    </span>
-                </div>
+                <span className={cn(
+                    "text-xs font-bold tabular-nums transition-all duration-300",
+                    active ? "text-foreground/80" : "text-muted-foreground/15"
+                )}>
+                    {count.toString().padStart(2, '0')}
+                </span>
             </div>
-            {active && (
-                <motion.div
-                    layoutId="activeNavHighlight"
-                    className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary/80 to-primary/50"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-            )}
+
+            <AnimatePresence>
+                {active && (
+                    <motion.div
+                        layoutId="navActiveBar"
+                        initial={{ opacity: 0, scaleY: 0 }}
+                        animate={{ opacity: 1, scaleY: 1 }}
+                        exit={{ opacity: 0, scaleY: 0 }}
+                        className="absolute left-0 top-0 bottom-0 w-1 bg-foreground origin-center"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                )}
+            </AnimatePresence>
         </motion.button>
-    )
+    );
 }
 
 function AchievementModal({ achievement, onClose }: { achievement: Achievement; onClose: () => void }) {
-    const categoryColors: Record<string, string> = {
-        certification: 'from-blue-600 via-blue-700 to-blue-800',
-        award: 'from-blue-500 via-blue-600 to-blue-700',
-        recognition: 'from-slate-600 via-slate-700 to-slate-800',
-        publication: 'from-gray-600 via-gray-700 to-gray-800',
-        competition: 'from-blue-400 via-blue-500 to-blue-600'
+    const categoryGradients: Record<string, string> = {
+        certification: 'from-zinc-700 via-zinc-600 to-zinc-500',
+        award: 'from-neutral-800 via-neutral-700 to-neutral-600',
+        recognition: 'from-stone-700 via-stone-600 to-stone-500',
+        publication: 'from-slate-700 via-slate-600 to-slate-500',
+        competition: 'from-gray-700 via-gray-600 to-gray-500'
     };
-    const gradient = categoryColors[achievement.category.toLowerCase()] || 'from-gray-600 via-slate-700 to-gray-800';
+    const gradient = categoryGradients[achievement.category.toLowerCase()] || categoryGradients.award;
 
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 lg:p-8"
             onClick={onClose}
         >
             <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                initial={{ scale: 0.85, opacity: 0, y: 50 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                exit={{ scale: 0.9, opacity: 0, y: 30 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="glass-strong rounded-3xl max-w-3xl w-full max-h-[85vh] overflow-hidden shadow-2xl border border-white/10"
+                className="bg-card rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-border/50"
                 onClick={e => e.stopPropagation()}
             >
-                <div className={`relative h-48 bg-gradient-to-br ${gradient} overflow-hidden`}>
-                    <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className={`relative h-52 sm:h-60 bg-gradient-to-br ${gradient} overflow-hidden`}>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(255,255,255,0.15),transparent_50%)]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
                     <motion.button
                         onClick={onClose}
                         whileHover={{ scale: 1.1, rotate: 90 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="absolute top-5 right-5 p-2.5 bg-black/30 hover:bg-black/50 rounded-full text-white z-20 transition-all backdrop-blur-md border border-white/10"
+                        whileTap={{ scale: 0.9 }}
+                        className="absolute top-5 right-5 p-3 bg-black/40 hover:bg-black/60 rounded-full text-white z-20 transition-colors backdrop-blur-md border border-white/10"
                     >
                         <X className="w-5 h-5" />
                     </motion.button>
 
-                    <div className="absolute bottom-6 left-8">
-                        <motion.span
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-[10px] font-black uppercase tracking-widest text-white/90 border border-white/30 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-md shadow-lg mb-3 inline-block"
-                        >
-                            {achievement.category}
-                        </motion.span>
-                        <motion.h2
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="text-3xl font-black text-white leading-tight drop-shadow-lg"
-                        >
+                    <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="absolute top-5 right-20 p-3 bg-black/40 hover:bg-black/60 rounded-full text-white z-20 transition-colors backdrop-blur-md border border-white/10"
+                    >
+                        <Share2 className="w-5 h-5" />
+                    </motion.button>
+
+                    <div className="absolute -bottom-6 -right-4 opacity-10">
+                        <span className="text-[10rem] font-black text-white leading-none select-none">
+                            {achievement.title.charAt(0)}
+                        </span>
+                    </div>
+
+                    <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+                        <div className="flex items-center gap-3 mb-3">
+                            <span className="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest bg-white/20 backdrop-blur-md border border-white/30 text-white">
+                                {achievement.category}
+                            </span>
+                            <span className="px-2.5 py-1 rounded-full text-[9px] font-medium bg-black/30 backdrop-blur-md text-white/80">
+                                {formatDate(achievement.date)}
+                            </span>
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight max-w-xl">
                             {achievement.title}
-                        </motion.h2>
+                        </h2>
                     </div>
                 </div>
 
-                <div className="p-8 bg-background/98 backdrop-blur-xl overflow-y-auto max-h-[calc(85vh-12rem)]">
-                    <div className="flex flex-wrap gap-3 mb-6">
-                        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/50 border border-border/50">
-                            <Building2 className="w-4 h-4 text-primary" />
-                            <span className="font-bold text-sm">{achievement.issuer}</span>
+                <div className="p-6 sm:p-8 overflow-y-auto max-h-[calc(90vh-15rem)]">
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-secondary/30 border border-border/50 mb-6">
+                        <div className="p-2.5 rounded-lg bg-foreground/10">
+                            <Building2 className="w-5 h-5 text-foreground/70" />
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/50 border border-border/50">
-                            <Calendar className="w-4 h-4 text-primary" />
-                            <span className="text-sm font-medium">{formatDate(achievement.date)}</span>
+                        <div>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Issued by</p>
+                            <p className="text-base font-bold">{achievement.issuer}</p>
                         </div>
                     </div>
 
-                    <div className="prose prose-invert prose-sm max-w-none text-muted-foreground leading-relaxed mb-8">
-                        {achievement.description || "This achievement represents a significant milestone in professional development and expertise."}
+                    <div className="mb-6">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">About</h3>
+                        <p className="text-foreground/80 leading-relaxed">
+                            {achievement.description || "This achievement represents a significant milestone in my professional journey, demonstrating dedication, expertise, and commitment to excellence."}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                        <div className="p-3 rounded-lg bg-secondary/20 border border-border/30">
+                            <Calendar className="w-4 h-4 text-foreground/50 mb-1.5" />
+                            <p className="text-[10px] text-muted-foreground mb-0.5">Date</p>
+                            <p className="text-sm font-bold">{formatDate(achievement.date)}</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-secondary/20 border border-border/30">
+                            <Trophy className="w-4 h-4 text-foreground/50 mb-1.5" />
+                            <p className="text-[10px] text-muted-foreground mb-0.5">Category</p>
+                            <p className="text-sm font-bold capitalize">{achievement.category}</p>
+                        </div>
                     </div>
 
                     {achievement.credentialUrl && (
@@ -261,12 +271,16 @@ function AchievementModal({ achievement, onClose }: { achievement: Achievement; 
                             href={achievement.credentialUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            whileHover={{ scale: 1.02, y: -2 }}
+                            whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="group inline-flex items-center gap-2 px-6 py-3.5 bg-primary text-primary-foreground font-bold rounded-xl overflow-hidden shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all text-sm relative"
+                            className="inline-flex items-center gap-2 px-5 py-3 bg-foreground text-background font-bold rounded-xl text-sm relative overflow-hidden group"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                            <span className="relative">View Official Credential</span>
+                            <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
+                                animate={{ x: ['-100%', '100%'] }}
+                                transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                            />
+                            <span className="relative">View Credential</span>
                             <ExternalLink className="w-4 h-4 relative" />
                         </motion.a>
                     )}
@@ -275,8 +289,6 @@ function AchievementModal({ achievement, onClose }: { achievement: Achievement; 
         </motion.div>
     );
 }
-
-// --- Main Page Component ---
 
 export default function AchievementsPage() {
     const t = useTranslations('achievements');
@@ -320,142 +332,247 @@ export default function AchievementsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col lg:flex-row overflow-hidden relative">
-            {/* Animated Background */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <FloatingOrb className="w-[600px] h-[600px] -top-[15%] -left-[10%]" gradient="radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)" delay={0} />
-                <FloatingOrb className="w-[800px] h-[800px] -bottom-[20%] -right-[15%]" gradient="radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%)" delay={2} />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.015]" />
+        <div className="min-h-screen bg-background text-foreground overflow-y-auto overflow-x-hidden">
+            {/* Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                <motion.div
+                    className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-foreground/[0.02] blur-3xl"
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
+                    transition={{ duration: 5, repeat: Infinity }}
+                />
+                <motion.div
+                    className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-foreground/[0.015] blur-3xl"
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
+                    transition={{ duration: 6, repeat: Infinity, delay: 1 }}
+                />
             </div>
 
-            {/* LEFT PANEL: Sidebar Navigation */}
-            <div className="lg:w-2/5 h-auto lg:h-screen lg:sticky lg:top-0 z-20 flex flex-col pt-24 lg:pt-28 bg-transparent relative">
-                {/* Top Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="px-8 mb-10"
-                >
-                    <div className="flex items-center gap-2 mb-3">
-                        <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
-                        <h1 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/60">The Archive</h1>
-                    </div>
-                    <div className="h-px w-16 bg-gradient-to-r from-primary via-primary/50 to-transparent" />
-                </motion.div>
+            {/* Main Two-Panel Layout */}
+            <div className="flex flex-col lg:flex-row relative z-10">
 
-                {/* Navigation */}
-                <nav className="flex-1 flex flex-col w-full">
-                    <NavItem label="All Entries" active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} count={getCategoryCount('all')} />
-                    <NavItem label="Certifications" active={activeCategory === 'certification'} onClick={() => setActiveCategory('certification')} count={getCategoryCount('certification')} />
-                    <NavItem label="Awards" active={activeCategory === 'award'} onClick={() => setActiveCategory('award')} count={getCategoryCount('award')} />
-                    <NavItem label="Competitions" active={activeCategory === 'competition'} onClick={() => setActiveCategory('competition')} count={getCategoryCount('competition')} />
-                </nav>
+                {/* LEFT PANEL: Navigation - Sticky */}
+                <div className="lg:w-2/5 xl:w-1/3 h-auto lg:h-screen lg:sticky lg:top-0 flex flex-col pt-28 lg:pt-36">
 
-                {/* Footer Stats Display */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="p-8 mt-auto hidden lg:flex flex-col gap-3"
-                >
-                    <div className="relative">
-                        <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-blue-600/20 blur-3xl opacity-50" />
-                        <div className="relative text-[9rem] font-black leading-[0.8] bg-gradient-to-br from-primary via-blue-400 to-blue-500 bg-clip-text text-transparent select-none -ml-3">
-                            {stats.total.toString().padStart(2, '0')}
+                    {/* Header */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="px-6 lg:px-10 mb-10"
+                    >
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-2 h-2 rounded-full bg-foreground" />
+                            <h1 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+                                The Archive
+                            </h1>
                         </div>
-                    </div>
-                    <div className="text-xs font-bold text-muted-foreground/60 uppercase tracking-[0.2em] pl-1 flex items-center gap-2">
-                        <Award className="w-3.5 h-3.5" />
-                        Achievements Unlocked
-                    </div>
-                </motion.div>
-            </div>
-
-            {/* RIGHT PANEL: Content */}
-            <div className="lg:w-3/5 h-screen relative z-10 flex flex-col pt-8 lg:pt-28 px-6 lg:px-10 pb-8">
-
-                {/* Header Controls */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col xl:flex-row gap-4 items-center justify-between mb-6 shrink-0"
-                >
-                    {/* Stats Pills */}
-                    <div className="flex gap-2.5 flex-wrap">
-                        <StatsPill icon={Trophy} label="Total" value={stats.total} gradient="from-blue-500 to-cyan-500" />
-                        <StatsPill icon={Medal} label="Awards" value={stats.awards} gradient="from-amber-500 to-orange-500" />
-                        <StatsPill icon={Target} label="Certs" value={stats.certifications} gradient="from-purple-500 to-pink-500" />
-                    </div>
-
-                    {/* Search & Sort */}
-                    <div className="flex items-center gap-2.5 w-full xl:w-auto">
-                        <div className="relative flex-1 group min-w-[220px]">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Search achievements..."
-                                value={searchQuery}
-                                onChange={e => setSearchQuery(e.target.value)}
-                                className="w-full bg-secondary/40 border border-white/5 focus:border-primary/50 rounded-xl pl-10 pr-10 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground/40 focus:bg-secondary/60"
-                            />
-                            {searchQuery && (
-                                <motion.button
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    onClick={() => setSearchQuery('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    <X className="w-3.5 h-3.5" />
-                                </motion.button>
-                            )}
-                        </div>
-                        <motion.button
-                            onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="p-2.5 rounded-xl bg-secondary/40 hover:bg-secondary/60 border border-white/5 hover:border-white/10 text-muted-foreground hover:text-foreground transition-all"
-                        >
-                            {sortOrder === 'newest' ? <SortDesc className="w-4 h-4" /> : <SortAsc className="w-4 h-4" />}
-                        </motion.button>
-                    </div>
-                </motion.div>
-
-                {/* SCROLLABLE CARD CONTAINER */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="flex-1 glass-card border border-white/10 rounded-2xl p-6 overflow-y-auto custom-scrollbar relative"
-                >
-                    {/* Subtle gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent pointer-events-none rounded-2xl" />
-
-                    <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10">
-                        <AnimatePresence mode="popLayout">
-                            {filteredAchievements.map((achievement, index) => (
-                                <AchievementCard
-                                    key={achievement.id}
-                                    achievement={achievement}
-                                    onClick={() => setSelectedAchievement(achievement)}
-                                    index={index}
-                                />
-                            ))}
-                        </AnimatePresence>
+                        <div className="h-px w-12 bg-gradient-to-r from-foreground/50 to-transparent" />
                     </motion.div>
 
-                    {filteredAchievements.length === 0 && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/40"
-                        >
-                            <Award className="w-16 h-16 mb-4 opacity-20" />
-                            <p className="text-sm font-medium">No achievements found</p>
-                            <p className="text-xs mt-1">Try adjusting your search criteria</p>
+                    {/* Navigation */}
+                    <motion.nav
+                        className="flex-1"
+                        variants={staggerContainer}
+                        initial="hidden"
+                        animate="show"
+                    >
+                        <motion.div variants={staggerItem}>
+                            <NavItem label="All Entries" active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} count={getCategoryCount('all')} />
                         </motion.div>
-                    )}
-                </motion.div>
+                        <motion.div variants={staggerItem}>
+                            <NavItem label="Certifications" active={activeCategory === 'certification'} onClick={() => setActiveCategory('certification')} count={getCategoryCount('certification')} />
+                        </motion.div>
+                        <motion.div variants={staggerItem}>
+                            <NavItem label="Awards" active={activeCategory === 'award'} onClick={() => setActiveCategory('award')} count={getCategoryCount('award')} />
+                        </motion.div>
+                        <motion.div variants={staggerItem}>
+                            <NavItem label="Competitions" active={activeCategory === 'competition'} onClick={() => setActiveCategory('competition')} count={getCategoryCount('competition')} />
+                        </motion.div>
+                    </motion.nav>
+
+                    {/* Large counter */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="p-6 lg:p-10 hidden lg:block"
+                    >
+                        <motion.div
+                            className="text-[9rem] font-black leading-none text-foreground/[0.04] select-none"
+                            animate={{ opacity: [0.04, 0.07, 0.04] }}
+                            transition={{ duration: 4, repeat: Infinity }}
+                        >
+                            {stats.total.toString().padStart(2, '0')}
+                        </motion.div>
+                        <div className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest flex items-center gap-2 -mt-4">
+                            <Award className="w-3 h-3" />
+                            Achievements
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* RIGHT PANEL: Cards with own scroll */}
+                <div className="lg:w-3/5 xl:w-2/3 h-auto lg:h-screen flex flex-col pt-8 lg:pt-36 px-6 lg:px-10 pb-8">
+
+                    {/* Controls */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-6 shrink-0"
+                    >
+                        {/* Stats */}
+                        <div className="flex gap-2 flex-wrap">
+                            {[
+                                { icon: Trophy, value: stats.total },
+                                { icon: Medal, value: stats.awards },
+                                { icon: Award, value: stats.certifications }
+                            ].map((stat, i) => (
+                                <motion.div
+                                    key={i}
+                                    whileHover={{ scale: 1.05 }}
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/40 bg-secondary/20 text-xs font-bold"
+                                >
+                                    <stat.icon className="w-3 h-3 text-muted-foreground" />
+                                    <span>{stat.value}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        {/* Search */}
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <div className="relative flex-1 sm:min-w-[200px] group">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    value={searchQuery}
+                                    onChange={e => setSearchQuery(e.target.value)}
+                                    className="w-full bg-secondary/20 border border-border/40 focus:border-foreground/30 rounded-xl pl-10 pr-8 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground/40"
+                                />
+                                {searchQuery && (
+                                    <motion.button
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        onClick={() => setSearchQuery('')}
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                    >
+                                        <X className="w-3.5 h-3.5" />
+                                    </motion.button>
+                                )}
+                            </div>
+                            <motion.button
+                                onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="p-2.5 rounded-xl bg-secondary/20 hover:bg-secondary/40 border border-border/40 text-muted-foreground hover:text-foreground transition-all"
+                            >
+                                {sortOrder === 'newest' ? <SortDesc className="w-4 h-4" /> : <SortAsc className="w-4 h-4" />}
+                            </motion.button>
+                        </div>
+                    </motion.div>
+
+                    {/* Scrollable Cards Container - SEPARATE SCROLL WITH CUSTOM STYLING */}
+                    <div
+                        className="flex-1 overflow-y-auto overflow-x-hidden pr-4 -mr-4 custom-scrollbar"
+                        style={{ maxHeight: 'calc(100vh - 14.5rem)' }}
+                    >
+                        <style jsx>{`
+                            .custom-scrollbar::-webkit-scrollbar {
+                                width: 5px;
+                            }
+                            .custom-scrollbar::-webkit-scrollbar-track {
+                                background: transparent;
+                            }
+                            .custom-scrollbar::-webkit-scrollbar-thumb {
+                                background: rgba(var(--foreground-rgb), 0.1);
+                                border-radius: 10px;
+                            }
+                            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                background: rgba(var(--foreground-rgb), 0.2);
+                            }
+                        `}</style>
+                        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5 pb-8">
+                            <AnimatePresence mode="popLayout">
+                                {filteredAchievements.map((achievement, index) => (
+                                    <AchievementCard
+                                        key={achievement.id}
+                                        achievement={achievement}
+                                        onClick={() => setSelectedAchievement(achievement)}
+                                        index={index}
+                                    />
+                                ))}
+                            </AnimatePresence>
+                        </motion.div>
+
+                        {filteredAchievements.length === 0 && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex flex-col items-center justify-center py-16 text-center"
+                            >
+                                <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                                    <Award className="w-16 h-16 text-muted-foreground/20 mb-4" />
+                                </motion.div>
+                                <p className="text-sm font-medium text-muted-foreground/50">No achievements found</p>
+                            </motion.div>
+                        )}
+                    </div>
+                </div>
             </div>
+
+            {/* FALLING TEXT SECTION - Full width, centered at bottom */}
+            <motion.section
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                className="relative z-10 w-full py-12 lg:py-20"
+            >
+                <div className="max-w-5xl mx-auto px-6">
+                    {/* Section header */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-center mb-8"
+                    >
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-3">
+                            Technical Universe
+                        </h2>
+                        <p className="text-sm text-muted-foreground/60 max-w-lg mx-auto leading-relaxed">
+                            Interact with the core technologies and values that drive my research and development journey.
+                        </p>
+                    </motion.div>
+
+                    {/* Falling text container - Narrower height for more compact feel */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        className="relative w-full mx-auto"
+                        style={{ height: '200px' }}
+                    >
+                        <FallingText
+                            text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
+                            highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
+                            trigger="scroll"
+                            gravity={0.5}
+                            mouseConstraintStiffness={0.2}
+                            fontSize="1.4rem"
+                            fontWeight="900"
+                        />
+                    </motion.div>
+
+                    {/* Hint */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        className="flex items-center justify-center gap-2 mt-4 text-muted-foreground/30"
+                    >
+
+
+                    </motion.div>
+                </div>
+            </motion.section>
 
             {/* Modal */}
             <AnimatePresence>
