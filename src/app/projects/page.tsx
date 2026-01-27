@@ -7,19 +7,9 @@ import { Search, Filter, ExternalLink, Github, X, Calendar, ChevronRight, Layers
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import { Project } from '@/types';
+import { HeroParallax } from '@/components/ui/hero-parallax';
 
 type FilterType = 'all' | 'ongoing' | 'completed';
-
-function FloatingShape({ className, gradient, delay = 0 }: { className?: string; gradient: string; delay?: number }) {
-    return (
-        <motion.div
-            className={`absolute rounded-full blur-3xl opacity-20 pointer-events-none ${className}`}
-            style={{ background: gradient }}
-            animate={{ y: [0, -20, 0], scale: [1, 1.05, 1] }}
-            transition={{ duration: 8, repeat: Infinity, delay }}
-        />
-    );
-}
 
 function TechMarquee({ items, direction = 'left', speed = 25 }: { items: string[]; direction?: 'left' | 'right'; speed?: number }) {
     const duplicatedItems = [...items, ...items, ...items];
@@ -128,10 +118,32 @@ export default function ProjectsPage() {
     const [filter, setFilter] = useState<FilterType>('all');
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 2;
+    const itemsPerPage = 6; // Increased from 2 for better grid view
 
     const allTechStack = Array.from(new Set(portfolioData.projects.flatMap((p) => p.techStack)));
     const allTools = Array.from(new Set(portfolioData.projects.flatMap((p) => p.tools)));
+
+    // Map and duplicate projects for Parallax effect (needs ~15 items)
+    const products = useMemo(() => {
+        const techImages = [
+            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop", // Cyberpunk Tech
+            "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2565&auto=format&fit=crop", // AI Abstract
+            "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2670&auto=format&fit=crop", // Coding
+            "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2832&auto=format&fit=crop", // AI Brain
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2670&auto=format&fit=crop", // Circuit
+            "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2670&auto=format&fit=crop", // Neon
+            "https://images.unsplash.com/photo-1531297424005-066e2c6ec9ce?q=80&w=2670&auto=format&fit=crop", // Tech Workspace
+            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2670&auto=format&fit=crop", // Matrix code
+        ];
+
+        const baseProducts = portfolioData.projects.map((p, i) => ({
+            title: p.title,
+            link: p.repoUrl || p.demoUrl || '#',
+            thumbnail: techImages[i % techImages.length] // Cycle through curated images
+        }));
+        // Duplicate to ensure enough items for parallax tiers
+        return [...baseProducts, ...baseProducts, ...baseProducts].slice(0, 15);
+    }, []);
 
     const filteredProjects = useMemo(() => {
         let projects = [...portfolioData.projects];
@@ -148,18 +160,11 @@ export default function ProjectsPage() {
     const filters: { key: FilterType; label: string }[] = [{ key: 'all', label: t('filters.all') }, { key: 'ongoing', label: t('filters.ongoing') }, { key: 'completed', label: t('filters.completed') }];
 
     return (
-        <div className="min-h-screen pt-32 pb-20 relative overflow-hidden">
-            <FloatingShape className="w-[600px] h-[600px] -top-40 -left-40" gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)" />
-            <FloatingShape className="w-[500px] h-[500px] bottom-20 -right-40" gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)" delay={3} />
+        <div className="min-h-screen bg-background relative overflow-hidden">
+            <HeroParallax products={products} />
 
-            <div className="container-creative relative">
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
-                    <motion.span className="inline-block px-4 py-2 rounded-full glass-card text-sm font-medium mb-6" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>My Work</motion.span>
-                    <h1 className="heading-lg mb-4">{t('title')}</h1>
-                    <p className="subheading max-w-xl mx-auto">{t('subtitle')}</p>
-                </motion.div>
-
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-12">
+            <div className="container-creative relative z-10 mt-40 pb-20">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-12">
                     <TechMarquee items={allTechStack} direction="left" speed={20} />
                     <TechMarquee items={allTools} direction="right" speed={25} />
                 </motion.div>

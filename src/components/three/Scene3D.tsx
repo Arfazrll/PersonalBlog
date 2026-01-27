@@ -108,20 +108,6 @@ interface Scene3DProps {
 }
 
 export function Scene3D({ className = '' }: Scene3DProps) {
-    const glRef = useRef<THREE.WebGLRenderer | null>(null);
-
-    useEffect(() => {
-        return () => {
-            // Aggressively clean up WebGL context on unmount to prevent memory leaks during HMR
-            if (glRef.current) {
-                const gl = glRef.current.getContext();
-                const ext = gl.getExtension('WEBGL_lose_context');
-                if (ext) ext.loseContext();
-                glRef.current.dispose();
-            }
-        };
-    }, []);
-
     return (
         <div className={`absolute inset-0 -z-10 ${className}`}>
             <Canvas
@@ -135,7 +121,6 @@ export function Scene3D({ className = '' }: Scene3DProps) {
                     failIfMajorPerformanceCaveat: true,
                 }}
                 onCreated={({ gl }) => {
-                    glRef.current = gl;
                     gl.toneMapping = THREE.ACESFilmicToneMapping;
                     gl.toneMappingExposure = 0.9;
                 }}

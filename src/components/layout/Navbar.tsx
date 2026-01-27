@@ -9,13 +9,7 @@ import { Menu, X, Moon, Sun, Globe, ChevronDown } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
-// Sub-links for the "About" dropdown
-const aboutLinks = [
-    { href: '/projects', key: 'projects' },
-    { href: '/experience', key: 'experience' },
-    { href: '/skills', key: 'skills' },
-    { href: '/achievements', key: 'achievements' },
-];
+import CardNav from '@/components/ui/CardNav';
 
 function Clock() {
     const [time, setTime] = useState<string>('');
@@ -48,6 +42,19 @@ function Clock() {
     );
 }
 
+// Sub-links for the "About" dropdown
+const navItems = [
+    {
+        label: "About",
+        links: [
+            { label: "Achievements", href: "/achievements", description: "Certifications, awards, and milestones" },
+            { label: "Skills", href: "/skills", description: "Technologies and tools I work with" },
+            { label: "Experience", href: "/experience", description: "My professional journey and growth" },
+            { label: "Projects", href: "/projects", description: "A showcase of all my work" }
+        ]
+    }
+];
+
 export function Navbar() {
     const t = useTranslations('navigation');
     const { theme, setTheme, resolvedTheme } = useTheme();
@@ -57,7 +64,6 @@ export function Navbar() {
     const [isVisible, setIsVisible] = useState(true);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isAboutHovered, setIsAboutHovered] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
     const [currentLocale, setCurrentLocale] = useState('en');
@@ -85,7 +91,6 @@ export function Navbar() {
     // Close menu on route change
     useEffect(() => {
         setIsMenuOpen(false);
-        setIsAboutHovered(false);
     }, [pathname]);
 
     useMotionValueEvent(scrollY, 'change', (latest) => {
@@ -133,11 +138,6 @@ export function Navbar() {
         open: { opacity: 1 }
     };
 
-    const dropdownVariants = {
-        closed: { opacity: 0, y: 10, scale: 0.95 },
-        open: { opacity: 1, y: 0, scale: 1 }
-    };
-
     return (
         <>
             <motion.nav
@@ -160,96 +160,34 @@ export function Navbar() {
                             <Clock />
                         </Link>
 
-                        {/* Desktop Navigation */}
-                        <div className="hidden lg:flex items-center gap-2">
+                        {/* Desktop Navigation with CardNav */}
+                        <div className="hidden lg:flex items-center gap-6">
                             {/* HOME */}
                             <Link
                                 href="/"
                                 className={cn(
-                                    'relative px-5 py-2 text-sm font-medium transition-all duration-300 rounded-full group',
-                                    pathname === '/' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                                    'relative px-5 py-2 text-sm font-bold transition-all duration-300 rounded-full group',
+                                    pathname === '/' ? 'text-foreground bg-muted' : 'text-muted-foreground hover:text-foreground'
                                 )}
                             >
-                                {pathname === '/' && (
-                                    <motion.div
-                                        layoutId="navbar-active-pill"
-                                        className="absolute inset-0 rounded-full bg-muted"
-                                        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                                    />
-                                )}
                                 <span className="relative z-10">{t('home')}</span>
                             </Link>
 
-                            {/* ABOUT DROPDOWN */}
-                            <div
-                                className="relative"
-                                onMouseEnter={() => setIsAboutHovered(true)}
-                                onMouseLeave={() => setIsAboutHovered(false)}
-                            >
-                                <button
-                                    className={cn(
-                                        'relative px-5 py-2 text-sm font-medium transition-all duration-300 rounded-full group flex items-center gap-1',
-                                        aboutLinks.some(link => pathname === link.href)
-                                            ? 'text-foreground'
-                                            : 'text-muted-foreground hover:text-foreground'
-                                    )}
-                                >
-                                    {(aboutLinks.some(link => pathname === link.href)) && (
-                                        <motion.div
-                                            layoutId="navbar-active-pill"
-                                            className="absolute inset-0 rounded-full bg-muted"
-                                            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                                        />
-                                    )}
-                                    <span className="relative z-10">About</span>
-                                    <ChevronDown className={cn("w-3 h-3 relative z-10 transition-transform duration-300", isAboutHovered ? "rotate-180" : "")} />
-                                </button>
+                            {/* CARD NAV (About) */}
+                            <CardNav
+                                items={navItems}
+                                theme={isDark ? 'dark' : 'light'}
+                                pathname={pathname}
+                            />
 
-                                {/* Dropdown Menu */}
-                                <AnimatePresence>
-                                    {isAboutHovered && (
-                                        <motion.div
-                                            variants={dropdownVariants}
-                                            initial="closed"
-                                            animate="open"
-                                            exit="closed"
-                                            transition={{ duration: 0.2 }}
-                                            className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-48"
-                                        >
-                                            <div className="p-2 glass-strong rounded-2xl border border-white/10 shadow-xl flex flex-col gap-1 overflow-hidden">
-                                                {aboutLinks.map((link) => (
-                                                    <Link
-                                                        key={link.key}
-                                                        href={link.href}
-                                                        className={cn(
-                                                            "px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-muted/50 text-left",
-                                                            pathname === link.href ? "text-primary bg-muted/30" : "text-muted-foreground hover:text-foreground"
-                                                        )}
-                                                    >
-                                                        {t(link.key)}
-                                                    </Link>
-                                                ))}
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-
-                            {/* CONTACT */}
+                            {/* CONTACT (Direct Link) */}
                             <Link
                                 href="/contact"
                                 className={cn(
-                                    'relative px-5 py-2 text-sm font-medium transition-all duration-300 rounded-full group',
-                                    pathname === '/contact' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                                    'relative px-5 py-2 text-sm font-bold transition-all duration-300 rounded-full group',
+                                    pathname === '/contact' ? 'text-foreground bg-muted' : 'text-muted-foreground hover:text-foreground'
                                 )}
                             >
-                                {pathname === '/contact' && (
-                                    <motion.div
-                                        layoutId="navbar-active-pill"
-                                        className="absolute inset-0 rounded-full bg-muted"
-                                        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                                    />
-                                )}
                                 <span className="relative z-10">{t('contact')}</span>
                             </Link>
                         </div>
@@ -337,32 +275,27 @@ export function Navbar() {
                                     {t('home')}
                                 </Link>
 
-                                {/* Mobile About Section */}
-                                <div className="flex flex-col items-center gap-4 py-4 border-y border-white/5 w-full">
-                                    <span className="text-sm font-mono text-primary tracking-widest uppercase">About</span>
-                                    {aboutLinks.map((link) => (
-                                        <Link
-                                            key={link.key}
-                                            href={link.href}
-                                            onClick={closeMenu}
-                                            className={cn(
-                                                'text-2xl font-bold transition-colors',
-                                                pathname === link.href ? 'text-gradient' : 'text-muted-foreground'
-                                            )}
-                                        >
-                                            {t(link.key)}
-                                        </Link>
-                                    ))}
-                                </div>
-
-                                {/* Mobile Contact */}
-                                <Link
-                                    href="/contact"
-                                    onClick={closeMenu}
-                                    className="text-3xl font-black text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    {t('contact')}
-                                </Link>
+                                {/* Mobile Links grouped by Categories */}
+                                {navItems.map((category) => (
+                                    <div key={category.label} className="flex flex-col items-center gap-4 py-4 border-b border-white/5 w-full last:border-0 text-center">
+                                        <span className="text-[10px] font-black font-mono text-primary tracking-[0.3em] uppercase opacity-50">
+                                            {category.label}
+                                        </span>
+                                        {category.links.map((link) => (
+                                            <Link
+                                                key={link.label}
+                                                href={link.href}
+                                                onClick={closeMenu}
+                                                className={cn(
+                                                    'text-2xl font-bold transition-all hover:scale-110 active:scale-95 duration-200',
+                                                    pathname === link.href ? 'text-foreground' : 'text-muted-foreground/60 hover:text-foreground'
+                                                )}
+                                            >
+                                                {link.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                ))}
                             </nav>
 
                             <motion.div
@@ -389,9 +322,10 @@ export function Navbar() {
                                 )}
                             </motion.div>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    </motion.div >
+                )
+                }
+            </AnimatePresence >
         </>
     );
 }
