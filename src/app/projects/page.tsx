@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Search, Filter, ExternalLink, Github, X, Calendar, ChevronRight, Layers } from 'lucide-react';
@@ -34,46 +34,50 @@ function TechMarquee({ items, direction = 'left', speed = 25 }: { items: string[
     );
 }
 
-function ProjectCard({ project, onClick, index }: { project: Project; onClick: () => void; index: number }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.15, duration: 0.5 }}
-            onClick={onClick}
-            className="card-creative cursor-pointer overflow-hidden group"
-        >
-            <div className="aspect-video relative bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 overflow-hidden">
-                <motion.div className="absolute inset-0 flex items-center justify-center" whileHover={{ scale: 1.1, rotate: 5 }}>
-                    <span className="text-8xl font-black text-white/10">{project.title.charAt(0)}</span>
-                </motion.div>
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-90" />
-                <div className="absolute top-4 right-4">
-                    <span className={cn('px-3 py-1.5 rounded-full text-xs font-semibold glass-card', project.status === 'ongoing' ? 'text-green-400 border border-green-500/30' : 'text-blue-400 border border-blue-500/30')}>
-                        {project.status}
-                    </span>
+const ProjectCard = forwardRef<HTMLDivElement, { project: Project; onClick: () => void; index: number }>(
+    ({ project, onClick, index }, ref) => {
+        return (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.15, duration: 0.5 }}
+                onClick={onClick}
+                className="card-creative cursor-pointer overflow-hidden group"
+            >
+                <div className="aspect-video relative bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 overflow-hidden">
+                    <motion.div className="absolute inset-0 flex items-center justify-center" whileHover={{ scale: 1.1, rotate: 5 }}>
+                        <span className="text-8xl font-black text-white/10">{project.title.charAt(0)}</span>
+                    </motion.div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-90" />
+                    <div className="absolute top-4 right-4">
+                        <span className={cn('px-3 py-1.5 rounded-full text-xs font-semibold glass-card', project.status === 'ongoing' ? 'text-green-400 border border-green-500/30' : 'text-blue-400 border border-blue-500/30')}>
+                            {project.status}
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <div className="p-6">
-                <h3 className="text-xl font-bold mb-2 group-hover:text-gradient transition-all">{project.title}</h3>
-                <p className="text-white/60 mb-4 line-clamp-2">{project.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {project.techStack.slice(0, 4).map((tech) => (
-                        <span key={tech} className="px-2 py-1 rounded-lg text-xs bg-white/5 border border-white/10">{tech}</span>
-                    ))}
-                    {project.techStack.length > 4 && <span className="px-2 py-1 rounded-lg text-xs bg-white/5">+{project.techStack.length - 4}</span>}
+                <div className="p-6">
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-gradient transition-all">{project.title}</h3>
+                    <p className="text-white/60 mb-4 line-clamp-2">{project.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {project.techStack.slice(0, 4).map((tech) => (
+                            <span key={tech} className="px-2 py-1 rounded-lg text-xs bg-white/5 border border-white/10">{tech}</span>
+                        ))}
+                        {project.techStack.length > 4 && <span className="px-2 py-1 rounded-lg text-xs bg-white/5">+{project.techStack.length - 4}</span>}
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs text-white/40 flex items-center gap-2"><Calendar className="w-3 h-3" />{formatDate(project.startDate)}</span>
+                        <span className="text-sm font-medium text-gradient flex items-center gap-1">
+                            View Details
+                            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </span>
+                    </div>
                 </div>
-                <div className="flex items-center justify-between">
-                    <span className="text-xs text-white/40 flex items-center gap-2"><Calendar className="w-3 h-3" />{formatDate(project.startDate)}</span>
-                    <span className="text-sm font-medium text-gradient flex items-center gap-1">
-                        View Details
-                        <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </span>
-                </div>
-            </div>
-        </motion.div>
-    );
-}
+            </motion.div>
+        );
+    }
+);
+ProjectCard.displayName = 'ProjectCard';
 
 function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
     const t = useTranslations('projects');

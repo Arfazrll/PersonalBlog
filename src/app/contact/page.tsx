@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Send, Mail, Github, Linkedin, Twitter, Instagram, ChevronDown, CheckCircle, AlertCircle, Loader2, ArrowUpRight } from 'lucide-react';
+import { Send, Mail, Github, Linkedin, Twitter, Instagram, ChevronDown, CheckCircle, AlertCircle, Loader2, ArrowUpRight, Disc, Music } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 
@@ -18,45 +18,68 @@ function FloatingShape({ className, gradient, delay = 0 }: { className?: string;
     );
 }
 
-const socialIcons: Record<string, React.ElementType> = { github: Github, linkedin: Linkedin, twitter: Twitter, instagram: Instagram };
-const socialGradients: Record<string, string> = {
-    github: 'from-gray-600 to-gray-800',
-    linkedin: 'from-blue-500 to-blue-700',
-    twitter: 'from-sky-400 to-sky-600',
-    instagram: 'from-pink-500 via-purple-500 to-orange-500',
+const socialIconsMap: Record<string, React.ElementType> = {
+    github: Github,
+    linkedin: Linkedin,
+    twitter: Twitter,
+    instagram: Instagram,
+    discord: Disc,
+    spotify: Music
+};
+
+
+const socialColors: Record<string, string> = {
+    github: 'hover:bg-gray-800/80 hover:border-gray-500/50',
+    linkedin: 'hover:bg-blue-700/80 hover:border-blue-400/50',
+    twitter: 'hover:bg-sky-600/80 hover:border-sky-400/50',
+    instagram: 'hover:bg-pink-600/80 hover:border-pink-400/50',
+    discord: 'hover:bg-indigo-600/80 hover:border-indigo-400/50',
+    spotify: 'hover:bg-green-600/80 hover:border-green-400/50',
 };
 
 function SocialLinks() {
     const t = useTranslations('contact');
     return (
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-16">
-            <h2 className="text-2xl font-bold mb-8 text-center">{t('social.title')}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {portfolioData.personal.socialLinks.map((social, index) => {
-                    const Icon = socialIcons[social.icon];
-                    return (
-                        <motion.a
-                            key={social.platform}
-                            href={social.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 + index * 0.1 }}
-                            whileHover={{ scale: 1.03, y: -5 }}
-                            whileTap={{ scale: 0.98 }}
-                            className={cn('relative overflow-hidden rounded-2xl p-6 group')}
-                        >
-                            <div className={cn('absolute inset-0 bg-gradient-to-br opacity-20 group-hover:opacity-40 transition-opacity', socialGradients[social.icon])} />
-                            <div className="relative flex flex-col items-center gap-3">
-                                {Icon && <Icon className="w-8 h-8" />}
-                                <span className="font-semibold">{social.platform}</span>
-                                {social.username && <span className="text-sm text-white/50">{social.username}</span>}
-                                <ArrowUpRight className="absolute top-0 right-0 w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                        </motion.a>
-                    );
-                })}
+        <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="w-full flex flex-col justify-center h-full">
+            <div className="glass-strong rounded-3xl p-8 border border-white/10 relative overflow-hidden group">
+                {/* Decorative Background */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/20 transition-colors duration-700" />
+
+                <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                        <ArrowUpRight className="w-5 h-5 text-primary" />
+                    </span>
+                    {t('social.title')}
+                </h2>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {portfolioData.personal.socialLinks.map((social, index) => {
+                        const Icon = socialIconsMap[social.icon.toLowerCase()] || ArrowUpRight;
+                        const colorClass = socialColors[social.icon.toLowerCase()] || 'hover:bg-white/10';
+
+                        return (
+                            <motion.a
+                                key={social.platform}
+                                href={social.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.4 + index * 0.05 }}
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.98 }}
+                                className={cn(
+                                    'relative overflow-hidden rounded-2xl p-5 flex flex-col items-center justify-center gap-3 text-center transition-all duration-300 border border-white/5 bg-white/5 backdrop-blur-sm',
+                                    colorClass
+                                )}
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <Icon className="w-8 h-8 opacity-80 group-hover:opacity-100 transition-opacity" />
+                                <span className="text-sm font-medium opacity-70 group-hover:opacity-100">{social.platform}</span>
+                            </motion.a>
+                        );
+                    })}
+                </div>
             </div>
         </motion.div>
     );
@@ -83,7 +106,7 @@ function ContactForm() {
     };
 
     return (
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="max-w-2xl mx-auto mb-16">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="w-full">
             <div className="glass-strong rounded-3xl p-8 md:p-12">
                 <div className="flex items-center gap-4 mb-8">
                     <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20">
@@ -127,7 +150,7 @@ function FAQSection() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="max-w-2xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="w-full">
             <h2 className="text-2xl font-bold mb-8 text-center">{t('faq.title')}</h2>
             <div className="space-y-4">
                 {portfolioData.faqs.map((faq, index) => (
@@ -155,6 +178,7 @@ function FAQSection() {
 export default function ContactPage() {
     const t = useTranslations('contact');
 
+
     return (
         <div className="min-h-screen pt-32 pb-20 relative overflow-hidden">
             <FloatingShape className="w-[500px] h-[500px] -top-40 -left-40" gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)" />
@@ -166,10 +190,44 @@ export default function ContactPage() {
                     <h1 className="heading-lg mb-4">{t('title')}</h1>
                     <p className="subheading max-w-xl mx-auto">{t('subtitle')}</p>
                 </motion.div>
-                <SocialLinks />
-                <ContactForm />
-                <FAQSection />
+
+                {/* Main Grid Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+
+                    {/* Top Left: 3D Lanyard */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="h-[500px] w-full relative z-10"
+                    >
+                        {/* We import Lanyard dynamically to avoid SSR issues if any, though it's a client component */}
+                        <Lanyard />
+                    </motion.div>
+
+                    {/* Top Right: Social Badges */}
+                    <div className="flex flex-col justify-center h-full">
+                        <SocialLinks />
+                    </div>
+
+                    {/* Bottom Left: Contact Form */}
+                    <div className="w-full">
+                        <ContactForm />
+                    </div>
+
+                    {/* Bottom Right: FAQ Section */}
+                    <div className="w-full">
+                        <FAQSection />
+                    </div>
+                </div>
             </div>
         </div>
     );
 }
+
+// Dynamic import for Lanyard to avoid SSR issues with Three.js
+import dynamic from 'next/dynamic';
+const Lanyard = dynamic(() => import('@/components/three/Lanyard').then(mod => mod.Lanyard), {
+    ssr: false,
+    loading: () => <div className="w-full h-full flex items-center justify-center glass-card"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>
+});

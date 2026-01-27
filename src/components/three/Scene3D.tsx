@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import { useTheme } from 'next-themes';
@@ -12,8 +12,8 @@ function ParticleField() {
     const isDark = resolvedTheme === 'dark';
 
     const particlesPosition = useMemo(() => {
-        const positions = new Float32Array(3000 * 3);
-        for (let i = 0; i < 3000; i++) {
+        const positions = new Float32Array(2000 * 3);
+        for (let i = 0; i < 2000; i++) {
             const i3 = i * 3;
             const radius = Math.random() * 15;
             const theta = Math.random() * Math.PI * 2;
@@ -108,26 +108,36 @@ interface Scene3DProps {
 }
 
 export function Scene3D({ className = '' }: Scene3DProps) {
+    const glRef = useRef<THREE.WebGLRenderer | null>(null);
+
+    useEffect(() => {
+        return () => {
+            // Aggressively clean up WebGL context on unmount to prevent memory leaks during HMR
+            if (glRef.current) {
+                const gl = glRef.current.getContext();
+                const ext = gl.getExtension('WEBGL_lose_context');
+                if (ext) ext.loseContext();
+                glRef.current.dispose();
+            }
+        };
+    }, []);
+
     return (
         <div className={`absolute inset-0 -z-10 ${className}`}>
             <Canvas
                 camera={{ position: [0, 0, 8], fov: 60 }}
-                dpr={[1, 1.5]} // Reduced max DPR to save resources
+                dpr={[1, 1.5]} // Keeping reduced DPR
                 gl={{
                     antialias: true,
                     alpha: true,
-                    powerPreference: "default", // Changed from high-performance to avoid aggressive context loss
+                    powerPreference: "default",
                     preserveDrawingBuffer: false,
                     failIfMajorPerformanceCaveat: true,
                 }}
                 onCreated={({ gl }) => {
-                    gl.domElement.addEventListener('webglcontextlost', (event) => {
-                        event.preventDefault();
-                        console.warn('WebGL Context Lost');
-                    });
-                    gl.domElement.addEventListener('webglcontextrestored', () => {
-                        console.log('WebGL Context Restored');
-                    });
+                    glRef.current = gl;
+                    gl.toneMapping = THREE.ACESFilmicToneMapping;
+                    gl.toneMappingExposure = 0.9;
                 }}
             >
                 <ambientLight intensity={0.2} />
