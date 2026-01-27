@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useMotionTemplate, motionValue } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Search, SortAsc, SortDesc, ExternalLink, X, Calendar, Building2, Trophy, Medal, Award, Target, ChevronRight, MousePointer2, Eye, Share2 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
@@ -22,8 +22,28 @@ const staggerItem = {
     show: { opacity: 1, y: 0 }
 };
 
-const AchievementCard = React.forwardRef<HTMLDivElement, { achievement: Achievement; onClick: () => void; index: number }>(
-    ({ achievement, onClick, index }, ref) => {
+const AchievementCard = React.forwardRef<HTMLDivElement, {
+    achievement: Achievement;
+    onClick: () => void;
+    index: number;
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
+    isHovered: boolean;
+}>(
+    ({ achievement, onClick, index, onMouseEnter, onMouseLeave, isHovered }, ref) => {
+        const mouseX = useMotionValue(0);
+        const mouseY = useMotionValue(0);
+
+        const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+            const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+            mouseX.set(e.clientX - left);
+            mouseY.set(e.clientY - top);
+        };
+
+        const springConfig = { stiffness: 150, damping: 20 };
+        const mouseXSpring = useSpring(mouseX, springConfig);
+        const mouseYSpring = useSpring(mouseY, springConfig);
+
         const categoryConfig: Record<string, { gradient: string; icon: typeof Trophy }> = {
             certification: { gradient: 'from-zinc-700 via-zinc-600 to-zinc-500', icon: Award },
             award: { gradient: 'from-neutral-800 via-neutral-700 to-neutral-600', icon: Trophy },
@@ -36,25 +56,61 @@ const AchievementCard = React.forwardRef<HTMLDivElement, { achievement: Achievem
         const IconComponent = config.icon;
 
         return (
-            <motion.div
-                ref={ref}
-                layout
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: index * 0.05, duration: 0.5, type: "spring", stiffness: 100 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+            <div
+                className="relative group block p-2 h-full w-full"
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                onMouseMove={handleMouseMove}
                 onClick={onClick}
-                className="group relative cursor-pointer"
             >
+                <AnimatePresence>
+                    {isHovered && (
+                        <motion.span
+                            className="absolute inset-0 h-full w-full bg-foreground/[0.05] dark:bg-slate-800/[0.8] block rounded-3xl z-0"
+                            layoutId="hoverBackground"
+                            initial={{ opacity: 0 }}
+                            animate={{
+                                opacity: 1,
+                                transition: { duration: 0.15 },
+                            }}
+                            exit={{
+                                opacity: 0,
+                                transition: { duration: 0.15, delay: 0.2 },
+                            }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 200,
+                                damping: 25,
+                            }}
+                        />
+                    )}
+                </AnimatePresence>
+
                 <motion.div
-                    className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 blur-xl bg-foreground/5"
-                />
+                    ref={ref}
+                    layout
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ delay: index * 0.05, duration: 0.5, type: "spring", stiffness: 100 }}
+                    whileHover={{ y: -4 }}
+                    className="relative bg-card/90 dark:bg-card/70 backdrop-blur-xl rounded-2xl overflow-hidden border border-border/40 group-hover:border-foreground/20 transition-all duration-500 shadow-lg group-hover:shadow-2xl z-20"
+                >
+                    {/* Animated Spotlight Effect */}
+                    <motion.div
+                        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                        style={{
+                            background: useMotionTemplate`
+                                radial-gradient(
+                                    250px circle at ${mouseXSpring}px ${mouseYSpring}px,
+                                    rgba(255, 255, 255, 0.06),
+                                    transparent 80%
+                                )
+                            `,
+                        }}
+                    />
 
-                <div className="relative bg-card/90 dark:bg-card/70 backdrop-blur-xl rounded-2xl overflow-hidden border border-border/40 group-hover:border-foreground/20 transition-all duration-500 shadow-lg group-hover:shadow-2xl">
-
-                    <div className={`relative h-32 w-full overflow-hidden bg-gradient-to-br ${config.gradient}`}>
+                    <div className={`relative h-28 w-full overflow-hidden bg-gradient-to-br ${config.gradient}`}>
                         <motion.div
                             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                             initial={{ x: '-100%' }}
@@ -87,7 +143,7 @@ const AchievementCard = React.forwardRef<HTMLDivElement, { achievement: Achievem
                         </div>
                     </div>
 
-                    <div className="p-4">
+                    <div className="p-4 relative z-20">
                         <h3 className="text-sm font-bold leading-snug mb-2 group-hover:text-foreground transition-colors line-clamp-2 min-h-[2.5rem]">
                             {achievement.title}
                         </h3>
@@ -111,8 +167,8 @@ const AchievementCard = React.forwardRef<HTMLDivElement, { achievement: Achievem
                             </motion.div>
                         </div>
                     </div>
-                </div>
-            </motion.div>
+                </motion.div>
+            </div>
         );
     }
 );
@@ -296,6 +352,7 @@ export default function AchievementsPage() {
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [activeCategory, setActiveCategory] = useState('all');
     const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     const stats = useMemo(() => {
         const total = portfolioData.achievements.length;
@@ -498,6 +555,9 @@ export default function AchievementsPage() {
                                         achievement={achievement}
                                         onClick={() => setSelectedAchievement(achievement)}
                                         index={index}
+                                        onMouseEnter={() => setHoveredIndex(index)}
+                                        onMouseLeave={() => setHoveredIndex(null)}
+                                        isHovered={hoveredIndex === index}
                                     />
                                 ))}
                             </AnimatePresence>
