@@ -87,11 +87,23 @@
     "achievements": {
         "title": "Achievements",
         "subtitle": "Certifications, awards, and milestones",
+        "search": "Search achievements...",
         "viewCredential": "View Credential",
         "category": {
+            "all": "All",
             "certification": "Certification",
             "award": "Award",
-            "publication": "Publication"
+            "publication": "Publication",
+            "competition": "Competition"
+        },
+        "sort": {
+            "newest": "Newest",
+            "oldest": "Oldest"
+        },
+        "stats": {
+            "total": "Total Achievements",
+            "awards": "Awards Won",
+            "certifications": "Certifications"
         }
     },
     "contact": {

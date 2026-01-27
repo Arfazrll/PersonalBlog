@@ -29,6 +29,8 @@ import { CircularGallery } from '@/components/ui/CircularGallery';
 import { portfolioData } from '@/data/portfolio';
 import { GitHubStats } from '@/components/stats/GitHubStats';
 import WakaTimeStats from '@/components/stats/WakaTimeStats';
+import TextScrollMarquee from '@/components/ui/TextScrollMarquee';
+import { InfiniteRibbon } from '@/components/ui/infinite-ribbon';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -450,12 +452,12 @@ function AboutSection() {
                         {/* Tech Ring Background - Subtle */}
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                             <motion.div
-                                className="w-[500px] h-[500px] border border-white/5 rounded-full"
+                                className="w-[500px] h-[500px] border border-foreground/5 rounded-full"
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 60, ease: "linear", repeat: Infinity }}
                             />
                             <motion.div
-                                className="absolute w-[350px] h-[350px] border border-dashed border-white/10 rounded-full"
+                                className="absolute w-[350px] h-[350px] border border-dashed border-foreground/10 rounded-full"
                                 animate={{ rotate: -360 }}
                                 transition={{ duration: 40, ease: "linear", repeat: Infinity }}
                             />
@@ -490,10 +492,10 @@ function AboutSection() {
                                     transition={{ delay: 0.2 }}
                                 >
                                     <div className="glass-card backdrop-blur-md px-4 py-2 border-l-2 border-blue-500 rounded-r-xl flex items-center gap-3 shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:scale-110 transition-transform cursor-default">
-                                        <Activity className="w-4 h-4 text-blue-400" />
+                                        <Activity className="w-4 h-4 text-blue-500" />
                                         <div>
-                                            <div className="text-[10px] text-blue-200/70 tracking-wider">UPTIME</div>
-                                            <div className="font-mono text-sm font-bold text-white">3+ YEARS</div>
+                                            <div className="text-[10px] text-blue-600 dark:text-blue-200/70 tracking-wider">UPTIME</div>
+                                            <div className="font-mono text-sm font-bold text-foreground">3+ YEARS</div>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -506,10 +508,10 @@ function AboutSection() {
                                     transition={{ delay: 0.4 }}
                                 >
                                     <div className="glass-card backdrop-blur-md px-4 py-2 border-l-2 border-purple-500 rounded-r-xl flex items-center gap-3 shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:scale-110 transition-transform cursor-default">
-                                        <Database className="w-4 h-4 text-purple-400" />
+                                        <Database className="w-4 h-4 text-purple-500" />
                                         <div>
-                                            <div className="text-[10px] text-purple-200/70 tracking-wider">PROJECTS</div>
-                                            <div className="font-mono text-sm font-bold text-white">10+ SHIPPED</div>
+                                            <div className="text-[10px] text-purple-600 dark:text-purple-200/70 tracking-wider">PROJECTS</div>
+                                            <div className="font-mono text-sm font-bold text-foreground">10+ SHIPPED</div>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -522,10 +524,10 @@ function AboutSection() {
                                     transition={{ delay: 0.6 }}
                                 >
                                     <div className="glass-card backdrop-blur-md px-4 py-2 border-r-2 border-emerald-500 rounded-l-xl flex flex-row-reverse items-center gap-3 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:scale-110 transition-transform cursor-default text-right">
-                                        <Award className="w-4 h-4 text-emerald-400" />
+                                        <Award className="w-4 h-4 text-emerald-500" />
                                         <div>
-                                            <div className="text-[10px] text-emerald-200/70 tracking-wider">SKILLS</div>
-                                            <div className="font-mono text-sm font-bold text-white">CERTIFIED</div>
+                                            <div className="text-[10px] text-emerald-600 dark:text-emerald-200/70 tracking-wider">SKILLS</div>
+                                            <div className="font-mono text-sm font-bold text-foreground">CERTIFIED</div>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -590,16 +592,25 @@ function ExpertiseSection() {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-12"
                 >
+
+
                     <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/5 border border-primary/20 backdrop-blur-sm mb-8">
                         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                         <span className="text-xs font-mono text-primary tracking-[0.2em] uppercase">Core Capabilities</span>
                         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                     </div>
 
-                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6">
-                        <span className="text-foreground">Tech</span>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-500 to-purple-500 ml-4">Arsenal</span>
-                    </h2>
+                    <div className="mb-12 w-full overflow-hidden">
+                        <TextScrollMarquee baseVelocity={-2} className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight">
+                            <span className="text-foreground">Creative</span>
+                            <span
+                                className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-violet-500 to-fuchsia-500 ml-4 bg-[length:200%_auto]"
+                                style={{ animation: 'gradient-flow 4s ease infinite' }}
+                            >
+                                Engineering
+                            </span>
+                        </TextScrollMarquee>
+                    </div>
 
                     <p className="text-lg text-muted-foreground max-w-xl mx-auto font-light">
                         Specialized in cutting-edge technologies that power modern digital experiences
@@ -710,10 +721,22 @@ function StatsSection() {
                     </h2>
                 </div>
 
+
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[500px] md:h-[400px]">
                     <GitHubStats />
                     <WakaTimeStats />
                 </div>
+            </div>
+
+            {/* Infinite Ribbons - Full Width Divider */}
+            <div className="relative flex h-[500px] w-full items-center justify-center overflow-hidden pointer-events-none mt-32 mb-20 md:my-40">
+                <InfiniteRibbon rotation={6} className="z-10 py-5 border-y border-blue-100 dark:border-zinc-800 shadow-xl" background="bg-white dark:bg-zinc-800" textColor="text-blue-600 dark:text-zinc-400 font-mono tracking-tighter">
+                    Next.js • TypeScript • Tailwind • React • Node.js • Three.js •
+                </InfiniteRibbon>
+                <InfiniteRibbon rotation={-6} reverse={true} className="z-20 py-5 border-y border-white/20 dark:border-zinc-700 shadow-2xl" background="bg-blue-600 dark:bg-black" textColor="text-white dark:text-white font-bold tracking-widest uppercase">
+                    Creative Developer • UI/UX Design • Full Stack Engineering • System Architecture •
+                </InfiniteRibbon>
             </div>
         </section>
     );

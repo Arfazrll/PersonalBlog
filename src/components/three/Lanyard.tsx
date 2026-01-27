@@ -14,6 +14,41 @@ useGLTF.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hc
 useTexture.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg');
 
 // ============================================
+// RESPONSIVE CAMERA RIG
+// ============================================
+function ResponsiveCamera() {
+    const { camera, size } = useThree();
+
+    useEffect(() => {
+        // Adjust camera based on screen width
+        const isMobile = size.width < 768;
+        const isTablet = size.width >= 768 && size.width < 1024;
+
+        if (isMobile) {
+            camera.position.set(0, 0, 14);
+            if (camera instanceof THREE.PerspectiveCamera) camera.fov = 50;
+        } else if (isTablet) {
+            camera.position.set(0, -1, 10); // Closer for tablets
+            if (camera instanceof THREE.PerspectiveCamera) camera.fov = 45;
+        } else {
+            // Desktop (Normal & Zoomed Out)
+            // If aspect ratio is very wide (Zoom 75%), adjust FOV to maintain vertical visibility
+            const aspect = size.width / size.height;
+            if (aspect > 1.8) {
+                camera.position.set(0, -2.0, 4.0); // Stabilized Massive Zoom (Wide)
+                if (camera instanceof THREE.PerspectiveCamera) camera.fov = 65;
+            } else {
+                camera.position.set(0, -2.0, 4.5); // Stabilized Titan Fit
+                if (camera instanceof THREE.PerspectiveCamera) camera.fov = 60;
+            }
+        }
+        camera.updateProjectionMatrix();
+    }, [size, camera]);
+
+    return null;
+}
+
+// ============================================
 // HOLOGRAPHIC AVATAR COMPONENT
 // Multi-layer glow effect with gradient border
 // ============================================
@@ -65,28 +100,6 @@ function HolographicAvatar({
 }
 
 // ============================================
-// MAIN LANYARD EXPORT
-// ============================================
-export function Lanyard() {
-    return (
-        <div className="w-full h-full min-h-[500px] relative z-20">
-            <Canvas camera={{ position: [0, 0, 13], fov: 25 }} gl={{ alpha: true }}>
-                <ambientLight intensity={Math.PI} />
-                <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
-                    <Band />
-                </Physics>
-                <Environment blur={0.75}>
-                    <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-                    <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-                    <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-                    <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
-                </Environment>
-            </Canvas>
-        </div>
-    );
-}
-
-// ============================================
 // BAND COMPONENT (Physics + Card)
 // ============================================
 function Band({ maxSpeed = 50, minSpeed = 10 }) {
@@ -132,9 +145,9 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
     const [dragged, drag] = useState<THREE.Vector3 | false>(false);
     const [hovered, hover] = useState(false);
 
-    useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
-    useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
-    useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
+    useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1.75]);
+    useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1.75]);
+    useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1.75]);
     useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.45, 0]]);
 
     useEffect(() => {
@@ -208,10 +221,10 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
                     {...segmentProps}
                     type={dragged ? 'kinematicPosition' : 'dynamic'}
                 >
-                    <CuboidCollider args={[0.8, 1.125, 0.01]} />
+                    <CuboidCollider args={[1, 1.5, 0.1]} /> {/* Standard Collider for Stability */}
                     <group
-                        scale={2.25}
-                        position={[0, -1.2, -0.05]}
+                        scale={4.5}
+                        position={[0, -3.0, -0.05]} // Re-aligned Visual Clip with Rope Anchor
                         onPointerOver={() => hover(true)}
                         onPointerOut={() => hover(false)}
                         onPointerUp={(e) => {
@@ -250,12 +263,12 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
 
                         {/* ========================================
                             CARD CONTENT - LARGER SIZES
-                            All elements scaled up for visibility
+                            All elements scaled up for visibility & Moved forward to prevent clipping
                         ======================================== */}
-                        <group position={[0, 0.48, 0]}>
+                        <group position={[0, 0.48, 0.1]}> {/* Moved forward by 0.1 */}
 
                             {/* TOP ACCENT LINE - thicker */}
-                            <mesh position={[0, 0.18, 0.01]}>
+                            <mesh position={[0, 0.18, 0.02]}>
                                 <planeGeometry args={[0.60, 0.010]} />
                                 <meshBasicMaterial color="#6366f1" />
                             </mesh>
@@ -263,7 +276,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
                             {/* AVATAR - BIGGER (0.14 instead of 0.09) */}
                             <HolographicAvatar
                                 url={portfolioData.personal.avatar}
-                                position={[0, -0.02, 0.02]}
+                                position={[0, -0.02, 0.05]}
                                 size={0.14}
                             />
 
@@ -275,7 +288,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
 
                             {/* NAME - LARGER FONT (0.065 instead of 0.048) */}
                             <Text
-                                position={[0, -0.36, 0.08]}
+                                position={[0, -0.36, 0.1]} // Pushed forward
                                 fontSize={0.065}
                                 color="#ffffff"
                                 anchorX="center"
@@ -289,7 +302,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
 
                             {/* TITLE - LARGER FONT (0.040 instead of 0.028) */}
                             <Text
-                                position={[0, -0.48, 0.08]}
+                                position={[0, -0.48, 0.1]} // Pushed forward
                                 fontSize={0.040}
                                 color="#a1a1aa"
                                 anchorX="center"
@@ -301,21 +314,21 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
                             </Text>
 
                             {/* BOTTOM DECORATIVE - larger dots */}
-                            <mesh position={[0, -0.58, 0.01]}>
+                            <mesh position={[0, -0.58, 0.02]}>
                                 <planeGeometry args={[0.40, 0.005]} />
                                 <meshBasicMaterial color="#8b5cf6" transparent opacity={0.5} />
                             </mesh>
-                            <mesh position={[-0.24, -0.58, 0.01]}>
+                            <mesh position={[-0.24, -0.58, 0.02]}>
                                 <circleGeometry args={[0.008, 16]} />
                                 <meshBasicMaterial color="#06b6d4" />
                             </mesh>
-                            <mesh position={[0.24, -0.58, 0.01]}>
+                            <mesh position={[0.24, -0.58, 0.02]}>
                                 <circleGeometry args={[0.008, 16]} />
                                 <meshBasicMaterial color="#06b6d4" />
                             </mesh>
 
                             {/* BOTTOM ACCENT LINE - thicker */}
-                            <mesh position={[0, -0.68, 0.01]}>
+                            <mesh position={[0, -0.68, 0.02]}>
                                 <planeGeometry args={[0.60, 0.008]} />
                                 <meshBasicMaterial color="#6366f1" transparent opacity={0.3} />
                             </mesh>
@@ -329,14 +342,38 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
                 <meshLineGeometry />
                 <meshLineMaterial
                     color="white"
-                    depthTest={false}
+                    depthTest={true} // Re-enabled depthTest for correct 3D sorting
+                    depthWrite={true}
                     resolution={new THREE.Vector2(width, height)}
                     useMap={1}
                     map={bandTexture}
                     repeat={new THREE.Vector2(-3, 1)}
-                    lineWidth={1}
+                    lineWidth={1.0}
                 />
             </mesh>
         </>
+    );
+}
+
+// ============================================
+// MAIN LANYARD EXPORT
+// ============================================
+export function Lanyard() {
+    return (
+        <div className="w-full h-full relative z-20">
+            <Canvas gl={{ alpha: true }}>
+                <ResponsiveCamera />
+                <ambientLight intensity={Math.PI * 1.5} />
+                <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
+                    <Band />
+                </Physics>
+                <Environment blur={0.75}>
+                    <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+                    <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+                    <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+                    <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
+                </Environment>
+            </Canvas>
+        </div>
     );
 }
