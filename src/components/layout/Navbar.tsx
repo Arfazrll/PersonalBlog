@@ -44,20 +44,25 @@ function Clock() {
 }
 
 // Sub-links for the "About" dropdown
-const navItems = [
-    {
-        label: "About",
-        links: [
-            { label: "Achievements", href: "/achievements", description: "Certifications, awards, and milestones" },
-            { label: "Skills", href: "/skills", description: "Technologies and tools I work with" },
-            { label: "Experience", href: "/experience", description: "My professional journey and growth" },
-            { label: "Projects", href: "/projects", description: "A showcase of all my work" }
-        ]
-    }
-];
+// Sub-links for the "About" dropdown
+const useNavItems = () => {
+    const t = useTranslations('navigation.menu');
+    return [
+        {
+            label: "About",
+            links: [
+                { label: t('achievements'), href: "/achievements", description: t('achievementsDesc') },
+                { label: t('skills'), href: "/skills", description: t('skillsDesc') },
+                { label: t('experience'), href: "/experience", description: t('experienceDesc') },
+                { label: t('projects'), href: "/projects", description: t('projectsDesc') }
+            ]
+        }
+    ];
+};
 
 export function Navbar() {
     const t = useTranslations('navigation');
+    const navItems = useNavItems();
     const { theme, setTheme, resolvedTheme } = useTheme();
     const pathname = usePathname();
     const { scrollY } = useScroll();

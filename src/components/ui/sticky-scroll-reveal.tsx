@@ -41,21 +41,12 @@ export const StickyScroll = ({
 
   return (
     <div className="relative group">
-      {/* Decorative Corner Accents */}
-      <div className="absolute -top-4 -left-4 w-12 h-12 border-t-2 border-l-2 border-primary/20 rounded-tl-3xl pointer-events-none group-hover:border-primary/40 transition-colors" />
-      <div className="absolute -bottom-4 -right-4 w-12 h-12 border-b-2 border-r-2 border-primary/20 rounded-br-3xl pointer-events-none group-hover:border-primary/40 transition-colors" />
-
-      {/* Top Progress Line */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-border/50 overflow-hidden rounded-full">
-        <motion.div
-          className="h-full bg-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.2)]"
-          style={{ width: `${((activeCard + 1) / cardLength) * 100}%` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        />
-      </div>
+      {/* Decorative Corner Accents - Inset to prevent clipping */}
+      <div className="absolute top-1 left-1 w-12 h-12 border-t border-l border-primary/20 rounded-tl-[2rem] pointer-events-none group-hover:border-primary/40 transition-colors z-20" />
+      <div className="absolute bottom-1 right-1 w-12 h-12 border-b border-r border-primary/20 rounded-br-[2rem] pointer-events-none group-hover:border-primary/40 transition-colors z-20" />
 
       <motion.div
-        className="relative flex h-[35rem] justify-center lg:justify-between space-x-0 lg:space-x-10 overflow-y-auto no-scrollbar rounded-[2.5rem] p-6 md:p-12 bg-black/5 dark:bg-white/5 border border-border/50 backdrop-blur-sm shadow-2xl transition-all duration-700"
+        className="relative flex h-[35rem] justify-center lg:justify-between space-x-0 lg:space-x-10 overflow-y-auto no-scrollbar rounded-[2.5rem] p-6 md:p-12 bg-transparent transition-all duration-700"
         ref={ref}
       >
         {/* Left Content Side */}

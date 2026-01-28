@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from 'next-intl';
 import { motion } from "framer-motion";
 import { Boxes } from "@/components/ui/background-boxes";
 import { GitHubHeatmap, StatPod, useGitHubData } from "@/components/stats/GitHubStats";
@@ -10,6 +11,7 @@ import { portfolioData } from "@/data/portfolio";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
 export default function StatsSection() {
+    const t = useTranslations('stats');
     const githubUsername = process.env.NEXT_PUBLIC_GITHUB_USERNAME ||
         portfolioData.personal.socialLinks.find(s => s.platform === 'GitHub')?.username ||
         "Arfazrll";
@@ -54,12 +56,12 @@ export default function StatsSection() {
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-[1px] w-12 bg-primary/30" />
                         <span className="text-[10px] text-primary font-mono uppercase tracking-[0.5em]">
-                            System Status: Analytics Active
+                            {t('systemStatus')}
                         </span>
                     </div>
                     <div className="overflow-visible pr-8">
                         <TextGenerateEffect
-                            words="Technical Portfolio"
+                            words={t('portfolio')}
                             className="text-4xl md:text-6xl font-black text-foreground tracking-tighter uppercase italic [&_span:nth-child(2)]:text-gradient"
                         />
                     </div>
@@ -76,7 +78,7 @@ export default function StatsSection() {
                     {/* Quick Stats Pods - GitHub (Right Column) */}
                     <div className="md:col-span-2">
                         <StatPod
-                            label="Total Pulse"
+                            label={t('totalPulse')}
                             value={gSummary?.total || 0}
                             icon={<Trophy className="w-4 h-4" />}
                             color="text-emerald-500"
@@ -85,7 +87,7 @@ export default function StatsSection() {
                     </div>
                     <div className="md:col-span-2">
                         <StatPod
-                            label="Peak Activity"
+                            label={t('peakActivity')}
                             value={gSummary?.best || 0}
                             icon={<TrendingUp className="w-4 h-4" />}
                             color="text-blue-500"
@@ -103,7 +105,7 @@ export default function StatsSection() {
                     {/* Bottom Row - WakaTime Details & GitHub Meta */}
                     <div className="md:col-span-4">
                         <StatPod
-                            label="Daily Average"
+                            label={t('dailyAverage')}
                             value={gSummary?.average || 0}
                             suffix="/d"
                             icon={<Calendar className="w-4 h-4" />}
@@ -113,7 +115,7 @@ export default function StatsSection() {
                     </div>
                     <div className="md:col-span-4">
                         <StatPod
-                            label="Current Sprint"
+                            label={t('currentSprint')}
                             value={gSummary?.thisWeek || 0}
                             icon={<Zap className="w-4 h-4" />}
                             color="text-yellow-500"
@@ -138,9 +140,9 @@ export default function StatsSection() {
                             <>
                                 <div className="md:col-span-4">
                                     <WakaTimeMetricPod
-                                        label="Engage Flow"
+                                        label={t('engageFlow')}
                                         value={displayData.human_readable_total}
-                                        subValue="Weekly Coding Effort"
+                                        subValue={t('weeklyEffort')}
                                         icon={<Clock className="w-4 h-4" />}
                                         color="text-yellow-400"
                                         highlight
@@ -149,9 +151,9 @@ export default function StatsSection() {
                                 </div>
                                 <div className="md:col-span-4">
                                     <WakaTimeMetricPod
-                                        label="Process Speed"
+                                        label={t('processSpeed')}
                                         value={displayData.human_readable_daily_average}
-                                        subValue="Average Performance"
+                                        subValue={t('avgPerf')}
                                         icon={<TrendingUp className="w-4 h-4" />}
                                         color="text-emerald-400"
                                         delay={0.6}
@@ -166,14 +168,14 @@ export default function StatsSection() {
                         <div className="flex items-center gap-6">
                             <span className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-400">
                                 <div className="w-2 h-2 rounded-full bg-primary/40 animate-pulse shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                                LATENCY: 14MS
+                                {t('latency')}
                             </span>
-                            <span className="hidden md:inline border-l border-black/10 dark:border-white/10 pl-6">SYSTEM: DARWIN_X64_STABLE</span>
+                            <span className="hidden md:inline border-l border-black/10 dark:border-white/10 pl-6">{t('system')}</span>
                         </div>
                         <div className="flex items-center gap-10">
                             <span className="font-medium">SESSION_TOKEN: {Math.random().toString(36).substring(7).toUpperCase()}</span>
                             <div className="flex items-center gap-2 text-primary font-bold">
-                                <Search className="w-3 h-3" /> [SCANNING_LIVE_RESOURCES]
+                                <Search className="w-3 h-3" /> [{t('scanning')}]
                             </div>
                         </div>
                     </div>

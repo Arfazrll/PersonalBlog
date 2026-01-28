@@ -10,6 +10,8 @@ import {
 
 
 
+import { useTranslations } from 'next-intl';
+
 export const HeroParallax = ({
   products,
 }: {
@@ -102,15 +104,16 @@ export const HeroParallax = ({
 };
 
 export const Header = () => {
+  const t = useTranslations('projectHeader');
   return (
     <div className="max-w-7xl relative mx-auto py-20 md:py-40 px-4 w-full  left-0 top-0">
       <h1 className="text-2xl md:text-7xl font-bold dark:text-white">
-        Architecting <br /> Digital Reality
+        {t('title')}
       </h1>
-      <p className="max-w-2xl text-base md:text-xl mt-8 dark:text-neutral-200">
-        A curated showcase of technical innovation and creative engineering.
-        Exploring the frontiers of <span className="text-primary font-semibold">Artificial Intelligence</span>, <span className="text-secondary font-semibold">Blockchain</span>, and <span className="text-accent font-semibold">Immersive Web</span> experiences.
-      </p>
+      <p
+        className="max-w-2xl text-base md:text-xl mt-8 dark:text-neutral-200"
+        dangerouslySetInnerHTML={{ __html: t.raw('subtitle') }}
+      />
     </div>
   );
 };
@@ -135,7 +138,7 @@ export const ProductCard = ({
         y: -20,
       }}
       key={product.title}
-      className="group/product h-96 w-[30rem] relative shrink-0"
+      className="group/product h-64 w-[16rem] md:h-96 md:w-[30rem] relative shrink-0"
     >
       <a
         href={product.link}

@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import { getMessages, getLocale } from 'next-intl/server';
 import { ThemeProvider, I18nProvider } from '@/providers';
 import { Navbar, Footer } from '@/components/layout';
+import { BackToTop } from '@/components/ui/BackToTop';
 import '@/styles/globals.css';
 
 const inter = Inter({
@@ -83,6 +84,7 @@ export default async function RootLayout({
                             <Navbar />
                             <main className="flex-1">{children}</main>
                             <Footer />
+                            <BackToTop />
                         </div>
                     </I18nProvider>
                 </ThemeProvider>

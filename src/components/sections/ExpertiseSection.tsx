@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
+import { useTranslations } from 'next-intl';
 import { CircularGallery } from "@/components/ui/CircularGallery";
 import TextScrollMarquee from "@/components/ui/TextScrollMarquee";
 
 export default function ExpertiseSection() {
     const sectionRef = useRef<HTMLElement>(null);
     const [isDarkMode, setIsDarkMode] = useState(true);
+    const t = useTranslations('expertise');
 
     // Detect theme changes
     useEffect(() => {
@@ -62,12 +64,12 @@ export default function ExpertiseSection() {
 
                     <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/5 border border-primary/20 backdrop-blur-sm mb-8">
                         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                        <span className="text-xs font-mono text-primary tracking-[0.2em] uppercase">Core Capabilities</span>
+                        <span className="text-xs font-mono text-primary tracking-[0.2em] uppercase">{t('title')}</span>
                         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                     </div>
 
                     <div className="mb-12 w-full overflow-hidden">
-                        <TextScrollMarquee baseVelocity={-2} className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight">
+                        <TextScrollMarquee baseVelocity={-2} className="text-3xl md:text-7xl lg:text-8xl font-black tracking-tight">
                             <span className="text-foreground">Creative</span>
                             <span
                                 className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-violet-500 to-fuchsia-500 ml-4 bg-[length:200%_auto]"
@@ -79,7 +81,7 @@ export default function ExpertiseSection() {
                     </div>
 
                     <p className="text-lg text-muted-foreground max-w-xl mx-auto font-light">
-                        Specialized in cutting-edge technologies that power modern digital experiences
+                        {t('subtitle')}
                     </p>
                 </motion.div>
 
@@ -111,7 +113,7 @@ export default function ExpertiseSection() {
                     className="text-center text-sm text-muted-foreground/60 font-mono mt-8 flex items-center justify-center gap-2"
                 >
                     <span className="inline-block w-8 h-[1px] bg-border" />
-                    Drag or scroll to explore
+                    {t('dragHint')}
                     <span className="inline-block w-8 h-[1px] bg-border" />
                 </motion.p>
             </div>

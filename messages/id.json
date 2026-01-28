@@ -5,7 +5,17 @@
         "experience": "Pengalaman",
         "skills": "Keahlian",
         "achievements": "Pencapaian",
-        "contact": "Kontak"
+        "contact": "Kontak",
+        "menu": {
+            "achievements": "Pencapaian",
+            "achievementsDesc": "Sertifikasi, penghargaan, dan pencapaian",
+            "skills": "Keahlian",
+            "skillsDesc": "Teknologi dan alat yang saya gunakan",
+            "experience": "Pengalaman",
+            "experienceDesc": "Perjalanan profesional dan pertumbuhan saya",
+            "projects": "Proyek",
+            "projectsDesc": "Pameran semua karya saya"
+        }
     },
     "hero": {
         "greeting": "Selamat datang di ruang digital saya",
@@ -13,7 +23,11 @@
         "cta": {
             "primary": "Jelajahi Proyek",
             "secondary": "Hubungi Saya"
-        }
+        },
+        "badge": "Terbuka untuk peluang",
+        "scroll": "Gulir ke Bawah",
+        "role": "Creative Developer",
+        "description": "Menciptakan pengalaman digital imersif di persimpangan <span class='text-primary font-semibold'>AI</span>, <span class='text-secondary font-semibold'>Desain</span>, dan <span class='text-accent font-semibold'>Performa</span>."
     },
     "about": {
         "title": "Tentang Saya",
@@ -24,7 +38,10 @@
             "projects": "Proyek Selesai",
             "certifications": "Sertifikasi",
             "competitions": "Kompetisi"
-        }
+        },
+        "identity": "Tautan Identitas Dibuat",
+        "architecting": "Merancang",
+        "digitalReality": "Realitas Digital"
     },
     "projects": {
         "title": "Proyek",
@@ -71,6 +88,11 @@
             "title": "Pendidikan"
         }
     },
+    "expertise": {
+        "title": "Kapabilitas Inti",
+        "subtitle": "Spesialisasi dalam teknologi mutakhir yang mendukung pengalaman digital modern",
+        "dragHint": "Geser atau gulir untuk menjelajah"
+    },
     "skills": {
         "title": "Keahlian & Tools",
         "subtitle": "Teknologi dan tools yang saya gunakan",
@@ -102,9 +124,11 @@
             "email": "Email Anda",
             "subject": "Subjek",
             "message": "Pesan Anda",
+            "messagePlaceholder": "Ceritakan tentang proyek Anda...",
             "send": "Kirim Pesan",
-            "submit": "Kirim Pesan",
-            "sending": "Mengirim...",
+            "submit": "KIRIM PESAN",
+            "sending": "MENGIRIM...",
+            "sent": "TERKIRIM!",
             "success": "Pesan berhasil dikirim!",
             "error": "Terjadi kesalahan. Silakan coba lagi."
         },
@@ -119,11 +143,87 @@
             "phone": "Telepon",
             "location": "Lokasi",
             "availability": "Terbuka untuk kesempatan"
-        }
+        },
+        "hero": {
+            "title": "MARI BICARA",
+            "subtitle": "Punya ide? Mari bangun sesuatu yang luar biasa bersama.",
+            "ticker": {
+                "build": "Mari Bangun Sesuatu yang Luar Biasa · ",
+                "freelance": "Tersedia untuk Freelance · "
+            }
+        },
+        "faqData": [
+            {
+                "q": "Apa bidang keahlian utama Anda?",
+                "a": "Sebagai mahasiswa Teknologi Informasi di Telkom University dan Asisten Peneliti di Laboratorium Cyber Physical System, saya berspesialisasi dalam persimpangan Kecerdasan Buatan (Computer Vision & Deep Learning), Full-stack Development (Next.js & Node.js), dan teknologi Blockchain/Web3 yang sedang berkembang."
+            },
+            {
+                "q": "Apakah Anda tersedia untuk kolaborasi riset atau freelance?",
+                "a": "Tentu saja. Saat ini saya aktif dalam riset AI di CPS Lab dan Pusat Riset HUMIC, tetapi saya selalu terbuka untuk proyek freelance inovatif, magang, atau kolaborasi teknis yang menjembatani inovasi dengan eksekusi strategis."
+            },
+            {
+                "q": "Apa tech stack tipikal Anda untuk produksi?",
+                "a": "Untuk proyek AI, saya menggunakan Python dengan TensorFlow, PyTorch, dan YOLO. Untuk aplikasi web, andalan saya adalah stack T3: Next.js, TypeScript, dan Tailwind CSS, sering kali diintegrasikan dengan Agen AI atau Smart Contracts jika sesuai."
+            },
+            {
+                "q": "Apakah Anda memiliki pengalaman dengan proyek enterprise atau lab?",
+                "a": "Ya, saya pernah menjabat sebagai System Analyst dan Pengembang AI di berbagai lingkungan berbasis riset. Saya telah merancang mulai dari platform AIoT dan sistem deteksi serangan hingga modul praktikum siswa untuk audiens global."
+            },
+            {
+                "q": "Bagaimana cara memulai kemitraan atau proyek?",
+                "a": "Cara paling efisien adalah menggunakan formulir kontak di atas atau menghubungi langsung melalui email di azril4974@gmail.com. Saya biasanya dapat merespons dalam waktu 24 jam untuk mendiskusikan bagaimana keterampilan teknis saya dapat memberikan nilai tambah bagi inisiatif Anda."
+            }
+        ]
+    },
+    "stats": {
+        "systemStatus": "Status Sistem: Analitik Aktif",
+        "portfolio": "Portofolio Teknis",
+        "totalPulse": "Total Denyut",
+        "peakActivity": "Aktivitas Puncak",
+        "dailyAverage": "Rata-rata Harian",
+        "currentSprint": "Sprint Saat Ini",
+        "engageFlow": "Alur Keterlibatan",
+        "weeklyEffort": "Upaya Coding Mingguan",
+        "processSpeed": "Kecepatan Proses",
+        "avgPerf": "Performa Rata-rata",
+        "latency": "LATENSI: 14MS",
+        "system": "SISTEM: DARWIN_X64_STABIL",
+        "scanning": "MEMINDAI_SUMBER_DAYA_LANGSUNG"
+    },
+    "projectHeader": {
+        "title": "Merancang Realitas Digital",
+        "subtitle": "Pameran kurasi inovasi teknis dan rekayasa kreatif. Menjelajahi batas-batas <span class='font-bold text-white'>Kecerdasan Buatan</span>, Blockchain, dan pengalaman Web Imersif."
     },
     "footer": {
         "copyright": "Hak cipta dilindungi.",
-        "madeWith": "Dibuat dengan"
+        "madeWith": "Dibuat dengan",
+        "more": "Lainnya",
+        "marquee": [
+            "Terbuka untuk Peluang",
+            "Pengembangan Frontend",
+            "Arsitektur Backend",
+            "Desain UI/UX",
+            "Coding Kreatif",
+            "Optimasi Sistem"
+        ],
+        "cta": {
+            "title": "Mari Bekerja",
+            "titleHighlight": "Bersama",
+            "subtitle": "Punya proyek? Mari bangun sesuatu yang luar biasa yang memecahkan masalah nyata."
+        }
+    },
+    "ctaSection": {
+        "title": "Mari Membangun Sesuatu yang",
+        "together": "Bersama",
+        "subtitle": "Siap berkolaborasi dalam proyek AI, Pengembangan Web, atau Blockchain? Mari wujudkan.",
+        "start": "Mulai Proyek",
+        "work": "Lihat Karya Saya",
+        "words": {
+            "amazing": "Luar Biasa",
+            "innovative": "Inovatif",
+            "intelligent": "Cerdas",
+            "creative": "Kreatif"
+        }
     },
     "common": {
         "loading": "Memuat...",

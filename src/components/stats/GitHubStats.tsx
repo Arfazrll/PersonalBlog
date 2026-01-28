@@ -24,15 +24,26 @@ export function useGitHubData(username: string) {
                 const res = await fetch(`https://github-contributions-api.deno.dev/${username}.json`);
                 if (res.ok) {
                     const data = await res.json();
-                    const total = data.total.lastYear;
-                    const contributions = data.contributions;
+                    if (!data || !data.total) {
+                        console.warn('GitHub API returned invalid structure, using fallback data.');
+                        setSummary({
+                            total: 599,
+                            thisWeek: 6,
+                            best: 50,
+                            average: 2.1
+                        });
+                        return;
+                    }
+
+                    const total = data.total.lastYear ?? 0;
+                    const contributions = Array.isArray(data.contributions) ? data.contributions : [];
 
                     const today = new Date();
                     const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
                     const weekData = contributions.filter((c: any) => new Date(c.date) >= oneWeekAgo);
                     const thisWeek = weekData.reduce((acc: number, curr: any) => acc + curr.count, 0);
 
-                    const best = Math.max(...contributions.map((c: any) => c.count));
+                    const best = contributions.length > 0 ? Math.max(...contributions.map((c: any) => c.count)) : 0;
                     const average = parseFloat((total / 365).toFixed(1));
 
                     setSummary({ total, thisWeek, best, average });
@@ -104,7 +115,7 @@ export function GitHubHeatmap({ username }: { username: string }) {
             </div>
 
             <div className="mt-6 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase tracking-[0.3em] font-bold">
-                <span>Data Source: GitHub API v3</span>
+                <span>Data Source: GitHub Arfazrll</span>
                 <div className="flex gap-1">
                     {cyberpunkTheme.dark.map((c, i) => (
                         <div key={i} className="w-2 h-2 rounded-full shadow-[0_0_5px_rgba(0,0,0,0.2)]" style={{ backgroundColor: c }} />

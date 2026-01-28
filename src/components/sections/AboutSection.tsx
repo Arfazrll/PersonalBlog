@@ -1,7 +1,7 @@
-"use client";
 import React, { useRef } from "react";
 import { motion } from "motion/react";
 import Image from "next/image";
+import { useTranslations } from 'next-intl';
 import { Cpu, Activity, Database, Award } from "lucide-react";
 import { Lens } from "@/components/ui/Lens";
 import { MaskContainer } from "@/components/ui/svg-mask-effect";
@@ -10,6 +10,7 @@ import { portfolioData } from "@/data/portfolio";
 export default function AboutSection() {
     const sectionRef = useRef<HTMLElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const t = useTranslations('about');
 
     return (
         <section ref={sectionRef} className="relative py-32 overflow-hidden">
@@ -35,13 +36,13 @@ export default function AboutSection() {
                                     <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
                                     <span className="w-1.5 h-1.5 rounded-full bg-primary/20" />
                                 </div>
-                                <span className="text-xs font-mono text-primary tracking-[0.2em] uppercase">Identity Link Established</span>
+                                <span className="text-xs font-mono text-primary tracking-[0.2em] uppercase">{t('identity')}</span>
                             </div>
 
                             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[0.9] tracking-tight mb-6 text-foreground">
-                                Architecting <br />
+                                {t('architecting')} <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 animate-gradient-x">
-                                    Digital Reality
+                                    {t('digitalReality')}
                                 </span>
                             </h2>
                         </div>
@@ -73,26 +74,26 @@ export default function AboutSection() {
                     </div>
 
                     {/* Right Col: The Holographic Persona (Visuals) */}
-                    <div className="lg:col-span-5 relative h-[600px] flex items-center justify-center perspective-deep lg:pl-10 order-1 lg:order-2">
+                    <div className="lg:col-span-5 relative min-h-[500px] lg:h-[600px] flex items-center justify-center perspective-deep lg:pl-10 order-1 lg:order-2">
                         {/* Dynamic Background Aura */}
                         <div className="absolute inset-0 bg-gradient-radial from-primary/20 via-transparent to-transparent blur-[80px] opacity-40 animate-pulse-slow" />
 
                         {/* Tech Ring Background - Subtle */}
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                             <motion.div
-                                className="w-[500px] h-[500px] border border-foreground/5 rounded-full"
+                                className="w-[280px] md:w-[500px] h-[280px] md:h-[500px] border border-foreground/5 rounded-full"
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 60, ease: "linear", repeat: Infinity }}
                             />
                             <motion.div
-                                className="absolute w-[350px] h-[350px] border border-dashed border-foreground/10 rounded-full"
+                                className="absolute w-[200px] md:w-[350px] h-[200px] md:h-[350px] border border-dashed border-foreground/10 rounded-full"
                                 animate={{ rotate: -360 }}
                                 transition={{ duration: 40, ease: "linear", repeat: Infinity }}
                             />
                         </div>
 
                         {/* Image Container with Blending */}
-                        <div className="relative w-full h-full max-w-[420px] mx-auto z-10">
+                        <div className="relative w-full max-w-[420px] mx-auto z-10 aspect-[3/4] md:aspect-square lg:aspect-[3/4]">
                             <div className="relative w-full h-full">
                                 <Lens zoomFactor={2} lensSize={200} isStatic={false} className="w-full h-full">
                                     <Image
@@ -114,7 +115,7 @@ export default function AboutSection() {
                             <div className="absolute inset-0 pointer-events-none z-20">
                                 {/* Top Right - System Uptime */}
                                 <motion.div
-                                    className="absolute top-[15%] -right-4 md:-right-12 pointer-events-auto"
+                                    className="absolute top-[10%] -right-0 md:-right-12 pointer-events-auto scale-90 md:scale-100"
                                     initial={{ opacity: 0, x: 20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.2 }}
@@ -130,7 +131,7 @@ export default function AboutSection() {
 
                                 {/* Bottom Right - Projects */}
                                 <motion.div
-                                    className="absolute bottom-[25%] -right-2 md:-right-8 pointer-events-auto"
+                                    className="absolute bottom-[20%] -right-0 md:-right-8 pointer-events-auto scale-90 md:scale-100"
                                     initial={{ opacity: 0, x: 20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.4 }}
@@ -146,7 +147,7 @@ export default function AboutSection() {
 
                                 {/* Bottom Left - Certifications (Floating lower) */}
                                 <motion.div
-                                    className="absolute bottom-[15%] left-0 md:-left-8 pointer-events-auto"
+                                    className="absolute bottom-[10%] left-0 md:-left-8 pointer-events-auto scale-90 md:scale-100"
                                     initial={{ opacity: 0, x: -20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.6 }}

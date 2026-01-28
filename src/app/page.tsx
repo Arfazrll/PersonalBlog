@@ -135,6 +135,7 @@ function AnimatedBackground() {
 
 // ==================== SCROLL INDICATOR ====================
 function ScrollIndicator() {
+    const t = useTranslations('hero');
     return (
         <motion.div
             className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20"
@@ -164,7 +165,7 @@ function ScrollIndicator() {
                     </motion.div>
                 </div>
                 <span className="text-xs text-muted-foreground uppercase tracking-[0.2em] group-hover:text-foreground transition-colors">
-                    Scroll Down
+                    {t('scroll')}
                 </span>
             </motion.div>
         </motion.div>
@@ -284,52 +285,64 @@ function HeroIntro() {
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                         <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
                     </span>
-                    <span className="tracking-wide text-foreground/80">Available for opportunities</span>
+                    <span className="tracking-wide text-foreground/80">{t('badge')}</span>
                     <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                 </motion.div>
 
-                {/* Name with TextPressure Animation - Centered, Large */}
-                <div className="hero-name mb-6 w-full max-w-6xl mx-auto h-[100px] sm:h-[120px] md:h-[150px] lg:h-[180px] xl:h-[220px] flex items-center justify-center">
-                    <TextPressure
-                        text="Syahril Arfian Almazril"
-                        flex={false}
-                        alpha={false}
-                        stroke={false}
-                        width={true}
-                        weight={true}
-                        italic={true}
-                        textColor={isDarkMode ? "#ffffff" : "#0f172a"}
-                        minFontSize={72}
-                        className="w-full h-full flex items-center justify-center"
-                    />
+                {/* Name - Responsive Switch: Canvas on Desktop, Static Text on Mobile */}
+                <div className="hero-name mb-6 w-full max-w-6xl mx-auto flex items-center justify-center">
+                    {/* Mobile: Static Text (Guarantees wrapping) */}
+                    <h1 className="block md:hidden text-5xl font-black text-center leading-tight tracking-tighter">
+                        <span className="text-foreground">Syahril</span> <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x">
+                            Arfian Almazril
+                        </span>
+                    </h1>
+
+                    {/* Desktop: TextPressure Canvas (No wrapping needed) */}
+                    <div className="hidden md:flex w-full h-[150px] lg:h-[180px] xl:h-[220px] items-center justify-center">
+                        <TextPressure
+                            text="Syahril Arfian Almazril"
+                            flex={false}
+                            alpha={false}
+                            stroke={false}
+                            width={true}
+                            weight={true}
+                            italic={true}
+                            textColor={isDarkMode ? "#ffffff" : "#0f172a"}
+                            minFontSize={72}
+                            className="w-full h-full flex items-center justify-center"
+                        />
+                    </div>
                 </div>
 
                 {/* Title */}
                 <motion.div className="hero-subtitle mb-8 flex flex-col items-center gap-2">
                     <div className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
                     <p className="text-xl md:text-2xl lg:text-3xl text-foreground/80 font-medium tracking-wide">
-                        {portfolioData.personal.title} <span className="text-primary mx-2">•</span> Creative Developer
+                        {portfolioData.personal.title} <span className="text-primary mx-2">•</span> {t('role')}
                     </p>
                     <div className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
                 </motion.div>
 
                 {/* Subtitle */}
-                <p className="hero-subtitle text-base md:text-lg text-muted-foreground/70 max-w-2xl mx-auto mb-12 leading-relaxed">
-                    Crafting immersive digital experiences at the intersection of <span className="text-primary font-semibold">AI</span>, <span className="text-secondary font-semibold">Design</span>, and <span className="text-accent font-semibold">Performance</span>.
-                </p>
+                <p
+                    className="hero-subtitle text-base md:text-lg text-muted-foreground/70 max-w-2xl mx-auto mb-12 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: t.raw('description') }}
+                />
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                     <motion.div className="hero-cta w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Link href="/projects" className="btn-creative group inline-flex items-center justify-center gap-3 text-base w-full sm:w-auto min-w-[180px]">
-                            <span>Explore Radius</span>
+                            <span>{t('cta.primary')}</span>
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </motion.div>
                     <motion.div className="hero-cta w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Link href="/contact" className="btn-outline-creative inline-flex items-center justify-center gap-2 text-base w-full sm:w-auto min-w-[180px]">
                             <Mail className="w-4 h-4" />
-                            <span>Initialize Contact</span>
+                            <span>{t('cta.secondary')}</span>
                         </Link>
                     </motion.div>
                 </div>

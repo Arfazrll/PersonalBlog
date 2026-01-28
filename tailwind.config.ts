@@ -79,9 +79,18 @@ const config: Config = {
 				'gradient-shift': 'gradientShift 8s ease infinite',
 				marquee: 'marquee 30s linear infinite',
 				'marquee-reverse': 'marqueeReverse 30s linear infinite',
-				scan: 'scan 3s linear infinite'
+				scan: 'scan 3s linear infinite',
+				meteor: 'meteor 5s linear infinite'
 			},
 			keyframes: {
+				meteor: {
+					'0%': { transform: 'rotate(var(--angle)) translateX(0)', opacity: '1' },
+					'70%': { opacity: '1' },
+					'100%': {
+						transform: 'rotate(var(--angle)) translateX(-500px)',
+						opacity: '0'
+					}
+				},
 				scan: {
 					'0%': { top: '0%' },
 					'100%': { top: '100%' }

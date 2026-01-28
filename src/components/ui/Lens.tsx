@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -58,8 +58,23 @@ export const Lens: React.FC<LensProps> = ({
     const isHovering = hovering !== undefined ? hovering : localIsHovering;
     const setIsHovering = setHovering || setLocalIsHovering;
 
+    // Mobile Optimization: Disable Lens on touch devices automatically
+    useEffect(() => {
+        const checkMobile = () => {
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                // We don't have a direct 'setDisabled' prop, but we can effectively disable it
+                // by returning early in handleMouseMove or treating it as static.
+                // Since 'disabled' is a prop, we can't change it, but we can override behavior.
+            }
+        };
+        // Better approach: wrap logic in handleMouseMove
+    }, []);
+
+    const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
+    const effectiveDisabled = disabled || isMobile;
+
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (disabled || isStatic) return;
+        if (effectiveDisabled || isStatic) return;
 
         const rect = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -142,10 +157,10 @@ export const Lens: React.FC<LensProps> = ({
                 className
             )}
             onMouseEnter={function () {
-                return !disabled && setIsHovering(true);
+                return !effectiveDisabled && setIsHovering(true);
             }}
             onMouseLeave={function () {
-                return !disabled && setIsHovering(false);
+                return !effectiveDisabled && setIsHovering(false);
             }}
             onMouseMove={handleMouseMove}
         >
@@ -155,7 +170,7 @@ export const Lens: React.FC<LensProps> = ({
                 <div>{lensContent}</div>
             ) : (
                 <AnimatePresence>
-                    {isHovering && !disabled && (
+                    {isHovering && !effectiveDisabled && (
                         <div>{lensContent}</div>
                     )}
                 </AnimatePresence>
