@@ -28,7 +28,7 @@
         "meshline": "^3.3.1",
         "mini-svg-data-uri": "^1.4.4",
         "motion": "^12.29.2",
-        "next": "14.2.15",
+        "next": "16.1.6",
         "next-intl": "^3.4.0",
         "next-themes": "^0.2.1",
         "ogl": "^1.0.11",
@@ -52,7 +52,7 @@
         "@types/three": "^0.160.0",
         "autoprefixer": "^10.4.0",
         "eslint": "^8.56.0",
-        "eslint-config-next": "14.2.15",
+        "eslint-config-next": "16.1.6",
         "postcss": "^8.4.0",
         "tailwindcss": "^3.4.0",
         "typescript": "^5.3.0"
