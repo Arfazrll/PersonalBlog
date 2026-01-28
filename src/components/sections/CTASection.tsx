@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import { useTranslations } from 'next-intl';
 import { Mail, Layers } from "lucide-react";
 import { InfiniteRibbon } from "@/components/ui/infinite-ribbon";
 
@@ -13,7 +14,8 @@ if (typeof window !== "undefined") {
 
 export default function CTASection() {
     const sectionRef = useRef<HTMLElement>(null);
-    const words = ['Amazing', 'Innovative', 'Intelligent', 'Creative'];
+    const t = useTranslations('ctaSection');
+    const words = [t('words.amazing'), t('words.innovative'), t('words.intelligent'), t('words.creative')];
     const [currentWord, setCurrentWord] = useState(0);
 
     useEffect(() => {
@@ -65,7 +67,7 @@ export default function CTASection() {
 
             <div className="container-creative relative z-10 text-center cta-content">
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-12">
-                    Let's Build Something
+                    {t('title')}
                     <br />
                     <AnimatePresence mode="wait">
                         <motion.span
@@ -79,24 +81,24 @@ export default function CTASection() {
                             {words[currentWord]}
                         </motion.span>
                     </AnimatePresence>
-                    {' '}Together
+                    {' '}{t('together')}
                 </h2>
 
                 <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-16">
-                    Ready to collaborate on AI, Web Development, or Blockchain projects? Let's make it happen.
+                    {t('subtitle')}
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Link href="/contact" className="btn-creative text-lg px-10 py-5 inline-flex items-center gap-3">
                             <Mail className="w-5 h-5" />
-                            Start a Project
+                            {t('start')}
                         </Link>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Link href="/projects" className="btn-outline-creative text-lg px-10 py-5 inline-flex items-center gap-3">
                             <Layers className="w-5 h-5" />
-                            View My Work
+                            {t('work')}
                         </Link>
                     </motion.div>
                 </div>

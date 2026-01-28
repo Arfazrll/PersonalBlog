@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import { getMessages, getLocale } from 'next-intl/server';
 import { ThemeProvider, I18nProvider } from '@/providers';
 import { Navbar, Footer } from '@/components/layout';
+import { BackToTop } from '@/components/ui/BackToTop';
 import '@/styles/globals.css';
 
 const inter = Inter({
@@ -66,6 +67,10 @@ export const viewport: Viewport = {
     initialScale: 1,
 };
 
+import { ThemeAwareClickSpark } from '@/components/ui/ThemeAwareClickSpark';
+
+// ... (existing imports)
+
 export default async function RootLayout({
     children,
 }: {
@@ -79,11 +84,14 @@ export default async function RootLayout({
             <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
                 <ThemeProvider>
                     <I18nProvider locale={locale} messages={messages}>
-                        <div className="relative min-h-screen flex flex-col">
-                            <Navbar />
-                            <main className="flex-1">{children}</main>
-                            <Footer />
-                        </div>
+                        <ThemeAwareClickSpark>
+                            <div className="relative min-h-screen flex flex-col">
+                                <Navbar />
+                                <main className="flex-1">{children}</main>
+                                <Footer />
+                                <BackToTop />
+                            </div>
+                        </ThemeAwareClickSpark>
                     </I18nProvider>
                 </ThemeProvider>
             </body>

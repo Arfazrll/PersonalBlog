@@ -29,26 +29,20 @@ const socialIcons: Record<string, React.ElementType> = {
     spotify: Music,
 };
 
-const marqueeItems = [
-    "Open to Opportunities",
-    "Frontend Development",
-    "Backend Architecture",
-    "UI/UX Design",
-    "Creative Coding",
-    "System Optimization"
-];
+const marqueeKeys = ['0', '1', '2', '3', '4', '5'];
 
 function Marquee() {
+    const t = useTranslations('footer.marquee');
     return (
-        <div className="relative flex overflow-hidden py-4 bg-muted/30 border-y border-white/5 backdrop-blur-sm">
+        <div className="relative flex overflow-hidden py-4 bg-muted/30 border-y border-border backdrop-blur-sm">
             <motion.div
                 className="flex gap-12 whitespace-nowrap"
                 animate={{ x: [0, -1000] }}
                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
             >
-                {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
+                {[...marqueeKeys, ...marqueeKeys, ...marqueeKeys].map((key, i) => (
                     <div key={i} className="flex items-center gap-4 text-sm font-mono tracking-widest uppercase text-muted-foreground/80">
-                        <span>{item}</span>
+                        <span>{t(key)}</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
                     </div>
                 ))}
@@ -68,13 +62,13 @@ function SocialCard({ social }: { social: any }) {
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-primary/50 overflow-hidden transition-colors"
+            className="group relative p-6 rounded-3xl bg-secondary/50 border border-border hover:border-primary/50 overflow-hidden transition-colors"
             whileHover={{ y: -5 }}
         >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative z-10 flex flex-col items-center gap-4">
-                <div className="p-4 rounded-2xl bg-white/5 group-hover:bg-primary/20 transition-colors duration-300">
+                <div className="p-4 rounded-2xl bg-background group-hover:bg-primary/20 transition-colors duration-300 shadow-sm">
                     <Icon className="w-8 h-8 text-foreground group-hover:text-primary transition-colors" />
                 </div>
                 <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">
@@ -86,8 +80,8 @@ function SocialCard({ social }: { social: any }) {
 }
 
 export function Footer() {
-    const t = useTranslations('navigation');
-    const tFooter = useTranslations('footer');
+    const tNav = useTranslations('navigation');
+    const t = useTranslations('footer');
     const [isExpanded, setIsExpanded] = useState(false);
     const [copied, setCopied] = useState(false);
 
@@ -134,11 +128,8 @@ export function Footer() {
                         <div className="flex items-center justify-between flex-wrap gap-4">
                             <div className="flex items-center gap-4 md:gap-6">
                                 <Link href="/" className="text-lg md:text-xl font-black text-gradient">
-                                    PORTFOLIO
+                                    SYAHRIL ARFIAN ALMAZRIL
                                 </Link>
-                                <span className="hidden sm:inline text-sm text-muted-foreground">
-                                    © {currentYear}
-                                </span>
                             </div>
 
                             <div className="flex items-center gap-3 md:gap-4">
@@ -151,7 +142,7 @@ export function Footer() {
                                                 href={social.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-2 rounded-full hover:bg-muted transition-colors"
+                                                className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.95 }}
                                                 aria-label={social.platform}
@@ -164,11 +155,11 @@ export function Footer() {
 
                                 <motion.button
                                     onClick={toggleExpand}
-                                    className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-muted hover:bg-muted/80 transition-all text-sm font-medium"
+                                    className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-muted hover:bg-muted/80 transition-all text-sm font-medium text-foreground"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
-                                    <span className="hidden sm:inline">More</span>
+                                    <span className="hidden sm:inline">{t('more')}</span>
                                     <motion.span
                                         animate={{ rotate: isExpanded ? 180 : 0 }}
                                         transition={{ duration: 0.3 }}
@@ -196,7 +187,7 @@ export function Footer() {
                         {/* Close Button */}
                         <motion.button
                             onClick={closeExpanded}
-                            className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-50 hover:bg-muted transition-colors"
+                            className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-50 hover:bg-muted transition-colors text-foreground"
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
@@ -218,10 +209,10 @@ export function Footer() {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.2 }}
-                                            className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.9]"
+                                            className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.9] text-foreground"
                                         >
-                                            Let's Work <br />
-                                            <span className="text-gradient">Together</span>
+                                            {t('cta.title')} <br />
+                                            <span className="text-gradient">{t('cta.titleHighlight')}</span>
                                         </motion.h2>
 
                                         <motion.p
@@ -230,7 +221,7 @@ export function Footer() {
                                             transition={{ delay: 0.3 }}
                                             className="text-xl text-muted-foreground max-w-lg mb-12"
                                         >
-                                            Have a project in mind? Let's build something extraordinary that solves real problems.
+                                            {t('cta.subtitle')}
                                         </motion.p>
 
                                         <motion.div
@@ -241,7 +232,7 @@ export function Footer() {
                                         >
                                             <button
                                                 onClick={handleCopyEmail}
-                                                className="group flex items-center gap-3 px-6 py-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors w-fit"
+                                                className="group flex items-center gap-3 px-6 py-4 rounded-full bg-secondary/50 border border-border hover:bg-secondary transition-colors w-fit text-foreground"
                                             >
                                                 <Mail className="w-5 h-5 text-primary" />
                                                 <span className="font-mono">{portfolioData.personal.email}</span>
@@ -267,12 +258,9 @@ export function Footer() {
                             </div>
 
                             {/* Bottom Bar in Overlay */}
-                            <div className="container-creative py-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div className="container-creative py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
                                 <p className="text-sm text-muted-foreground">
-                                    © {currentYear} {portfolioData.personal.name}. All rights reserved.
-                                </p>
-                                <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    Made with <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" /> using Next.js
+                                    © {currentYear} {portfolioData.personal.name}. {t('copyright')}
                                 </p>
                             </div>
                         </div>

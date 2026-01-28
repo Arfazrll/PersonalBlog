@@ -5,7 +5,17 @@
         "experience": "Experience",
         "skills": "Skills",
         "achievements": "Achievements",
-        "contact": "Contact"
+        "contact": "Contact",
+        "menu": {
+            "achievements": "Achievements",
+            "achievementsDesc": "Certifications, awards, and milestones",
+            "skills": "Skills",
+            "skillsDesc": "Technologies and tools I work with",
+            "experience": "Experience",
+            "experienceDesc": "My professional journey and growth",
+            "projects": "Projects",
+            "projectsDesc": "A showcase of all my work"
+        }
     },
     "hero": {
         "greeting": "Welcome to my digital space",
@@ -13,7 +23,11 @@
         "cta": {
             "primary": "Explore Projects",
             "secondary": "Get in Touch"
-        }
+        },
+        "badge": "Available for opportunities",
+        "scroll": "Scroll Down",
+        "role": "Creative Developer",
+        "description": "Crafting immersive digital experiences at the intersection of <span class='text-primary font-semibold'>AI</span>, <span class='text-secondary font-semibold'>Design</span>, and <span class='text-accent font-semibold'>Performance</span>."
     },
     "about": {
         "title": "About Me",
@@ -24,7 +38,10 @@
             "projects": "Projects Done",
             "certifications": "Certifications",
             "competitions": "Competitions"
-        }
+        },
+        "identity": "Identity Link Established",
+        "architecting": "Architecting",
+        "digitalReality": "Digital Reality"
     },
     "projects": {
         "title": "Projects",
@@ -71,6 +88,11 @@
             "title": "Education"
         }
     },
+    "expertise": {
+        "title": "Core Capabilities",
+        "subtitle": "Specialized in cutting-edge technologies that power modern digital experiences",
+        "dragHint": "Drag or scroll to explore"
+    },
     "skills": {
         "title": "Skills & Tools",
         "subtitle": "Technologies and tools I work with",
@@ -114,9 +136,11 @@
             "email": "Your Email",
             "subject": "Subject",
             "message": "Your Message",
+            "messagePlaceholder": "Tell me about your project...",
             "send": "Send Message",
-            "submit": "Send Message",
-            "sending": "Sending...",
+            "submit": "SEND MESSAGE",
+            "sending": "SENDING...",
+            "sent": "SENT!",
             "success": "Message sent successfully!",
             "error": "Something went wrong. Please try again."
         },
@@ -131,11 +155,87 @@
             "phone": "Phone",
             "location": "Location",
             "availability": "Open for opportunities"
-        }
+        },
+        "hero": {
+            "title": "LET'S TALK",
+            "subtitle": "Have an idea? Let's build something extraordinary together.",
+            "ticker": {
+                "build": "Let's Build Something Amazing · ",
+                "freelance": "Available for Freelance · "
+            }
+        },
+        "faqData": [
+            {
+                "q": "What is your main area of expertise?",
+                "a": "As an Information Technology student at Telkom University and a Research Assistant at the Cyber Physical System Laboratory, I specialize in the intersection of Artificial Intelligence (Computer Vision & Deep Learning), Full-stack Development (Next.js & Node.js), and emerging Blockchain/Web3 technologies."
+            },
+            {
+                "q": "Are you available for research or freelance collaborations?",
+                "a": "Absolutely. I am currently active in AI research at the CPS Lab and HUMIC Research Center, but I'm always open to innovative freelance projects, internships, or technical collaborations that bridge innovation with strategic execution."
+            },
+            {
+                "q": "What is your typical tech stack for production?",
+                "a": "For AI projects, I primarily use Python with TensorFlow, PyTorch, and YOLO. For web applications, my go-to is the T3-style stack: Next.js, TypeScript, and Tailwind CSS, often integrated with AI Agents or Smart Contracts where appropriate."
+            },
+            {
+                "q": "Do you have experience with enterprise or lab projects?",
+                "a": "Yes, I've served as a System Analyst and AI Developer in various research-driven environments. I've architected everything from AIoT platforms and attack detection systems to student practicum modules for global audiences."
+            },
+            {
+                "q": "How can we start a partnership or project?",
+                "a": "The most efficient way is to use the contact form above or reach out directly via email at azril4974@gmail.com. I'm usually able to respond within 24 hours to discuss how my technical skill set can add value to your initiatives."
+            }
+        ]
     },
     "footer": {
         "copyright": "All rights reserved.",
-        "madeWith": "Made with"
+        "madeWith": "Made with",
+        "more": "More",
+        "marquee": [
+            "Open to Opportunities",
+            "Frontend Development",
+            "Backend Architecture",
+            "UI/UX Design",
+            "Creative Coding",
+            "System Optimization"
+        ],
+        "cta": {
+            "title": "Let's Work",
+            "titleHighlight": "Together",
+            "subtitle": "Have a project in mind? Let's build something extraordinary that solves real problems."
+        }
+    },
+    "ctaSection": {
+        "title": "Let's Build Something",
+        "together": "Together",
+        "subtitle": "Ready to collaborate on AI, Web Development, or Blockchain projects? Let's make it happen.",
+        "start": "Start a Project",
+        "work": "View My Work",
+        "words": {
+            "amazing": "Amazing",
+            "innovative": "Innovative",
+            "intelligent": "Intelligent",
+            "creative": "Creative"
+        }
+    },
+    "stats": {
+        "systemStatus": "System Status: Analytics Active",
+        "portfolio": "Technical Portfolio",
+        "totalPulse": "Total Pulse",
+        "peakActivity": "Peak Activity",
+        "dailyAverage": "Daily Average",
+        "currentSprint": "Current Sprint",
+        "engageFlow": "Engage Flow",
+        "weeklyEffort": "Weekly Coding Effort",
+        "processSpeed": "Process Speed",
+        "avgPerf": "Average Performance",
+        "latency": "LATENCY: 14MS",
+        "system": "SYSTEM: DARWIN_X64_STABLE",
+        "scanning": "SCANNING_LIVE_RESOURCES"
+    },
+    "projectHeader": {
+        "title": "Architecting Digital Reality",
+        "subtitle": "A curated showcase of technical innovation and creative engineering. Exploring the frontiers of <span class='font-bold text-white'>Artificial Intelligence</span>, Blockchain, and Immersive Web experiences."
     },
     "common": {
         "loading": "Loading...",
