@@ -10,10 +10,12 @@ import {
     ChevronRight,
     Briefcase,
     GraduationCap,
-    Filter
+    Filter,
+    Rocket
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
+import ExperienceStickyScroll from '@/components/sections/ExperienceStickyScroll';
 import { Experience, Education } from '@/types';
 
 type FilterType = 'all' | 'latest' | 'oldest' | 'ongoing';
@@ -279,6 +281,17 @@ export default function ExperiencePage() {
                     <h1 className="heading-lg mb-4">{t('title')}</h1>
                     <p className="subheading max-w-xl mx-auto">{t('subtitle')}</p>
                 </motion.div>
+
+                {/* Academic Foundation Highlight */}
+                <div className="mb-24">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="p-3 rounded-xl bg-primary/20">
+                            <GraduationCap className="w-6 h-6 text-primary" />
+                        </div>
+                        <h2 className="text-2xl font-bold italic tracking-tight uppercase">Academic Foundation</h2>
+                    </div>
+                    <ExperienceStickyScroll />
+                </div>
 
                 <div className="mb-16">
                     <div className="flex items-center gap-4 mb-8">

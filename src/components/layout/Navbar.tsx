@@ -10,6 +10,7 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
 import CardNav from '@/components/ui/CardNav';
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 
 function Clock() {
     const [time, setTime] = useState<string>('');
@@ -112,10 +113,6 @@ export function Navbar() {
         setIsMenuOpen((prev) => !prev);
     }, []);
 
-    const toggleTheme = useCallback(() => {
-        setTheme(theme === 'dark' ? 'light' : 'dark');
-    }, [theme, setTheme]);
-
     const toggleLocale = useCallback(() => {
         const newLocale = currentLocale === 'en' ? 'id' : 'en';
         document.cookie = `locale=${newLocale};path=/;max-age=31536000`;
@@ -205,21 +202,7 @@ export function Navbar() {
                             </motion.button>
 
                             {mounted && (
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={toggleTheme}
-                                    className="p-2 md:p-2.5 rounded-full bg-muted/80 hover:bg-muted transition-colors"
-                                    aria-label="Toggle theme"
-                                >
-                                    <motion.div
-                                        initial={false}
-                                        animate={{ rotate: isDark ? 0 : 180 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                                    </motion.div>
-                                </motion.button>
+                                <AnimatedThemeToggler />
                             )}
 
                             <motion.button
@@ -312,13 +295,9 @@ export function Navbar() {
                                     {currentLocale === 'en' ? 'English' : 'Indonesia'}
                                 </button>
                                 {mounted && (
-                                    <button
-                                        onClick={toggleTheme}
-                                        className="px-6 py-3 rounded-full glass-card text-sm font-medium hover:bg-muted/50 transition-colors flex items-center gap-2"
-                                    >
-                                        {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                                        {isDark ? 'Light' : 'Dark'}
-                                    </button>
+                                    <AnimatedThemeToggler
+                                        className="px-6 py-6 glass-card text-sm font-medium hover:bg-muted/50 flex items-center gap-2"
+                                    />
                                 )}
                             </motion.div>
                         </div>

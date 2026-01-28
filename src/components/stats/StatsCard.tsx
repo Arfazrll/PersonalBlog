@@ -69,13 +69,16 @@ export function StatsCard({ children, className = "", delay = 0 }: StatsCardProp
                     rotateY,
                     transformStyle: 'preserve-3d',
                 }}
-                className="relative h-full w-full rounded-[2rem] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-xl transition-all duration-200 group"
+                className="relative h-full w-full rounded-[2rem] bg-zinc-950/40 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-2xl transition-all duration-300 group shadow-2xl"
             >
+                {/* Multi-layered Glass Effect */}
+                <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/10 to-transparent dark:from-white/5 dark:to-transparent pointer-events-none" />
+
                 {/* Holographic Gradient Overlay */}
                 <div
-                    className="absolute inset-0 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    className="absolute inset-0 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
                     style={{
-                        background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(147,51,234,0.1) 50%, rgba(16,185,129,0.1) 100%)',
+                        background: 'linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(147,51,234,0.15) 50%, rgba(16,185,129,0.15) 100%)',
                         transform: 'translateZ(1px)',
                     }}
                 />

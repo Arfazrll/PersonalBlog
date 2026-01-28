@@ -393,8 +393,6 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
@@ -428,4 +426,8 @@
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+::view-transition-old(root), ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
 }
