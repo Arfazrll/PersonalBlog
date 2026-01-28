@@ -8,6 +8,7 @@ import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import { Achievement } from '@/types';
 import FallingText from '@/components/effects/FallingText';
+import CertificateHeroScroll from '@/components/sections/CertificateHeroScroll';
 
 const staggerContainer = {
     hidden: { opacity: 0 },
@@ -389,9 +390,14 @@ export default function AchievementsPage() {
     };
 
     return (
+
         <div className="min-h-screen bg-background text-foreground overflow-y-auto overflow-x-hidden">
+            {/* Hero Scroll Section */}
+            <CertificateHeroScroll />
+
             {/* Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                {/* ... existing background blobs ... */}
                 <motion.div
                     className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-foreground/[0.02] blur-3xl"
                     animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
@@ -404,235 +410,229 @@ export default function AchievementsPage() {
                 />
             </div>
 
-            {/* Main Two-Panel Layout */}
-            <div className="flex flex-col lg:flex-row relative z-10">
+            {/* CONTINUOUS CURTAIN LAYER: Covers the fixed hero */}
+            <div className="relative z-50 bg-background shadow-[0_-20px_40px_rgba(0,0,0,0.2)]">
 
-                {/* LEFT PANEL: Navigation - Sticky */}
-                <div className="lg:w-2/5 xl:w-1/3 h-auto lg:h-screen lg:sticky lg:top-0 flex flex-col pt-28 lg:pt-36">
+                {/* Main Two-Panel Layout */}
+                <div className="flex flex-col lg:flex-row">
 
-                    {/* Header */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="px-6 lg:px-10 mb-10"
-                    >
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="w-2 h-2 rounded-full bg-foreground" />
-                            <h1 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
-                                The Archive
-                            </h1>
-                        </div>
-                        <div className="h-px w-12 bg-gradient-to-r from-foreground/50 to-transparent" />
-                    </motion.div>
+                    {/* LEFT PANEL: Navigation - Sticky */}
+                    <div className="lg:w-2/5 xl:w-1/3 h-auto lg:h-screen lg:sticky lg:top-0 flex flex-col pt-28 lg:pt-36">
 
-                    {/* Navigation */}
-                    <motion.nav
-                        className="flex-1"
-                        variants={staggerContainer}
-                        initial="hidden"
-                        animate="show"
-                    >
-                        <motion.div variants={staggerItem}>
-                            <NavItem label="All Entries" active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} count={getCategoryCount('all')} />
-                        </motion.div>
-                        <motion.div variants={staggerItem}>
-                            <NavItem label="Certifications" active={activeCategory === 'certification'} onClick={() => setActiveCategory('certification')} count={getCategoryCount('certification')} />
-                        </motion.div>
-                        <motion.div variants={staggerItem}>
-                            <NavItem label="Awards" active={activeCategory === 'award'} onClick={() => setActiveCategory('award')} count={getCategoryCount('award')} />
-                        </motion.div>
-                        <motion.div variants={staggerItem}>
-                            <NavItem label="Competitions" active={activeCategory === 'competition'} onClick={() => setActiveCategory('competition')} count={getCategoryCount('competition')} />
-                        </motion.div>
-                    </motion.nav>
-
-                    {/* Large counter */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.6 }}
-                        className="p-6 lg:p-10 hidden lg:block"
-                    >
+                        {/* Header */}
                         <motion.div
-                            className="text-[9rem] font-black leading-none text-foreground/[0.04] select-none"
-                            animate={{ opacity: [0.04, 0.07, 0.04] }}
-                            transition={{ duration: 4, repeat: Infinity }}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="px-6 lg:px-10 mb-10"
                         >
-                            {stats.total.toString().padStart(2, '0')}
-                        </motion.div>
-                        <div className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest flex items-center gap-2 -mt-4">
-                            <Award className="w-3 h-3" />
-                            Achievements
-                        </div>
-                    </motion.div>
-                </div>
-
-                {/* RIGHT PANEL: Cards with own scroll */}
-                <div className="lg:w-3/5 xl:w-2/3 h-auto lg:h-screen flex flex-col pt-8 lg:pt-36 px-6 lg:px-10 pb-8">
-
-                    {/* Controls */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-6 shrink-0"
-                    >
-                        {/* Stats */}
-                        <div className="flex gap-2 flex-wrap">
-                            {[
-                                { icon: Trophy, value: stats.total },
-                                { icon: Medal, value: stats.awards },
-                                { icon: Award, value: stats.certifications }
-                            ].map((stat, i) => (
-                                <motion.div
-                                    key={i}
-                                    whileHover={{ scale: 1.05 }}
-                                    className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/40 bg-secondary/20 text-xs font-bold"
-                                >
-                                    <stat.icon className="w-3 h-3 text-muted-foreground" />
-                                    <span>{stat.value}</span>
-                                </motion.div>
-                            ))}
-                        </div>
-
-                        {/* Search */}
-                        <div className="flex items-center gap-2 w-full sm:w-auto">
-                            <div className="relative flex-1 sm:min-w-[200px] group">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="Search..."
-                                    value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
-                                    className="w-full bg-secondary/20 border border-border/40 focus:border-foreground/30 rounded-xl pl-10 pr-8 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground/40"
-                                />
-                                {searchQuery && (
-                                    <motion.button
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        onClick={() => setSearchQuery('')}
-                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                    >
-                                        <X className="w-3.5 h-3.5" />
-                                    </motion.button>
-                                )}
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="w-2 h-2 rounded-full bg-foreground" />
+                                <h1 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+                                    The Archive
+                                </h1>
                             </div>
-                            <motion.button
-                                onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="p-2.5 rounded-xl bg-secondary/20 hover:bg-secondary/40 border border-border/40 text-muted-foreground hover:text-foreground transition-all"
-                            >
-                                {sortOrder === 'newest' ? <SortDesc className="w-4 h-4" /> : <SortAsc className="w-4 h-4" />}
-                            </motion.button>
-                        </div>
-                    </motion.div>
-
-                    {/* Scrollable Cards Container - SEPARATE SCROLL WITH CUSTOM STYLING */}
-                    <div
-                        className="flex-1 overflow-y-auto overflow-x-hidden pr-4 -mr-4 custom-scrollbar"
-                        style={{ maxHeight: 'calc(100vh - 14.5rem)' }}
-                    >
-                        <style jsx>{`
-                            .custom-scrollbar::-webkit-scrollbar {
-                                width: 5px;
-                            }
-                            .custom-scrollbar::-webkit-scrollbar-track {
-                                background: transparent;
-                            }
-                            .custom-scrollbar::-webkit-scrollbar-thumb {
-                                background: rgba(var(--foreground-rgb), 0.1);
-                                border-radius: 10px;
-                            }
-                            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                                background: rgba(var(--foreground-rgb), 0.2);
-                            }
-                        `}</style>
-                        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5 pb-8">
-                            <AnimatePresence mode="popLayout">
-                                {filteredAchievements.map((achievement, index) => (
-                                    <AchievementCard
-                                        key={achievement.id}
-                                        achievement={achievement}
-                                        onClick={() => setSelectedAchievement(achievement)}
-                                        index={index}
-                                        onMouseEnter={() => setHoveredIndex(index)}
-                                        onMouseLeave={() => setHoveredIndex(null)}
-                                        isHovered={hoveredIndex === index}
-                                    />
-                                ))}
-                            </AnimatePresence>
+                            <div className="h-px w-12 bg-gradient-to-r from-foreground/50 to-transparent" />
                         </motion.div>
 
-                        {filteredAchievements.length === 0 && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="flex flex-col items-center justify-center py-16 text-center"
-                            >
-                                <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                                    <Award className="w-16 h-16 text-muted-foreground/20 mb-4" />
-                                </motion.div>
-                                <p className="text-sm font-medium text-muted-foreground/50">No achievements found</p>
+                        {/* Navigation */}
+                        <motion.nav
+                            className="flex-1"
+                            variants={staggerContainer}
+                            initial="hidden"
+                            animate="show"
+                        >
+                            <motion.div variants={staggerItem}>
+                                <NavItem label="All Entries" active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} count={getCategoryCount('all')} />
                             </motion.div>
-                        )}
+                            <motion.div variants={staggerItem}>
+                                <NavItem label="Certifications" active={activeCategory === 'certification'} onClick={() => setActiveCategory('certification')} count={getCategoryCount('certification')} />
+                            </motion.div>
+                            <motion.div variants={staggerItem}>
+                                <NavItem label="Awards" active={activeCategory === 'award'} onClick={() => setActiveCategory('award')} count={getCategoryCount('award')} />
+                            </motion.div>
+                            <motion.div variants={staggerItem}>
+                                <NavItem label="Competitions" active={activeCategory === 'competition'} onClick={() => setActiveCategory('competition')} count={getCategoryCount('competition')} />
+                            </motion.div>
+                        </motion.nav>
+
+                        {/* Large counter */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.6 }}
+                            className="p-6 lg:p-10 hidden lg:block"
+                        >
+                            <motion.div
+                                className="text-[9rem] font-black leading-none text-foreground/20 select-none"
+                            >
+                                {stats.total.toString().padStart(2, '0')}
+                            </motion.div>
+                            <div className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest flex items-center gap-2 -mt-4">
+                                <Award className="w-3 h-3" />
+                                Achievements
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* RIGHT PANEL: Cards with own scroll */}
+                    <div className="lg:w-3/5 xl:w-2/3 h-auto lg:h-screen flex flex-col pt-8 lg:pt-36 px-6 lg:px-10 pb-8">
+
+                        {/* Controls */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-6 shrink-0"
+                        >
+                            {/* Stats */}
+                            <div className="flex gap-2 flex-wrap">
+                                {[
+                                    { icon: Trophy, value: stats.total },
+                                    { icon: Medal, value: stats.awards },
+                                    { icon: Award, value: stats.certifications }
+                                ].map((stat, i) => (
+                                    <motion.div
+                                        key={i}
+                                        whileHover={{ scale: 1.05 }}
+                                        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/40 bg-secondary/20 text-xs font-bold"
+                                    >
+                                        <stat.icon className="w-3 h-3 text-muted-foreground" />
+                                        <span>{stat.value}</span>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* Search */}
+                            <div className="flex items-center gap-2 w-full sm:w-auto">
+                                <div className="relative flex-1 sm:min-w-[200px] group">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        value={searchQuery}
+                                        onChange={e => setSearchQuery(e.target.value)}
+                                        className="w-full bg-secondary/20 border border-border/40 focus:border-foreground/30 rounded-xl pl-10 pr-8 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground/40"
+                                    />
+                                    {searchQuery && (
+                                        <motion.button
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            onClick={() => setSearchQuery('')}
+                                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </motion.button>
+                                    )}
+                                </div>
+                                <motion.button
+                                    onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="p-2.5 rounded-xl bg-secondary/20 hover:bg-secondary/40 border border-border/40 text-muted-foreground hover:text-foreground transition-all"
+                                >
+                                    {sortOrder === 'newest' ? <SortDesc className="w-4 h-4" /> : <SortAsc className="w-4 h-4" />}
+                                </motion.button>
+                            </div>
+                        </motion.div>
+
+                        {/* Scrollable Cards Container - SEPARATE SCROLL WITH CUSTOM STYLING */}
+                        <div
+                            className="flex-1 overflow-y-auto overflow-x-hidden pr-4 -mr-4 custom-scrollbar"
+                            style={{
+                                maxHeight: 'calc(100vh - 14.5rem)',
+                                maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                                WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
+                            }}
+                        >
+                            <style jsx>{`
+                                .custom-scrollbar::-webkit-scrollbar {
+                                    width: 5px;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-track {
+                                    background: transparent;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-thumb {
+                                    background: hsl(var(--muted-foreground) / 0.3);
+                                    border-radius: 10px;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                    background: hsl(var(--muted-foreground) / 0.5);
+                                }
+                            `}</style>
+                            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5 pb-8">
+                                <AnimatePresence mode="popLayout">
+                                    {filteredAchievements.map((achievement, index) => (
+                                        <AchievementCard
+                                            key={achievement.id}
+                                            achievement={achievement}
+                                            onClick={() => setSelectedAchievement(achievement)}
+                                            index={index}
+                                            onMouseEnter={() => setHoveredIndex(index)}
+                                            onMouseLeave={() => setHoveredIndex(null)}
+                                            isHovered={hoveredIndex === index}
+                                        />
+                                    ))}
+                                </AnimatePresence>
+                            </motion.div>
+
+                            {filteredAchievements.length === 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="flex flex-col items-center justify-center py-16 text-center"
+                                >
+                                    <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                                        <Award className="w-16 h-16 text-muted-foreground/20 mb-4" />
+                                    </motion.div>
+                                    <p className="text-sm font-medium text-muted-foreground/50">No achievements found</p>
+                                </motion.div>
+                            )}
+                        </div>
                     </div>
                 </div>
+
+                {/* FALLING TEXT SECTION - Included in the curtain */}
+                <motion.section
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    className="w-full pt-12 pb-20"
+                >
+                    <div className="max-w-5xl mx-auto px-6">
+                        {/* Section header */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="text-center mb-8"
+                        >
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-3">
+                                Technical Universe
+                            </h2>
+                            <p className="text-sm text-muted-foreground/60 max-w-lg mx-auto leading-relaxed">
+                                Interact with the core technologies and values that drive my research and development journey.
+                            </p>
+                        </motion.div>
+
+                        {/* Falling text container */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            className="relative w-full mx-auto h-[300px] md:h-[400px]"
+                        >
+                            <FallingText
+                                text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
+                                highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
+                                trigger="scroll"
+                                gravity={0.8}
+                                mouseConstraintStiffness={0.2}
+                                fontSize="1.5rem"
+                                fontWeight="900"
+                            />
+                        </motion.div>
+                    </div>
+                </motion.section>
             </div>
-
-            {/* FALLING TEXT SECTION - Full width, centered at bottom */}
-            <motion.section
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                className="relative z-10 w-full py-12 lg:py-20"
-            >
-                <div className="max-w-5xl mx-auto px-6">
-                    {/* Section header */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-center mb-8"
-                    >
-                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-3">
-                            Technical Universe
-                        </h2>
-                        <p className="text-sm text-muted-foreground/60 max-w-lg mx-auto leading-relaxed">
-                            Interact with the core technologies and values that drive my research and development journey.
-                        </p>
-                    </motion.div>
-
-                    {/* Falling text container - Narrower height for more compact feel */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        className="relative w-full mx-auto"
-                        style={{ height: '200px' }}
-                    >
-                        <FallingText
-                            text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
-                            highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
-                            trigger="scroll"
-                            gravity={0.5}
-                            mouseConstraintStiffness={0.2}
-                            fontSize="1.4rem"
-                            fontWeight="900"
-                        />
-                    </motion.div>
-
-                    {/* Hint */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        className="flex items-center justify-center gap-2 mt-4 text-muted-foreground/30"
-                    >
-
-
-                    </motion.div>
-                </div>
-            </motion.section>
 
             {/* Modal */}
             <AnimatePresence>

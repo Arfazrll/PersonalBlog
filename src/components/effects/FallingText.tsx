@@ -219,12 +219,9 @@ export default function FallingText({
         if (trigger === 'scroll' && containerRef.current) {
             const observer = new IntersectionObserver(
                 ([entry]) => {
-                    if (entry.isIntersecting) {
-                        setEffectStarted(true);
-                        observer.disconnect();
-                    }
+                    setEffectStarted(entry.isIntersecting);
                 },
-                { threshold: 0.01 }
+                { threshold: 0.1 }
             );
             observer.observe(containerRef.current);
             return () => observer.disconnect();
@@ -234,9 +231,12 @@ export default function FallingText({
     useEffect(() => {
         if (effectStarted) {
             startPhysics();
+        } else {
+            cleanup();
+            createTextHTML(); // Reset DOM to initial state when effect stops
         }
         return () => cleanup();
-    }, [effectStarted, startPhysics, cleanup]);
+    }, [effectStarted, startPhysics, cleanup, createTextHTML]);
 
     return (
         <div
