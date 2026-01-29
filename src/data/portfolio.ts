@@ -174,6 +174,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: true,
             location: 'Bandung, Jawa Barat',
             type: 'part-time',
+            logo: '/assets/logocps.png',
         },
         {
             id: 'exp-1b',
@@ -191,6 +192,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: true,
             location: 'Bandung, Jawa Barat',
             type: 'part-time',
+            logo: '/assets/logocps.png',
         },
         {
             id: 'exp-1c',
@@ -209,6 +211,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Bandung, Jawa Barat',
             type: 'internship',
+            logo: '/assets/logocps.png',
         },
         {
             id: 'exp-2',
@@ -227,6 +230,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Bandung, Jawa Barat',
             type: 'internship',
+            logo: '/assets/HumicLogo.png',
         },
         {
             id: 'exp-3',
@@ -245,6 +249,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Bandung, Jawa Barat',
             type: 'internship',
+            logo: '/assets/aselablogo.png',
         },
         {
             id: 'exp-4',
@@ -263,6 +268,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Bandung, Jawa Barat',
             type: 'part-time',
+            logo: '/assets/iflablogo.png',
         },
         {
             id: 'exp-5',
@@ -281,6 +287,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Indonesia',
             type: 'freelance',
+            logo: '/assets/dicodinglogo.png',
         },
         {
             id: 'exp-6',
@@ -299,6 +306,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Indonesia',
             type: 'freelance',
+            logo: '/assets/dicodinglogo.png',
         },
         {
             id: 'exp-7',
@@ -317,6 +325,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Indonesia',
             type: 'part-time',
+            logo: '/assets/logodigistar.png',
         },
         {
             id: 'exp-8',
@@ -334,6 +343,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: true,
             location: 'Indonesia',
             type: 'part-time',
+            logo: '/assets/logodigistar.png',
         },
         {
             id: 'exp-9',
@@ -352,6 +362,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Indonesia',
             type: 'full-time',
+            logo: '/assets/microsotlogo.jpg',
         },
         {
             id: 'exp-10',
@@ -369,6 +380,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: true,
             location: 'Bandung, Jawa Barat',
             type: 'part-time',
+            logo: '/assets/logogdsc.jpg',
         },
         {
             id: 'exp-11',
@@ -387,6 +399,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Jawa Barat',
             type: 'part-time',
+            logo: '/assets/youth-ranger-indonesia.png',
         },
         {
             id: 'exp-12',
@@ -405,6 +418,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Bandung, Jawa Barat',
             type: 'part-time',
+            logo: '/assets/aieseclogo.png',
         },
         {
             id: 'exp-13',
@@ -423,6 +437,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Jakarta',
             type: 'full-time',
+            logo: '/assets/indosat-ooredoo-hutchison-digital-camp.png',
         },
         {
             id: 'exp-14',
@@ -441,6 +456,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Bandung, Jawa Barat',
             type: 'part-time',
+            logo: '/assets/TelkomUniversityLogo.png',
         },
         {
             id: 'exp-15',
@@ -459,6 +475,7 @@ export const portfolioData: PortfolioData = {
             isOngoing: false,
             location: 'Bandung, Jawa Barat',
             type: 'internship',
+            logo: '/assets/dinas-pangan-dan-pertanian-kota-bandung.png',
         },
     ],
     education: [

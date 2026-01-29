@@ -24,7 +24,6 @@ export const SmoothScrollHero = () => {
                 }}
             >
                 <Hero />
-                <Schedule />
             </ReactLenis>
         </div>
     );
@@ -197,48 +196,5 @@ const ParallaxImg = ({ className, alt, src, start, end, scrollY }: { className?:
             className={className}
             style={{ transform, opacity }}
         />
-    );
-};
-
-const Schedule = () => {
-    return (
-        <section
-            id="launch-schedule"
-            className="mx-auto max-w-5xl px-4 py-48 text-zinc-900 dark:text-white"
-        >
-            <motion.h1
-                initial={{ y: 48, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ ease: "easeInOut", duration: 0.75 }}
-                className="mb-20 text-4xl font-black uppercase text-zinc-900 dark:text-zinc-50 text-center"
-            >
-                Experience Timeline
-            </motion.h1>
-            <ScheduleItem title="Lead Frontend Engineer" date="2024 - Present" location="Remote" />
-            <ScheduleItem title="Senior React Developer" date="2022 - 2024" location="New York, US" />
-            <ScheduleItem title="Full Stack Developer" date="2020 - 2022" location="Toronto, CA" />
-            <ScheduleItem title="Frontend Developer" date="2018 - 2020" location="London, UK" />
-            <ScheduleItem title="Intern" date="2017 - 2018" location="Berlin, DE" />
-        </section>
-    );
-};
-
-const ScheduleItem = ({ title, date, location }: { title: string, date: string, location: string }) => {
-    return (
-        <motion.div
-            initial={{ y: 48, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ ease: "easeInOut", duration: 0.75 }}
-            className="mb-9 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-3 pb-9 hover:bg-zinc-100/50 dark:hover:bg-zinc-900/50 transition-colors rounded-lg"
-        >
-            <div>
-                <p className="mb-1.5 text-xl font-bold text-zinc-900 dark:text-zinc-50">{title}</p>
-                <p className="text-sm uppercase text-zinc-500 dark:text-zinc-500">{date}</p>
-            </div>
-            <div className="flex items-center gap-1.5 text-end text-sm uppercase text-zinc-500 dark:text-zinc-500">
-                <p>{location}</p>
-                <FiMapPin />
-            </div>
-        </motion.div>
     );
 };

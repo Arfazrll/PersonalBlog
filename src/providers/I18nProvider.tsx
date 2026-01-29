@@ -7,11 +7,12 @@ interface I18nProviderProps {
     children: ReactNode;
     locale: string;
     messages: AbstractIntlMessages;
+    timeZone?: string;
 }
 
-export function I18nProvider({ children, locale, messages }: I18nProviderProps) {
+export function I18nProvider({ children, locale, messages, timeZone = 'Asia/Jakarta' }: I18nProviderProps) {
     return (
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
             {children}
         </NextIntlClientProvider>
     );
