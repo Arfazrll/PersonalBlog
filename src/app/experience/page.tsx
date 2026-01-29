@@ -120,6 +120,8 @@ function EducationCard({ education, index }: { education: Education; index: numb
     );
 }
 
+import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
+
 export default function ExperiencePage() {
     const t = useTranslations('experience');
     const [isEducationExpanded, setIsEducationExpanded] = useState(false);
@@ -127,28 +129,14 @@ export default function ExperiencePage() {
     const { resolvedTheme } = useTheme();
 
     return (
-        <div className="min-h-screen pt-32 pb-20 relative overflow-hidden">
-            {/* Hyperspeed Background Removed */}
+        <div className="bg-background text-foreground relative">
+            {/* Smooth Scroll Hero Section */}
+            <SmoothScrollHero />
 
             <FloatingShape className="w-[500px] h-[500px] -top-20 -right-40" gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)" />
             <FloatingShape className="w-[400px] h-[400px] bottom-40 -left-20" gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)" delay={3} />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-16"
-                >
-                    <motion.span
-                        className="inline-block px-4 py-2 rounded-full glass-card text-sm font-medium mb-6"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                    >
-                        My Journey
-                    </motion.span>
-                    <h1 className="heading-lg mb-4">{t('title')}</h1>
-                    <p className="subheading max-w-xl mx-auto">{t('subtitle')}</p>
-                </motion.div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20">
 
                 {/* Academic Foundation Highlight (Interactive Reveal) */}
                 <div

@@ -73,69 +73,42 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
     const getPositions = useCallback((): Positions => {
         const vw = typeof window !== "undefined" ? window.innerWidth : 1920;
         const vh = typeof window !== "undefined" ? window.innerHeight : 1080;
+        const isMobile = vw < 768;
 
-        const initial: Record<string, Position> = {
-            cert1: {
-                top: vh * 0.15,
-                left: vw * 0.05,
-                width: vw * 0.22,
-                height: vh * 0.22,
-                borderRadius: 12,
-                zIndex: 1
-            },
-            cert2: {
-                top: vh * 0.12,
-                left: vw * 0.38,
-                width: vw * 0.2,
-                height: vh * 0.2,
-                borderRadius: 12,
-                zIndex: 1
-            },
-            cert3: {
-                top: vh * 0.18,
-                left: vw * 0.72,
-                width: vw * 0.22,
-                height: vh * 0.22,
-                borderRadius: 12,
-                zIndex: 1
-            },
-            cert4: {
-                top: vh * 0.70,
-                left: vw * 0.08,
-                width: vw * 0.2,
-                height: vh * 0.25,
-                borderRadius: 12,
-                zIndex: 1
-            },
-            cert5: {
-                top: vh * 0.75,
-                left: vw * 0.42,
-                width: vw * 0.2,
-                height: vh * 0.18,
-                borderRadius: 12,
-                zIndex: 1
-            },
-            cert6: {
-                top: vh * 0.65,
-                left: vw * 0.75,
-                width: vw * 0.18,
-                height: vh * 0.25,
-                borderRadius: 12,
-                zIndex: 1
-            },
+        // Desktop Initial Positions
+        const desktopInitial: Record<string, Position> = {
+            cert1: { top: vh * 0.15, left: vw * 0.05, width: vw * 0.22, height: vh * 0.22, borderRadius: 12, zIndex: 1 },
+            cert2: { top: vh * 0.12, left: vw * 0.38, width: vw * 0.2, height: vh * 0.2, borderRadius: 12, zIndex: 1 },
+            cert3: { top: vh * 0.18, left: vw * 0.72, width: vw * 0.22, height: vh * 0.22, borderRadius: 12, zIndex: 1 },
+            cert4: { top: vh * 0.70, left: vw * 0.08, width: vw * 0.2, height: vh * 0.25, borderRadius: 12, zIndex: 1 },
+            cert5: { top: vh * 0.75, left: vw * 0.42, width: vw * 0.2, height: vh * 0.18, borderRadius: 12, zIndex: 1 },
+            cert6: { top: vh * 0.65, left: vw * 0.75, width: vw * 0.18, height: vh * 0.25, borderRadius: 12, zIndex: 1 },
         };
 
+        // Mobile Initial Positions (Larger relative size, centrally distributed)
+        const mobileInitial: Record<string, Position> = {
+            cert1: { top: vh * 0.15, left: vw * 0.05, width: vw * 0.42, height: vh * 0.18, borderRadius: 8, zIndex: 1 },
+            cert2: { top: vh * 0.12, left: vw * 0.52, width: vw * 0.4, height: vh * 0.15, borderRadius: 8, zIndex: 1 },
+            cert3: { top: vh * 0.35, left: vw * 0.08, width: vw * 0.38, height: vh * 0.18, borderRadius: 8, zIndex: 1 },
+            cert4: { top: vh * 0.60, left: vw * 0.10, width: vw * 0.42, height: vh * 0.20, borderRadius: 8, zIndex: 1 },
+            cert5: { top: vh * 0.65, left: vw * 0.55, width: vw * 0.38, height: vh * 0.15, borderRadius: 8, zIndex: 1 },
+            cert6: { top: vh * 0.40, left: vw * 0.50, width: vw * 0.35, height: vh * 0.20, borderRadius: 8, zIndex: 1 },
+        };
+
+        const initial = isMobile ? mobileInitial : desktopInitial;
+
+        // Desktop Grid
         const gridW = Math.min(vw * 0.85, 1400);
         const gridH = vh * 0.7;
         const startX = (vw - gridW) / 2;
         const startY = (vh - gridH) / 2 + (vh * 0.05);
         const gap = 16;
-
         const col1W = (gridW - 2 * gap) * 0.4;
         const col2W = (gridW - 2 * gap) * 0.3;
         const col3W = (gridW - 2 * gap) * 0.3;
 
-        const final: Record<string, Position> = {
+        // Desktop Final Positions
+        const desktopFinal: Record<string, Position> = {
             cert1: { top: startY, left: startX, width: col1W, height: (gridH - gap) * 0.55, borderRadius: 8, zIndex: 10 },
             cert2: { top: startY + (gridH - gap) * 0.55 + gap, left: startX, width: col1W, height: (gridH - gap) * 0.45, borderRadius: 8, zIndex: 10 },
             cert3: { top: startY, left: startX + col1W + gap, width: col2W, height: (gridH - gap) * 0.4, borderRadius: 8, zIndex: 10 },
@@ -143,6 +116,24 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             cert5: { top: startY, left: startX + col1W + col2W + 2 * gap, width: col3W, height: (gridH - gap) * 0.65, borderRadius: 8, zIndex: 10 },
             cert6: { top: startY + (gridH - gap) * 0.65 + gap, left: startX + col1W + col2W + 2 * gap, width: col3W, height: (gridH - gap) * 0.35, borderRadius: 8, zIndex: 10 },
         };
+
+        // Mobile Final Positions (Simple 2-column grid, larger images)
+        const mGap = 10;
+        const mGridW = vw * 0.9;
+        const mStartX = (vw - mGridW) / 2;
+        const mColW = (mGridW - mGap) / 2;
+        const mStartY = vh * 0.2; // Start higher
+
+        const mobileFinal: Record<string, Position> = {
+            cert1: { top: mStartY, left: mStartX, width: mColW, height: 160, borderRadius: 8, zIndex: 10 },
+            cert2: { top: mStartY, left: mStartX + mColW + mGap, width: mColW, height: 160, borderRadius: 8, zIndex: 10 },
+            cert3: { top: mStartY + 170, left: mStartX, width: mColW, height: 160, borderRadius: 8, zIndex: 10 },
+            cert4: { top: mStartY + 170, left: mStartX + mColW + mGap, width: mColW, height: 160, borderRadius: 8, zIndex: 10 },
+            cert5: { top: mStartY + 340, left: mStartX, width: mColW, height: 160, borderRadius: 8, zIndex: 10 },
+            cert6: { top: mStartY + 340, left: mStartX + mColW + mGap, width: mColW, height: 160, borderRadius: 8, zIndex: 10 },
+        };
+
+        const final = isMobile ? mobileFinal : desktopFinal;
 
         return { initial, final };
     }, []);
@@ -252,8 +243,8 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             {/* SPACER: Takes up space in the document flow to allow scrolling */}
             <div ref={spacerRef} className="h-[140vh] w-full relative z-10 pointer-events-none" />
 
-            {/* FIXED HERO: Stays behind content. z-0 means standard content (z-10) will slide over it */}
-            <div ref={fixedContainerRef} className="fixed inset-0 z-0 h-screen w-full overflow-hidden bg-background">
+            {/* FIXED HERO: Stays behind content. z-10 ensures it sits ABOVE particles (z-0), but transparent to see them. */}
+            <div ref={fixedContainerRef} className="fixed inset-0 z-10 h-screen w-full overflow-hidden bg-transparent pointer-events-none">
                 {/* Background Effects */}
                 <div className="absolute inset-0 opacity-20 pointer-events-none">
                     <div className="absolute top-[20%] right-[10%] w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full" />
@@ -263,7 +254,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                 {/* Content */}
                 <div
                     ref={heroContentRef}
-                    className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-50 pt-10"
+                    className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-50 pt-10 pb-32"
                 >
                     <div className="inline-block px-4 py-1.5 rounded-full bg-secondary/50 backdrop-blur-md border border-border/50 text-xs font-medium mb-6 animate-fade-in-up">
                         Professional Milestones

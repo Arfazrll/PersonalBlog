@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useMotionTemplate, motionValue } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Search, SortAsc, SortDesc, ExternalLink, X, Calendar, Building2, Trophy, Medal, Award, Target, ChevronRight, MousePointer2, Eye, Share2 } from 'lucide-react';
@@ -347,8 +347,21 @@ function AchievementModal({ achievement, onClose }: { achievement: Achievement; 
     );
 }
 
+import { useTheme } from 'next-themes';
+import Particles from '@/components/ui/Particles';
+
 export default function AchievementsPage() {
     const t = useTranslations('achievements');
+    const { resolvedTheme } = useTheme();
+    const [color, setColor] = useState('#ffffff');
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        // Green for Dark, Light Blue (Sky) for Light
+        setColor(resolvedTheme === 'dark' ? '#22c55e' : '#0ea5e9');
+    }, [resolvedTheme]);
+
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [activeCategory, setActiveCategory] = useState('all');
@@ -408,6 +421,24 @@ export default function AchievementsPage() {
                     animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
                     transition={{ duration: 6, repeat: Infinity, delay: 1 }}
                 />
+
+                {/* Interactive Particles Layer - Z-0 to sit behind Hero (Z-10) */}
+                {mounted && (
+                    <div className="fixed inset-0 z-0 pointer-events-none">
+                        <Particles
+                            particleColors={[color]}
+                            particleCount={300}
+                            particleSpread={10}
+                            speed={0.1}
+                            particleBaseSize={160}
+                            moveParticlesOnHover={true}
+                            alphaParticles={false}
+                            disableRotation={false}
+                            pixelRatio={1}
+                            className="w-full h-full"
+                        />
+                    </div>
+                )}
             </div>
 
             {/* CONTINUOUS CURTAIN LAYER: Covers the fixed hero */}
@@ -536,12 +567,7 @@ export default function AchievementsPage() {
 
                         {/* Scrollable Cards Container - SEPARATE SCROLL WITH CUSTOM STYLING */}
                         <div
-                            className="flex-1 overflow-y-auto overflow-x-hidden pr-4 -mr-4 custom-scrollbar"
-                            style={{
-                                maxHeight: 'calc(100vh - 14.5rem)',
-                                maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-                                WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
-                            }}
+                            className="flex-1 pr-4 -mr-4 custom-scrollbar h-auto overflow-visible lg:overflow-y-auto lg:max-h-[calc(100vh-14.5rem)] lg:[mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] lg:[webkit-mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
                         >
                             <style jsx>{`
                                 .custom-scrollbar::-webkit-scrollbar {
