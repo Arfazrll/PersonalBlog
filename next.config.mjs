@@ -6,7 +6,7 @@ const withNextIntl = createNextIntlPlugin('./src/lib/i18n.ts');
 const nextConfig = {
     reactStrictMode: true,
     images: {
-        domains: ['cdn.jsdelivr.net'],
+        domains: ['cdn.jsdelivr.net', 'images.unsplash.com', 'assets.aceternity.com'],
         formats: ['image/avif', 'image/webp'],
     },
     experimental: {
