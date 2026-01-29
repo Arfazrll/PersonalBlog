@@ -16,10 +16,11 @@ import {
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
-import ExperienceStickyScroll from '@/components/sections/ExperienceStickyScroll';
 import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 import { Experience, Education } from '@/types';
+
+import ExperienceMarquee from '../../components/sections/ExperienceMarquee';
 import { Timeline } from '@/components/ui/timeline';
 
 type FilterType = 'all' | 'latest' | 'oldest' | 'ongoing';
@@ -123,6 +124,8 @@ function EducationCard({ education, index }: { education: Education; index: numb
 
 import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
 
+import ExperienceStickyScroll from '../../components/sections/ExperienceStickyScroll';
+
 export default function ExperiencePage() {
     const t = useTranslations('experience');
     const [isEducationExpanded, setIsEducationExpanded] = useState(false);
@@ -139,7 +142,12 @@ export default function ExperiencePage() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20">
 
-                {/* Academic Foundation Highlight (Interactive Reveal) */}
+                {/* 1. Work Experience Gallery Marquee (Moved Top) */}
+                <div className="w-screen relative left-1/2 -translate-x-1/2 mb-20 -mt-10 md:-mt-20">
+                    <ExperienceMarquee />
+                </div>
+
+                {/* 2. Academic Foundation Highlight (Interactive Reveal) */}
                 <div
                     className="mb-24 relative"
                     onMouseEnter={() => setIsEducationHovered(true)}
@@ -312,13 +320,13 @@ export default function ExperiencePage() {
                             </motion.div>
                         )}
                     </AnimatePresence>
-                    {/* Work Experience Timeline */}
-                    <div className="w-full">
-                        <ExperienceTimeline />
-                    </div>
+                </div>
+
+                {/* 3. Changelog / Journey (Restored) */}
+                <div className="w-full mb-20">
+                    <ExperienceTimeline />
                 </div>
             </div>
-            );
         </div>
     );
 }

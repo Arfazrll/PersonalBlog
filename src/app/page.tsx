@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, Suspense, lazy, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, useScroll, useTransform, AnimatePresence, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useSpring as useReactSpring, animated, config } from '@react-spring/web';
@@ -29,7 +29,10 @@ if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
 
-const Scene3D = lazy(() => import('@/components/three/Scene3D').then(mod => ({ default: mod.Scene3D })));
+const Scene3D = dynamic(() => import('@/components/three/Scene3D').then(mod => ({ default: mod.Scene3D })), {
+    ssr: false,
+    loading: () => null
+});
 const AboutSection = dynamic(() => import("@/components/sections/AboutSection"), {
     ssr: false,
     loading: () => <div className="h-[600px] w-full animate-pulse bg-zinc-100/5 dark:bg-zinc-800/5" />
@@ -266,9 +269,7 @@ function HeroIntro() {
             <AnimatedBackground />
 
             {/* 3D Scene */}
-            <Suspense fallback={null}>
-                <Scene3D className="opacity-20" />
-            </Suspense>
+            <Scene3D className="opacity-20" />
 
             {/* Main Content */}
             <animated.div
