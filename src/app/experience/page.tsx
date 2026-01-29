@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from "next/image";
 import { useTranslations } from 'next-intl';
 import {
     Calendar,
@@ -396,14 +397,14 @@ function ExperienceTimeline() {
 
                         {/* Visual Assets (Placeholders as requested) */}
                         <div className="grid grid-cols-2 gap-4">
-                            <img
+                            <Image
                                 src={`https://assets.aceternity.com/templates/startup-${(idx % 4) + 1}.webp`}
                                 alt="work environment"
                                 width={500}
                                 height={500}
                                 className="rounded-lg object-cover h-24 md:h-32 w-full shadow-sm hover:shadow-md transition-shadow duration-200"
                             />
-                            <img
+                            <Image
                                 src={`https://assets.aceternity.com/templates/startup-${((idx + 1) % 4) + 1}.webp`}
                                 alt="project showcase"
                                 width={500}

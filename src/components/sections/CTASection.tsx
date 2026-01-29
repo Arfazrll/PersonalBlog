@@ -23,7 +23,7 @@ export default function CTASection() {
             setCurrentWord((prev) => (prev + 1) % words.length);
         }, 2500);
         return () => clearInterval(interval);
-    }, []);
+    }, [words.length]);
 
     useEffect(() => {
         if (!sectionRef.current) return;

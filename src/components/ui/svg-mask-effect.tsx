@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, useMotionValue, useMotionTemplate, animate } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -41,11 +41,11 @@ export const MaskContainer = ({
   };
 
   // Update mouse position using cached rect
-  const updateMousePosition = (e: MouseEvent) => {
+  const updateMousePosition = useCallback((e: MouseEvent) => {
     if (!rectRef.current) return;
     x.set(e.clientX - rectRef.current.left);
     y.set(e.clientY - rectRef.current.top);
-  };
+  }, [x, y]);
 
   useEffect(() => {
     // Initial rect calculation
@@ -66,7 +66,7 @@ export const MaskContainer = ({
       container.removeEventListener("mouseenter", updateRect);
       container.removeEventListener("mousemove", updateMousePosition);
     };
-  }, []);
+  }, [updateMousePosition]);
 
   // Dynamic mask position: center the mask on the cursor
   const maskPosition = useMotionTemplate`calc(${x}px - ${maskSize}px / 2) calc(${y}px - ${maskSize}px / 2)`;

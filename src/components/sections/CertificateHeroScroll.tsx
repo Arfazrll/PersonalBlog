@@ -4,6 +4,8 @@ import { useEffect, useRef, useCallback, type FC } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTheme } from "next-themes";
+import { motion } from "motion/react";
+import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 
 interface ImageItem {
@@ -287,10 +289,12 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                             zIndex: 1 // Base z-index
                         }}
                     >
-                        <img
+                        <Image
                             src={image.src}
                             alt={image.alt}
-                            className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover opacity-90 hover:opacity-100 transition-opacity"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60 pointer-events-none" />
                     </div>

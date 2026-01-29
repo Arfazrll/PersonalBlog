@@ -229,9 +229,15 @@ export function ScrollStack({
             if (animationFrameRef.current) {
                 cancelAnimationFrame(animationFrameRef.current);
             }
-            lenis.destroy();
+            // Capture ref values for cleanup
+            const currentLenis = lenisRef.current;
+            const currentLastTransforms = lastTransformsRef.current;
+
+            if (currentLenis) {
+                currentLenis.destroy();
+            }
             cardsRef.current = [];
-            lastTransformsRef.current.clear();
+            currentLastTransforms.clear();
         };
     }, [itemDistance, updateCardTransforms]);
 
