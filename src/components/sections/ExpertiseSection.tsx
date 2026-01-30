@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { useTranslations } from 'next-intl';
 import { CircularGallery } from "@/components/ui/CircularGallery";
 import TextScrollMarquee from "@/components/ui/TextScrollMarquee";

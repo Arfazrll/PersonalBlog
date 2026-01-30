@@ -64,10 +64,6 @@ const Hero = () => {
                     });
                 }}
             >
-                <span className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-400 bg-white/50 dark:bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800">
-                    Timeline
-                </span>
-                <ChevronDown className="w-5 h-5 text-zinc-500 dark:text-zinc-400 animate-bounce" />
             </motion.div>
         </div>
     );

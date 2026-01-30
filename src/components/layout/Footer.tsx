@@ -20,7 +20,9 @@ import {
 } from 'lucide-react';
 import { portfolioData } from '@/data/portfolio';
 
-const socialIcons: Record<string, React.ElementType> = {
+type SocialIconComponent = typeof Github;
+
+const socialIcons: { [key: string]: SocialIconComponent } = {
     github: Github,
     linkedin: Linkedin,
     twitter: Twitter,

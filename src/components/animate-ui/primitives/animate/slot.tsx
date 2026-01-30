@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { motion, isMotionComponent, type HTMLMotionProps } from 'motion/react';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 type AnyProps = Record<string, unknown>;
@@ -64,17 +64,27 @@ function Slot<T extends HTMLElement = HTMLElement>({
 }: SlotProps<T>) {
   if (!React.isValidElement(children)) return null;
 
-  const isAlreadyMotion =
-    typeof children.type === 'object' &&
-    children.type !== null &&
-    isMotionComponent(children.type);
+  const childType = children.type;
 
+  // Check if it's already a motion component by checking for motion-specific properties
+  const isAlreadyMotion =
+    typeof childType === 'object' &&
+    childType !== null &&
+    ('render' in childType || '_payload' in childType);
+
+  // For framer-motion, we use motion() factory function
   const Base = React.useMemo(
-    () =>
-      isAlreadyMotion
-        ? (children.type as React.ElementType)
-        : motion.create(children.type as React.ElementType),
-    [isAlreadyMotion, children.type],
+    () => {
+      if (isAlreadyMotion) {
+        return childType as React.ElementType;
+      }
+      // Use motion() for HTML elements, otherwise wrap with motion.div
+      if (typeof childType === 'string') {
+        return (motion as any)[childType] || motion.div;
+      }
+      return motion.div;
+    },
+    [isAlreadyMotion, childType],
   );
 
   const { ref: childRef, ...childProps } = children.props as AnyProps;

@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
 import { Cpu, Activity, Database, Award } from "lucide-react";

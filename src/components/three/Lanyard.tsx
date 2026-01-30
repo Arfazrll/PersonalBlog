@@ -10,6 +10,13 @@ import { portfolioData } from '@/data/portfolio';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
+declare module '@react-three/fiber' {
+    interface ThreeElements {
+        meshLineGeometry: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & Record<string, any>;
+        meshLineMaterial: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & Record<string, any>;
+    }
+}
+
 useTexture.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg');
 
 function ResponsiveCamera() {
@@ -54,12 +61,12 @@ function HolographicAvatar({ url, position, size = 0.13 }: { url: string; positi
 }
 
 function Band({ maxSpeed = 50, minSpeed = 0 }) {
-    const band = useRef<any>();
-    const fixed = useRef<any>();
-    const j1 = useRef<any>();
-    const j2 = useRef<any>();
-    const j3 = useRef<any>();
-    const card = useRef<any>();
+    const band = useRef<any>(null);
+    const fixed = useRef<any>(null);
+    const j1 = useRef<any>(null);
+    const j2 = useRef<any>(null);
+    const j3 = useRef<any>(null);
+    const card = useRef<any>(null);
 
     const vec = new THREE.Vector3();
     const ang = new THREE.Vector3();
