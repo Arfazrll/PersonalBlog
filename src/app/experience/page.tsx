@@ -255,14 +255,24 @@ export default function ExperiencePage() {
     const { resolvedTheme } = useTheme();
 
     return (
-        <div className="bg-background text-foreground relative">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="bg-background text-foreground relative"
+        >
             {/* Smooth Scroll Hero Section */}
             <SmoothScrollHero />
 
             <FloatingShape className="w-[500px] h-[500px] -top-20 -right-40" gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)" />
             <FloatingShape className="w-[400px] h-[400px] bottom-40 -left-20" gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)" delay={3} />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20">
+            <motion.div
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20"
+            >
 
                 {/* 1. Work Experience Gallery Marquee */}
                 <div className="w-screen relative left-1/2 -translate-x-1/2 mb-20 -mt-10 md:-mt-20">
@@ -271,8 +281,8 @@ export default function ExperiencePage() {
 
                 {/* 2. Tab Slider Section (Testimonial-style UI) */}
                 <ExperienceTabSlider />
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }
 

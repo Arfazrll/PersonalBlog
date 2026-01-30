@@ -80,6 +80,14 @@ const CenterImage = ({ scrollY }: { scrollY: MotionValue<number> }) => {
         [1, 0]
     );
 
+    // Text specific animations
+    const textOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+    const textScale = useTransform(scrollY, [0, 200], [1, 1.1]);
+    const textY = useTransform(scrollY, [0, 200], [0, 50]);
+
+    const subtitleOpacity = useTransform(scrollY, [0, 150], [1, 0]);
+    const subtitleY = useTransform(scrollY, [0, 150], [0, 20]);
+
     return (
         <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden z-0">
             <motion.div
@@ -95,7 +103,35 @@ const CenterImage = ({ scrollY }: { scrollY: MotionValue<number> }) => {
                 }}
                 className="w-full h-full shadow-2xl relative origin-center"
             >
-                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute inset-0 bg-black/40" />
+            </motion.div>
+
+            {/* Title Overlay */}
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4 mix-blend-exclusion"
+            >
+                <motion.h1
+                    style={{
+                        opacity: textOpacity,
+                        scale: textScale,
+                        y: textY,
+                    }}
+                    className="text-5xl md:text-9xl font-black text-white tracking-tighter text-center mb-6 mix-blend-exclusion"
+                >
+                    EXPERIENCE
+                </motion.h1>
+                <motion.p
+                    style={{
+                        opacity: subtitleOpacity,
+                        y: subtitleY,
+                    }}
+                    className="w-full max-w-[90vw] md:max-w-6xl text-center text-lg md:text-2xl text-zinc-600 dark:text-zinc-200 font-medium tracking-wide leading-relaxed"
+                >
+                    Merging technical precision with creative vision. A curated timeline of my professional journey, from foundational code to advanced AI solutions.
+                </motion.p>
             </motion.div>
         </div>
     );
