@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
+import { Transition } from "@headlessui/react";
 import {
     Calendar,
     MapPin,
@@ -21,9 +22,65 @@ import { useTheme } from 'next-themes';
 import { Experience, Education } from '@/types';
 
 import ExperienceMarquee from '../../components/sections/ExperienceMarquee';
+import ExperienceStickyScroll from '../../components/sections/ExperienceStickyScroll';
 import { Timeline } from '@/components/ui/timeline';
+import { HeroHighlight, Highlight } from '@/components/ui/hero-highlight';
 
-type FilterType = 'all' | 'latest' | 'oldest' | 'ongoing';
+type TabType = 'education' | 'journey' | 'experience';
+
+const highlightContent = {
+    education: {
+        title: "Building the Future",
+        highlight: "Through Knowledge",
+        description: "Every line of code starts with understanding. My academic journey at Telkom University shapes how I approach complex problems with systematic thinking."
+    },
+    journey: {
+        title: "Crafting Experiences",
+        highlight: "That Matter",
+        description: "From internships to leadership roles, each step has been a lesson in collaboration, innovation, and pushing boundaries."
+    },
+    experience: {
+        title: "Turning Ideas",
+        highlight: "Into Reality",
+        description: "Real-world projects that solve real problems. Building solutions that make a difference, one commit at a time."
+    }
+};
+
+function ExperienceHighlightSection({ type }: { type: TabType }) {
+    const content = highlightContent[type];
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            viewport={{ once: true }}
+            className="mt-24"
+        >
+            <HeroHighlight containerClassName="h-[30rem] rounded-3xl overflow-hidden">
+                <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug mx-auto px-4"
+                >
+                    {content.title}{" "}
+                    <Highlight className="text-black dark:text-white">
+                        {content.highlight}
+                    </Highlight>
+                </motion.h2>
+                <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                    className="text-center text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto mt-6 px-4 text-lg"
+                >
+                    {content.description}
+                </motion.p>
+            </HeroHighlight>
+        </motion.div>
+    );
+}
 
 function FloatingShape({ className, gradient, delay = 0 }: { className?: string; gradient: string; delay?: number }) {
     return (
@@ -36,305 +93,202 @@ function FloatingShape({ className, gradient, delay = 0 }: { className?: string;
     );
 }
 
+interface TabItem {
+    id: TabType;
+    label: string;
+    description: string;
+}
 
+function ExperienceTabSlider() {
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [activeTab, setActiveTab] = useState<number>(1);
 
-function EducationCard({ education, index }: { education: Education; index: number }) {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const tabs: TabItem[] = [
+        { id: 'education', label: 'Education', description: 'Building strong foundations through academic excellence at Telkom University and SMAN 88 Jakarta.' },
+        { id: 'journey', label: 'Journey', description: 'A timeline of roles, responsibilities, and professional growth across various organizations.' },
+        { id: 'experience', label: 'Experience', description: 'Detailed breakdown of work experiences with project highlights and achievements.' },
+    ];
+
+    const heightFix = () => {
+        if (contentRef.current && contentRef.current.parentElement)
+            contentRef.current.parentElement.style.height = `${contentRef.current.clientHeight}px`;
+    };
+
+    useEffect(() => {
+        heightFix();
+    }, [activeTab]);
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.15 }}
-            className="w-full md:min-w-[400px]"
-        >
-            <motion.div
-                className={cn(
-                    'card-creative h-full cursor-pointer',
-                    isExpanded && 'ring-1 ring-secondary/30'
-                )}
-                onClick={() => setIsExpanded(!isExpanded)}
-                whileHover={{ scale: 1.02, y: -5 }}
-            >
-                <div className="flex items-start justify-between gap-4 mb-4">
-                    <div className="p-3 rounded-2xl bg-gradient-to-br from-secondary/20 to-primary/20">
-                        <GraduationCap className="w-6 h-6 text-secondary" />
+        <div className="mb-24">
+            {/* Testimonial-style Header with Hemisphere */}
+            <div className="mx-auto w-full max-w-5xl px-8 text-center sm:px-12 mb-12">
+                {/* Orb with Hemisphere Background */}
+                <div className="relative h-28 sm:h-36">
+                    <div className="pointer-events-none absolute top-0 left-1/2 h-[400px] w-[400px] -translate-x-1/2 before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-gradient-to-b before:from-cyan-500/25 before:via-cyan-500/5 before:via-25% before:to-cyan-500/0 before:to-75% sm:h-[560px] sm:w-[560px]">
+                        <div className="h-24 [mask-image:_linear-gradient(0deg,transparent,theme(colors.white)_20%,theme(colors.white))] sm:h-32">
+                            {tabs.map((tab, index) => (
+                                <Transition
+                                    as="div"
+                                    key={index}
+                                    show={activeTab === index}
+                                    className="absolute inset-0 -z-10 h-full flex items-center justify-center"
+                                    enter="transition ease-out duration-700 order-first"
+                                    enterFrom="opacity-0 -rotate-[60deg]"
+                                    enterTo="opacity-100 rotate-0"
+                                    leave="transition ease-out duration-700"
+                                    leaveFrom="opacity-100 rotate-0"
+                                    leaveTo="opacity-0 rotate-[60deg]"
+                                >
+                                    <div className="relative top-8 sm:top-11 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 shadow-lg shadow-cyan-500/30" />
+                                </Transition>
+                            ))}
+                        </div>
                     </div>
-                    <motion.div
-                        animate={{ rotate: isExpanded ? 180 : 0 }}
-                        className="p-2 rounded-full bg-secondary/50"
-                    >
-                        <ChevronDown className="w-4 h-4" />
-                    </motion.div>
                 </div>
 
-                <h3 className="text-lg font-bold mb-1">{education.degree}</h3>
-                <p className="text-gradient font-medium mb-1">{education.institution}</p>
-                <p className="text-sm text-muted-foreground mb-3">{education.major}</p>
-                <p className="text-sm text-muted-foreground/80">
-                    {formatDate(education.startDate)} - {education.endDate ? formatDate(education.endDate) : 'Present'}
-                </p>
-                {education.gpa && (
-                    <p className="text-sm font-semibold mt-3 text-primary">GPA: {education.gpa}</p>
-                )}
+                {/* Description Text */}
+                <div className="mb-6 transition-all delay-300 duration-150 ease-in-out sm:mb-9">
+                    <div className="relative flex flex-col" ref={contentRef}>
+                        {tabs.map((tab, index) => (
+                            <Transition
+                                key={index}
+                                show={activeTab === index}
+                                enter="transition ease-in-out duration-500 delay-200 order-first"
+                                enterFrom="opacity-0 -translate-x-4"
+                                enterTo="opacity-100 translate-x-0"
+                                leave="transition ease-out duration-300 delay-300 absolute"
+                                leaveFrom="opacity-100 translate-x-0"
+                                leaveTo="opacity-0 translate-x-4"
+                                beforeEnter={() => heightFix()}
+                            >
+                                <div className="px-4 text-xl font-bold text-foreground sm:px-0 sm:text-2xl lg:text-3xl">
+                                    &ldquo;{tab.description}&rdquo;
+                                </div>
+                            </Transition>
+                        ))}
+                    </div>
+                </div>
 
-                <AnimatePresence>
-                    {isExpanded && (education.activities?.length || education.achievements?.length) && (
-                        <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden"
+                {/* Tab Buttons */}
+                <div className="-m-1 flex flex-wrap justify-center gap-1 sm:gap-1.5">
+                    {tabs.map((tab, index) => (
+                        <button
+                            key={index}
+                            className={`m-1.5 inline-flex justify-center items-center gap-2.5 rounded-full px-5 py-2.5 text-sm whitespace-nowrap shadow-sm transition-colors duration-150 focus-visible:ring focus-visible:ring-cyan-300 focus-visible:outline-none sm:px-6 sm:py-3 sm:text-base ${activeTab === index
+                                ? "bg-cyan-500 text-white shadow-cyan-950/10"
+                                : "bg-white dark:bg-neutral-800 text-cyan-900 dark:text-cyan-100 hover:bg-cyan-100 dark:hover:bg-neutral-700"
+                                }`}
+                            onClick={() => setActiveTab(index)}
                         >
-                            <div className="pt-4 border-t border-border mt-4 space-y-4">
-                                {education.activities && education.activities.length > 0 && (
-                                    <div>
-                                        <h4 className="font-semibold mb-2 text-sm text-foreground/90">Activities</h4>
-                                        <ul className="space-y-1">
-                                            {education.activities.map((activity, i) => (
-                                                <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                    <span className="w-1 h-1 rounded-full bg-secondary" />
-                                                    {activity}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                                {education.achievements && education.achievements.length > 0 && (
-                                    <div>
-                                        <h4 className="font-semibold mb-2 text-sm text-foreground/90">Achievements</h4>
-                                        <ul className="space-y-1">
-                                            {education.achievements.map((achievement, i) => (
-                                                <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                    <span className="w-1 h-1 rounded-full bg-primary" />
-                                                    {achievement}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
+                            {tab.id === 'education' && <GraduationCap className="w-5 h-5" />}
+                            {tab.id === 'journey' && <Briefcase className="w-5 h-5" />}
+                            {tab.id === 'experience' && <Rocket className="w-5 h-5" />}
+                            <span>{tab.label}</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Tab Content */}
+            <div>
+                <AnimatePresence mode="wait">
+                    {/* Education Tab */}
+                    {activeTab === 0 && (
+                        <motion.div
+                            key="education"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <ExperienceStickyScroll />
+                            <ExperienceHighlightSection type="education" />
+                        </motion.div>
+                    )}
+
+                    {/* Journey Tab */}
+                    {activeTab === 1 && (
+                        <motion.div
+                            key="journey"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <ExperienceTimeline />
+                            <ExperienceHighlightSection type="journey" />
+                        </motion.div>
+                    )}
+
+                    {/* Experience Tab */}
+                    {activeTab === 2 && (
+                        <motion.div
+                            key="experience"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
+                                <div className="p-4 rounded-2xl bg-primary/10">
+                                    <Rocket className="w-12 h-12 text-primary" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-foreground">Coming Soon</h3>
+                                <p className="text-muted-foreground max-w-md">
+                                    Detailed experience breakdown with project highlights and achievements will be available here soon.
+                                </p>
                             </div>
+                            <ExperienceHighlightSection type="experience" />
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </motion.div>
-        </motion.div>
+            </div>
+        </div >
     );
 }
 
-import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
 
-import ExperienceStickyScroll from '../../components/sections/ExperienceStickyScroll';
+import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
 
 export default function ExperiencePage() {
     const t = useTranslations('experience');
-    const [isEducationExpanded, setIsEducationExpanded] = useState(false);
-    const [isEducationHovered, setIsEducationHovered] = useState(false);
     const { resolvedTheme } = useTheme();
 
     return (
-        <div className="bg-background text-foreground relative">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="bg-background text-foreground relative"
+        >
             {/* Smooth Scroll Hero Section */}
             <SmoothScrollHero />
 
             <FloatingShape className="w-[500px] h-[500px] -top-20 -right-40" gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)" />
             <FloatingShape className="w-[400px] h-[400px] bottom-40 -left-20" gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)" delay={3} />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20">
+            <motion.div
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20"
+            >
 
-                {/* 1. Work Experience Gallery Marquee (Moved Top) */}
+                {/* 1. Work Experience Gallery Marquee */}
                 <div className="w-screen relative left-1/2 -translate-x-1/2 mb-20 -mt-10 md:-mt-20">
                     <ExperienceMarquee />
                 </div>
 
-                {/* 2. Academic Foundation Highlight (Interactive Reveal) */}
-                <div
-                    className="mb-24 relative"
-                    onMouseEnter={() => setIsEducationHovered(true)}
-                    onMouseLeave={() => setIsEducationHovered(false)}
-                >
-                    <div className="flex items-center justify-between gap-8 flex-wrap">
-                        <motion.button
-                            onClick={() => setIsEducationExpanded(!isEducationExpanded)}
-                            className="group flex items-center gap-4 focus:outline-none"
-                        >
-                            <motion.div
-                                className={cn(
-                                    "p-3 rounded-xl transition-all duration-500",
-                                    isEducationExpanded ? "bg-primary shadow-[0_0_20px_rgba(var(--primary),0.4)]" : "bg-primary/20 hover:bg-primary/30"
-                                )}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <GraduationCap className={cn(
-                                    "w-6 h-6 transition-colors duration-500",
-                                    isEducationExpanded ? "text-primary-foreground" : "text-primary"
-                                )} />
-                            </motion.div>
-                            <div className="text-left">
-                                <h2 className="text-2xl font-bold italic tracking-tight uppercase group-hover:text-primary transition-colors">Academic Foundation</h2>
-                                <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mt-1">
-                                    {isEducationExpanded ? "Click to collapse" : "Click to reveal educational milestones"}
-                                </p>
-                            </div>
-                        </motion.button>
-
-                        <AnimatePresence>
-                            {isEducationHovered && !isEducationExpanded && (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-                                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                                    exit={{ opacity: 0, scale: 1.05, filter: "blur(5px)" }}
-                                    className="hidden lg:flex relative h-44 min-w-[650px] rounded-2xl overflow-hidden bg-transparent border-none shadow-none"
-                                >
-                                    {/* Background Data Stream */}
-                                    <div className="absolute inset-0 opacity-[0.05] dark:opacity-10 pointer-events-none font-mono text-[8px] leading-none overflow-hidden select-none">
-                                        {Array.from({ length: 20 }).map((_, i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ y: -100 }}
-                                                animate={{ y: 300 }}
-                                                transition={{ duration: 3 + Math.random() * 4, repeat: Infinity, ease: "linear", delay: Math.random() * 2 }}
-                                                className="whitespace-nowrap text-primary"
-                                            >
-                                                {Array.from({ length: 60 }).map(() => Math.random() > 0.5 ? "1" : "0").join("")}
-                                                {Array.from({ length: 60 }).map(() => (Math.random() * 0xFFF << 0).toString(16).padStart(3, '0')).join("")}
-                                            </motion.div>
-                                        ))}
-                                    </div>
-
-                                    {/* Scanning Beam */}
-                                    <motion.div
-                                        className="absolute top-0 bottom-0 w-[1px] bg-primary/40 shadow-[0_0_15px_rgba(var(--primary),0.8)] z-10"
-                                        animate={{ left: ["0%", "100%", "0%"] }}
-                                        transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-                                    />
-
-                                    {/* Terminal Interface */}
-                                    <div className="relative z-20 w-full p-4 flex flex-col justify-between">
-                                        <div className="flex justify-between items-start border-b border-primary/10 dark:border-primary/20 pb-2 mb-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                                                <span className="text-[10px] font-mono text-primary font-bold tracking-[0.2em] uppercase">SECURE_ACCESS: ACADEMIC_RECORDS_V2.0</span>
-                                            </div>
-                                            <div className="flex items-center gap-4">
-                                                <span className="text-[8px] font-mono text-primary/60 uppercase">HASH: {Math.random().toString(36).substring(7).toUpperCase()}</span>
-                                                <span className="text-[8px] font-mono text-primary/60 uppercase">DCTR: VERIFIED</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-6 h-full items-stretch">
-                                            {portfolioData.education.map((edu, idx) => (
-                                                <motion.div
-                                                    key={edu.id}
-                                                    initial={{ opacity: 0, x: -10 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: 0.1 + idx * 0.1 }}
-                                                    className="flex-1 group/item"
-                                                >
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <span className="text-[8px] font-mono text-primary/40">[{idx.toString().padStart(2, '0')}]</span>
-                                                        <p className="text-[13px] font-mono text-foreground dark:text-primary font-black uppercase tracking-tight truncate group-hover/item:text-primary transition-colors">
-                                                            {edu.institution}
-                                                        </p>
-                                                    </div>
-                                                    <div className="pl-4 space-y-1.5 border-l border-primary/10 dark:border-primary/20 h-full">
-                                                        <p className="text-[9px] font-mono text-muted-foreground uppercase leading-tight">{edu.degree}</p>
-                                                        {edu.gpa && (
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="text-[8px] font-mono text-primary/40">GPA_ANALYSIS:</span>
-                                                                <span className="text-[11px] font-mono text-primary font-bold">{edu.gpa}</span>
-                                                            </div>
-                                                        )}
-                                                        <div className="flex flex-wrap gap-1 mt-2">
-                                                            {edu.activities?.slice(0, 2).map((act, i) => (
-                                                                <span key={i} className="text-[7px] font-mono px-1.5 py-0.5 rounded-sm bg-primary/5 text-primary/70 border border-primary/10">
-                                                                    {act}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                </motion.div>
-                                            ))}
-
-                                            {/* Advanced Status Pod */}
-                                            <div className="w-32 border-l border-primary/10 dark:border-primary/20 pl-6 flex flex-col justify-center">
-                                                <div className="text-[8px] font-mono text-primary/40 uppercase mb-2">ENCRYPTION_LAYER</div>
-                                                <div className="space-y-1 mb-3">
-                                                    {[0.8, 0.4, 0.6].map((w, i) => (
-                                                        <div key={i} className="h-1 w-full bg-primary/5 rounded-full overflow-hidden">
-                                                            <motion.div
-                                                                className="h-full bg-primary/40"
-                                                                initial={{ width: "0%" }}
-                                                                animate={{ width: `${w * 100}%` }}
-                                                                transition={{ duration: 1, delay: i * 0.2, repeat: Infinity, repeatType: "reverse" }}
-                                                            />
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                <div className="text-[10px] font-mono text-primary font-bold animate-pulse tracking-tighter">DATA_STREAM_ACTIVE</div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Corner Details */}
-                                    <div className="absolute top-2 right-2 flex gap-1">
-                                        <div className="w-1 h-1 bg-primary/40 rounded-full" />
-                                        <div className="w-1 h-3 bg-primary/20 rounded-full" />
-                                    </div>
-                                    <div className="absolute bottom-2 left-2 flex flex-col gap-1">
-                                        <div className="w-3 h-1 bg-primary/20 rounded-full" />
-                                        <div className="w-1 h-1 bg-primary/40 rounded-full" />
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-
-                    <AnimatePresence>
-                        {isEducationExpanded && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{
-                                    opacity: 1,
-                                    height: "auto",
-                                }}
-                                exit={{
-                                    opacity: 0,
-                                    height: 0,
-                                }}
-                                transition={{
-                                    height: { duration: 0.4, ease: [0.33, 1, 0.68, 1] }, // circOut for fast, smooth expansion
-                                    opacity: { duration: 0.3 }
-                                }}
-                                className="overflow-hidden will-change-[height,opacity]"
-                            >
-                                <motion.div
-                                    initial={{ y: 10, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.1, duration: 0.4 }}
-                                    className="pt-4"
-                                >
-                                    <ExperienceStickyScroll />
-                                </motion.div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-
-                {/* 3. Changelog / Journey (Restored) */}
-                <div className="w-full mb-20">
-                    <ExperienceTimeline />
-                </div>
-            </div>
-        </div>
+                {/* 2. Tab Slider Section (Testimonial-style UI) */}
+                <ExperienceTabSlider />
+            </motion.div>
+        </motion.div>
     );
 }
 
 function ExperienceTimeline() {
     const experiences = portfolioData.experiences;
 
-    // Group experiences by year
     const groupedExperiences = useMemo(() => {
         const groups: { [key: string]: Experience[] } = {};
 
@@ -346,7 +300,6 @@ function ExperienceTimeline() {
             groups[year].push(exp);
         });
 
-        // Sort years descending
         return Object.keys(groups)
             .sort((a, b) => parseInt(b) - parseInt(a))
             .map(year => ({
@@ -361,7 +314,6 @@ function ExperienceTimeline() {
             <div className="space-y-12">
                 {group.experiences.map((exp, idx) => (
                     <div key={exp.id} className="relative pl-8 border-l-2 border-neutral-200 dark:border-neutral-800">
-                        {/* Dot indicator */}
                         <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-neutral-200 dark:bg-neutral-800 border-2 border-white dark:border-black" />
 
                         <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -382,7 +334,6 @@ function ExperienceTimeline() {
                             {exp.description}
                         </p>
 
-                        {/* Responsibilities */}
                         {exp.responsibilities && (
                             <ul className="mb-6 space-y-2">
                                 {exp.responsibilities.slice(0, 3).map((resp, i) => (
@@ -394,7 +345,6 @@ function ExperienceTimeline() {
                             </ul>
                         )}
 
-                        {/* Skills */}
                         <div className="flex flex-wrap gap-2 mb-6">
                             {exp.skills.map((skill, i) => (
                                 <span key={i} className="text-xs px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
@@ -403,7 +353,6 @@ function ExperienceTimeline() {
                             ))}
                         </div>
 
-                        {/* Visual Assets (Placeholders as requested) */}
                         <div className="grid grid-cols-2 gap-4">
                             <Image
                                 src={`https://assets.aceternity.com/templates/startup-${(idx % 4) + 1}.webp`}

@@ -431,3 +431,14 @@
     animation: none;
     mix-blend-mode: normal;
 }
+
+@theme inline {
+  @keyframes move-x {
+  from {
+    transform: translateX(-100%);
+    }
+  to {
+    transform: translateX(100%);
+    }
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, useMotionValue, useMotionTemplate, animate } from "motion/react";
+import { motion, useMotionValue, useMotionTemplate, animate } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export const MaskContainer = ({

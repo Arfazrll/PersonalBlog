@@ -78,6 +78,7 @@ const GalleryItem = ({ exp, index }: { exp: Experience; index: number }) => {
                 src={logoSrc}
                 alt={exp.company}
                 fill
+                sizes="280px"
                 priority
                 className="object-contain p-2 grayscale hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300"
             />

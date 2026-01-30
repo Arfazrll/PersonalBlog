@@ -81,7 +81,7 @@ export default async function RootLayout({
 
     return (
         <html lang={locale} suppressHydrationWarning>
-            <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
+            <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans relative`}>
                 <ThemeProvider>
                     <I18nProvider locale={locale} messages={messages}>
                         <ThemeAwareClickSpark>

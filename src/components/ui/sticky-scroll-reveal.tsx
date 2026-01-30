@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ export const StickyScroll = ({
   contentClassName?: string;
 }) => {
   const [activeCard, setActiveCard] = React.useState(0);
-  const ref = useRef<any>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     container: ref,
     offset: ["start start", "end start"],
@@ -39,14 +39,33 @@ export const StickyScroll = ({
     setActiveCard(closestBreakpointIndex);
   });
 
+  useEffect(() => {
+    const container = ref.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const isAtTop = scrollTop <= 0;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+      if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+      container.scrollTop += e.deltaY;
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, []);
+
   return (
     <div className="relative group">
-      {/* Decorative Corner Accents - Inset to prevent clipping */}
-      <div className="absolute top-1 left-1 w-12 h-12 border-t border-l border-primary/20 rounded-tl-[2rem] pointer-events-none group-hover:border-primary/40 transition-colors z-20" />
-      <div className="absolute bottom-1 right-1 w-12 h-12 border-b border-r border-primary/20 rounded-br-[2rem] pointer-events-none group-hover:border-primary/40 transition-colors z-20" />
 
       <motion.div
-        className="relative flex h-[35rem] justify-center lg:justify-between space-x-0 lg:space-x-10 overflow-y-auto no-scrollbar rounded-[2.5rem] p-6 md:p-12 bg-transparent transition-all duration-700"
+        className="relative flex h-[35rem] justify-center lg:justify-between space-x-0 lg:space-x-10 overflow-y-scroll custom-scrollbar rounded-[2.5rem] p-6 md:p-12 bg-transparent transition-all duration-700"
         ref={ref}
       >
         {/* Left Content Side */}
@@ -62,7 +81,7 @@ export const StickyScroll = ({
 
           <div className="max-w-2xl py-10 md:pl-8">
             {content.map((item, index) => (
-              <div key={item.title + index} className="py-24 first:pt-0 last:pb-20">
+              <div key={item.title + index} className="min-h-[25rem] py-16 first:pt-0 last:pb-8">
                 <AnimatePresence mode="wait">
                   {item.label && (
                     <motion.div

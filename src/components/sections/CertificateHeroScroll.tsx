@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback, type FC } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTheme } from "next-themes";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 
