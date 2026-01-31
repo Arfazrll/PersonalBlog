@@ -57,7 +57,7 @@ export const HeroParallax = ({
   return (
     <div
       ref={ref}
-      className="h-[250vh] pt-10 pb-40 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
+      className="h-[180vh] sm:h-[200vh] lg:h-[250vh] pt-10 pb-20 sm:pb-40 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
     >
       <Header />
       <motion.div
@@ -92,10 +92,12 @@ export const HeroParallax = ({
   );
 };
 
+import { Mouse } from "lucide-react";
+
 export const Header = () => {
   const t = useTranslations('projectHeader');
   return (
-    <div className="max-w-7xl relative mx-auto py-10 md:py-20 px-4 w-full  left-0 top-0">
+    <div className="max-w-7xl relative mx-auto pt-32 md:pt-48 px-4 w-full left-0 top-0">
       <h1 className="text-2xl md:text-7xl font-bold dark:text-white">
         {t('title')}
       </h1>
@@ -103,6 +105,25 @@ export const Header = () => {
         className="max-w-2xl text-base md:text-xl mt-8 dark:text-neutral-200"
         dangerouslySetInnerHTML={{ __html: t.raw('subtitle') }}
       />
+
+      {/* Scroll Indicator */}
+      <motion.div
+        className="absolute left-4 md:left-4 -bottom-32 md:-bottom-48 flex flex-col items-center gap-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 1 }}
+      >
+        <div className="w-[1px] h-10 md:h-16 bg-gradient-to-b from-transparent via-neutral-400 to-transparent relative overflow-hidden">
+          <motion.div
+            className="absolute top-0 w-full h-1/2 bg-white blur-[1px]"
+            animate={{ y: [0, 40, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+        <span className="text-[9px] uppercase tracking-[0.3em] text-neutral-500 font-medium">
+          Scroll
+        </span>
+      </motion.div>
     </div>
   );
 };

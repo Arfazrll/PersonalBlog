@@ -13,6 +13,7 @@ export interface Project {
     endDate?: string;
     highlights?: string[];
     challenges?: string[];
+    category?: string;
 }
 
 export interface Experience {
