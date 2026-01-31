@@ -4,20 +4,18 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Search, Filter, ExternalLink, Github, X, Calendar, ChevronRight, Layers, ArrowRight, ArrowUpRight, Sparkles, Code2, Zap } from 'lucide-react';
-import { cn, formatDate } from '@/lib/utils';
+import { Search, X, Layers, ArrowRight, ArrowUpRight, Sparkles, Code2, Zap, Brain, Cpu, Wifi, Blocks, Globe, Database } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import { Project } from '@/types';
 import { HeroParallax } from '@/components/ui/hero-parallax';
 import { LogoTimeline, LogoItem } from '@/components/ui/logo-timeline';
 import { Icons } from '@/components/icons';
 import { Meteors } from '@/components/ui/meteors';
+import { ProjectDetail } from '@/components/projects/ProjectDetail';
 
 type FilterType = 'all' | 'ongoing' | 'completed';
 
-// ========================================
-// PROJECT LIST ITEM - Full-width flowing design
-// ========================================
 function ProjectListItem({
     project,
     onClick,
@@ -177,14 +175,25 @@ function ProjectListItem({
                         }}
                     >
                         <div className={cn(
-                            "w-48 h-32 rounded-xl overflow-hidden border backdrop-blur-sm",
-                            isOngoing ? "border-emerald-500/30 bg-emerald-500/10" : "border-blue-500/30 bg-blue-500/10"
+                            "w-80 h-48 rounded-xl overflow-hidden border backdrop-blur-sm flex items-center justify-center relative", // Increased size
+                            isOngoing ? "border-emerald-500/30 bg-emerald-950/80" : "border-blue-500/30 bg-blue-950/80"
                         )}>
-                            <div className="w-full h-full flex items-center justify-center">
-                                <span className={cn("text-5xl font-black", isOngoing ? "text-emerald-400/40" : "text-blue-400/40")}>
-                                    {project.title.charAt(0)}
-                                </span>
-                            </div>
+                            {project.image ? (
+                                <img
+                                    src={project.image}
+                                    alt={project.title}
+                                    className="absolute inset-0 w-full h-full object-cover opacity-90 block"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-zinc-900/50">
+                                    <span className={cn("text-6xl font-black", isOngoing ? "text-emerald-400/20" : "text-blue-400/20")}>
+                                        {project.title.charAt(0)}
+                                    </span>
+                                </div>
+                            )}
+
+                            {/* Overlay Gradient for better text readability if we add text later, or just style */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         </div>
                     </motion.div>
                 )}
@@ -677,284 +686,7 @@ function CompactCard({ project, onClick, index }: { project: Project; onClick: (
     );
 }
 
-function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
-    const t = useTranslations('projects');
-    const isOngoing = project.status === 'ongoing';
-    const [activeSection, setActiveSection] = useState<'overview' | 'tech' | 'highlights'>('overview');
 
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-background"
-            onClick={onClose}
-        >
-            {/* Full-Screen Slide-Up Container */}
-            <motion.div
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                className="absolute inset-0 bg-background overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Close Button */}
-                <motion.button
-                    onClick={onClose}
-                    className="fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-full bg-muted/80 hover:bg-muted border border-border backdrop-blur-sm transition-colors"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    whileHover={{ scale: 1.05 }}
-                >
-                    <span className="text-sm font-medium text-muted-foreground">Close</span>
-                    <X className="w-4 h-4" />
-                </motion.button>
-
-                {/* Split Screen Layout */}
-                <div className="h-full flex flex-col lg:flex-row">
-
-                    {/* LEFT - Giant Title Hero */}
-                    <div className="lg:w-2/5 h-[35vh] lg:h-full relative flex items-end lg:items-center p-6 sm:p-8 lg:p-12 overflow-hidden">
-                        {/* Dot Pattern */}
-                        <div className="absolute inset-0 opacity-[0.02]" style={{
-                            backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
-                            backgroundSize: '24px 24px'
-                        }} />
-
-                        {/* Accent Bar */}
-                        <motion.div
-                            className={cn("absolute left-0 top-0 w-1 h-full", isOngoing ? "bg-emerald-500" : "bg-blue-500")}
-                            initial={{ scaleY: 0 }}
-                            animate={{ scaleY: 1 }}
-                            transition={{ delay: 0.2, duration: 0.8 }}
-                        />
-
-                        <div className="relative z-10 w-full">
-                            {/* Label */}
-                            <motion.span
-                                className="text-xs font-mono uppercase tracking-[0.4em] text-muted-foreground mb-4 block"
-                                initial={{ opacity: 0, x: -30 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.2 }}
-                            >
-                                Project
-                            </motion.span>
-
-                            {/* Stacked Title */}
-                            <motion.h1
-                                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-foreground leading-[0.9] tracking-tight mb-6"
-                                initial={{ opacity: 0, y: 40 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3, duration: 0.6 }}
-                            >
-                                {project.title.split(' ').map((word, i) => (
-                                    <span key={i} className="block">{word}</span>
-                                ))}
-                            </motion.h1>
-
-                            {/* Status + Date */}
-                            <motion.div
-                                className="flex flex-wrap items-center gap-4"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                            >
-                                <span className={cn(
-                                    "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider",
-                                    isOngoing ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                                )}>
-                                    <span className={cn("w-1.5 h-1.5 rounded-full", isOngoing ? "bg-emerald-500 animate-pulse" : "bg-blue-500")} />
-                                    {project.status}
-                                </span>
-                                <span className="text-sm text-muted-foreground font-mono">
-                                    {formatDate(project.startDate)} — {project.endDate ? formatDate(project.endDate) : 'Present'}
-                                </span>
-                            </motion.div>
-                        </div>
-                    </div>
-
-                    {/* RIGHT - Tabbed Content */}
-                    <div className="lg:w-3/5 flex-1 overflow-y-auto border-t lg:border-t-0 lg:border-l border-border">
-
-                        {/* Tab Navigation */}
-                        <motion.div
-                            className="sticky top-0 z-20 flex items-center gap-1 p-4 bg-background/95 backdrop-blur-sm border-b border-border"
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 }}
-                        >
-                            {(['overview', 'tech', 'highlights'] as const).map((section) => (
-                                <button
-                                    key={section}
-                                    onClick={() => setActiveSection(section)}
-                                    className={cn(
-                                        "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                                        activeSection === section
-                                            ? "bg-foreground text-background"
-                                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                                    )}
-                                >
-                                    {section.charAt(0).toUpperCase() + section.slice(1)}
-                                </button>
-                            ))}
-                        </motion.div>
-
-                        {/* Tab Content */}
-                        <div className="p-6 sm:p-8 lg:p-10">
-                            <AnimatePresence mode="wait">
-                                {activeSection === 'overview' && (
-                                    <motion.div
-                                        key="overview"
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -20 }}
-                                        className="space-y-8"
-                                    >
-                                        <div>
-                                            <h2 className="text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground mb-4">About</h2>
-                                            <p className="text-lg sm:text-xl text-foreground/80 leading-relaxed">
-                                                {project.longDescription || project.description}
-                                            </p>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="p-4 rounded-xl bg-muted/30 border border-border/50">
-                                                <span className="text-3xl font-bold text-foreground">{project.techStack.length}</span>
-                                                <p className="text-sm text-muted-foreground mt-1">Technologies</p>
-                                            </div>
-                                            <div className="p-4 rounded-xl bg-muted/30 border border-border/50">
-                                                <span className="text-3xl font-bold text-foreground">{project.tools.length}</span>
-                                                <p className="text-sm text-muted-foreground mt-1">Tools</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-wrap gap-3 pt-4">
-                                            {project.demoUrl && (
-                                                <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
-                                                    className={cn("inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all hover:scale-105",
-                                                        isOngoing ? "bg-emerald-500 hover:bg-emerald-600 text-white" : "bg-blue-500 hover:bg-blue-600 text-white"
-                                                    )}>
-                                                    <span>{t('liveDemo')}</span>
-                                                    <ExternalLink className="w-4 h-4" />
-                                                </a>
-                                            )}
-                                            {project.repoUrl && (
-                                                <a href={project.repoUrl} target="_blank" rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold bg-transparent border-2 border-foreground/20 text-foreground hover:bg-muted transition-all hover:scale-105">
-                                                    <Github className="w-4 h-4" />
-                                                    <span>{t('sourceCode')}</span>
-                                                </a>
-                                            )}
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {activeSection === 'tech' && (
-                                    <motion.div
-                                        key="tech"
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -20 }}
-                                        className="space-y-10"
-                                    >
-                                        <div>
-                                            <h2 className="text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground mb-6">Tech Stack</h2>
-                                            <div className="flex flex-wrap gap-3">
-                                                {project.techStack.map((tech, i) => (
-                                                    <motion.div
-                                                        key={tech}
-                                                        initial={{ opacity: 0, scale: 0.8 }}
-                                                        animate={{ opacity: 1, scale: 1 }}
-                                                        transition={{ delay: i * 0.05 }}
-                                                        className={cn("px-5 py-3 rounded-xl text-base font-medium border-2 transition-all cursor-default hover:scale-105 hover:-translate-y-1",
-                                                            isOngoing ? "border-emerald-500/30 hover:border-emerald-500 hover:bg-emerald-500/10" : "border-blue-500/30 hover:border-blue-500 hover:bg-blue-500/10"
-                                                        )}>
-                                                        {tech}
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <h2 className="text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground mb-6">Tools & Platforms</h2>
-                                            <div className="flex flex-wrap gap-3">
-                                                {project.tools.map((tool, i) => (
-                                                    <motion.div
-                                                        key={tool}
-                                                        initial={{ opacity: 0, scale: 0.8 }}
-                                                        animate={{ opacity: 1, scale: 1 }}
-                                                        transition={{ delay: 0.2 + i * 0.05 }}
-                                                        className="px-5 py-3 rounded-xl text-base font-medium border-2 border-violet-500/30 hover:border-violet-500 hover:bg-violet-500/10 transition-all cursor-default hover:scale-105 hover:-translate-y-1">
-                                                        {tool}
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {activeSection === 'highlights' && (
-                                    <motion.div
-                                        key="highlights"
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -20 }}
-                                    >
-                                        <h2 className="text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground mb-6">Key Achievements</h2>
-                                        {project.highlights && project.highlights.length > 0 ? (
-                                            <div className="space-y-4">
-                                                {project.highlights.map((highlight, i) => (
-                                                    <motion.div
-                                                        key={i}
-                                                        initial={{ opacity: 0, x: -30 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: i * 0.1 }}
-                                                        className="flex gap-4 p-4 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group"
-                                                    >
-                                                        <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 transition-transform group-hover:scale-110",
-                                                            isOngoing ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400" : "bg-blue-500/20 text-blue-600 dark:text-blue-400"
-                                                        )}>
-                                                            {String(i + 1).padStart(2, '0')}
-                                                        </div>
-                                                        <p className="text-foreground/80 leading-relaxed pt-1">{highlight}</p>
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-muted-foreground italic">No highlights available.</p>
-                                        )}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom Navigation Dots */}
-                <motion.div
-                    className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-muted/80 backdrop-blur-sm border border-border"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                >
-                    {(['overview', 'tech', 'highlights'] as const).map((section) => (
-                        <button
-                            key={section}
-                            onClick={() => setActiveSection(section)}
-                            className={cn("w-2 h-2 rounded-full transition-all",
-                                activeSection === section
-                                    ? (isOngoing ? "bg-emerald-500 w-6" : "bg-blue-500 w-6")
-                                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                            )}
-                        />
-                    ))}
-                </motion.div>
-            </motion.div>
-        </motion.div>
-    );
-}
 
 
 
@@ -975,6 +707,7 @@ export default function ProjectsPage() {
     const t = useTranslations('projects');
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState<FilterType>('all');
+    const [visibleCount, setVisibleCount] = useState(10);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
     const router = useRouter();
@@ -1051,15 +784,40 @@ export default function ProjectsPage() {
         });
     }, []);
 
+    const [selectedCategory, setSelectedCategory] = useState('All');
+
+    const categories = [
+        { id: 'All', label: 'All Realms', icon: Globe },
+        { id: 'AI & Machine Learning', label: 'Artificial Intelligence', icon: Brain },
+        { id: 'Software Engineering', label: 'Software Architecture', icon: Database },
+        { id: 'IoT & Embedded', label: 'IoT & Hardware', icon: Wifi },
+        { id: 'Blockchain', label: 'Blockchain', icon: Blocks },
+        { id: 'Creative Tech', label: 'Creative Tech', icon: Sparkles },
+    ];
+
     const filteredProjects = useMemo(() => {
         let projects = [...portfolioData.projects];
+
+        // Category Filter
+        if (selectedCategory !== 'All') {
+            projects = projects.filter(p => p.category === selectedCategory);
+        }
+
+        // Search Filter
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             projects = projects.filter((p) => p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query) || p.techStack.some((t) => t.toLowerCase().includes(query)));
         }
+
+        // Status Filter
         if (filter !== 'all') projects = projects.filter((p) => p.status === filter);
         return projects;
-    }, [searchQuery, filter]);
+    }, [searchQuery, filter, selectedCategory]);
+
+    // Reset pagination when filters change
+    useEffect(() => {
+        setVisibleCount(10);
+    }, [searchQuery, filter, selectedCategory]);
 
     const filters: { key: FilterType; label: string }[] = [{ key: 'all', label: t('filters.all') }, { key: 'ongoing', label: t('filters.ongoing') }, { key: 'completed', label: t('filters.completed') }];
 
@@ -1068,7 +826,7 @@ export default function ProjectsPage() {
             <HeroParallax products={products} />
 
             {/* Logo Timeline - Full Width */}
-            <div className="relative w-full z-10 -mt-16 mb-12">
+            <div className="relative w-full z-10 mt-0 sm:-mt-16 mb-12">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -1097,7 +855,7 @@ export default function ProjectsPage() {
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                             <span className="text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground">
-                                Projects Archive
+                                {selectedCategory === 'All' ? 'Projects Archive' : selectedCategory}
                             </span>
                         </div>
                         <div className="flex-1 h-[1px] bg-gradient-to-r from-border to-transparent" />
@@ -1128,6 +886,32 @@ export default function ProjectsPage() {
                                     <X className="w-4 h-4 text-muted-foreground" />
                                 </motion.button>
                             )}
+                        </div>
+                    </div>
+
+                    {/* Creative Category Filter - Refined & Minimalist */}
+                    <div className="mb-8 overflow-x-auto pb-2 no-scrollbar">
+                        <div className="flex gap-2 min-w-max">
+                            {categories.map((cat) => {
+                                const Icon = cat.icon;
+                                const isActive = selectedCategory === cat.id;
+
+                                return (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setSelectedCategory(cat.id)}
+                                        className={cn(
+                                            "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border",
+                                            isActive
+                                                ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25"
+                                                : "bg-background/50 border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-muted/50"
+                                        )}
+                                    >
+                                        <Icon className="w-3.5 h-3.5" />
+                                        <span>{cat.label}</span>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -1180,12 +964,12 @@ export default function ProjectsPage() {
                             </span>
                         </motion.div>
                     </div>
-                </motion.div>
+                </motion.div >
 
                 {/* Projects List Layout */}
-                <div className="space-y-0 mb-8 sm:mb-10 md:mb-12 border-t border-white/5">
+                < div className="space-y-0 mb-8 sm:mb-10 md:mb-12 border-t border-white/5" >
                     <AnimatePresence mode="popLayout">
-                        {filteredProjects.map((project, index) => (
+                        {filteredProjects.slice(0, visibleCount).map((project, index) => (
                             <ProjectListItem
                                 key={project.id}
                                 project={project}
@@ -1194,17 +978,42 @@ export default function ProjectsPage() {
                             />
                         ))}
                     </AnimatePresence>
-                </div>
+                </div >
 
-                {filteredProjects.length === 0 && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-                        <Layers className="w-16 h-16 mx-auto text-white/20 mb-4" />
-                        <p className="text-lg text-white/50">No projects found</p>
-                    </motion.div>
-                )}
-            </div>
+                {/* View All Button */}
+                {
+                    filteredProjects.length > visibleCount && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="flex justify-center mt-12 sm:mt-16 pb-12"
+                        >
+                            <button
+                                onClick={() => setVisibleCount(filteredProjects.length)}
+                                className="group relative px-8 py-3 rounded-full bg-zinc-900 border border-white/10 text-white font-semibold hover:bg-white/5 transition-all outline-none focus:ring-2 focus:ring-primary/50"
+                            >
+                                <span className="relative z-10 flex items-center gap-2">
+                                    View All Projects
+                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </span>
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity blur-lg" />
+                            </button>
+                        </motion.div>
+                    )
+                }
 
-            <AnimatePresence>{selectedProject && <ProjectModal project={selectedProject} onClose={handleCloseModal} />}</AnimatePresence>
-        </div>
+                {
+                    filteredProjects.length === 0 && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+                            <Layers className="w-16 h-16 mx-auto text-white/20 mb-4" />
+                            <p className="text-lg text-white/50">No projects found</p>
+                        </motion.div>
+                    )
+                }
+            </div >
+
+            <AnimatePresence>{selectedProject && <ProjectDetail project={selectedProject} onClose={handleCloseModal} />}</AnimatePresence>
+        </div >
     );
 }
