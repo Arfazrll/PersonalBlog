@@ -616,6 +616,26 @@ function ProjectCard({ project, onClick, index }: { project: Project; onClick: (
                         </div>
                     </div>
                 </div>
+
+                {/* Bottom Navigation Dots */}
+                <motion.div
+                    className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-muted/80 backdrop-blur-sm border border-border"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                >
+                    {(['overview', 'tech', 'highlights'] as const).map((section) => (
+                        <button
+                            key={section}
+                            onClick={() => setActiveSection(section)}
+                            className={cn("w-2 h-2 rounded-full transition-all",
+                                activeSection === section
+                                    ? (isOngoing ? "bg-emerald-500 w-6" : "bg-blue-500 w-6")
+                                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                            )}
+                        />
+                    ))}
+                </motion.div>
             </motion.div>
         </motion.article>
     );
