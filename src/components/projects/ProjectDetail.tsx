@@ -177,37 +177,18 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
 
     const lenis = useLenis();
 
-    // Lock body scroll with proper Lenis + CSS handling
+    // Lock body scroll with robust Lenis + Manual CSS handling (Layout Effect for Sync)
     useEffect(() => {
-        // Immediate lock
-        const lockScroll = () => {
-            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-            document.documentElement.style.setProperty('overflow', 'hidden', 'important');
-            document.body.style.setProperty('overflow', 'hidden', 'important');
-            document.body.style.setProperty('height', '100vh', 'important');
-            document.body.style.paddingRight = `${scrollBarWidth}px`;
-        };
+        // Lock
+        if (lenis) lenis.stop();
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
 
-        lockScroll();
-
-        // Late lock (for Lenis or others resetting it)
-        const timeoutId = setTimeout(() => {
-            if (lenis) lenis.stop();
-            lockScroll();
-        }, 10);
-
+        // Unlock
         return () => {
-            clearTimeout(timeoutId);
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
             if (lenis) lenis.start();
-
-            // Force Clear CSS Properties
-            document.body.style.removeProperty('overflow');
-            document.body.style.removeProperty('height');
-            document.body.style.removeProperty('padding-right');
-            document.documentElement.style.removeProperty('overflow');
-
-            // Trigger resize to fix layout
-            window.dispatchEvent(new Event('resize'));
         };
     }, [lenis]);
 
@@ -235,7 +216,12 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
             exit={{ opacity: 0, pointerEvents: "none" }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm overflow-hidden"
-            onClick={onClose}
+            onClick={() => {
+                document.documentElement.style.overflow = '';
+                document.body.style.overflow = '';
+                if (lenis) lenis.start();
+                onClose();
+            }}
         >
             {/* Modal Container */}
             <motion.div
@@ -255,7 +241,14 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
 
                 {/* Close Button */}
                 <motion.button
-                    onClick={onClose}
+                    onClick={() => {
+                        // FORCE UNLOCK IMMEDIATELY before unmount animation starts
+                        // This prevents heavy tabs (like TechStack) from blocking the restore
+                        document.documentElement.style.overflow = '';
+                        document.body.style.overflow = '';
+                        if (lenis) lenis.start();
+                        onClose();
+                    }}
                     className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/10 hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/50 transition-all duration-300 group"
                     whileHover={{ rotate: 90 }}
                     whileTap={{ scale: 0.9 }}

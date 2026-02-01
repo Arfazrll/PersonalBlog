@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { getMessages, getLocale } from 'next-intl/server';
-import { ThemeProvider, I18nProvider } from '@/providers';
+import { ThemeProvider, I18nProvider, SmoothScrollProvider } from '@/providers';
 import { Navbar, Footer } from '@/components/layout';
 import { BackToTop } from '@/components/ui/BackToTop';
 import '@/styles/globals.css';
@@ -84,14 +84,16 @@ export default async function RootLayout({
             <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans relative`}>
                 <ThemeProvider>
                     <I18nProvider locale={locale} messages={messages}>
-                        <ThemeAwareClickSpark>
-                            <div className="relative min-h-screen flex flex-col">
-                                <Navbar />
-                                <main className="flex-1">{children}</main>
-                                <Footer />
-                                <BackToTop />
-                            </div>
-                        </ThemeAwareClickSpark>
+                        <SmoothScrollProvider>
+                            <ThemeAwareClickSpark>
+                                <div className="relative min-h-screen flex flex-col">
+                                    <Navbar />
+                                    <main className="flex-1">{children}</main>
+                                    <Footer />
+                                    <BackToTop />
+                                </div>
+                            </ThemeAwareClickSpark>
+                        </SmoothScrollProvider>
                     </I18nProvider>
                 </ThemeProvider>
             </body>
