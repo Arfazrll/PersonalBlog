@@ -1,4 +1,4 @@
-import { ReactLenis } from "lenis/react";
+// ReactLenis removed - using global provider
 import {
     motion,
     useMotionTemplate,
@@ -15,16 +15,7 @@ import { cn } from "@/lib/utils";
 export const SmoothScrollHero = () => {
     return (
         <div className="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 relative z-0">
-            <ReactLenis
-                root
-                options={{
-                    lerp: 0.05,
-                    duration: 1.5,
-                    smoothWheel: true,
-                }}
-            >
-                <Hero />
-            </ReactLenis>
+            <Hero />
         </div>
     );
 };
