@@ -14,6 +14,10 @@ export interface Project {
     highlights?: string[];
     challenges?: string[];
     category?: string;
+    features?: { title: string; items: string[] }[];
+    installation?: { title: string; cmd?: string; code?: string; type: 'code' | 'text' }[];
+    challengesAndSolutions?: { problem: string; solution: string }[];
+    galleryImages?: string[];
 }
 
 export interface Experience {

@@ -62,7 +62,7 @@ function ProjectListItem({
                     "border-b border-border/50 dark:border-white/5 transition-colors duration-500",
                     isHovered && "border-border dark:border-white/10"
                 )}
-                whileHover={{ backgroundColor: 'var(--color-muted)' }}
+                whileHover={{ backgroundColor: 'rgba(120, 120, 120, 0.1)' }}
             >
                 {/* Spotlight */}
                 <motion.div
