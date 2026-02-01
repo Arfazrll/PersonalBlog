@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { WakaTimeCard } from './WakaTimeCard';
+import { WakaTimeLanguageBoard } from './WakaTimeCard';
 
 export default function WakaTimeStats() {
     const [data, setData] = useState(null);
@@ -27,5 +27,5 @@ export default function WakaTimeStats() {
 
     if (loading) return null; // Or a loading skeleton if preferred
 
-    return <WakaTimeCard data={data} />;
+    return <WakaTimeLanguageBoard data={data} />;
 }
