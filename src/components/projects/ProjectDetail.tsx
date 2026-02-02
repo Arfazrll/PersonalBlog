@@ -234,9 +234,9 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
                     stiffness: 200,
                     exit: { duration: 0.2, ease: "easeInOut" }
                 }}
-                className="absolute inset-0 md:inset-4 md:rounded-3xl bg-zinc-50/90 dark:bg-black/80 backdrop-blur-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10 shadow-2xl flex flex-col lg:flex-row will-change-transform"
+                className="absolute inset-0 md:inset-4 md:rounded-3xl bg-white/90 dark:bg-zinc-950/90 backdrop-blur-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10 shadow-2xl flex flex-col lg:flex-row will-change-transform"
                 onClick={(e) => e.stopPropagation()}
-                data-lenis-prevent // CRITICAL: Stop scroll propagation to Lenis
+                data-lenis-prevent
             >
 
                 {/* Close Button */}
@@ -361,10 +361,10 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
                 {/* RIGHT COLUMN - Scrollable Content */}
                 <div className="lg:w-7/12 flex flex-col flex-1 min-h-0 lg:h-full bg-transparent relative">
                     {/* Cloud/Blur Separator - Soft seamless fade (Directed Left & Narrower) */}
-                    <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-zinc-50 via-zinc-50/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent pointer-events-none z-30" />
+                    <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white via-white/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent pointer-events-none z-30" />
 
                     {/* Tabs - Floating & Adaptive */}
-                    <div className="sticky top-0 z-20 px-6 pt-6 pb-2 bg-gradient-to-b from-zinc-50/95 to-transparent dark:from-black/95 dark:to-transparent backdrop-blur-sm lg:pl-12 transition-[padding]">
+                    <div className="sticky top-0 z-20 px-6 pt-6 pb-2 bg-gradient-to-b from-white/95 to-transparent dark:from-zinc-950/95 dark:to-transparent backdrop-blur-sm lg:pl-12 transition-[padding]">
                         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
                             {(['overview', 'tech', 'features', 'gallery', 'install'] as const).map((section) => {
                                 // Conditionally render tabs based on available data

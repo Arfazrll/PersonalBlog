@@ -289,7 +289,7 @@ export function TechStack({ techStack, tools }: TechStackProps) {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
                             transition={{ delay: i * 0.05 }}
-                            className="bg-white/80 dark:bg-zinc-900/40 backdrop-blur-md border border-black/10 dark:border-white/5 p-6 rounded-2xl shadow-xl flex flex-col md:flex-row gap-6 items-start hover:bg-white dark:hover:bg-zinc-900/60 hover:border-emerald-500/20 transition-all group"
+                            className="bg-white/60 dark:bg-zinc-900/40 backdrop-blur-md border border-black/10 dark:border-white/5 p-6 rounded-2xl shadow-xl flex flex-col md:flex-row gap-6 items-start hover:bg-white/80 dark:hover:bg-zinc-900/60 hover:border-emerald-500/20 transition-all group"
                         >
                             {/* Icon */}
                             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-black/5 to-black/0 dark:from-white/10 dark:to-white/5 p-3 shrink-0 border border-black/5 dark:border-white/5 group-hover:scale-105 transition-transform shadow-inner">
