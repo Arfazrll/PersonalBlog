@@ -4,7 +4,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Search, X, Layers, ArrowRight, ArrowUpRight, Sparkles, Code2, Zap, Brain, Cpu, Wifi, Blocks, Globe, Database } from 'lucide-react';
+import { Search, X, Layers, ArrowRight, ArrowUpRight, Sparkles, Code2, Zap, Brain, Cpu, Wifi, Blocks, Globe, Database, LayoutGrid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import { Project } from '@/types';
@@ -12,6 +12,7 @@ import { HeroParallax } from '@/components/ui/hero-parallax';
 import { LogoTimeline, LogoItem } from '@/components/ui/logo-timeline';
 import { Icons } from '@/components/icons';
 import { Meteors } from '@/components/ui/meteors';
+import { ProjectContact } from '@/components/sections/ProjectContact';
 import { ProjectDetail } from '@/components/projects/ProjectDetail';
 
 type FilterType = 'all' | 'ongoing' | 'completed';
@@ -58,11 +59,11 @@ function ProjectListItem({
         >
             <motion.div
                 className={cn(
-                    "relative cursor-pointer overflow-hidden",
-                    "border-b border-border/50 dark:border-white/5 transition-colors duration-500",
-                    isHovered && "border-border dark:border-white/10"
+                    "relative cursor-pointer overflow-hidden rounded-xl", /* Added rounded-xl for smoother feel */
+                    "border-b border-black/5 dark:border-white/5 transition-all duration-300",
+                    isHovered ? "bg-black/5 dark:bg-white/5 border-transparent" : "hover:bg-black/[0.02] dark:hover:bg-white/[0.02]"
                 )}
-                whileHover={{ backgroundColor: 'rgba(120, 120, 120, 0.1)' }}
+                whileHover={{ scale: 1.002 }} /* Micro interaction */
             >
                 {/* Spotlight */}
                 <motion.div
@@ -138,7 +139,7 @@ function ProjectListItem({
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.3, ease: 'easeInOut' }}
-                            className="overflow-hidden border-t border-border/50 dark:border-white/5"
+                            className="overflow-hidden border-t border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02]"
                         >
                             <div className="relative py-3 overflow-hidden">
                                 <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
@@ -175,8 +176,8 @@ function ProjectListItem({
                         }}
                     >
                         <div className={cn(
-                            "w-80 h-48 rounded-xl overflow-hidden border backdrop-blur-sm flex items-center justify-center relative", // Increased size
-                            isOngoing ? "border-emerald-500/30 bg-emerald-950/80" : "border-blue-500/30 bg-blue-950/80"
+                            "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl", // increased rounded
+                            isOngoing ? "border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/80" : "border-blue-500/20 bg-blue-500/5 dark:bg-blue-950/80"
                         )}>
                             {project.image ? (
                                 <img
@@ -265,14 +266,14 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
                 />
 
                 {/* Main Card Body */}
-                <div className="relative h-full bg-zinc-950/90 dark:bg-zinc-950/95 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/5">
+                <div className="relative h-full bg-white/50 dark:bg-black/40 backdrop-blur-2xl rounded-3xl overflow-hidden border border-black/5 dark:border-white/10 transition-colors duration-500">
 
                     {/* Spotlight Effect */}
                     <motion.div
                         className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-500"
                         style={{
                             opacity: isHovered ? 1 : 0,
-                            background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.15)' : 'rgba(59, 130, 246, 0.15)'}, transparent 40%)`
+                            background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}, transparent 40%)`
                         }}
                     />
 
@@ -283,18 +284,18 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="absolute inset-0 z-10 overflow-hidden"
+                                className="absolute inset-0 z-10 overflow-hidden mix-blend-screen"
                             >
                                 <Meteors number={12} minDuration={3} maxDuration={8} />
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    {/* Floating Orbs */}
+                    {/* Floating Orbs - Subtle Blending */}
                     <motion.div
                         className={cn(
-                            "absolute w-40 h-40 rounded-full blur-[80px] z-0",
-                            isOngoing ? "bg-emerald-500/30" : "bg-blue-500/30"
+                            "absolute w-40 h-40 rounded-full blur-[80px] z-0 opacity-40",
+                            isOngoing ? "bg-emerald-500/20" : "bg-blue-500/20"
                         )}
                         style={{ top: '10%', right: '15%' }}
                         animate={{
@@ -305,7 +306,7 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
                         transition={{ duration: 4, repeat: Infinity }}
                     />
                     <motion.div
-                        className="absolute w-32 h-32 rounded-full bg-violet-500/20 blur-[60px] z-0"
+                        className="absolute w-32 h-32 rounded-full bg-violet-500/20 blur-[60px] z-0 opacity-40"
                         style={{ bottom: '20%', left: '10%' }}
                         animate={{
                             scale: isHovered ? [1, 1.3, 1] : 1,
@@ -314,9 +315,9 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
                         transition={{ duration: 5, repeat: Infinity, delay: 0.5 }}
                     />
 
-                    {/* Grid Pattern */}
-                    <div className="absolute inset-0 z-0 opacity-[0.015]" style={{
-                        backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`,
+                    {/* Grid Pattern - Very Subtle */}
+                    <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style={{
+                        backgroundImage: `linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)`,
                         backgroundSize: '40px 40px'
                     }} />
 
@@ -330,7 +331,7 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
                         }}
                         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        <span className="text-[14rem] sm:text-[18rem] md:text-[22rem] font-black text-white/[0.015] select-none leading-none">
+                        <span className="text-[14rem] sm:text-[18rem] md:text-[22rem] font-black text-black/[0.02] dark:text-white/[0.025] select-none leading-none">
                             {project.title.charAt(0)}
                         </span>
                     </motion.div>
@@ -366,7 +367,7 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
 
                         {/* Title with underline effect */}
                         <motion.h2
-                            className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4"
+                            className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4"
                             animate={{ x: isHovered ? 6 : 0 }}
                         >
                             {project.title}
@@ -382,7 +383,7 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
                         </motion.h2>
 
                         {/* Description */}
-                        <p className="text-zinc-400 text-base sm:text-lg md:text-xl mb-6 max-w-2xl line-clamp-2">
+                        <p className="text-zinc-600 dark:text-zinc-400 text-base sm:text-lg md:text-xl mb-6 max-w-2xl line-clamp-2">
                             {project.description}
                         </p>
 
@@ -391,7 +392,7 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
                             {project.techStack.slice(0, 6).map((tech, i) => (
                                 <motion.span
                                     key={tech}
-                                    className="px-3 py-1.5 rounded-xl text-sm font-medium bg-white/5 text-zinc-300 border border-white/10 backdrop-blur-sm"
+                                    className="px-3 py-1.5 rounded-xl text-sm font-medium bg-black/5 dark:bg-white/5 text-zinc-700 dark:text-zinc-300 border border-black/5 dark:border-white/10 backdrop-blur-sm"
                                     initial={{ opacity: 0, y: 15, scale: 0.9 }}
                                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
                                     transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
@@ -445,6 +446,7 @@ function ProjectCard({ project, onClick, index }: { project: Project; onClick: (
     const cardRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
 
     // 3D Tilt
     const mouseX = useMotionValue(0);
@@ -501,6 +503,20 @@ function ProjectCard({ project, onClick, index }: { project: Project; onClick: (
 
                 {/* Card Body */}
                 <div className="relative h-full bg-zinc-950/95 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden">
+
+                    {/* Project Image Background */}
+                    {project.image ? (
+                        <div className="absolute inset-0 z-0">
+                            <img
+                                src={project.image}
+                                alt={project.title}
+                                className="w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />
+                        </div>
+                    ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/50 to-zinc-950/50" />
+                    )}
 
                     {/* Spotlight */}
                     <div
@@ -617,25 +633,7 @@ function ProjectCard({ project, onClick, index }: { project: Project; onClick: (
                     </div>
                 </div>
 
-                {/* Bottom Navigation Dots */}
-                <motion.div
-                    className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-muted/80 backdrop-blur-sm border border-border"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                >
-                    {(['overview', 'tech', 'highlights'] as const).map((section) => (
-                        <button
-                            key={section}
-                            onClick={() => setActiveSection(section)}
-                            className={cn("w-2 h-2 rounded-full transition-all",
-                                activeSection === section
-                                    ? (isOngoing ? "bg-emerald-500 w-6" : "bg-blue-500 w-6")
-                                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                            )}
-                        />
-                    ))}
-                </motion.div>
+
             </motion.div>
         </motion.article>
     );
@@ -769,7 +767,7 @@ export default function ProjectsPage() {
             "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2832&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2670&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2670&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1531297424005-066e2c6ec9ce?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2670&auto=format&fit=crop", // Replaced broken image
             "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2670&auto=format&fit=crop",
         ];
 
@@ -810,9 +808,7 @@ export default function ProjectsPage() {
         { id: 'All', label: 'All Realms', icon: Globe },
         { id: 'AI & Machine Learning', label: 'Artificial Intelligence', icon: Brain },
         { id: 'Software Engineering', label: 'Software Architecture', icon: Database },
-        { id: 'IoT & Embedded', label: 'IoT & Hardware', icon: Wifi },
-        { id: 'Blockchain', label: 'Blockchain', icon: Blocks },
-        { id: 'Creative Tech', label: 'Creative Tech', icon: Sparkles },
+        { id: 'More', label: 'More', icon: Layers },
     ];
 
     const filteredProjects = useMemo(() => {
@@ -820,7 +816,11 @@ export default function ProjectsPage() {
 
         // Category Filter
         if (selectedCategory !== 'All') {
-            projects = projects.filter(p => p.category === selectedCategory);
+            if (selectedCategory === 'More') {
+                projects = projects.filter(p => p.category && ['IoT & Embedded', 'Blockchain', 'Creative Tech'].includes(p.category));
+            } else {
+                projects = projects.filter(p => p.category === selectedCategory);
+            }
         }
 
         // Search Filter
@@ -834,6 +834,8 @@ export default function ProjectsPage() {
         return projects;
     }, [searchQuery, filter, selectedCategory]);
 
+    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+
     // Reset pagination when filters change
     useEffect(() => {
         setVisibleCount(10);
@@ -842,7 +844,7 @@ export default function ProjectsPage() {
     const filters: { key: FilterType; label: string }[] = [{ key: 'all', label: t('filters.all') }, { key: 'ongoing', label: t('filters.ongoing') }, { key: 'completed', label: t('filters.completed') }];
 
     return (
-        <div className="min-h-screen bg-background relative overflow-hidden">
+        <div className="min-h-screen bg-background relative overflow-hidden" style={{ position: 'relative' }}>
             <HeroParallax products={products} />
 
             {/* Logo Timeline - Full Width */}
@@ -863,146 +865,173 @@ export default function ProjectsPage() {
             </div>
 
             <div className="container-creative relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
-                {/* Search & Filter Section - Creative Design */}
+                {/* Search & Filter Control Bar */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                     className="mb-10 sm:mb-12 md:mb-16"
                 >
-                    {/* Section Header */}
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                            <span className="text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground">
-                                {selectedCategory === 'All' ? 'Projects Archive' : selectedCategory}
-                            </span>
+                    <div className="flex flex-col gap-6 p-0 sm:p-2 rounded-3xl bg-transparent">
+
+                        {/* Top Partition: Header & Search */}
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
+                            {/* Title & Count */}
+                            <div className="flex items-center gap-3">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-muted-foreground">
+                                    Projects Archive
+                                </h2>
+                                <span className="px-2 py-0.5 rounded-md bg-white/5 text-[10px] font-mono text-muted-foreground border border-white/5">
+                                    {String(filteredProjects.length).padStart(2, '0')}
+                                </span>
+                            </div>
+
+                            {/* Search Input - Compact */}
+                            <div className="relative group w-full md:w-80">
+                                <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-primary/20 via-primary/10 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                                <div className="relative flex items-center bg-transparent rounded-xl hover:bg-white/5 overflow-hidden transition-colors">
+                                    <Search className="absolute left-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search projects..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full pl-9 pr-8 py-2.5 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+                                    />
+                                    {searchQuery && (
+                                        <button
+                                            onClick={() => setSearchQuery('')}
+                                            className="absolute right-2 p-1 rounded-sm hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex-1 h-[1px] bg-gradient-to-r from-border to-transparent" />
-                        <span className="text-xs font-mono text-muted-foreground/50">
-                            [{String(filteredProjects.length).padStart(2, '0')}]
-                        </span>
-                    </div>
 
-                    {/* Search Input - Creative Style */}
-                    <div className="relative group mb-6">
-                        <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-500" />
-                        <div className="relative flex items-center bg-card dark:bg-zinc-900/80 rounded-2xl border border-border dark:border-white/10 overflow-hidden transition-all duration-300 group-hover:border-primary/30 group-focus-within:border-primary/50">
-                            <Search className="absolute left-5 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                            <input
-                                type="text"
-                                placeholder={t('search')}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-14 pr-5 py-4 sm:py-5 bg-transparent text-foreground placeholder:text-muted-foreground/50 focus:outline-none text-sm sm:text-base font-medium"
-                            />
-                            {searchQuery && (
-                                <motion.button
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    onClick={() => setSearchQuery('')}
-                                    className="absolute right-4 p-1.5 rounded-full bg-muted hover:bg-muted/80 transition-colors"
-                                >
-                                    <X className="w-4 h-4 text-muted-foreground" />
-                                </motion.button>
-                            )}
-                        </div>
-                    </div>
+                        {/* Divider - REMOVED */}
 
-                    {/* Creative Category Filter - Refined & Minimalist */}
-                    <div className="mb-8 overflow-x-auto pb-2 no-scrollbar">
-                        <div className="flex gap-2 min-w-max">
-                            {categories.map((cat) => {
-                                const Icon = cat.icon;
-                                const isActive = selectedCategory === cat.id;
+                        {/* Bottom Partition: Controls */}
+                        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 xl:gap-4">
 
-                                return (
+                            {/* Categories - Horizontal Scroll */}
+                            <div className="w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0 no-scrollbar">
+                                <div className="flex items-center gap-1.5 min-w-max px-2">
+                                    {categories.map((cat) => {
+                                        const Icon = cat.icon;
+                                        const isActive = selectedCategory === cat.id;
+
+                                        return (
+                                            <button
+                                                key={cat.id}
+                                                onClick={() => setSelectedCategory(cat.id)}
+                                                className={cn(
+                                                    "relative group flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300",
+                                                    isActive
+                                                        ? "bg-primary/10 text-primary border border-primary/20"
+                                                        : "bg-transparent text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent"
+                                                )}
+                                            >
+                                                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+                                                <span>{cat.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Filters & View Toggle */}
+                            <div className="flex items-center gap-3 px-2 self-end xl:self-auto">
+                                {/* Status Filters */}
+                                <div className="flex items-center p-1 bg-transparent rounded-xl">
+                                    {filters.map((f) => (
+                                        <button
+                                            key={f.key}
+                                            onClick={() => setFilter(f.key)}
+                                            className={cn(
+                                                'relative px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-all duration-300',
+                                                filter === f.key
+                                                    ? 'bg-zinc-800 text-white shadow-sm'
+                                                    : 'text-muted-foreground hover:text-white'
+                                            )}
+                                        >
+                                            {f.label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Vertical Divider REMOVED */}
+
+                                {/* View Switcher */}
+                                <div className="flex items-center p-1 bg-transparent rounded-xl gap-0.5">
                                     <button
-                                        key={cat.id}
-                                        onClick={() => setSelectedCategory(cat.id)}
+                                        onClick={() => setViewMode('list')}
                                         className={cn(
-                                            "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border",
-                                            isActive
-                                                ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25"
-                                                : "bg-background/50 border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-muted/50"
+                                            "p-1.5 rounded-lg transition-all duration-200",
+                                            viewMode === 'list'
+                                                ? "bg-zinc-800 text-white shadow-sm"
+                                                : "text-muted-foreground hover:text-white hover:bg-white/5"
                                         )}
+                                        title="List View"
                                     >
-                                        <Icon className="w-3.5 h-3.5" />
-                                        <span>{cat.label}</span>
+                                        <List className="w-4 h-4" />
                                     </button>
-                                );
-                            })}
-                        </div>
-                    </div>
+                                    <button
+                                        onClick={() => setViewMode('grid')}
+                                        className={cn(
+                                            "p-1.5 rounded-lg transition-all duration-200",
+                                            viewMode === 'grid'
+                                                ? "bg-zinc-800 text-white shadow-sm"
+                                                : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                        )}
+                                        title="Grid View"
+                                    >
+                                        <LayoutGrid className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
 
-                    {/* Filter Tabs - Creative Style */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground/50 mr-2 hidden sm:inline">
-                            Filter:
-                        </span>
-                        <div className="flex items-center p-1 bg-muted/30 dark:bg-zinc-900/50 rounded-xl border border-border/50 dark:border-white/5">
-                            {filters.map((f) => (
-                                <motion.button
-                                    key={f.key}
-                                    onClick={() => setFilter(f.key)}
-                                    className={cn(
-                                        'relative px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300',
-                                        filter === f.key
-                                            ? 'text-primary-foreground'
-                                            : 'text-muted-foreground hover:text-foreground'
-                                    )}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    {/* Active Background */}
-                                    {filter === f.key && (
-                                        <motion.div
-                                            layoutId="activeFilter"
-                                            className="absolute inset-0 bg-foreground dark:bg-white rounded-lg"
-                                            transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                                        />
-                                    )}
-                                    <span className={cn(
-                                        "relative z-10 transition-colors",
-                                        filter === f.key && "text-background dark:text-zinc-950"
-                                    )}>
-                                        {f.label}
-                                    </span>
-                                </motion.button>
-                            ))}
                         </div>
-
-                        {/* Results Count Badge */}
-                        <motion.div
-                            key={filteredProjects.length}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="ml-auto hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20"
-                        >
-                            <span className="text-xs font-mono text-primary">
-                                {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
-                            </span>
-                        </motion.div>
                     </div>
                 </motion.div >
 
                 {/* Projects List Layout */}
-                < div className="space-y-0 mb-8 sm:mb-10 md:mb-12 border-t border-white/5" >
-                    <AnimatePresence mode="popLayout">
-                        {filteredProjects.slice(0, visibleCount).map((project, index) => (
-                            <ProjectListItem
-                                key={project.id}
-                                project={project}
-                                onClick={() => handleOpenProject(project)}
-                                index={index}
-                            />
-                        ))}
-                    </AnimatePresence>
-                </div >
+                <div className="space-y-0 mb-8 sm:mb-10 md:mb-12">
+
+                    {viewMode === 'list' ? (
+                        <div className="border-t border-white/5">
+                            <AnimatePresence mode="popLayout">
+                                {filteredProjects.slice(0, visibleCount).map((project, index) => (
+                                    <ProjectListItem
+                                        key={project.id}
+                                        project={project}
+                                        onClick={() => handleOpenProject(project)}
+                                        index={index}
+                                    />
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                            <AnimatePresence mode="popLayout">
+                                {filteredProjects.slice(0, visibleCount).map((project, index) => (
+                                    <ProjectCard
+                                        key={project.id}
+                                        project={project}
+                                        onClick={() => handleOpenProject(project)}
+                                        index={index}
+                                    />
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    )}
+                </div>
 
                 {/* View All Button */}
                 {
-                    filteredProjects.length > visibleCount && (
+                    filteredProjects.length > 10 && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -1010,12 +1039,12 @@ export default function ProjectsPage() {
                             className="flex justify-center mt-12 sm:mt-16 pb-12"
                         >
                             <button
-                                onClick={() => setVisibleCount(filteredProjects.length)}
+                                onClick={() => setVisibleCount(visibleCount < filteredProjects.length ? filteredProjects.length : 10)}
                                 className="group relative px-8 py-3 rounded-full bg-zinc-900 border border-white/10 text-white font-semibold hover:bg-white/5 transition-all outline-none focus:ring-2 focus:ring-primary/50"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
-                                    View All Projects
-                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                    {visibleCount < filteredProjects.length ? 'View All Projects' : 'View Less'}
+                                    <ArrowRight className={cn("w-4 h-4 transition-transform", visibleCount >= filteredProjects.length && "rotate-180")} />
                                 </span>
                                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity blur-lg" />
                             </button>
@@ -1031,6 +1060,8 @@ export default function ProjectsPage() {
                         </motion.div>
                     )
                 }
+                {/* Contact Section */}
+                <ProjectContact />
             </div >
 
             <AnimatePresence>{selectedProject && <ProjectDetail project={selectedProject} onClose={handleCloseModal} />}</AnimatePresence>
