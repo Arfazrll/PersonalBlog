@@ -277,6 +277,10 @@ function ToolsCloud() {
     );
 }
 
+import { SplineScene } from '@/components/ui/SplineScene';
+
+// ... (existing imports)
+
 export default function SkillsPage() {
     const t = useTranslations('skills');
 
@@ -284,11 +288,21 @@ export default function SkillsPage() {
     const backendTech = portfolioData.techStack.filter((t) => t.category === 'language' || t.category === 'database');
 
     return (
-        <div className="min-h-screen pt-32 relative overflow-hidden">
+        <div className="min-h-screen bg-background relative overflow-hidden">
+            {/* 3D Spline Scene Hero */}
+            <div className="w-full h-[500px] md:h-[600px] relative z-0">
+                <SplineScene
+                    scene="https://prod.spline.design/qVnpleqGGhqRlQYK/scene.splinecode"
+                    className="w-full h-full"
+                />
+                {/* Gradient Overlay for Blending */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
+            </div>
+
             <FloatingShape className="w-[600px] h-[600px] -top-40 -left-40" />
             <FloatingShape className="w-[500px] h-[500px] top-1/2 -right-40" delay={2} />
 
-            <div className="container-creative pb-20 relative">
+            <div className="container-creative pb-20 relative z-10 -mt-20">
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
                     <motion.span className="inline-block px-4 py-2 rounded-full glass-card text-sm font-medium mb-6" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>
                         What I Use

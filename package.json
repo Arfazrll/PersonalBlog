@@ -15,6 +15,8 @@
         "@react-three/fiber": "^9.0.0",
         "@react-three/postprocessing": "^2.16.3",
         "@react-three/rapier": "^2.0.0",
+        "@splinetool/react-spline": "^4.1.0",
+        "@splinetool/runtime": "^1.12.47",
         "@tsparticles/react": "^3.0.0",
         "@tsparticles/slim": "^3.0.0",
         "@types/matter-js": "^0.20.2",
