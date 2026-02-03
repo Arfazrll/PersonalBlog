@@ -88,7 +88,7 @@ export default function TextScrollMarquee({
                 className="flex whitespace-nowrap gap-10 flex-nowrap"
                 style={{ x }}
             >
-                {[...Array(4)].map((_, index) => (
+                {[...Array(typeof window !== 'undefined' && window.innerWidth < 768 ? 2 : 4)].map((_, index) => (
                     <span key={index} className={cn('block text-[5vw]', className)}>
                         {children}
                     </span>

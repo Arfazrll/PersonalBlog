@@ -41,6 +41,7 @@ export function TextPressure({
     const titleRef = useRef<HTMLHeadingElement>(null);
     const spansRef = useRef<(HTMLSpanElement | null)[]>([]);
 
+    const centersRef = useRef<{ x: number; y: number }[]>([]);
     const mouseRef = useRef({ x: 0, y: 0 });
     const cursorRef = useRef({ x: 0, y: 0 });
 
@@ -56,6 +57,19 @@ export function TextPressure({
         const dy = b.y - a.y;
         return Math.sqrt(dx * dx + dy * dy);
     };
+
+    const updateCenters = useCallback(() => {
+        if (!titleRef.current) return;
+        const newCenters = spansRef.current.map(span => {
+            if (!span) return { x: 0, y: 0 };
+            const rect = span.getBoundingClientRect();
+            return {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            };
+        });
+        centersRef.current = newCenters;
+    }, []);
 
     const setSize = useCallback(() => {
         if (!containerRef.current || !titleRef.current) return;
@@ -78,8 +92,9 @@ export function TextPressure({
                 setScaleY(yRatio);
                 setLineHeight(yRatio);
             }
+            updateCenters();
         });
-    }, [chars.length, minFontSize, scale]);
+    }, [chars.length, minFontSize, scale, updateCenters]);
 
     useEffect(() => {
         const style = document.createElement('style');
@@ -107,13 +122,16 @@ export function TextPressure({
         style.setAttribute('data-text-pressure', 'true');
         document.head.appendChild(style);
 
-        const timer = setTimeout(() => setFontLoaded(true), 500);
+        const timer = setTimeout(() => {
+            setFontLoaded(true);
+            updateCenters();
+        }, 500);
 
         return () => {
             document.querySelectorAll('style[data-text-pressure="true"]').forEach(el => el.remove());
             clearTimeout(timer);
         };
-    }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth]);
+    }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth, updateCenters]);
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
@@ -159,15 +177,10 @@ export function TextPressure({
                 const titleRect = titleRef.current.getBoundingClientRect();
                 const maxDist = titleRect.width / 2;
 
-                spansRef.current.forEach(span => {
-                    if (!span) return;
+                spansRef.current.forEach((span, i) => {
+                    if (!span || !centersRef.current[i]) return;
 
-                    const rect = span.getBoundingClientRect();
-                    const charCenter = {
-                        x: rect.x + rect.width / 2,
-                        y: rect.y + rect.height / 2
-                    };
-
+                    const charCenter = centersRef.current[i];
                     const d = dist(mouseRef.current, charCenter);
 
                     const getAttr = (distance: number, minVal: number, maxVal: number) => {

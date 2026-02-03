@@ -2,10 +2,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export const BoxesCore = ({ className, ...rest }: { className?: string }) => {
-  const rows = new Array(40).fill(1);
-  const cols = new Array(25).fill(1);
+  const isMobile = useIsMobile();
+  const rows = new Array(isMobile ? 10 : 20).fill(1);
+  const cols = new Array(isMobile ? 8 : 15).fill(1);
   let colors = [
     "#f8fafc", // slate-50 (pure bright)
     "#e2e8f0", // slate-200
@@ -48,9 +50,6 @@ export const BoxesCore = ({ className, ...rest }: { className?: string }) => {
               whileHover={{
                 backgroundColor: `${getRandomColor()}`,
                 transition: { duration: 0 },
-              }}
-              animate={{
-                transition: { duration: 2 },
               }}
               key={`col` + j}
               className="relative h-24 w-40 border-t border-r border-zinc-200/60 dark:border-zinc-700/80"
