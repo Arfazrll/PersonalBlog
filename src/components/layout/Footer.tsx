@@ -34,7 +34,7 @@ const socialIcons: { [key: string]: SocialIconComponent } = {
 const marqueeKeys = ['0', '1', '2', '3', '4', '5'];
 
 function Marquee() {
-    const t = useTranslations('footer.marquee');
+    const t = useTranslations('footer.marquee') as (key: string) => string;
     return (
         <div className="relative flex overflow-hidden py-4 bg-muted/30 border-y border-border backdrop-blur-sm">
             <motion.div
@@ -56,7 +56,9 @@ function Marquee() {
     );
 }
 
-function SocialCard({ social }: { social: any }) {
+import { SocialLink } from '@/types/index';
+
+function SocialCard({ social }: { social: SocialLink }) {
     const Icon = socialIcons[social.icon] || Github;
 
     return (
@@ -136,7 +138,7 @@ export function Footer() {
 
                             <div className="flex items-center gap-3 md:gap-4">
                                 <div className="hidden sm:flex items-center gap-1 md:gap-2">
-                                    {portfolioData.personal.socialLinks.slice(0, 4).map((social) => {
+                                    {portfolioData.personal.socialLinks.slice(0, 4).map((social: SocialLink) => {
                                         const Icon = socialIcons[social.icon];
                                         return (
                                             <motion.a
@@ -245,7 +247,7 @@ export function Footer() {
 
                                     {/* Right Column - Social Grid */}
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 content-center">
-                                        {portfolioData.personal.socialLinks.map((social, i) => (
+                                        {portfolioData.personal.socialLinks.map((social: SocialLink, i: number) => (
                                             <motion.div
                                                 key={social.platform}
                                                 initial={{ opacity: 0, scale: 0.9 }}

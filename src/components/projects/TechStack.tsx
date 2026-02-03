@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { portfolioData } from '@/data/portfolio';
 import { cn } from '@/lib/utils';
 import { Cpu, Wrench, Zap, RefreshCw, ArrowDown, ChevronDown } from 'lucide-react';
+import { TechStack as TechStackType, Tool } from '@/types/index';
 
 // --- Types ---
 interface TechStackProps {
@@ -76,8 +77,8 @@ export function TechStack({ techStack, tools }: TechStackProps) {
             const startX = width / 2 + Math.cos(angle) * distance;
             const startY = height / 2 + Math.sin(angle) * distance;
 
-            const icon = portfolioData.techStack.find(t => t.name.toLowerCase() === name.toLowerCase())?.icon ||
-                portfolioData.tools.find(t => t.name.toLowerCase() === name.toLowerCase())?.icon;
+            const icon = portfolioData.techStack.find((t: TechStackType) => t.name.toLowerCase() === name.toLowerCase())?.icon ||
+                portfolioData.tools.find((t: Tool) => t.name.toLowerCase() === name.toLowerCase())?.icon;
 
             return {
                 id: name + (isTool ? '-tool' : ''),
@@ -293,9 +294,9 @@ export function TechStack({ techStack, tools }: TechStackProps) {
                         >
                             {/* Icon */}
                             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-black/5 to-black/0 dark:from-white/10 dark:to-white/5 p-3 shrink-0 border border-black/5 dark:border-white/5 group-hover:scale-105 transition-transform shadow-inner">
-                                {portfolioData.techStack.find(t => t.name.toLowerCase() === tech.toLowerCase())?.icon ? (
+                                {portfolioData.techStack.find((t: TechStackType) => t.name.toLowerCase() === tech.toLowerCase())?.icon ? (
                                     <img
-                                        src={portfolioData.techStack.find(t => t.name.toLowerCase() === tech.toLowerCase())?.icon}
+                                        src={portfolioData.techStack.find((t: TechStackType) => t.name.toLowerCase() === tech.toLowerCase())?.icon}
                                         alt={tech}
                                         className={cn(
                                             "w-full h-full object-contain drop-shadow-lg",
@@ -308,7 +309,7 @@ export function TechStack({ techStack, tools }: TechStackProps) {
                                         }}
                                     />
                                 ) : null}
-                                <div className={cn("hidden w-full h-full flex items-center justify-center font-bold text-lg text-foreground/50", !portfolioData.techStack.find(t => t.name.toLowerCase() === tech.toLowerCase())?.icon && "flex")}>
+                                <div className={cn("hidden w-full h-full flex items-center justify-center font-bold text-lg text-foreground/50", !portfolioData.techStack.find((t: TechStackType) => t.name.toLowerCase() === tech.toLowerCase())?.icon && "flex")}>
                                     {tech[0]}
                                 </div>
                             </div>

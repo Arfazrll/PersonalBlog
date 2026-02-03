@@ -97,8 +97,8 @@ export default function ExperienceMarquee() {
     // Bottom 5: DIGISTAR, GDSC, AIESEC, HMIT (TelU Logo), CODING CAMP (Microsoft Logo)
     const bottomIds = ['exp-7', 'exp-10', 'exp-12', 'exp-14', 'exp-9'];
 
-    const row1 = experiences.filter(exp => topIds.includes(exp.id));
-    const row2 = experiences.filter(exp => bottomIds.includes(exp.id));
+    const row1 = experiences.filter((exp: Experience) => topIds.includes(exp.id));
+    const row2 = experiences.filter((exp: Experience) => bottomIds.includes(exp.id));
 
     const ensureLength = (items: Experience[]) => {
         if (items.length < 4) return [...items, ...items, ...items];
@@ -113,13 +113,13 @@ export default function ExperienceMarquee() {
 
             <div className="flex flex-col gap-2">
                 <ParallaxText baseVelocity={2}>
-                    {ensureLength(row1).map((exp, idx) => (
+                    {ensureLength(row1).map((exp: Experience, idx: number) => (
                         <GalleryItem key={`r1-${idx}`} exp={exp} index={idx} />
                     ))}
                 </ParallaxText>
 
                 <ParallaxText baseVelocity={-2}>
-                    {ensureLength(row2).map((exp, idx) => (
+                    {ensureLength(row2).map((exp: Experience, idx: number) => (
                         <GalleryItem key={`r2-${idx}`} exp={exp} index={idx + 4} />
                     ))}
                 </ParallaxText>

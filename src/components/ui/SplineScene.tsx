@@ -2,17 +2,7 @@
 
 import { useEffect, useRef, useState, HTMLAttributes } from 'react';
 
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            'spline-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
-                url?: string;
-                'loading-anim-type'?: string;
-                [key: string]: any;
-            }, HTMLElement>;
-        }
-    }
-}
+
 
 
 
@@ -22,6 +12,8 @@ interface SplineSceneProps extends HTMLAttributes<HTMLDivElement> {
     scene: string;
     className?: string;
 }
+
+
 
 export function SplineScene({ scene, className, ...props }: SplineSceneProps) {
     const [isLoading, setIsLoading] = useState(true);

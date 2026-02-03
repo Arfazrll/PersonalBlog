@@ -37,7 +37,7 @@ function Code({ className, code, ...props }: CodeProps) {
 }
 
 type CodeHeaderProps = React.ComponentProps<'div'> & {
-  icon?: React.ElementType;
+  icon?: React.ElementType<{ className?: string }>;
   copyButton?: boolean;
 };
 
@@ -90,7 +90,7 @@ function CodeBlock({ cursor, className, ...props }: CodeBlockProps) {
         'relative text-sm p-4 overflow-auto',
         '[&>pre,_&_code]:!bg-transparent [&>pre,_&_code]:[background:transparent_!important] [&>pre,_&_code]:border-none [&_code]:!text-[13px] [&_code_.line]:!px-0',
         cursor &&
-          "data-[done=false]:[&_.line:last-of-type::after]:content-['|'] data-[done=false]:[&_.line:last-of-type::after]:inline-block data-[done=false]:[&_.line:last-of-type::after]:w-[1ch] data-[done=false]:[&_.line:last-of-type::after]:-translate-px",
+        "data-[done=false]:[&_.line:last-of-type::after]:content-['|'] data-[done=false]:[&_.line:last-of-type::after]:inline-block data-[done=false]:[&_.line:last-of-type::after]:w-[1ch] data-[done=false]:[&_.line:last-of-type::after]:-translate-px",
         className,
       )}
       code={code}
