@@ -31,7 +31,7 @@ export function Scene3D({ className = '' }: Scene3DProps) {
                 }}
             />
             <div className="absolute inset-0 overflow-hidden">
-                {[...Array(50)].map((_, i) => (
+                {[...Array(25)].map((_, i) => (
                     <div
                         key={i}
                         className="absolute rounded-full animate-pulse"

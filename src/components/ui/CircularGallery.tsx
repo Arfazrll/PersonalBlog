@@ -468,9 +468,10 @@ class GalleryApp {
     }
 
     createGeometry() {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
         this.planeGeometry = new Plane(this.gl, {
-            heightSegments: 50,
-            widthSegments: 100
+            heightSegments: isMobile ? 10 : 30,
+            widthSegments: isMobile ? 20 : 60
         });
     }
 

@@ -11,15 +11,11 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
 import { loadSlim } from '@tsparticles/slim';
-import type {
-    ISourceOptions
-
-} from '@tsparticles/engine';
+import { useIsMobile } from "@/hooks/useIsMobile";
+import type { ISourceOptions } from '@tsparticles/engine';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import {
-    Sparkles, ChevronDown, Mail, ArrowRight
-} from 'lucide-react';
+import { Sparkles, ChevronDown, Mail, ArrowRight } from 'lucide-react';
 import { LoadingScreen } from '@/components/layout';
 import { TextPressure } from '@/components/ui/TextPressure';
 import { portfolioData } from '@/data/portfolio';
@@ -64,7 +60,7 @@ const particlesOptions: ISourceOptions = {
             straight: false,
             outModes: { default: 'out' },
         },
-        number: { density: { enable: true }, value: 60 },
+        number: { density: { enable: true }, value: 40 }, // Reduced from 60
         opacity: { value: { min: 0.1, max: 0.4 } },
         size: { value: { min: 1, max: 3 } },
     },
@@ -74,6 +70,7 @@ const particlesOptions: ISourceOptions = {
 // ==================== ANIMATED BACKGROUND ====================
 function AnimatedBackground() {
     const [particlesReady, setParticlesReady] = useState(false);
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         initParticlesEngine(async (engine) => {
@@ -81,45 +78,55 @@ function AnimatedBackground() {
         }).then(() => setParticlesReady(true));
     }, []);
 
+    const mobileOptions = useMemo(() => ({
+        ...particlesOptions,
+        particles: {
+            ...particlesOptions.particles,
+            number: { ...particlesOptions.particles?.number, value: isMobile ? 20 : 40 }
+        }
+    }), [isMobile]);
+
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Particles */}
             {particlesReady && (
                 <Particles
                     id="hero-particles"
-                    options={particlesOptions}
+                    options={mobileOptions}
                     className="absolute inset-0"
                 />
             )}
 
-            {/* Gradient orbs */}
+            {/* Gradient orbs - Reduced on mobile */}
             <motion.div
-                className="absolute w-[600px] h-[600px] rounded-full blur-[100px]"
+                className="absolute w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full blur-[60px] md:blur-[100px]"
                 style={{
                     background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%)',
                     top: '10%',
                     left: '-10%',
                 }}
-                animate={{
+                animate={isMobile ? {} : {
                     x: [0, 30, 0],
                     y: [0, 20, 0],
                     scale: [1, 1.1, 1],
                 }}
                 transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
             />
-            <motion.div
-                className="absolute w-[500px] h-[500px] rounded-full blur-[80px]"
-                style={{
-                    background: 'radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, transparent 70%)',
-                    bottom: '20%',
-                    right: '-5%',
-                }}
-                animate={{
-                    x: [0, -25, 0],
-                    y: [0, -30, 0],
-                }}
-                transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-            />
+            {!isMobile && (
+                <motion.div
+                    className="absolute w-[500px] h-[500px] rounded-full blur-[80px]"
+                    style={{
+                        background: 'radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, transparent 70%)',
+                        bottom: '20%',
+                        right: '-5%',
+                    }}
+                    animate={{
+                        x: [0, -25, 0],
+                        y: [0, -30, 0],
+                    }}
+                    transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+                />
+            )}
 
             {/* Grid pattern - works for both light and dark */}
             <div
@@ -181,6 +188,7 @@ function HeroIntro() {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isDarkMode, setIsDarkMode] = useState(true);
     const t = useTranslations('hero');
+    const isMobile = useIsMobile();
 
     // React Spring for smooth mouse following
     const [springProps, api] = useReactSpring(() => ({
@@ -189,18 +197,20 @@ function HeroIntro() {
     }));
 
     const handleMouseMove = useCallback((e: MouseEvent) => {
+        if (isMobile) return;
         const { clientX, clientY } = e;
         const { innerWidth, innerHeight } = window;
         const x = (clientX - innerWidth / 2) / 40;
         const y = (clientY - innerHeight / 2) / 40;
         api.start({ xy: [x, y] });
         setMousePosition({ x, y });
-    }, [api]);
+    }, [api, isMobile]);
 
     useEffect(() => {
+        if (isMobile) return;
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [handleMouseMove]);
+    }, [handleMouseMove, isMobile]);
 
     // Detect theme changes
     useEffect(() => {
@@ -275,7 +285,7 @@ function HeroIntro() {
             <animated.div
                 className="hero-content relative z-10 container-creative text-center px-4 max-w-5xl mx-auto"
                 style={{
-                    transform: springProps.xy.to((x, y) => `translate3d(${x}px, ${y}px, 0)`),
+                    transform: isMobile ? 'none' : springProps.xy.to((x, y) => `translate3d(${x}px, ${y}px, 0)`),
                 }}
             >
                 {/* Badge */}
