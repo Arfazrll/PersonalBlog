@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 export const SmoothScrollHero = () => {
     return (
-        <div className="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 relative z-0">
+        <div className="bg-background text-zinc-900 dark:text-zinc-50 relative z-0">
             <Hero />
         </div>
     );
@@ -41,7 +41,7 @@ const Hero = () => {
 
             <ParallaxImages scrollY={smoothScrollY} />
 
-            <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent to-zinc-50/90 dark:to-zinc-950/90 z-20 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent to-background z-20 pointer-events-none" />
 
             {/* Scroll Indicator - Shifted left to match 'About' nav alignment */}
             <motion.div
