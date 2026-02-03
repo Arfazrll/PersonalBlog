@@ -6,6 +6,7 @@ import { GraduationCap, Briefcase, Rocket, ChevronDown, ChevronRight, Calendar, 
 import { useTheme } from 'next-themes';
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
+import { Education, Experience } from '@/types/index';
 
 type TabType = 'education' | 'journey' | 'experience';
 
@@ -66,7 +67,7 @@ function EducationContent() {
                     </div>
 
                     <h2 className="text-4xl md:text-5xl font-black italic tracking-tight text-foreground">
-                        {education.institution.split(' ').map((word, i) => (
+                        {education.institution.split(' ').map((word: string, i: number) => (
                             <span key={i} className="block">{word.toUpperCase()}</span>
                         ))}
                     </h2>
@@ -133,7 +134,7 @@ function EducationContent() {
                         className="overflow-hidden"
                     >
                         <div className="space-y-4 pt-4 border-t border-border">
-                            {portfolioData.education.map((edu, index) => (
+                            {portfolioData.education.map((edu: Education, index: number) => (
                                 <motion.div
                                     key={edu.id}
                                     initial={{ opacity: 0, x: -20 }}
@@ -170,7 +171,7 @@ function JourneyContent() {
     const groupedExperiences = useMemo(() => {
         const groups: { [key: string]: typeof experiences } = {};
 
-        experiences.forEach(exp => {
+        experiences.forEach((exp: Experience) => {
             const year = new Date(exp.startDate).getFullYear().toString();
             if (!groups[year]) {
                 groups[year] = [];
@@ -182,7 +183,7 @@ function JourneyContent() {
             .sort((a, b) => parseInt(b) - parseInt(a))
             .map(year => ({
                 year,
-                experiences: groups[year].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+                experiences: groups[year].sort((a: Experience, b: Experience) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
             }));
     }, [experiences]);
 
@@ -221,7 +222,7 @@ function JourneyContent() {
                             </div>
 
                             <div className="flex-1 space-y-6 border-l border-border pl-6">
-                                {group.experiences.slice(0, 3).map((exp, expIndex) => (
+                                {group.experiences.slice(0, 3).map((exp: Experience, expIndex: number) => (
                                     <motion.div
                                         key={exp.id}
                                         initial={{ opacity: 0, x: -10 }}
@@ -251,7 +252,7 @@ function JourneyContent() {
 
                                         {exp.responsibilities && exp.responsibilities.length > 0 && (
                                             <ul className="space-y-1 mb-3">
-                                                {exp.responsibilities.slice(0, 3).map((resp, i) => (
+                                                {exp.responsibilities.slice(0, 3).map((resp: string, i: number) => (
                                                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                                                         <ChevronRight className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                                                         <span>{resp}</span>
@@ -261,7 +262,7 @@ function JourneyContent() {
                                         )}
 
                                         <div className="flex flex-wrap gap-2">
-                                            {exp.skills.slice(0, 4).map((skill, i) => (
+                                            {exp.skills.slice(0, 4).map((skill: string, i: number) => (
                                                 <span
                                                     key={i}
                                                     className="text-xs px-2.5 py-1 rounded-full bg-secondary/50 text-muted-foreground border border-secondary/30"
