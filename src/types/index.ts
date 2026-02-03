@@ -65,7 +65,7 @@ export interface Achievement {
 export interface Skill {
     name: string;
     level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-    category: 'frontend' | 'backend' | 'database' | 'devops' | 'mobile' | 'ai' | 'data' | 'blockchain' | 'other';
+    category: 'frontend' | 'backend' | 'database' | 'devops' | 'mobile' | 'ai' | 'data' | 'blockchain' | 'software' | 'other';
 }
 
 export interface TechStack {
