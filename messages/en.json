@@ -96,9 +96,12 @@
     "skills": {
         "title": "Skills & Tools",
         "subtitle": "Technologies and tools I work with",
-        "hard": "Technical Skills",
+        "hard": "Hard Skills",
         "soft": "Soft Skills",
+        "technical": "Technical Proficiency",
         "tools": "Tools & Software",
+        "pillars": "Core Pillars",
+        "achievements": "Verified Achievements",
         "level": {
             "beginner": "Beginner",
             "intermediate": "Intermediate",
