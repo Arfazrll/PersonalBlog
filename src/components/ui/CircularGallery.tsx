@@ -215,6 +215,14 @@ class Media {
         this.textColor = textColor;
         this.borderRadius = borderRadius;
         this.font = font;
+
+        // Safety check for unitialized screen/viewport
+        if (!this.screen || !this.viewport) {
+            console.warn('[CircularGallery] Media initialized without screen or viewport');
+            this.screen = this.screen || { width: 1000, height: 1000 };
+            this.viewport = this.viewport || { width: 10, height: 10 };
+        }
+
         this.createShader();
         this.createMesh();
         this.createTitle();
@@ -359,6 +367,11 @@ class Media {
         if (viewport) {
             this.viewport = viewport;
         }
+
+        // Safety check for screen dimensions
+        if (!this.screen || this.screen.width === 0 || this.screen.height === 0) return;
+        if (!this.viewport) return;
+
         this.scale = this.screen.height / 1500;
         this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
         this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
@@ -532,18 +545,30 @@ class GalleryApp {
     }
 
     onResize() {
-        this.screen = {
-            width: this.container.clientWidth,
-            height: this.container.clientHeight
-        };
-        this.renderer.setSize(this.screen.width, this.screen.height);
-        this.camera.perspective({
-            aspect: this.screen.width / this.screen.height
-        });
-        const fov = (this.camera.fov * Math.PI) / 180;
-        const height = 2 * Math.tan(fov / 2) * this.camera.position.z;
-        const width = height * this.camera.aspect;
-        this.viewport = { width, height };
+        if (!this.container) return;
+
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+
+        // Prevent zero-size initialization or resizing
+        if (width === 0 || height === 0) return;
+
+        this.screen = { width, height };
+
+        if (this.renderer) {
+            this.renderer.setSize(this.screen.width, this.screen.height);
+        }
+
+        if (this.camera) {
+            this.camera.perspective({
+                aspect: this.screen.width / this.screen.height
+            });
+            const fov = (this.camera.fov * Math.PI) / 180;
+            const viewportHeight = 2 * Math.tan(fov / 2) * this.camera.position.z;
+            const viewportWidth = viewportHeight * this.camera.aspect;
+            this.viewport = { width: viewportWidth, height: viewportHeight };
+        }
+
         if (this.medias) {
             this.medias.forEach(media => media.onResize({ screen: this.screen, viewport: this.viewport }));
         }
@@ -630,9 +655,30 @@ export function CircularGallery({
     }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
 
     useEffect(() => {
-        initGallery();
+        let timer: NodeJS.Timeout;
+
+        const checkAndInit = () => {
+            if (containerRef.current) {
+                const width = containerRef.current.clientWidth;
+                const height = containerRef.current.clientHeight;
+
+                if (width > 0 && height > 0) {
+                    console.log(`[CircularGallery] Initializing with dimensions: ${width}x${height}`);
+                    initGallery();
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        if (!checkAndInit()) {
+            timer = setInterval(() => {
+                if (checkAndInit()) clearInterval(timer);
+            }, 100);
+        }
 
         return () => {
+            if (timer) clearInterval(timer);
             if (appRef.current) {
                 appRef.current.destroy();
                 appRef.current = null;

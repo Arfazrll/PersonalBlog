@@ -34,7 +34,7 @@
 
   .dark {
     /* Dark Mode - Pure black with gray accents, white text */
-    --background: 0 0% 4%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 98%;
     --card: 0 0% 7%;
     --card-foreground: 0 0% 98%;
@@ -68,6 +68,7 @@
 
   html {
     scroll-behavior: smooth;
+    position: relative;
   }
 
   body {
@@ -95,7 +96,7 @@
   }
 
   .glass-card {
-    @apply backdrop-blur-2xl rounded-3xl transition-colors;
+    @apply backdrop-blur-2xl rounded-3xl transition-colors relative;
     background: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 
@@ -112,7 +113,7 @@
   }
 
   .glass-strong {
-    @apply backdrop-blur-3xl rounded-3xl transition-colors;
+    @apply backdrop-blur-3xl rounded-3xl transition-colors relative;
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
@@ -248,7 +249,7 @@
   }
 
   .container-creative {
-    @apply max-w-7xl mx-auto px-6 md:px-12 lg:px-20;
+    @apply max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative;
   }
 
   .heading-xl {

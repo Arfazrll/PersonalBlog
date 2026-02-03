@@ -80,7 +80,7 @@ export default async function RootLayout({
     const messages = await getMessages();
 
     return (
-        <html lang={locale} suppressHydrationWarning>
+        <html lang={locale} data-scroll-behavior="smooth" suppressHydrationWarning>
             <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans relative`}>
                 <ThemeProvider>
                     <I18nProvider locale={locale} messages={messages}>
@@ -88,7 +88,7 @@ export default async function RootLayout({
                             <ThemeAwareClickSpark>
                                 <div className="relative min-h-screen flex flex-col">
                                     <Navbar />
-                                    <main className="flex-1">{children}</main>
+                                    <main className="flex-1 relative">{children}</main>
                                     <Footer />
                                     <BackToTop />
                                 </div>
