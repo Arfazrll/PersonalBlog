@@ -18,6 +18,7 @@ interface TextPressureProps {
     strokeWidth?: number;
     className?: string;
     minFontSize?: number;
+    maxFontSize?: number;
 }
 
 export function TextPressure({
@@ -36,6 +37,7 @@ export function TextPressure({
     strokeWidth = 2,
     className = '',
     minFontSize = 24,
+    maxFontSize = 200,
 }: TextPressureProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const titleRef = useRef<HTMLHeadingElement>(null);
@@ -78,6 +80,7 @@ export function TextPressure({
 
         let newFontSize = containerW / (chars.length / 5);
         newFontSize = Math.max(newFontSize, minFontSize);
+        newFontSize = Math.min(newFontSize, maxFontSize);
 
         setFontSize(newFontSize);
         setScaleY(1);
@@ -166,7 +169,39 @@ export function TextPressure({
         };
     }, [setSize]);
 
+    const [isVisible, setIsVisible] = useState(false);
+
     useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => setIsVisible(entry.isIntersecting),
+            { threshold: 0.1 }
+        );
+
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    const titleWidthRef = useRef(0);
+
+    const updateCachedMeasures = useCallback(() => {
+        if (titleRef.current) {
+            titleWidthRef.current = titleRef.current.getBoundingClientRect().width;
+        }
+        updateCenters();
+    }, [updateCenters]);
+
+    useEffect(() => {
+        window.addEventListener('resize', updateCachedMeasures);
+        updateCachedMeasures();
+        return () => window.removeEventListener('resize', updateCachedMeasures);
+    }, [updateCachedMeasures]);
+
+    useEffect(() => {
+        if (!isVisible) return;
+
         let rafId: number;
 
         const animate = () => {
@@ -174,13 +209,12 @@ export function TextPressure({
             mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
 
             if (titleRef.current) {
-                const titleRect = titleRef.current.getBoundingClientRect();
-                const maxDist = titleRect.width / 2;
+                const maxDist = titleWidthRef.current / 2;
 
                 spansRef.current.forEach((span, i) => {
-                    if (!span || !centersRef.current[i]) return;
-
                     const charCenter = centersRef.current[i];
+                    if (!span || !charCenter) return;
+
                     const d = dist(mouseRef.current, charCenter);
 
                     const getAttr = (distance: number, minVal: number, maxVal: number) => {
@@ -208,7 +242,7 @@ export function TextPressure({
                 cancelAnimationFrame(rafId);
             }
         };
-    }, [width, weight, italic, alpha]);
+    }, [isVisible, width, weight, italic, alpha]);
 
     const titleStyle: React.CSSProperties = {
         fontFamily: fontFamily,

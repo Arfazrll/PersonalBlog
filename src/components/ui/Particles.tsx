@@ -119,12 +119,50 @@ const Particles: React.FC<ParticlesProps> = ({
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+    const [isVisible, setIsVisible] = React.useState(false);
 
     const colorKey = particleColors ? particleColors.join('-') : 'default';
 
     useEffect(() => {
+        let resizeObserver: ResizeObserver | null = null;
+        let intersectionObserver: IntersectionObserver | null = null;
+        const state = { isIntersecting: false };
+
+        const updateVisibility = () => {
+            if (!containerRef.current) return;
+            const { width, height } = containerRef.current.getBoundingClientRect();
+            const hasValidSize = width > 1 && height > 1;
+            setIsVisible(state.isIntersecting && hasValidSize);
+        };
+
+        intersectionObserver = new IntersectionObserver(
+            ([entry]) => {
+                state.isIntersecting = entry.isIntersecting;
+                updateVisibility();
+            },
+            { threshold: 0.01 }
+        );
+
+        resizeObserver = new ResizeObserver(() => updateVisibility());
+
+        if (containerRef.current) {
+            intersectionObserver.observe(containerRef.current);
+            resizeObserver.observe(containerRef.current);
+        }
+
+        return () => {
+            intersectionObserver?.disconnect();
+            resizeObserver?.disconnect();
+        };
+    }, []);
+
+    useEffect(() => {
         const container = containerRef.current;
-        if (!container) return;
+        if (!container || !isVisible) return;
+
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        if (width === 0 || height === 0) return;
 
         const renderer = new Renderer({ dpr: pixelRatio, depth: false, alpha: true });
         const gl = renderer.gl;
@@ -135,9 +173,10 @@ const Particles: React.FC<ParticlesProps> = ({
         camera.position.set(0, 0, cameraDistance);
 
         const resize = () => {
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-            renderer.setSize(width, height);
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            if (w === 0 || h === 0) return;
+            renderer.setSize(w, h);
             camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
         };
         window.addEventListener('resize', resize, false);
@@ -223,6 +262,12 @@ const Particles: React.FC<ParticlesProps> = ({
                 particles.rotation.z += 0.01 * speed;
             }
 
+            // FRAME-LEVEL GUARD: Skip rendering if dimensions are zero to avoid GL_INVALID_VALUE
+            if (container.clientWidth === 0 || container.clientHeight === 0) {
+                animationFrameId = requestAnimationFrame(update);
+                return;
+            }
+
             renderer.render({ scene: particles, camera });
         };
 
@@ -251,7 +296,8 @@ const Particles: React.FC<ParticlesProps> = ({
         cameraDistance,
         disableRotation,
         pixelRatio,
-        colorKey
+        colorKey,
+        isVisible
     ]);
 
     return <div ref={containerRef} className={`relative w-full h-full ${className}`} />;
