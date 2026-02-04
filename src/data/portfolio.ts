@@ -970,4 +970,172 @@ WAKATIME_API_KEY=your_wakatime_key`
             answer: 'Yes! I\'m open to internships, collaborations, and exciting projects in AI, Data Science, Full Stack Development, and Blockchain. Feel free to reach out!',
         },
     ],
+    blogs: [
+        {
+            id: 'blog-1',
+            slug: 'future-of-ai-agents',
+            title: 'The Future of AI Agents in Enterprise',
+            excerpt: 'How autonomous agents are redefining software architecture and decision-making processes.',
+            content: 'Detailed exploration of AI agents...',
+            image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop',
+            date: '2025-01-15',
+            category: 'ai',
+            tags: ['AI', 'Agents', 'Enterprise'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '5'
+        },
+        {
+            id: 'blog-2',
+            slug: 'web3-ux-challenges',
+            title: 'Overcoming Web3 UX Challenges',
+            excerpt: 'Strategies for building decentralized applications that feel as smooth as Web2.',
+            content: 'UX in Web3 is critical...',
+            image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2000&auto=format&fit=crop',
+            date: '2025-01-10',
+            category: 'web3',
+            tags: ['Web3', 'Blockchain', 'UX'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '4'
+        },
+        {
+            id: 'blog-3',
+            slug: 'mastering-nextjs-performance',
+            title: 'Mastering Next.js Performance',
+            excerpt: 'Advanced techniques for optimizing Core Web Vitals in modern React applications.',
+            content: 'Performance optimization...',
+            image: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=2000&auto=format&fit=crop',
+            date: '2025-01-05',
+            category: 'coding',
+            tags: ['Next.js', 'React', 'Performance'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '6'
+        },
+        {
+            id: 'blog-4',
+            slug: 'ai-driven-security',
+            title: 'AI-Driven Cybersecurity',
+            excerpt: 'Using deep learning to detect and prevent modern network intrusion.',
+            content: 'Cybersecurity with AI...',
+            image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop',
+            date: '2024-12-20',
+            category: 'ai',
+            tags: ['AI', 'Security', 'Deep Learning'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '7'
+        },
+        {
+            id: 'blog-5',
+            slug: 'llm-fine-tuning',
+            title: 'Fine-Tuning LLMs locally',
+            excerpt: 'A guide to optimizing open-source models using Ollama and LoRA techniques.',
+            content: 'Local LLM fine-tuning...',
+            image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop',
+            date: '2024-12-15',
+            category: 'ai',
+            tags: ['LLM', 'Python', 'Ollama'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '8'
+        },
+        {
+            id: 'blog-6',
+            slug: 'smart-contract-security',
+            title: 'Smart Contract Audit Patterns',
+            excerpt: 'Common vulnerabilities and how to prevent them in Solidity.',
+            content: 'Audit patterns...',
+            image: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop',
+            date: '2024-12-10',
+            category: 'web3',
+            tags: ['Solidity', 'Ethereum', 'Security'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '5'
+        },
+        {
+            id: 'blog-7',
+            slug: 'modern-state-management',
+            title: 'Modern State Management in React',
+            excerpt: 'Comparing Zustand, Redux Toolkit, and React Context for large-scale apps.',
+            content: 'State management...',
+            image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2000&auto=format&fit=crop',
+            date: '2024-12-05',
+            category: 'coding',
+            tags: ['React', 'Zustand', 'Architecture'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '4'
+        },
+        {
+            id: 'blog-8',
+            slug: 'iot-edge-computing',
+            title: 'Edge Computing with ESP32',
+            excerpt: 'Implementing real-time data processing at the edge for industrial IoT.',
+            content: 'Edge computing...',
+            image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop',
+            date: '2024-11-25',
+            category: 'coding',
+            tags: ['IoT', 'ESP32', 'Edge'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '6'
+        },
+        {
+            id: 'blog-9',
+            slug: 'ai-in-healthcare',
+            title: 'AI Transformation in Healthcare',
+            excerpt: 'How computer vision is assisting in medical diagnostics and data analysis.',
+            content: 'Healthcare AI...',
+            image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop',
+            date: '2024-11-20',
+            category: 'ai',
+            tags: ['Healthcare', 'AI', 'Ethics'],
+            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            readTime: '7'
+        }
+    ],
+    gallery: [
+        {
+            id: 'gal-1',
+            title: 'CPS Lab Research',
+            description: 'Deep Learning research workshop at Cyber Physical System Laboratory.',
+            date: '2025-01-20',
+            type: 'image',
+            url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2000&auto=format&fit=crop',
+            category: 'research'
+        },
+        {
+            id: 'gal-2',
+            title: 'Smart City Symposium',
+            description: 'Presenting AIoT solutions for sustainable urban development.',
+            date: '2024-12-15',
+            type: 'video',
+            url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder video
+            thumbnail: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop',
+            category: 'event'
+        },
+        {
+            id: 'gal-3',
+            title: 'Neural Network Visualization',
+            description: 'Custom visualization of a Convolutional Neural Network architecture.',
+            date: '2024-11-30',
+            type: 'image',
+            url: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2000&auto=format&fit=crop',
+            category: 'technical'
+        },
+        {
+            id: 'gal-4',
+            title: 'Blockchain Hackathon',
+            description: 'Building decentralized finance solutions in 48 hours.',
+            date: '2024-10-25',
+            type: 'image',
+            url: 'https://images.unsplash.com/photo-1516245834210-c4c142787335?q=80&w=2000&auto=format&fit=crop',
+            category: 'event'
+        },
+        {
+            id: 'gal-5',
+            title: 'IoT Prototype Demo',
+            description: 'Testing real-time sensor integration with cloud platforms.',
+            date: '2024-09-15',
+            type: 'video',
+            url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop',
+            category: 'technical'
+        }
+    ],
 };

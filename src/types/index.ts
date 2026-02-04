@@ -120,6 +120,34 @@ export interface PersonalInfo {
     socialLinks: SocialLink[];
 }
 
+export interface BlogPost {
+    id: string;
+    slug: string;
+    title: string;
+    excerpt: string;
+    content: string;
+    image: string;
+    date: string;
+    category: string;
+    tags: string[];
+    author: {
+        name: string;
+        avatar: string;
+    };
+    readTime: string;
+}
+
+export interface GalleryItem {
+    id: string;
+    title: string;
+    description: string;
+    date: string;
+    type: 'image' | 'video';
+    url: string;
+    thumbnail?: string;
+    category: string;
+}
+
 export interface PortfolioData {
     personal: PersonalInfo;
     projects: Project[];
@@ -131,4 +159,6 @@ export interface PortfolioData {
     softSkills: SoftSkill[];
     tools: Tool[];
     faqs: FAQ[];
+    blogs: BlogPost[];
+    gallery: GalleryItem[];
 }

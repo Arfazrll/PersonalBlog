@@ -5,6 +5,8 @@
         "experience": "Pengalaman",
         "skills": "Keahlian",
         "achievements": "Pencapaian",
+        "blog": "Blog",
+        "gallery": "Galeri",
         "contact": "Kontak",
         "menu": {
             "achievements": "Pencapaian",
@@ -14,7 +16,11 @@
             "experience": "Pengalaman",
             "experienceDesc": "Perjalanan profesional dan pertumbuhan saya",
             "projects": "Proyek",
-            "projectsDesc": "Pameran semua karya saya"
+            "projectsDesc": "Pameran semua karya saya",
+            "blog": "Blog",
+            "blogDesc": "Pemikiran dan eksplorasi teknis",
+            "gallery": "Galeri",
+            "galleryDesc": "Arsip visual media dan proyek"
         }
     },
     "hero": {
@@ -235,5 +241,31 @@
         "close": "Tutup",
         "download": "Unduh",
         "share": "Bagikan"
+    },
+    "blog": {
+        "title": "Pemikiran & Eksplorasi",
+        "subtitle": "Menjembatani kesenjangan antara kompleksitas teknis dan implementasi praktis. Kumpulan wawasan tentang AI, Web3, dan Software Engineering.",
+        "search": "Cari artikel...",
+        "readTime": "menit baca",
+        "readMore": "Baca Artikel",
+        "back": "Kembali ke Blog",
+        "noResults": "Tidak ada artikel ditemukan",
+        "categories": {
+            "all": "Semua",
+            "ai": "AI & ML",
+            "web3": "Blockchain",
+            "coding": "Development",
+            "other": "Wawasan"
+        }
+    },
+    "gallery": {
+        "title": "Arsip Visual",
+        "subtitle": "Koleksi kurasi highlight proyek, dokumentasi teknis, dan eksplorasi visual kreatif.",
+        "filter": {
+            "all": "Semua Media",
+            "image": "Foto",
+            "video": "Video"
+        },
+        "viewMedia": "Lihat Media"
     }
 }

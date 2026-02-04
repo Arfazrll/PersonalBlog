@@ -54,7 +54,8 @@ const useNavItems = () => {
                 { label: t('achievements'), href: "/achievements", description: t('achievementsDesc') },
                 { label: t('skills'), href: "/skills", description: t('skillsDesc') },
                 { label: t('experience'), href: "/experience", description: t('experienceDesc') },
-                { label: t('projects'), href: "/projects", description: t('projectsDesc') }
+                { label: t('projects'), href: "/projects", description: t('projectsDesc') },
+                { label: t('blog'), href: "/blog", description: t('blogDesc') },
             ]
         }
     ];
@@ -175,7 +176,6 @@ export function Navbar() {
                                 <span className="relative z-10">{t('home')}</span>
                             </Link>
 
-                            {/* CARD NAV (About) */}
                             <CardNav
                                 items={navItems}
                                 theme={isDark ? 'dark' : 'light'}

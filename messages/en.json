@@ -5,6 +5,8 @@
         "experience": "Experience",
         "skills": "Skills",
         "achievements": "Achievements",
+        "blog": "Blog",
+        "gallery": "Gallery",
         "contact": "Contact",
         "menu": {
             "achievements": "Achievements",
@@ -14,7 +16,11 @@
             "experience": "Experience",
             "experienceDesc": "My professional journey and growth",
             "projects": "Projects",
-            "projectsDesc": "A showcase of all my work"
+            "projectsDesc": "A showcase of all my work",
+            "blog": "Blog",
+            "blogDesc": "Thoughts and technical explorations",
+            "gallery": "Gallery",
+            "galleryDesc": "Visual archive of media and projects"
         }
     },
     "hero": {
@@ -250,5 +256,31 @@
         "close": "Close",
         "download": "Download",
         "share": "Share"
+    },
+    "blog": {
+        "title": "Thoughts & Explorations",
+        "subtitle": "Bridging the gap between technical complexity and practical implementation. A collection of insights on AI, Web3, and Software Engineering.",
+        "search": "Search articles...",
+        "readTime": "min read",
+        "readMore": "Read Post",
+        "back": "Back to Blog",
+        "noResults": "No articles found",
+        "categories": {
+            "all": "All",
+            "ai": "AI & ML",
+            "web3": "Blockchain",
+            "coding": "Development",
+            "other": "Insights"
+        }
+    },
+    "gallery": {
+        "title": "Visual Archive",
+        "subtitle": "A curated collection of project highlights, technical documentation, and creative visual explorations.",
+        "filter": {
+            "all": "All Media",
+            "image": "Photos",
+            "video": "Videos"
+        },
+        "viewMedia": "View Media"
     }
 }
