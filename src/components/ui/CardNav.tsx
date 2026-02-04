@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { ChevronDown, ArrowUpRight, Trophy, MousePointer2, Briefcase, Rocket } from 'lucide-react';
+import { ChevronDown, ArrowUpRight, Trophy, Navigation, Briefcase, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NavLink {
@@ -85,46 +85,85 @@ export default function CardNav({
                             damping: 30,
                         }}
                         style={{ perspective: "1200px" }}
-                        className="fixed top-28 left-1/2 z-[100] w-full max-w-5xl px-6"
+                        className="fixed top-28 left-1/2 z-[100] w-full max-w-5xl px-4"
                     >
-                        <div className="relative p-1 glass-strong rounded-[2.5rem] border border-white/10 shadow-2xl shadow-black/60 overflow-hidden bg-card/95 backdrop-blur-2xl">
-                            {/* Inner Content Grid - Side by Side Cards */}
-                            <div className="flex flex-col md:flex-row gap-2 p-2">
+                        <div className={cn(
+                            "relative p-1.5 rounded-[2rem] border shadow-2xl overflow-hidden backdrop-blur-3xl transition-colors duration-500",
+                            theme === 'dark'
+                                ? "bg-[#18181b]/95 border-white/10 shadow-black/80"
+                                : "bg-white/95 border-black/5 shadow-black/20"
+                        )}>
+                            {/* Inner Content Grid - Balanced Horizontal Row */}
+                            <div className="grid grid-cols-2 md:grid-cols-5 gap-1.5">
                                 {aboutItem.links.map((link, idx) => {
-                                    // Map icons to labels
-                                    const icons: Record<string, any> = {
-                                        "Achievements": Trophy,
-                                        "Skills": MousePointer2,
-                                        "Experience": Briefcase,
-                                        "Projects": Rocket
+                                    // Use href for stable icon mapping regardless of locale
+                                    const iconMap: Record<string, any> = {
+                                        "/achievements": Trophy,
+                                        "/skills": Navigation,
+                                        "/experience": Briefcase,
+                                        "/projects": Rocket,
+                                        "/blog": Rocket
                                     };
-                                    const Icon = icons[link.label] || Rocket;
+                                    const Icon = iconMap[link.href] || Rocket;
 
                                     return (
                                         <Link
-                                            key={link.label}
+                                            key={link.href}
                                             href={link.href}
-                                            className="group/card flex-1 min-h-[180px] md:min-h-[240px] relative p-6 md:p-8 rounded-[2rem] overflow-hidden transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] bg-secondary/30 dark:bg-white/5 hover:bg-white/10 dark:hover:bg-white/10"
+                                            onClick={() => setIsExpanded(false)}
+                                            className={cn(
+                                                "group/card flex flex-col h-[180px] md:h-[200px] relative p-5 rounded-[1.5rem] overflow-hidden transition-all duration-500 hover:scale-[1.02] active:scale-[0.98]",
+                                                pathname === link.href
+                                                    ? (theme === 'dark' ? "bg-white/10 ring-1 ring-white/20" : "bg-black/5 ring-1 ring-black/10")
+                                                    : (theme === 'dark' ? "bg-white/[0.03] hover:bg-white/5" : "bg-black/[0.02] hover:bg-black/[0.05]")
+                                            )}
                                         >
-                                            {/* Decorative Gradient Background */}
+                                            {/* Glow Effect */}
                                             <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-700 pointer-events-none">
-                                                <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-foreground/5 blur-[80px] rounded-full" />
-                                                <div className="absolute -bottom-1/2 -left-1/2 w-full h-full bg-primary/5 blur-[80px] rounded-full" />
+                                                <div className={cn(
+                                                    "absolute -top-1/4 -right-1/4 w-full h-full blur-[40px] rounded-full",
+                                                    theme === 'dark' ? "bg-primary/10" : "bg-primary/5"
+                                                )} />
                                             </div>
 
-                                            <div className="relative h-full flex flex-col justify-between z-10">
-                                                <div className="flex items-start justify-between">
-                                                    <div className="p-3 rounded-2xl bg-foreground/5 group-hover/card:bg-foreground/10 transition-colors">
-                                                        <Icon className="w-5 h-5 text-foreground/70" />
+                                            <div className="relative h-full flex flex-col z-10">
+                                                {/* Header Icons */}
+                                                <div className="flex items-start justify-between mb-auto">
+                                                    <div className={cn(
+                                                        "p-2.5 rounded-xl border transition-colors",
+                                                        theme === 'dark'
+                                                            ? "bg-white/[0.05] group-hover/card:bg-white/10 border-white/5"
+                                                            : "bg-black/[0.03] group-hover/card:bg-black/[0.06] border-black/5"
+                                                    )}>
+                                                        <Icon className={cn(
+                                                            "w-4 h-4 transition-colors",
+                                                            theme === 'dark'
+                                                                ? "text-white/80 group-hover/card:text-white"
+                                                                : "text-black/70 group-hover/card:text-black"
+                                                        )} />
                                                     </div>
-                                                    <ArrowUpRight className="w-5 h-5 opacity-20 group-hover/card:opacity-100 group-hover/card:translate-x-1 group-hover/card:-translate-y-1 transition-all duration-300" />
+                                                    <ArrowUpRight className={cn(
+                                                        "w-4 h-4 opacity-20 group-hover/card:opacity-100 group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5 transition-all duration-500 ease-out",
+                                                        theme === 'dark' ? "text-white/60" : "text-black/40"
+                                                    )} />
                                                 </div>
 
+                                                {/* Content */}
                                                 <div>
-                                                    <h4 className="text-xl md:text-2xl font-black tracking-tight mb-2 text-foreground">
+                                                    <h4 className={cn(
+                                                        "text-xl md:text-2xl font-black tracking-tighter mb-1 transition-colors",
+                                                        theme === 'dark'
+                                                            ? "text-white/90 group-hover/card:text-white"
+                                                            : "text-black/80 group-hover/card:text-black"
+                                                    )}>
                                                         {link.label}
                                                     </h4>
-                                                    <p className="text-xs md:text-sm text-muted-foreground/60 leading-relaxed font-medium">
+                                                    <p className={cn(
+                                                        "text-[11px] md:text-xs leading-tight font-medium line-clamp-2 transition-colors",
+                                                        theme === 'dark'
+                                                            ? "text-white/40 group-hover/card:text-white/60"
+                                                            : "text-black/40 group-hover/card:text-black/60"
+                                                    )}>
                                                         {link.description}
                                                     </p>
                                                 </div>
@@ -133,8 +172,6 @@ export default function CardNav({
                                     );
                                 })}
                             </div>
-
-
                         </div>
                     </motion.div>
                 )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Code2, Brain, Wrench, X } from 'lucide-react';
@@ -8,63 +8,6 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import { SplineScene } from '@/components/ui/SplineScene';
-import Particles from '@/components/ui/Particles';
-
-function CursorGlow() {
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (containerRef.current) {
-                const rect = containerRef.current.getBoundingClientRect();
-                setMousePos({
-                    x: e.clientX - rect.left,
-                    y: e.clientY - rect.top,
-                });
-            }
-        };
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, []);
-
-    return (
-        <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden z-[1]">
-            <motion.div
-                className="absolute w-[800px] h-[800px] rounded-full opacity-30 dark:opacity-20 blur-[120px]"
-                animate={{
-                    x: mousePos.x - 400,
-                    y: mousePos.y - 400,
-                }}
-                transition={{ type: 'spring', damping: 30, stiffness: 200, mass: 0.5 }}
-                style={{
-                    background: 'radial-gradient(circle, var(--primary) 0%, transparent 70%)',
-                }}
-            />
-        </div>
-    );
-}
-
-function SectionHeader({ title, subtitle, number, className }: { title: string; subtitle?: string; number: string; className?: string }) {
-    return (
-        <div className={cn("mb-16", className)}>
-            <div className="flex items-center gap-4 mb-4">
-                <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/60 font-black">
-                    {number}
-                </span>
-                <div className="h-[1px] w-12 bg-primary/20" />
-            </div>
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none mb-6">
-                {title}
-            </h2>
-            {subtitle && (
-                <p className="text-muted-foreground font-mono text-[11px] uppercase tracking-widest leading-relaxed">
-                    {subtitle}
-                </p>
-            )}
-        </div>
-    );
-}
 
 // Tech logo mapping using devicon CDN
 const techLogos: Record<string, string> = {
@@ -219,19 +162,6 @@ export default function SkillsPage() {
 
             <FloatingShape className="w-[600px] h-[600px] -top-40 -left-40" />
             <FloatingShape className="w-[500px] h-[500px] top-1/2 -right-40" delay={2} />
-
-            {/* Dynamic Background Effects */}
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-                <Particles
-                    particleCount={150}
-                    speed={0.2}
-                    particleBaseSize={80}
-                    particleColors={['#3b82f6', '#8b5cf6', '#1a1a1a']}
-                    alphaParticles
-                />
-            </div>
-
-            <CursorGlow />
 
             <div className="container-creative pb-20 relative z-10 -mt-20">
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
