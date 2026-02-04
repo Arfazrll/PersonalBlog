@@ -106,23 +106,67 @@ export function SplineScene({ scene, className, ...props }: SplineSceneProps) {
         };
     }, []);
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        let resizeObserver: ResizeObserver | null = null;
+        let intersectionObserver: IntersectionObserver | null = null;
+        const state = { isIntersecting: false };
+
+        const updateVisibility = () => {
+            if (!containerRef.current || !isMounted.current) return;
+            const { width, height } = containerRef.current.getBoundingClientRect();
+            const hasValidSize = width > 1 && height > 1;
+            setIsVisible(state.isIntersecting && hasValidSize);
+        };
+
+        intersectionObserver = new IntersectionObserver(
+            ([entry]) => {
+                if (isMounted.current) {
+                    state.isIntersecting = entry.isIntersecting;
+                    updateVisibility();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        resizeObserver = new ResizeObserver(() => {
+            if (isMounted.current) {
+                updateVisibility();
+            }
+        });
+
+        if (containerRef.current) {
+            intersectionObserver.observe(containerRef.current);
+            resizeObserver.observe(containerRef.current);
+        }
+
+        return () => {
+            intersectionObserver?.disconnect();
+            resizeObserver?.disconnect();
+        };
+    }, []);
+
     return (
-        <div className={`relative w-full h-full overflow-hidden ${className || ''}`} {...props}>
+        <div ref={containerRef} className={`relative w-full h-full overflow-hidden ${className || ''}`} {...props}>
             <div className="w-full h-full pt-20">
-                <spline-viewer
-                    ref={splineRef}
-                    url={scene}
-                    loading-anim-type="spinner-small-dark"
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        transform: 'scale(1.2)',
-                        transformOrigin: 'center center',
-                        visibility: isLoaded ? 'visible' : 'hidden',
-                        opacity: isLoaded ? 1 : 0,
-                        transition: 'opacity 0.8s ease-in-out'
-                    }}
-                />
+                {isVisible && (
+                    <spline-viewer
+                        ref={splineRef}
+                        url={scene}
+                        loading-anim-type="spinner-small-dark"
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            transform: 'scale(1.2) translate3d(0,0,0)',
+                            transformOrigin: 'center center',
+                            visibility: isLoaded ? 'visible' : 'hidden',
+                            opacity: isLoaded ? 1 : 0,
+                            transition: 'opacity 0.8s ease-in-out'
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

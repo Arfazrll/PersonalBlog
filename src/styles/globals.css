@@ -451,8 +451,7 @@
     mix-blend-mode: normal;
 }
 
-@theme inline {
-  @keyframes move-x {
+@keyframes move-x {
   from {
     transform: translateX(-100%);
     }
@@ -460,4 +459,3 @@
     transform: translateX(100%);
     }
   }
-}
