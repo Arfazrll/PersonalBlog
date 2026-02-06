@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { useEffect, useRef, useState } from 'react';
 import { Canvas, extend, useThree, useFrame } from '@react-three/fiber';
-import { useTexture, Environment, Lightformer, Text, RoundedBox } from '@react-three/drei';
+import { useTexture, Text, RoundedBox } from '@react-three/drei';
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import { portfolioData } from '@/data/portfolio';
@@ -201,18 +201,19 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
 export function Lanyard() {
     return (
         <div className="w-full h-full relative z-20">
-            <Canvas gl={{ alpha: true, antialias: true }} onCreated={({ gl }) => { gl.setClearColor(new THREE.Color(0x000000), 0); }}>
+            <Canvas
+                dpr={[1, 1.5]} // Limiting max DPR
+                gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }} // Optimize GL context
+                onCreated={({ gl }) => {
+                    gl.setClearColor(new THREE.Color(0x000000), 0);
+                }}
+            >
                 <ResponsiveCamera />
-                <ambientLight intensity={Math.PI} />
-                <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
+                <ambientLight intensity={2} />
+                <directionalLight position={[10, 10, 10]} intensity={1} />
+                <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 45}> {/* Reduced physics step */}
                     <Band />
                 </Physics>
-                <Environment blur={0.75}>
-                    <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-                    <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-                    <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-                    <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
-                </Environment>
             </Canvas>
         </div>
     );

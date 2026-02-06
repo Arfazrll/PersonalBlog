@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useMotionTemplate } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface LensProps {
@@ -53,22 +53,13 @@ export const Lens: React.FC<LensProps> = ({
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [localIsHovering, setLocalIsHovering] = useState(false);
-    const [mousePosition, setMousePosition] = useState({ x: 100, y: 100 });
+
+    // Use MotionValues instead of State to prevent re-renders on every frame
+    const mouseX = useMotionValue(100);
+    const mouseY = useMotionValue(100);
 
     const isHovering = hovering !== undefined ? hovering : localIsHovering;
     const setIsHovering = setHovering || setLocalIsHovering;
-
-    // Mobile Optimization: Disable Lens on touch devices automatically
-    useEffect(() => {
-        const checkMobile = () => {
-            if (window.matchMedia('(max-width: 768px)').matches) {
-                // We don't have a direct 'setDisabled' prop, but we can effectively disable it
-                // by returning early in handleMouseMove or treating it as static.
-                // Since 'disabled' is a prop, we can't change it, but we can override behavior.
-            }
-        };
-        // Better approach: wrap logic in handleMouseMove
-    }, []);
 
     const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
     const effectiveDisabled = disabled || isMobile;
@@ -80,16 +71,9 @@ export const Lens: React.FC<LensProps> = ({
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        if (smoothFollow) {
-            setMousePosition({ x, y });
-        } else {
-            // Snap to grid for less smooth following
-            const gridSize = 20;
-            setMousePosition({
-                x: Math.round(x / gridSize) * gridSize,
-                y: Math.round(y / gridSize) * gridSize,
-            });
-        }
+        // Update MotionValues directly
+        mouseX.set(x);
+        mouseY.set(y);
     };
 
     const shadowClasses = {
@@ -99,23 +83,23 @@ export const Lens: React.FC<LensProps> = ({
         heavy: 'shadow-xl',
     };
 
-    const getMaskImage = (x: number, y: number) => {
-        const radius = lensSize / 2;
-        // Using string concatenation for shape and gradient
-        const shape =
-            maskShape === 'circle'
-                ? "circle " + radius + "px at " + x + "px " + y + "px"
-                : "ellipse " + radius + "px " + radius + "px at " + x + "px " + y + "px";
+    // Optimization: Create motion templates for styles that depend on mouse position
+    // We only use these if NOT static. If static, we just use the fixed position.
 
-        const gradient = blurEdge
-            ? "radial-gradient(" + shape + ", black 60%, transparent 100%)"
-            : "radial-gradient(" + shape + ", black 100%, transparent 100%)";
+    // Static Position Handling
+    // We can't conditionally call hooks, but we can set the initial MV to the static pos if needed
+    // However, if swapping between static/dynamic, MVs are better.
 
-        return gradient;
+    const maskImage = useMotionTemplate`radial-gradient(${maskShape === 'circle' ? 'circle' : 'ellipse'} ${lensSize / 2}px ${maskShape === 'circle' ? '' : lensSize / 2 + 'px'} at ${mouseX}px ${mouseY}px, black 100%, transparent 100%)`; // simplified gradient for perf
+
+    // For transform origin, we need px values
+    const transformOrigin = useMotionTemplate`${mouseX}px ${mouseY}px`;
+
+    // Static styles fallback
+    const staticStyle = {
+        maskImage: `radial-gradient(${maskShape === 'circle' ? 'circle' : 'ellipse'} ${lensSize / 2}px ${maskShape === 'circle' ? '' : lensSize / 2 + 'px'} at ${position.x}px ${position.y}px, black 100%, transparent 100%)`,
+        transformOrigin: `${position.x}px ${position.y}px`
     };
-
-    const currentX = isStatic ? position.x : mousePosition.x;
-    const currentY = isStatic ? position.y : mousePosition.y;
 
     const lensContent = (
         <motion.div
@@ -125,21 +109,27 @@ export const Lens: React.FC<LensProps> = ({
             transition={{ duration: animationDuration, ease: animationEasing }}
             className={cn(
                 "absolute inset-0 overflow-hidden",
-                borderWidth > 0 && "border-" + borderWidth + " " + borderColor, // String concatenation
+                borderWidth > 0 && "border-" + borderWidth + " " + borderColor,
                 shadowClasses[shadowIntensity]
             )}
-            style={{
-                maskImage: getMaskImage(currentX, currentY),
-                WebkitMaskImage: getMaskImage(currentX, currentY),
-                transformOrigin: currentX + "px " + currentY + "px", // String concatenation
+            style={isStatic ? {
+                ...staticStyle,
+                zIndex: 50,
+            } : {
+                maskImage,
+                WebkitMaskImage: maskImage,
+                transformOrigin,
                 zIndex: 50,
             }}
         >
             <div
                 className="absolute inset-0"
-                style={{
-                    transform: "scale(" + zoomFactor + ")", // String concatenation
-                    transformOrigin: currentX + "px " + currentY + "px", // String concatenation
+                style={isStatic ? {
+                    transform: `scale(${zoomFactor})`,
+                    transformOrigin: `${position.x}px ${position.y}px`
+                } : {
+                    transform: `scale(${zoomFactor})`,
+                    transformOrigin: transformOrigin as any, // Cast to avoid type issues with MotionValue string
                 }}
             >
                 {children}
@@ -152,16 +142,12 @@ export const Lens: React.FC<LensProps> = ({
             ref={containerRef}
             className={cn(
                 "relative overflow-hidden z-20",
-                "rounded-" + borderRadius, // String concatenation
+                "rounded-" + borderRadius,
                 disabled && "cursor-not-allowed opacity-50",
                 className
             )}
-            onMouseEnter={function () {
-                return !effectiveDisabled && setIsHovering(true);
-            }}
-            onMouseLeave={function () {
-                return !effectiveDisabled && setIsHovering(false);
-            }}
+            onMouseEnter={() => !effectiveDisabled && setIsHovering(true)}
+            onMouseLeave={() => !effectiveDisabled && setIsHovering(false)}
             onMouseMove={handleMouseMove}
         >
             {children}

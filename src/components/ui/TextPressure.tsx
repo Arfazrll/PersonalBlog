@@ -203,13 +203,35 @@ export function TextPressure({
         if (!isVisible) return;
 
         let rafId: number;
+        let lastFrameTime = 0;
+        const targetFPS = 30; // Throttle to 30fps to prevent main thread blocking
+        const frameInterval = 1000 / targetFPS;
 
-        const animate = () => {
+        const animate = (timestamp: number) => {
+            // Idle check: if mouse hasn't moved significantly, skip heavy updates
+            // (We keep this idle check as it's very effective)
+            const dx = Math.abs(cursorRef.current.x - mouseRef.current.x);
+            const dy = Math.abs(cursorRef.current.y - mouseRef.current.y);
+
+            if (dx < 0.1 && dy < 0.1) {
+                rafId = requestAnimationFrame(animate);
+                return;
+            }
+
+            // Throttle FPS
+            const deltaTime = timestamp - lastFrameTime;
+            if (deltaTime < frameInterval) {
+                rafId = requestAnimationFrame(animate);
+                return;
+            }
+            lastFrameTime = timestamp - (deltaTime % frameInterval);
+
             mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
             mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
 
             if (titleRef.current) {
-                const maxDist = titleWidthRef.current / 2;
+                // Modified: Reduced influence radius to make it react only when close
+                const maxDist = 200;
 
                 spansRef.current.forEach((span, i) => {
                     const charCenter = centersRef.current[i];
@@ -235,7 +257,7 @@ export function TextPressure({
             rafId = requestAnimationFrame(animate);
         };
 
-        animate();
+        rafId = requestAnimationFrame(animate);
 
         return () => {
             if (rafId) {

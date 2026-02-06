@@ -53,7 +53,7 @@ const TechCard = ({ tech, idx, scrollYProgress }: { tech: TechItem, idx: number,
             ref={cardRef}
             style={{ y: springY, rotateZ: springRotate }}
             whileHover={{ scale: 1.05, zIndex: 10 }}
-            className="group relative h-48 rounded-3xl overflow-hidden glass-card border-white/5 bg-white/[0.02] flex flex-col items-center justify-center gap-6 p-8 transition-colors hover:border-primary/50 hover:bg-primary/[0.05]"
+            className="group relative h-48 rounded-3xl overflow-hidden border border-border/50 bg-card text-card-foreground flex flex-col items-center justify-center gap-6 p-8 transition-colors hover:border-primary/50 hover:bg-muted/50 shadow-sm dark:shadow-none"
         >
             <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
