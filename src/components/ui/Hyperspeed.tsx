@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
+// EffectComposer removed for performance
 import * as THREE from 'three';
 
 const FogController = ({ color }: { color: string }) => {
@@ -32,7 +32,7 @@ const MovingRoad = ({ color }: { color: string }) => {
 };
 
 const MovingStars = ({ color }: { color: string }) => {
-    const count = 500;
+    const count = 100; // Aggressively optimized count
     const mesh = useRef<THREE.InstancedMesh>(null);
     const dummy = useMemo(() => new THREE.Object3D(), []);
 
@@ -166,17 +166,7 @@ const Hyperspeed: React.FC<HyperspeedProps> = ({ effectOptions, className }) => 
                 <MovingRoad color={roadColor} />
                 <MovingStars color={starColor} />
 
-                {enableBloom && (
-                    <EffectComposer>
-                        <Bloom
-                            luminanceThreshold={0.2}
-                            luminanceSmoothing={0.9}
-                            height={300}
-                            intensity={1.5}
-                            mipmapBlur
-                        />
-                    </EffectComposer>
-                )}
+                {/* Bloom Removed for performance */}
             </Canvas>
         </div>
     );

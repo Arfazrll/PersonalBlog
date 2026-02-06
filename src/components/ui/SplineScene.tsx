@@ -151,22 +151,20 @@ export function SplineScene({ scene, className, ...props }: SplineSceneProps) {
     return (
         <div ref={containerRef} className={`relative w-full h-full overflow-hidden ${className || ''}`} {...props}>
             <div className="w-full h-full pt-20">
-                {isVisible && (
-                    <spline-viewer
-                        ref={splineRef}
-                        url={scene}
-                        loading-anim-type="spinner-small-dark"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            transform: 'scale(1.2) translate3d(0,0,0)',
-                            transformOrigin: 'center center',
-                            visibility: isLoaded ? 'visible' : 'hidden',
-                            opacity: isLoaded ? 1 : 0,
-                            transition: 'opacity 0.8s ease-in-out'
-                        }}
-                    />
-                )}
+                <spline-viewer
+                    ref={splineRef}
+                    url={scene}
+                    loading-anim-type="spinner-small-dark"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        transform: 'scale(1.2) translate3d(0,0,0)',
+                        transformOrigin: 'center center',
+                        display: isLoaded ? 'block' : 'none',
+                        opacity: isLoaded ? 1 : 0,
+                        transition: 'opacity 0.8s ease-in-out'
+                    }}
+                />
             </div>
         </div>
     );

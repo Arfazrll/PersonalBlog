@@ -9,8 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Particles, { initParticlesEngine } from '@tsparticles/react';
-import { loadSlim } from '@tsparticles/slim';
+// Particles removed for performance
 import { useIsMobile } from "@/hooks/useIsMobile";
 import type { ISourceOptions } from '@tsparticles/engine';
 import AOS from 'aos';
@@ -60,43 +59,19 @@ const particlesOptions: ISourceOptions = {
             straight: false,
             outModes: { default: 'out' },
         },
-        number: { density: { enable: true }, value: 40 }, // Reduced from 60
+        number: { density: { enable: true }, value: 25 }, // Optimized count
         opacity: { value: { min: 0.1, max: 0.4 } },
         size: { value: { min: 1, max: 3 } },
     },
     detectRetina: true,
 };
-
 // ==================== ANIMATED BACKGROUND ====================
 function AnimatedBackground() {
-    const [particlesReady, setParticlesReady] = useState(false);
     const isMobile = useIsMobile();
-
-    useEffect(() => {
-        initParticlesEngine(async (engine) => {
-            await loadSlim(engine);
-        }).then(() => setParticlesReady(true));
-    }, []);
-
-    const mobileOptions = useMemo(() => ({
-        ...particlesOptions,
-        particles: {
-            ...particlesOptions.particles,
-            number: { ...particlesOptions.particles?.number, value: isMobile ? 20 : 40 }
-        }
-    }), [isMobile]);
 
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Particles */}
-            {particlesReady && (
-                <Particles
-                    id="hero-particles"
-                    options={mobileOptions}
-                    className="absolute inset-0"
-                />
-            )}
-
+            {/* Particles Removed */}
             {/* Gradient orbs - Reduced on mobile */}
             <motion.div
                 className="absolute w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full blur-[60px] md:blur-[100px]"
@@ -104,6 +79,7 @@ function AnimatedBackground() {
                     background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%)',
                     top: '10%',
                     left: '-10%',
+                    willChange: 'transform',
                 }}
                 animate={isMobile ? {} : {
                     x: [0, 30, 0],
@@ -119,6 +95,7 @@ function AnimatedBackground() {
                         background: 'radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, transparent 70%)',
                         bottom: '20%',
                         right: '-5%',
+                        willChange: 'transform',
                     }}
                     animate={{
                         x: [0, -25, 0],
@@ -198,12 +175,14 @@ function HeroIntro() {
 
     const handleMouseMove = useCallback((e: MouseEvent) => {
         if (isMobile) return;
-        const { clientX, clientY } = e;
-        const { innerWidth, innerHeight } = window;
-        const x = (clientX - innerWidth / 2) / 40;
-        const y = (clientY - innerHeight / 2) / 40;
-        api.start({ xy: [x, y] });
-        setMousePosition({ x, y });
+        requestAnimationFrame(() => {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+            const x = (clientX - innerWidth / 2) / 40;
+            const y = (clientY - innerHeight / 2) / 40;
+            api.start({ xy: [x, y] });
+            setMousePosition({ x, y });
+        });
     }, [api, isMobile]);
 
     useEffect(() => {
