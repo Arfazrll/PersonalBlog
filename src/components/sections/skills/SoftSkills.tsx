@@ -5,13 +5,14 @@ import { portfolioData } from '@/data/portfolio';
 import { cn } from '@/lib/utils';
 import { useMemo, useState, useEffect } from 'react';
 
+
 // --- SUB-COMPONENT: Skill Card Content ---
 const SkillCard = ({ skill, index, isBack = false }: { skill: any, index: number, isBack?: boolean }) => {
     return (
         <div className={cn(
-            "h-full w-full relative p-8 md:p-12 flex flex-col justify-between overflow-hidden transition-colors duration-500 border border-border/50 bg-card text-card-foreground",
+            "h-full w-full relative p-8 md:p-12 flex flex-col justify-between overflow-hidden transition-colors duration-500 border border-neutral-300 dark:border-white/10 bg-white dark:bg-card text-card-foreground",
             // Shadows for depth in light mode
-            "shadow-sm dark:shadow-none"
+            "shadow-lg dark:shadow-none"
         )}>
             {/* Hover Gradient Bloom */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
@@ -118,33 +119,59 @@ export const SoftSkills = () => {
     }, []);
 
     return (
-        <section className="py-32 px-6 relative overflow-hidden bg-background">
-            <div className="max-w-7xl mx-auto">
+        <section className="py-32 px-6 relative overflow-hidden bg-slate-50 dark:bg-background">
+
+            <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header - Minimalist Typography */}
-                <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/10 pb-12">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6 }}
+                    className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-neutral-400 dark:border-white/10 pb-12"
+                >
                     <div className="space-y-4">
-                        <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block">
+                        <motion.span
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
+                        >
                             Competency_Matrix // 01
-                        </span>
+                        </motion.span>
                         <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-[0.9]">
                             Strategic<br />
-                            <span className="text-muted-foreground font-light not-italic">Directives</span>
+                            <span className="text-neutral-700 dark:text-muted-foreground font-light not-italic">Directives</span>
                         </h2>
                     </div>
-                    <p className="max-w-md text-sm text-muted-foreground/60 font-mono leading-relaxed">
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        className="max-w-md text-sm text-neutral-800 dark:text-muted-foreground/60 font-mono leading-relaxed"
+                    >
                         Interpersonal capabilities engineered for high-impact leadership and systemic problem solving in complex environments.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
 
                 {/* Grid Layout - 2x2 but flipping with GAP */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {pairs.map((pair, idx) => (
-                        <FlippingCard
+                        <motion.div
                             key={idx}
-                            front={pair.front}
-                            back={pair.back}
-                            index={idx}
-                        />
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{ duration: 0.5, delay: idx * 0.1, ease: "easeOut" }}
+                        >
+                            <FlippingCard
+                                front={pair.front}
+                                back={pair.back}
+                                index={idx}
+                            />
+                        </motion.div>
                     ))}
                 </div>
             </div>

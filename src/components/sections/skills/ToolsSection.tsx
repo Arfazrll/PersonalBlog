@@ -51,14 +51,26 @@ export const ToolsSection = () => {
             />
 
             {/* HEADER */}
-            <div className="relative z-10 text-center mb-24 mix-blend-difference pointer-events-none select-none">
-                <span className="text-[10px] font-mono uppercase tracking-[0.6em] text-white/50 block mb-4 animate-pulse-slow">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="relative z-10 text-center mb-24 mix-blend-difference pointer-events-none select-none"
+            >
+                <motion.span
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 0.5 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="text-[10px] font-mono uppercase tracking-[0.6em] text-white/50 block mb-4 animate-pulse-slow"
+                >
                     Domain // 03
-                </span>
+                </motion.span>
                 <h2 className="text-4xl md:text-7xl font-sans font-thin text-white/90 tracking-[0.2em] uppercase transition-all duration-700">
-                    Technical <span className="font-serif italic text-white/40">Arsenal</span>
+                    Technical <span className="font-serif italic text-white/40">TOOLS</span>
                 </h2>
-            </div>
+            </motion.div>
 
             {/* INTERACTIVE GRID */}
             <div
@@ -67,26 +79,27 @@ export const ToolsSection = () => {
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
             >
-                {portfolioData.tools.map((tool) => (
+                {portfolioData.tools.map((tool, index) => (
                     <MistItem
                         key={tool.name}
                         tool={tool}
                         mouseX={mouseX}
                         mouseY={mouseY}
+                        index={index}
                     />
                 ))}
             </div>
 
             <div className="absolute bottom-12 text-center w-full pointer-events-none opacity-30 text-white/50">
                 <p className="text-[10px] font-mono uppercase tracking-[0.4em]">
-                    [ Interactive Arsenal ]
+                    [ Daily Arsenal ]
                 </p>
             </div>
         </section>
     );
 };
 
-const MistItem = ({ tool, mouseX, mouseY }: { tool: any, mouseX: any, mouseY: any }) => {
+const MistItem = ({ tool, mouseX, mouseY, index = 0 }: { tool: any, mouseX: any, mouseY: any, index?: number }) => {
     const itemRef = useRef<HTMLDivElement>(null);
     const iconUrl = toolLogos[tool.name] || (tool.icon?.includes('http') ? tool.icon : `https://cdn.simpleicons.org/${tool.name.toLowerCase().replace(/[\s.]/g, '')}`);
 
@@ -124,6 +137,10 @@ const MistItem = ({ tool, mouseX, mouseY }: { tool: any, mouseX: any, mouseY: an
     return (
         <motion.div
             ref={itemRef}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: index * 0.05, ease: "easeOut" }}
             style={{
                 // Removed filter from here, kept opacity/scale/y
                 opacity,

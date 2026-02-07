@@ -40,14 +40,14 @@ function TechSchematic() {
     return (
         <div className="absolute inset-0 z-0 pointer-events-none">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.02] mix-blend-overlay" />
-            <div className="absolute inset-0 opacity-[0.05]">
+            <div className="absolute inset-0 opacity-[0.15] dark:opacity-[0.05]">
                 <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <pattern id="grid-large" width="100" height="100" patternUnits="userSpaceOnUse">
-                            <path d="M 100 0 L 0 0 0 100" fill="none" stroke="currentColor" strokeWidth="1" />
+                            <path d="M 100 0 L 0 0 0 100" fill="none" stroke="currentColor" strokeWidth="1.5" className="dark:stroke-white" />
                         </pattern>
                         <pattern id="grid-small" width="20" height="20" patternUnits="userSpaceOnUse">
-                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="1" className="dark:stroke-white" />
                         </pattern>
                     </defs>
                     <rect width="100%" height="100%" fill="url(#grid-small)" />
@@ -55,9 +55,15 @@ function TechSchematic() {
                 </svg>
             </div>
             {/* Architectural Callouts */}
-            <div className="absolute top-20 right-20 font-mono text-[8px] uppercase tracking-[0.5em] text-primary/20 rotate-90 origin-right select-none">
+            <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 0.2, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="absolute top-20 right-20 font-mono text-[8px] uppercase tracking-[0.5em] text-primary/20 rotate-90 origin-right select-none"
+            >
                 System_Ref: 0xFF-01 // Architectural_Blueprint_Active
-            </div>
+            </motion.div>
         </div>
     );
 }
@@ -95,31 +101,42 @@ export default function SkillsPage() {
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <div className="h-[180px] md:h-[320px] w-full max-w-full mx-auto relative flex items-center justify-center overflow-visible">
+                        <div className="h-[160px] md:h-[220px] w-full max-w-full mx-auto relative flex items-center justify-center overflow-visible">
                             <TextPressure
                                 text={t('title')}
                                 flex={false}
                                 textColor="hsl(var(--foreground))"
                                 strokeWidth={1}
                                 minFontSize={80}
-                                maxFontSize={220} // Titan Scale
-                                className="font-black italic" // Removed expensive drop-shadow
+                                maxFontSize={220}
+                                className="font-black italic"
                             />
                         </div>
-                        {/* TIGHTENED SPACING: Reduced mt-6 to mt-1 for professional cohesion */}
-                        <p className="max-w-4xl mx-auto mt-1 text-foreground/40 font-mono leading-relaxed uppercase tracking-[1.5em] text-[9px] pointer-events-auto">
+                        {/* Subtitle - more visible in light mode */}
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.3 }}
+                            className="max-w-4xl mx-auto mt-0 text-gray-600 dark:text-foreground/40 font-mono leading-relaxed uppercase tracking-[1.5em] text-[10px] font-medium pointer-events-auto"
+                        >
                             {t('subtitle')}
-                        </p>
+                        </motion.p>
                     </motion.div>
                 </div>
 
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-5">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 0.05 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, delay: 1 }}
+                    className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+                >
                     <motion.div
                         animate={{ y: [0, 8, 0] }}
                         transition={{ duration: 4, repeat: Infinity }}
                         className="w-[1px] h-24 bg-gradient-to-b from-foreground to-transparent"
                     />
-                </div>
+                </motion.div>
             </section>
 
             {/* VAPOR TRANSITION */}
@@ -141,22 +158,40 @@ export default function SkillsPage() {
                 </div>
 
                 <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="flex flex-col md:flex-row items-end justify-between mb-32 gap-12">
-                        <div className="space-y-4">
-                            <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary font-black block">Engine_Core // 02</span>
-                            <h2 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter">Hyper-Arsenal</h2>
-                        </div>
-                        <p className="max-w-sm text-muted-foreground/60 uppercase text-[10px] font-black tracking-[0.3em] leading-[2.5]">
-                            A kinetic collection of technologies maintained at the bleeding edge of software engineering.
-                        </p>
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ margin: "-100px" }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center mb-24 space-y-4"
+                    >
+                        <motion.span
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ margin: "-100px" }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
+                        >
+                            Tech_Arsenal // 04
+                        </motion.span>
+                        <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-foreground">
+                            <span className="text-neutral-700 dark:text-muted-foreground font-light not-italic">Tech</span> Stack
+                        </h2>
+                    </motion.div>
 
-                    <KineticTechGrid
-                        items={portfolioData.techStack.map(t => ({
-                            name: t.name,
-                            icon: techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`)
-                        }))}
-                    />
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ margin: "-100px" }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                    >
+                        <KineticTechGrid
+                            items={portfolioData.techStack.map(t => ({
+                                name: t.name,
+                                icon: techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`)
+                            }))}
+                        />
+                    </motion.div>
                 </div>
             </section>
 
