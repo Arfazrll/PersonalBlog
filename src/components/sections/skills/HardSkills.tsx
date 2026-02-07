@@ -5,6 +5,7 @@ import { portfolioData } from '@/data/portfolio';
 import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 
+
 // Grouping logic helper
 const GROUP_MAPPING: Record<string, string[]> = {
     'Artificial Intelligence': ['ai', 'machine learning', 'deep learning', 'nlp', 'computer vision'],
@@ -35,21 +36,32 @@ export const HardSkills = () => {
     }, []);
 
     return (
-        <section className="py-32 px-6 relative overflow-hidden bg-background">
-            {/* Background Decoration */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+        <section className="py-32 px-6 relative overflow-hidden bg-slate-50 dark:bg-background">
+
 
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header */}
-                <div className="mb-24 space-y-4">
-                    <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6 }}
+                    className="mb-24 space-y-4"
+                >
+                    <motion.span
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
+                    >
                         Technical_Core // 02
-                    </span>
+                    </motion.span>
                     <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-[0.9]">
                         Hard<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40">Capabilities</span>
+                        <span className="text-neutral-900 dark:text-white">Capabilities</span>
                     </h2>
-                </div>
+                </motion.div>
 
                 {/* Categories Layout */}
                 <div className="space-y-32">
@@ -57,24 +69,41 @@ export const HardSkills = () => {
                         if (skills.length === 0 || !skills) return null;
 
                         return (
-                            <div key={category} className="group section-block">
-                                <div className="flex items-baseline gap-4 mb-12 border-b border-border/40 pb-4">
-                                    <span className="text-4xl font-black text-muted-foreground/10 group-hover:text-muted-foreground/20 transition-colors pointer-events-none select-none">
+                            <motion.div
+                                key={category}
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                transition={{ duration: 0.6, delay: catIdx * 0.15 }}
+                                className="group section-block"
+                            >
+                                <motion.div
+                                    initial={{ opacity: 0, x: -30 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.6, delay: 0.2 }}
+                                    className="flex items-baseline gap-4 mb-12 border-b border-neutral-400 dark:border-white/10 pb-4"
+                                >
+                                    <span className="text-4xl font-black text-neutral-500 dark:text-muted-foreground/10 group-hover:text-primary transition-colors pointer-events-none select-none">
                                         0{catIdx + 1}
                                     </span>
                                     <h3 className="text-2xl font-bold uppercase tracking-widest text-foreground">{category}</h3>
-                                </div>
+                                </motion.div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {skills.map((skill, idx) => (
-                                        <div
+                                        <motion.div
                                             key={skill.name}
-                                            className="relative p-6 border border-border/50 bg-card/50 hover:bg-card hover:border-primary/20 transition-all duration-300 rounded-lg shadow-sm dark:shadow-none"
+                                            initial={{ opacity: 0, y: 20 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true, margin: "-50px" }}
+                                            transition={{ duration: 0.4, delay: idx * 0.05, ease: "easeOut" }}
+                                            className="relative p-6 border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:border-neutral-400 dark:hover:border-white/20 hover:shadow-lg transition-all duration-300 rounded-lg shadow-md"
                                         >
                                             <div className="flex flex-col gap-4">
                                                 <div className="flex justify-between items-start">
-                                                    <h4 className="text-lg font-bold uppercase tracking-tight text-foreground">{skill.name}</h4>
-                                                    <div className="text-[10px] font-mono px-2 py-1 bg-secondary rounded text-muted-foreground uppercase">
+                                                    <h4 className="text-lg font-bold uppercase tracking-tight text-neutral-900 dark:text-white">{skill.name}</h4>
+                                                    <div className="text-[10px] font-mono px-2 py-1 bg-neutral-100 dark:bg-white/5 rounded text-neutral-500 dark:text-neutral-400 uppercase border border-neutral-200 dark:border-white/5">
                                                         {skill.level || 'Exp'}
                                                     </div>
                                                 </div>
@@ -93,14 +122,14 @@ export const HardSkills = () => {
                                                     Core competency module active.
                                                 </p>
                                             </div>
-                                        </div>
+                                        </motion.div>
                                     ))}
                                 </div>
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>
             </div>
-        </section>
+        </section >
     );
 };
