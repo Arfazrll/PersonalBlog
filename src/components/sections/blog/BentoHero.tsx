@@ -1,344 +1,259 @@
 'use client';
 
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { ChevronDown, TrendingUp, FileText, Calendar, ArrowRight, Library, Code2, Bookmark } from 'lucide-react';
+import { ChevronDown, TrendingUp, Sparkles, Calendar, ArrowUpRight, Library, Code2, Bookmark } from 'lucide-react';
 import { portfolioData } from '@/data/portfolio';
 import Link from 'next/link';
 import Image from 'next/image';
 import { GalleryButton } from '@/components/ui/GalleryStack';
 import type { Project } from '@/types';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
 
 export const BentoHero = () => {
+    const t = useTranslations('blog');
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ['start start', 'end start']
     });
 
-    const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.5, 0]);
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
     const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
-    // Auto carousel state
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const featuredPosts = portfolioData.blogs.slice(0, 3); // 3 latest posts
-    const recentPosts = portfolioData.blogs.slice(3, 6); // Next 3 for small cards
-    const totalPosts = portfolioData.blogs.length;
-    const categories = ['AI', 'Web3', 'Code', 'ML'];
+    // Mouse Spotlight
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
 
-    // Auto rotate every 5 seconds
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!containerRef.current) return;
+        const { left, top } = containerRef.current.getBoundingClientRect();
+        mouseX.set(e.clientX - left);
+        mouseY.set(e.clientY - top);
+    };
+
+    // Carousel state
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const featuredPosts = portfolioData.blogs.slice(0, 3);
+    const totalPosts = portfolioData.blogs.length;
+
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % featuredPosts.length);
-        }, 5000);
+        }, 6000);
         return () => clearInterval(interval);
     }, [featuredPosts.length]);
 
     const currentPost = featuredPosts[currentSlide];
 
     return (
-        <motion.div
+        <motion.section
             ref={containerRef}
-            className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background to-primary/5"
+            onMouseMove={handleMouseMove}
+            className="relative min-h-screen w-full overflow-hidden bg-background flex flex-col"
             style={{ opacity, y }}
         >
-            {/* Background Effects */}
-            <div className="absolute inset-0 opacity-30">
-                <div className="absolute top-20 right-20 w-96 h-96 bg-primary/30 blur-[120px] rounded-full" />
-                <div className="absolute bottom-20 left-20 w-96 h-96 bg-secondary/30 blur-[120px] rounded-full" />
+            {/* Ambient Background */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/10 blur-[200px] rounded-full opacity-40 translate-x-1/4 -translate-y-1/4" />
+                <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[180px] rounded-full opacity-30 -translate-x-1/4 translate-y-1/4" />
+                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] mix-blend-overlay" />
             </div>
 
-            {/* Grid Pattern */}
-            <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]">
-                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <pattern id="bento-grid" width="60" height="60" patternUnits="userSpaceOnUse">
-                            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="1" />
-                        </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#bento-grid)" />
-                </svg>
-            </div>
+            {/* Content Container */}
+            <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-24 pt-32 pb-20 flex-grow flex flex-col">
 
-            <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-24 pt-24 md:pt-32 pb-24 md:pb-32">
-                {/* Header - Flex Layout with Gallery Button */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="mb-16 min-h-[200px]"
-                >
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="h-[2px] w-12 bg-primary" />
-                        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary font-bold">
-                            Knowledge Hub
-                        </span>
-                    </div>
-
-                    {/* BLOG + Gallery Button Container */}
-                    <div className="relative flex items-start justify-between gap-8 mb-4">
-                        {/* Left: BLOG Title */}
-                        <div className="flex-1">
-                            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tight mb-1 pb-8 leading-[1.4] text-foreground">
-                                Blog
-                            </h1>
-                            <p className="text-muted-foreground font-mono text-sm md:text-base max-w-2xl">
-                                Insights on AI, Web3, development, and everything in between. {totalPosts}+ articles and counting.
-                            </p>
-                        </div>
-
-                        {/* Right: Gallery Button - Absolutely positioned for precise alignment */}
+                {/* Section Title & Gallery Access */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end mb-20">
+                    <div className="lg:col-span-8">
                         <motion.div
-                            initial={{ opacity: 0, x: 20 }}
+                            initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="hidden lg:block absolute right-0 -top-4"
-                            style={{
-                                maxWidth: '300px',
-                            }}
+                            className="flex items-center gap-4 mb-8"
                         >
-                            <GalleryButton
-                                galleryImages={
-                                    // Get 3 random gallery images from projects
-                                    portfolioData.projects
-                                        .flatMap((p: Project) => p.galleryImages || [])
-                                        .filter(Boolean)
-                                        .slice(0, 3)
-                                }
-                            />
+                            <div className="h-px w-12 bg-primary/50" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">
+                                {t('sectionBadge') || 'The Digital Archive'}
+                            </span>
                         </motion.div>
-                    </div>
-                </motion.div>
 
-                {/* Bento Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
-                    {/* Featured Post Carousel - Large */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="md:col-span-8 md:row-span-2 group relative"
-                    >
-                        <Link
-                            href={`/blog/${currentPost?.slug || '#'}`}
-                            className="block h-full bg-gradient-to-br from-foreground/5 to-foreground/[0.02] border border-foreground/20 dark:border-foreground/10 rounded-2xl hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 relative"
+                        <motion.h1
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="text-6xl md:text-8xl lg:text-9xl font-black text-foreground leading-[0.9] tracking-tighter"
                         >
-                            {/* Featured Image */}
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={currentSlide}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.5 }}
-                                    className="absolute inset-0 rounded-2xl overflow-hidden"
-                                >
-                                    {currentPost?.image ? (
-                                        <div className="relative w-full h-full">
-                                            <Image
-                                                src={currentPost.image}
-                                                alt={currentPost.title}
-                                                fill
-                                                className="object-cover"
-                                                sizes="(max-width: 768px) 100vw, 66vw"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
-                                        </div>
-                                    ) : (
-                                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/10 to-transparent" />
-                                    )}
-                                </motion.div>
-                            </AnimatePresence>
-
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                            {/* Content */}
-                            <div className="relative z-10 h-full flex flex-col justify-end p-8">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={currentSlide}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -20 }}
-                                        transition={{ duration: 0.5 }}
-                                    >
-                                        <span className="inline-block px-3 py-1 bg-primary/90 backdrop-blur-sm text-primary-foreground text-[10px] font-mono uppercase tracking-wider rounded-full mb-4">
-                                            {currentPost?.category || 'Featured'}
-                                        </span>
-                                        <h2 className="text-2xl md:text-4xl font-black uppercase mb-4 text-foreground group-hover:text-primary transition-colors">
-                                            {currentPost?.title || 'Latest Post'}
-                                        </h2>
-                                        <p className="text-foreground/80 text-sm md:text-base line-clamp-2 mb-4">
-                                            {currentPost?.excerpt || 'Discover the latest insights and trends...'}
-                                        </p>
-                                        <div className="flex items-center gap-4 text-xs font-mono text-foreground/60">
-                                            <span className="flex items-center gap-1">
-                                                <Calendar className="w-3 h-3" />
-                                                {currentPost?.date || 'Recent'}
-                                            </span>
-                                        </div>
-                                    </motion.div>
-                                </AnimatePresence>
-                            </div>
-
-                            {/* Carousel Dots Indicator */}
-                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-[100] bg-background/80 backdrop-blur-md px-3 py-2 rounded-full shadow-lg">
-                                {featuredPosts.map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            setCurrentSlide(index);
-                                        }}
-                                        className={`rounded-full transition-all duration-300 ${index === currentSlide
-                                            ? 'bg-foreground w-8 h-2.5'  // Active: 32x10px
-                                            : 'bg-foreground/40 hover:bg-foreground/60 w-2.5 h-2.5'  // Inactive: 10x10px
-                                            }`}
-                                        aria-label={`Go to slide ${index + 1}`}
-                                    />
-                                ))}
-                            </div>
-                        </Link>
-                    </motion.div>
-
-                    {/* Stats Card */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
-                        className="md:col-span-4 bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-6 flex flex-col justify-between"
-                    >
-                        <div>
-                            <TrendingUp className="w-8 h-8 text-primary mb-4" />
-                            <div className="text-4xl md:text-5xl font-black mb-2">{totalPosts}+</div>
-                            <p className="text-sm font-mono text-muted-foreground uppercase tracking-wider">
-                                Articles Published
-                            </p>
-                        </div>
-                    </motion.div>
-
-                    {/* Categories Card */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        className="md:col-span-4 bg-gradient-to-br from-secondary/10 to-secondary/5 border border-foreground/10 rounded-2xl p-6"
-                    >
-                        <FileText className="w-6 h-6 text-foreground/60 mb-4" />
-                        <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-3">
-                            Topics
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                            {categories.map((cat) => (
-                                <span
-                                    key={cat}
-                                    className="px-3 py-1 bg-foreground/10 text-foreground/80 text-xs font-bold rounded-full"
-                                >
-                                    {cat}
-                                </span>
-                            ))}
-                        </div>
-                    </motion.div>
-
-                    {/* Blog Features Cards */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.5 }}
-                        className="md:col-span-4 group relative overflow-hidden"
-                    >
-                        <div className="block h-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-6 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 cursor-default">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/20 transition-colors" />
-                            <div className="relative z-10 flex flex-col justify-between h-full">
-                                <div>
-                                    <span className="inline-flex items-center gap-2 text-xs font-mono text-primary uppercase tracking-wider mb-4">
-                                        <Library className="w-4 h-4" />
-                                        Series
-                                    </span>
-                                    <h3 className="text-xl font-black uppercase mb-2 group-hover:text-primary transition-colors">
-                                        Learning Paths
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2">
-                                        Curated multi-part guides on complex technical topics.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
+                            THE <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground to-foreground/20 italic font-serif font-light">BLOG</span>
+                        </motion.h1>
+                    </div>
 
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
-                        className="md:col-span-4 group relative overflow-hidden"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="hidden lg:block lg:col-span-4 shrink-0"
                     >
-                        <div className="block h-full bg-foreground/5 border border-foreground/10 rounded-2xl p-6 hover:border-primary/40 transition-all duration-300 hover:shadow-lg cursor-default">
-                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-foreground/5 blur-[40px] rounded-full translate-y-1/2 -translate-x-1/2" />
-                            <div className="relative z-10 flex flex-col justify-between h-full">
-                                <div>
-                                    <span className="inline-flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-4">
-                                        <Code2 className="w-4 h-4 text-primary" />
-                                        Code Snippets
-                                    </span>
-                                    <h3 className="text-xl font-black uppercase mb-2 group-hover:text-primary transition-colors">
-                                        Quick Bytes
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2">
-                                        Reusable solutions for common development challenges.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.7 }}
-                        className="md:col-span-4 group relative overflow-hidden"
-                    >
-                        <div className="block h-full bg-gradient-to-br from-secondary/10 to-secondary/5 border border-foreground/10 rounded-2xl p-6 hover:border-primary/40 transition-all duration-300 hover:shadow-lg cursor-default">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="relative z-10 flex flex-col justify-between h-full">
-                                <div>
-                                    <span className="inline-flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-4">
-                                        <Bookmark className="w-4 h-4 text-green-500" />
-                                        Resources
-                                    </span>
-                                    <h3 className="text-xl font-black uppercase mb-2 group-hover:text-primary transition-colors">
-                                        My Toolkit
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2">
-                                        Essential libraries, tools, and reading materials I use daily.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <GalleryButton
+                            galleryImages={portfolioData.gallery
+                                .map(item => item.type === 'video' ? item.thumbnail : item.url)
+                                .filter((url): url is string => !!url)
+                                .slice(0, 5)}
+                        />
                     </motion.div>
                 </div>
 
-                {/* Scroll Indicator - Moved Lower */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1, duration: 1 }}
-                    className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
-                    onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-                >
-                    <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
-                        Explore All
-                    </span>
+                {/* Main Bento Grid Spread */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+
+                    {/* Hero Spotlight Card */}
+                    <div className="lg:col-span-8 group relative overflow-hidden rounded-[2.5rem] bg-card border-2 border-foreground/15 dark:border-white/10 hover:border-primary/40 transition-all duration-700 shadow-sm dark:shadow-none">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={currentSlide}
+                                initial={{ opacity: 0, scale: 1.05 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.8 }}
+                                className="absolute inset-0 z-0"
+                            >
+                                <Image
+                                    src={currentPost.image}
+                                    alt={currentPost.title}
+                                    fill
+                                    className="object-cover opacity-60 grayscale-[30%] group-hover:grayscale-0 transition-all duration-700"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Card Content */}
+                        <div className="relative z-10 h-full flex flex-col justify-end p-10 lg:p-16">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentSlide}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    className="max-w-2xl"
+                                >
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="px-3 py-1 bg-foreground text-background text-[10px] font-black uppercase tracking-widest rounded-full">
+                                            Featured
+                                        </span>
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                                            {currentPost.category}
+                                        </span>
+                                    </div>
+                                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-foreground mb-6 leading-tight tracking-tight">
+                                        <Link href={`/blog/${currentPost.slug}`} className="hover:text-primary transition-colors">
+                                            {currentPost.title}
+                                        </Link>
+                                    </h2>
+                                    <div className="flex items-center gap-8">
+                                        <Link
+                                            href={`/blog/${currentPost.slug}`}
+                                            className="flex items-center gap-3 text-xs font-black text-foreground hover:text-primary transition-colors uppercase tracking-[0.2em]"
+                                        >
+                                            Explore Story <ArrowUpRight className="w-4 h-4" />
+                                        </Link>
+                                        <div className="flex gap-2">
+                                            {featuredPosts.map((_, i) => (
+                                                <div
+                                                    key={i}
+                                                    className={cn(
+                                                        "h-1 transition-all duration-500 rounded-full",
+                                                        currentSlide === i ? "w-8 bg-primary" : "w-2 bg-foreground/20"
+                                                    )}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    {/* Side Info Cards */}
+                    <div className="lg:col-span-4 grid grid-cols-1 gap-6">
+
+                        {/* Stats & Trends Card */}
+                        <div className="rounded-[2.5rem] bg-card border-2 border-foreground/15 dark:border-white/5 p-8 flex flex-col justify-between hover:bg-muted/50 transition-all group overflow-hidden relative shadow-sm dark:shadow-none">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                            <div className="relative z-10">
+                                <TrendingUp className="w-10 h-10 text-primary mb-6" />
+                                <div className="text-6xl font-black text-foreground tracking-tighter mb-2">{totalPosts}+</div>
+                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Articles Published</p>
+                            </div>
+
+                            <div className="mt-8 flex flex-wrap gap-2 relative z-10">
+                                {['AI', 'Web3', 'Logic', 'Design'].map(tag => (
+                                    <span key={tag} className="px-3 py-1 bg-muted border border-border rounded-lg text-[9px] font-black text-muted-foreground uppercase tracking-widest">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Series/Paths Quick Access */}
+                        <div className="rounded-[2.5rem] bg-primary/10 border-2 border-primary/30 p-8 flex flex-col justify-between hover:border-primary/40 transition-all group relative overflow-hidden shadow-sm dark:shadow-none">
+                            <div className="absolute -bottom-8 -right-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <Library className="w-40 h-40 text-primary" />
+                            </div>
+
+                            <div className="relative z-10">
+                                <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center mb-6 shadow-xl shadow-primary/20">
+                                    <Sparkles className="w-6 h-6 text-primary-foreground" />
+                                </div>
+                                <h3 className="text-2xl font-black text-foreground mb-2 leading-none">Learning Paths</h3>
+                                <p className="text-sm text-primary/60 font-medium">Step-by-step masterclasses.</p>
+                            </div>
+
+                            <button className="relative z-10 px-6 py-3 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all self-start mt-8">
+                                Start Journey
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* Footer Controls */}
+                <div className="mt-12 flex items-center justify-between py-8 border-t border-border">
+                    <div className="flex gap-12">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">Status</span>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                <span className="text-xs font-bold text-muted-foreground">Archive Online</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <motion.div
-                        animate={{ y: [0, 8, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                        animate={{ y: [0, 10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="cursor-pointer group flex flex-col items-center gap-3"
+                        onClick={() => typeof window !== 'undefined' && window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
                     >
+                        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-[0.4em] group-hover:text-primary transition-colors">Scroll to Read</span>
                         <ChevronDown className="w-5 h-5 text-primary" />
                     </motion.div>
-                </motion.div>
+                </div>
+
             </div>
 
-            {/* Bottom Fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
-        </motion.div>
+            {/* Ambient Spotlight Glow (Mouse-Reactive) */}
+            <motion.div
+                className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
+                style={{
+                    background: useMotionTemplate`radial-gradient(1000px circle at ${mouseX}px ${mouseY}px, rgba(var(--primary-rgb), ${isDark ? '0.1' : '0.05'}), transparent 80%)`,
+                }}
+            />
+        </motion.section>
     );
 };

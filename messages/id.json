@@ -245,6 +245,7 @@
     "blog": {
         "title": "Pemikiran & Eksplorasi",
         "subtitle": "Menjembatani kesenjangan antara kompleksitas teknis dan implementasi praktis. Kumpulan wawasan tentang AI, Web3, dan Software Engineering.",
+        "sectionBadge": "Digital Archive",
         "search": "Cari artikel...",
         "readTime": "menit baca",
         "readMore": "Baca Artikel",

@@ -34,79 +34,79 @@ export default function BlogPage() {
             <BentoHero />
 
             {/* SECTION 2: Blog Cards Content */}
-            <div className="relative z-10 pt-12 pb-24 px-6 md:px-12 lg:px-24">
+            <div className="relative z-10 pt-12 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-background via-background/80 to-background">
                 {/* Background Effects */}
                 <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 dark:bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
-                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/10 dark:bg-secondary/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
-                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] dark:opacity-[0.03] mix-blend-overlay" />
+                    <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/5 blur-[200px] rounded-full opacity-40 -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[200px] rounded-full opacity-30 translate-y-1/2 -translate-x-1/2" />
+                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] mix-blend-overlay" />
                 </div>
 
                 <div className="container mx-auto relative z-10">
-                    {/* Header Section - Natural & Organic Design */}
-                    <header className="mb-24 relative">
-                        <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none opacity-50" />
-
-                        <div className="relative z-10 max-w-4xl">
+                    {/* Header Section - Modern Editorial */}
+                    <header className="mb-24 relative pt-20">
+                        <div className="relative z-10 max-w-5xl">
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
                                 transition={{ duration: 0.5 }}
-                                className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-primary/5 border border-primary/10 text-primary/80 text-xs font-medium tracking-wide mb-8 backdrop-blur-sm"
+                                className="flex items-center gap-3 mb-10"
                             >
-                                <span className="w-2 h-2 rounded-full bg-primary/60 animate-pulse" />
-                                The Digital Garden
+                                <div className="w-8 h-px bg-primary/60" />
+                                <span className="text-primary text-[10px] font-black uppercase tracking-[0.5em] mb-0">The Digital Garden</span>
                             </motion.div>
 
                             <motion.h1
                                 initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
                                 transition={{ duration: 0.7, delay: 0.1 }}
-                                className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 text-foreground"
+                                className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-10 text-foreground leading-[0.85]"
                             >
-                                Thoughts & <span className="font-serif italic font-light text-muted-foreground">Explorations</span>
+                                THOUGHTS & <br />
+                                <span className="italic font-serif font-light opacity-30 text-foreground">Explorations</span>
                             </motion.h1>
 
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
                                 transition={{ duration: 0.7, delay: 0.2 }}
-                                className="text-muted-foreground text-lg md:text-xl leading-relaxed max-w-2xl"
+                                className="text-muted-foreground text-lg md:text-2xl leading-relaxed max-w-3xl font-medium"
                             >
-                                Bridging technical complexity with practical implementation. A collection of insights on <span className="text-foreground">AI Agents</span>, <span className="text-foreground">Web3</span>, and modern <span className="text-foreground">Software Engineering</span>.
+                                Bridging technical complexity with practical implementation. A curated stream of insights on <span className="text-foreground/80">AI Agents</span>, <span className="text-foreground/80">Web3 Systems</span>, and <span className="text-foreground/80">Architecture</span>.
                             </motion.p>
                         </div>
                     </header>
 
-                    {/* Filters & Search - Glassmorphism Style */}
-                    <div className="flex flex-col md:flex-row gap-8 mb-20 items-start md:items-center justify-between sticky top-24 z-50 pointer-events-none">
-                        {/* Wrapper to allow pointer events only on children */}
-                        <div className="flex flex-wrap gap-2 pointer-events-auto">
+                    {/* Filters & Search - Editorial Style */}
+                    <div className="flex flex-col md:flex-row gap-10 mb-24 items-start md:items-center justify-between">
+                        <div className="flex flex-wrap gap-3">
                             {categories.map((cat) => (
                                 <button
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat)}
                                     className={cn(
-                                        "px-5 py-2.5 text-sm font-medium transition-all rounded-full border backdrop-blur-md",
+                                        "px-6 py-2.5 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-full border-2",
                                         selectedCategory === cat
-                                            ? "bg-primary/10 text-primary border-primary/50 shadow-[0_0_15px_-5px_hsl(var(--primary))]"
-                                            : "bg-background/40 hover:bg-background/60 text-muted-foreground border-border/40 hover:border-primary/20 hover:text-foreground"
+                                            ? "bg-primary border-primary text-primary-foreground shadow-lg"
+                                            : "bg-muted/50 border-foreground/10 text-muted-foreground hover:text-foreground hover:border-foreground/30"
                                     )}
                                 >
-                                    {cat === 'all' ? 'All Posts' : t(`categories.${cat}`)}
+                                    {cat === 'all' ? 'All Publications' : t(`categories.${cat}`)}
                                 </button>
                             ))}
                         </div>
 
-                        <div className="relative w-full md:w-80 group pointer-events-auto">
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
+                        <div className="relative w-full md:w-96 group">
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
                             <input
                                 type="text"
-                                placeholder="Search articles..."
+                                placeholder="SEARCH ARCHIVE"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="relative w-full pl-12 pr-4 py-3 bg-background/50 backdrop-blur-md border border-border/40 focus:border-primary/30 outline-none rounded-2xl text-sm font-medium transition-all shadow-sm hover:shadow-md focus:shadow-lg hover:border-primary/20"
+                                className="w-full pl-14 pr-8 py-4 bg-muted/50 border-2 border-foreground/10 focus:border-primary/40 outline-none rounded-2xl text-[11px] font-bold tracking-widest text-foreground transition-all placeholder:text-muted-foreground/30 uppercase"
                             />
                         </div>
                     </div>
