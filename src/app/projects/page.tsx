@@ -14,6 +14,7 @@ import { Icons } from '@/components/icons';
 import { Meteors } from '@/components/ui/meteors';
 import { ProjectContact } from '@/components/sections/ProjectContact';
 import { ProjectDetail } from '@/components/projects/ProjectDetail';
+import { ProjectStats } from '@/components/sections/ProjectStats';
 
 type FilterType = 'all' | 'ongoing' | 'completed';
 
@@ -847,22 +848,8 @@ export default function ProjectsPage() {
         <div className="min-h-screen bg-background relative overflow-hidden" style={{ position: 'relative' }}>
             <HeroParallax products={products} />
 
-            {/* Logo Timeline - Full Width */}
-            <div className="relative w-full z-10 mt-0 sm:-mt-16 mb-12">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.6 }}
-                >
-                    <LogoTimeline
-                        items={timelineItems}
-                        title="Technologies & Tools"
-                        height="h-[380px] md:h-[480px]"
-                        iconSize={18}
-                        className="w-full"
-                    />
-                </motion.div>
-            </div>
+            {/* Project Stats - Impressive Metrics */}
+            <ProjectStats />
 
             <div className="container-creative relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
                 {/* Search & Filter Control Bar */}

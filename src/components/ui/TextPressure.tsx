@@ -137,15 +137,30 @@ export function TextPressure({
     }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth, updateCenters]);
 
     useEffect(() => {
+        let throttleTimeout: NodeJS.Timeout | null = null;
+
         const handleMouseMove = (e: MouseEvent) => {
+            if (throttleTimeout) return; // Skip if throttled
+
             cursorRef.current.x = e.clientX;
             cursorRef.current.y = e.clientY;
+
+            // Throttle to max 20fps for mouse tracking
+            throttleTimeout = setTimeout(() => {
+                throttleTimeout = null;
+            }, 50);
         };
 
         const handleTouchMove = (e: TouchEvent) => {
+            if (throttleTimeout) return; // Skip if throttled
+
             const t = e.touches[0];
             cursorRef.current.x = t.clientX;
             cursorRef.current.y = t.clientY;
+
+            throttleTimeout = setTimeout(() => {
+                throttleTimeout = null;
+            }, 50);
         };
 
         window.addEventListener('mousemove', handleMouseMove);

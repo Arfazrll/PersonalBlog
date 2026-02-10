@@ -40,19 +40,27 @@ export const KineticTechGrid = ({ items, className }: KineticTechGridProps) => {
 const TechCard = ({ tech, idx, scrollYProgress }: { tech: TechItem, idx: number, scrollYProgress: any }) => {
     const cardRef = useRef<HTMLDivElement>(null);
 
-    // Create random parallax and rotation offsets
-    const yOffset = useTransform(scrollYProgress, [0, 1], [idx % 2 === 0 ? 50 : -50, idx % 2 === 0 ? -50 : 50]);
-    const rotateOffset = useTransform(scrollYProgress, [0, 1], [idx % 2 === 0 ? 10 : -10, idx % 2 === 0 ? -10 : 10]);
+    // Simplified parallax with clamped values for better performance
+    const yRange = idx % 2 === 0 ? [30, -30] : [-30, 30];
+    const rotateRange = idx % 2 === 0 ? [5, -5] : [-5, 5];
 
-    // Smooth the motion
-    const springY = useSpring(yOffset, { stiffness: 100, damping: 20 });
-    const springRotate = useSpring(rotateOffset, { stiffness: 100, damping: 20 });
+    const yOffset = useTransform(scrollYProgress, [0, 1], yRange);
+    const rotateOffset = useTransform(scrollYProgress, [0, 1], rotateRange);
+
+    // Reduced spring stiffness for smoother, less calculation-heavy animation
+    const springY = useSpring(yOffset, { stiffness: 60, damping: 25, restDelta: 0.001 });
+    const springRotate = useSpring(rotateOffset, { stiffness: 60, damping: 25, restDelta: 0.001 });
 
     return (
         <motion.div
             ref={cardRef}
-            style={{ y: springY, rotateZ: springRotate }}
+            style={{
+                y: springY,
+                rotateZ: springRotate,
+                willChange: 'transform' // GPU hint
+            }}
             whileHover={{ scale: 1.05, zIndex: 10 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="group relative h-48 rounded-3xl overflow-hidden border border-border/50 bg-card text-card-foreground flex flex-col items-center justify-center gap-6 p-8 transition-colors hover:border-primary/50 hover:bg-muted/50 shadow-sm dark:shadow-none"
         >
             <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

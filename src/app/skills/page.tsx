@@ -99,7 +99,9 @@ export default function SkillsPage() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
                         transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ willChange: 'transform, opacity' }}
                     >
                         <div className="h-[160px] md:h-[220px] w-full max-w-full mx-auto relative flex items-center justify-center overflow-visible">
                             <TextPressure
@@ -116,6 +118,7 @@ export default function SkillsPage() {
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
                             transition={{ duration: 0.8, delay: 0.3 }}
                             className="max-w-4xl mx-auto mt-0 text-gray-600 dark:text-foreground/40 font-mono leading-relaxed uppercase tracking-[1.5em] text-[10px] font-medium pointer-events-auto"
                         >
@@ -161,14 +164,14 @@ export default function SkillsPage() {
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ margin: "-100px" }}
+                        viewport={{ margin: "-100px", once: true }}
                         transition={{ duration: 0.6 }}
                         className="text-center mb-24 space-y-4"
                     >
                         <motion.span
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ margin: "-100px" }}
+                            viewport={{ margin: "-100px", once: true }}
                             transition={{ duration: 0.5, delay: 0.2 }}
                             className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
                         >
@@ -182,7 +185,7 @@ export default function SkillsPage() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ margin: "-100px" }}
+                        viewport={{ margin: "-100px", once: true }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
                         <KineticTechGrid

@@ -131,9 +131,26 @@ export function Footer() {
                     <div className="glass-card px-6 md:px-8 py-4 md:py-6">
                         <div className="flex items-center justify-between flex-wrap gap-4">
                             <div className="flex items-center gap-4 md:gap-6">
-                                <Link href="/" className="text-lg md:text-xl font-black text-gradient">
-                                    SYAHRIL ARFIAN ALMAZRIL
-                                </Link>
+                                <motion.a
+                                    href="https://drive.google.com/file/d/1mfYs2MOHpwEFLe-Ld4OCcgS1Lbo6wW7O/view?usp=sharing"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group flex items-center gap-2 md:gap-3 px-4 md:px-5 py-2 md:py-2.5 rounded-full bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20 hover:border-primary/40 transition-all duration-300"
+                                    whileHover={{ scale: 1.02, y: -2 }}
+                                    whileTap={{ scale: 0.98 }}
+                                >
+                                    <span className="text-sm md:text-base font-bold text-gradient uppercase tracking-wide">
+                                        View Resume
+                                    </span>
+                                    <svg
+                                        className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:translate-x-1 transition-transform"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m0 0l-3-3m3 3l-3 3m9-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </motion.a>
                             </div>
 
                             <div className="flex items-center gap-3 md:gap-4">
