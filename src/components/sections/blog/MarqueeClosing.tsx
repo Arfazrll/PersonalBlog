@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Twitter, ArrowUpRight, Code, Heart, Sparkles, Mail } from 'lucide-react';
 import { LiquidOcean } from '@/components/ui/liquid-ocean';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
@@ -27,18 +28,21 @@ export const MarqueeClosing = () => {
         accent: 0x06b6d4, // Cyan-500
         opacity: 0.8
     } : {
-        // Light Mode: White Ocean with Subtle Gray Grid & Blue Accents
+        // Light Mode: White Ocean for seamless blending
         bg: 0xffffff,
-        grid: 0xe5e7eb, // Gray-200
+        grid: 0xf3f4f6, // Gray-100
         accent: 0x3b82f6, // Blue-500
-        opacity: 0.5
+        opacity: 0.6
     };
 
     if (!mounted) return null; // Prevent hydration mismatch
 
     return (
         // Added pb-32 to account for the overlay footer and position text lower
-        <div className={`relative w-full min-h-screen flex flex-col items-center justify-end overflow-hidden pb-5 transition-colors duration-500 ${isDark ? 'bg-black text-white' : 'bg-background text-foreground'}`}>
+        <div className={cn(
+            "relative w-full min-h-screen flex flex-col items-center justify-end overflow-hidden pb-5 transition-colors duration-500",
+            isDark ? "bg-black text-white" : "bg-background text-foreground"
+        )}>
 
             {/* Background Ocean - Full Immersive */}
             <div className="absolute inset-0 z-0">
@@ -72,11 +76,17 @@ export const MarqueeClosing = () => {
                     viewport={{ once: true }}
                     className="flex flex-col items-center gap-8 max-w-4xl mx-auto"
                 >
-                    <h2 className={`text-6xl md:text-8xl font-black tracking-tighter drop-shadow-2xl ${isDark ? 'text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60' : 'text-gray-950'}`}>
+                    <h2 className={cn(
+                        "text-6xl md:text-8xl font-black tracking-tighter drop-shadow-2xl",
+                        isDark ? "text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" : "text-foreground"
+                    )}>
                         Ready to Build?
                     </h2>
 
-                    <p className={`text-xl md:text-2xl font-light leading-relaxed max-w-2xl drop-shadow-md pb-2 ${isDark ? 'text-gray-400/90' : 'text-gray-700 font-medium'}`}>
+                    <p className={cn(
+                        "text-xl md:text-2xl font-light leading-relaxed max-w-2xl drop-shadow-md pb-2",
+                        isDark ? "text-white/70" : "text-muted-foreground font-medium"
+                    )}>
                         I'm always open to discussing product design work or partnership opportunities. Let's create something extraordinary together.
                     </p>
 
@@ -84,45 +94,46 @@ export const MarqueeClosing = () => {
                     <div className="w-full max-w-md mx-auto flex flex-col gap-6">
 
                         {/* Newsletter Input */}
-                        <div className={`
-                            relative group flex items-center p-1.5 rounded-full backdrop-blur-md border transition-all duration-300
-                            ${isDark
-                                ? 'bg-white/5 border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.1)]'
-                                : 'bg-white/80 border-gray-900/10 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]'
-                            }
-                        `}>
+                        <div className={cn(
+                            "relative group flex items-center p-1.5 rounded-full border-2 transition-all duration-300",
+                            isDark
+                                ? "bg-white/5 border-white/10 backdrop-blur-md hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.1)]"
+                                : "bg-card border-foreground/15 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] shadow-xl"
+                        )}>
                             <div className={`pl-4 ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>
                                 <Mail className="w-5 h-5" />
                             </div>
                             <input
                                 type="email"
                                 placeholder="Enter your email for updates..."
-                                className={`
-                                    w-full bg-transparent border-none focus:ring-0 px-4 py-2 outline-none text-sm font-medium
-                                    ${isDark
-                                        ? 'text-white placeholder:text-gray-300'
-                                        : 'text-gray-900 placeholder:text-gray-400'
-                                    }
-                                `}
+                                className={cn(
+                                    "w-full bg-transparent border-none focus:ring-0 px-4 py-2 outline-none text-sm font-medium",
+                                    isDark ? "text-white placeholder:text-white/40" : "text-foreground placeholder:text-muted-foreground"
+                                )}
                             />
-                            <button className={`
-                                px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300
-                                ${isDark
-                                    ? 'bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]'
-                                    : 'bg-gray-900 text-white hover:bg-black hover:shadow-lg'
-                                }
-                            `}>
+                            <button className={cn(
+                                "px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-[0.15em] transition-all duration-500 hover:scale-105 active:scale-95",
+                                isDark
+                                    ? "bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+                                    : "bg-foreground text-background hover:bg-primary shadow-xl shadow-primary/20"
+                            )}>
                                 Join
                             </button>
                         </div>
 
                         {/* Secondary Navigation Links */}
                         <div className="flex items-center justify-center gap-6 text-sm font-medium tracking-wide">
-                            <Link href="/contact" className={`flex items-center gap-2 transition-colors ${isDark ? 'text-gray-400 hover:text-cyan-400' : 'text-gray-500 hover:text-blue-600'}`}>
+                            <Link href="/contact" className={cn(
+                                "flex items-center gap-2 transition-colors",
+                                isDark ? "text-white/50 hover:text-cyan-400" : "text-muted-foreground hover:text-primary"
+                            )}>
                                 <span>Contact Me</span>
                                 <ArrowUpRight className="w-3 h-3" />
                             </Link>
-                            <Link href="/projects" className={`flex items-center gap-2 transition-colors ${isDark ? 'text-gray-400 hover:text-cyan-400' : 'text-gray-500 hover:text-blue-600'}`}>
+                            <Link href="/projects" className={cn(
+                                "flex items-center gap-2 transition-colors",
+                                isDark ? "text-white/50 hover:text-cyan-400" : "text-muted-foreground hover:text-primary"
+                            )}>
                                 <span>View Projects</span>
                                 <ArrowUpRight className="w-3 h-3" />
                             </Link>

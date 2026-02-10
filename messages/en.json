@@ -260,6 +260,7 @@
     "blog": {
         "title": "Thoughts & Explorations",
         "subtitle": "Bridging the gap between technical complexity and practical implementation. A collection of insights on AI, Web3, and Software Engineering.",
+        "sectionBadge": "The Digital Archive",
         "search": "Search articles...",
         "readTime": "min read",
         "readMore": "Read Post",

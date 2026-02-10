@@ -143,7 +143,7 @@ export function Footer() {
                     <div className={`
                         px-6 md:px-8 py-4 md:py-6 transition-all duration-300
                         ${isBlog
-                            ? 'bg-white/80 dark:bg-black/40 backdrop-blur-md border border-black/5 dark:border-white/5 rounded-3xl shadow-lg dark:shadow-black/20'
+                            ? 'bg-card dark:bg-black/40 dark:backdrop-blur-xl border-2 border-foreground/10 dark:border-white/5 rounded-[2rem] shadow-xl dark:shadow-black/20'
                             : 'glass-card'
                         }
                     `}>
@@ -154,26 +154,26 @@ export function Footer() {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className={`
-                                        group flex items-center gap-2 md:gap-3 px-4 md:px-5 py-2 md:py-2.5 rounded-full 
-                                        transition-all duration-300
+                                        group flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-full 
+                                        transition-all duration-500
                                         ${isBlog
-                                            ? 'bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
+                                            ? 'bg-foreground text-background hover:bg-primary dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 border-2 border-foreground/5 dark:border-white/10 shadow-lg shadow-black/5 hover:scale-105 active:scale-95'
                                             : 'bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20 hover:border-primary/40'
                                         }
                                     `}
-                                    whileHover={{ scale: 1.02, y: -2 }}
+                                    whileHover={{ y: -2 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
-                                    <span className={`text-sm md:text-base font-bold uppercase tracking-wide ${isBlog ? 'text-foreground dark:text-gray-300 group-hover:text-primary dark:group-hover:text-white' : 'text-gradient'}`}>
+                                    <span className={`text-xs md:text-sm font-black uppercase tracking-[0.2em] ${isBlog ? '' : 'text-gradient'}`}>
                                         View Resume
                                     </span>
                                     <svg
-                                        className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:translate-x-1 transition-transform"
+                                        className={`w-4 h-4 md:w-5 md:h-5 ${isBlog ? 'text-background dark:text-primary' : 'text-primary'} group-hover:translate-x-1 transition-transform`}
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
                                     >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m0 0l-3-3m3 3l-3 3m9-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m0 0l-3-3m3 3l-3 3m9-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </motion.a>
                             </div>
@@ -201,9 +201,15 @@ export function Footer() {
 
                                 <motion.button
                                     onClick={toggleExpand}
-                                    className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-muted hover:bg-muted/80 transition-all text-sm font-medium text-foreground"
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
+                                    className={`
+                                        flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full transition-all text-xs font-black uppercase tracking-[0.2em]
+                                        ${isBlog
+                                            ? 'bg-muted/50 border-2 border-foreground/10 text-foreground hover:bg-muted hover:border-foreground/20'
+                                            : 'bg-muted hover:bg-muted/80 text-foreground'
+                                        }
+                                    `}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                 >
                                     <span className="hidden sm:inline">{t('more')}</span>
                                     <motion.span

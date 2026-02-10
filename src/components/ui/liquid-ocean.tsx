@@ -348,7 +348,7 @@ export function LiquidOcean({
     }, []);
 
     return (
-        <div ref={containerRef} className={cn("relative w-full h-full min-h-[400px] overflow-hidden bg-black cursor-crosshair", className)}>
+        <div ref={containerRef} className={cn("relative w-full h-full min-h-[400px] overflow-hidden bg-background cursor-crosshair", className)}>
             <Canvas
                 shadows
                 dpr={1}
