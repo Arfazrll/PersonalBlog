@@ -1,221 +1,163 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Send, Check, ArrowRight } from 'lucide-react';
-import { portfolioData } from '@/data/portfolio';
+import { motion } from 'framer-motion';
+import { Github, Linkedin, Twitter, ArrowUpRight, Code, Heart, Sparkles, Mail } from 'lucide-react';
+import { LiquidOcean } from '@/components/ui/liquid-ocean';
 import Link from 'next/link';
 
-const MarqueeRow = ({
-    posts,
-    direction = 'left',
-    speed = 40
-}: { posts: typeof portfolioData.blogs; direction?: 'left' | 'right'; speed?: number }) => {
-    const duplicatedPosts = [...posts, ...posts, ...posts];
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
+
+export const MarqueeClosing = () => {
+    const { theme, systemTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const currentTheme = theme === 'system' ? systemTheme : theme;
+    const isDark = currentTheme === 'dark';
+
+    // Ocean Colors
+    const oceanConfig = isDark ? {
+        // Dark Mode: Deep Black Ocean with Cyan Accents
+        bg: 0x000000,
+        grid: 0x1a1a1a,
+        accent: 0x06b6d4, // Cyan-500
+        opacity: 0.8
+    } : {
+        // Light Mode: White Ocean with Subtle Gray Grid & Blue Accents
+        bg: 0xffffff,
+        grid: 0xe5e7eb, // Gray-200
+        accent: 0x3b82f6, // Blue-500
+        opacity: 0.5
+    };
+
+    if (!mounted) return null; // Prevent hydration mismatch
 
     return (
-        <div className="relative flex overflow-hidden whitespace-nowrap">
-            <motion.div
-                className="flex gap-6"
-                animate={{
-                    x: direction === 'left' ? [0, -33.33 * posts.length * 8] : [-33.33 * posts.length * 8, 0]
-                }}
-                transition={{
-                    duration: speed,
-                    repeat: Infinity,
-                    ease: 'linear'
-                }}
-            >
-                {duplicatedPosts.map((post, i) => (
-                    <Link
-                        key={`${post.id}-${i}`}
-                        href={`/blog/${post.slug}`}
-                        className="inline-flex items-center gap-3 px-6 py-3 bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 hover:border-primary/40 rounded-full transition-all duration-300 group"
-                    >
-                        <span className="text-[10px] font-mono text-primary uppercase tracking-wider">
-                            {post.category}
-                        </span>
-                        <span className="text-sm font-bold group-hover:text-primary transition-colors">
-                            {post.title}
-                        </span>
-                        <ArrowRight className="w-4 h-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-                    </Link>
-                ))}
-            </motion.div>
+        // Added pb-32 to account for the overlay footer and position text lower
+        <div className={`relative w-full min-h-screen flex flex-col items-center justify-end overflow-hidden pb-5 transition-colors duration-500 ${isDark ? 'bg-black text-white' : 'bg-background text-foreground'}`}>
+
+            {/* Background Ocean - Full Immersive */}
+            <div className="absolute inset-0 z-0">
+                <LiquidOcean
+                    backgroundColor={oceanConfig.bg}
+                    gridColor={oceanConfig.grid}
+                    accentColor={oceanConfig.accent}
+                    oceanSize={60}
+                    oceanFragments={40}
+                    waveAmplitude={isDark ? 0.8 : 0.5} // Calmer waves in light mode
+                    waveSpeed={0.015}
+                    showBoats={true}
+                    boatCount={6}
+                    boatSpread={20}
+                    showWireframe={true}
+                    oceanOpacity={oceanConfig.opacity}
+                />
+
+                {/* Top Fade Only - Seamless Integration */}
+                {/* Top Fade - Gradient Bridge from Page Background to Ocean */}
+                <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-10" />
+            </div>
+
+            {/* Main Content - Centered */}
+            <div className="relative z-10 flex-1 flex flex-col items-center justify-center container px-6 py-20 text-center space-y-12">
+
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                    viewport={{ once: true }}
+                    className="flex flex-col items-center gap-8 max-w-4xl mx-auto"
+                >
+                    <h2 className={`text-6xl md:text-8xl font-black tracking-tighter drop-shadow-2xl ${isDark ? 'text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60' : 'text-gray-950'}`}>
+                        Ready to Build?
+                    </h2>
+
+                    <p className={`text-xl md:text-2xl font-light leading-relaxed max-w-2xl drop-shadow-md pb-2 ${isDark ? 'text-gray-400/90' : 'text-gray-700 font-medium'}`}>
+                        I'm always open to discussing product design work or partnership opportunities. Let's create something extraordinary together.
+                    </p>
+
+                    {/* Action Area: Newsletter & Navigation */}
+                    <div className="w-full max-w-md mx-auto flex flex-col gap-6">
+
+                        {/* Newsletter Input */}
+                        <div className={`
+                            relative group flex items-center p-1.5 rounded-full backdrop-blur-md border transition-all duration-300
+                            ${isDark
+                                ? 'bg-white/5 border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.1)]'
+                                : 'bg-white/80 border-gray-900/10 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]'
+                            }
+                        `}>
+                            <div className={`pl-4 ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>
+                                <Mail className="w-5 h-5" />
+                            </div>
+                            <input
+                                type="email"
+                                placeholder="Enter your email for updates..."
+                                className={`
+                                    w-full bg-transparent border-none focus:ring-0 px-4 py-2 outline-none text-sm font-medium
+                                    ${isDark
+                                        ? 'text-white placeholder:text-gray-300'
+                                        : 'text-gray-900 placeholder:text-gray-400'
+                                    }
+                                `}
+                            />
+                            <button className={`
+                                px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300
+                                ${isDark
+                                    ? 'bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]'
+                                    : 'bg-gray-900 text-white hover:bg-black hover:shadow-lg'
+                                }
+                            `}>
+                                Join
+                            </button>
+                        </div>
+
+                        {/* Secondary Navigation Links */}
+                        <div className="flex items-center justify-center gap-6 text-sm font-medium tracking-wide">
+                            <Link href="/contact" className={`flex items-center gap-2 transition-colors ${isDark ? 'text-gray-400 hover:text-cyan-400' : 'text-gray-500 hover:text-blue-600'}`}>
+                                <span>Contact Me</span>
+                                <ArrowUpRight className="w-3 h-3" />
+                            </Link>
+                            <Link href="/projects" className={`flex items-center gap-2 transition-colors ${isDark ? 'text-gray-400 hover:text-cyan-400' : 'text-gray-500 hover:text-blue-600'}`}>
+                                <span>View Projects</span>
+                                <ArrowUpRight className="w-3 h-3" />
+                            </Link>
+                        </div>
+
+                    </div>
+                </motion.div>
+            </div>
         </div>
     );
 };
 
-export const MarqueeClosing = () => {
-    const [email, setEmail] = useState('');
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const allPosts = portfolioData.blogs;
-    const row1Posts = allPosts.filter((_, i) => i % 3 === 0);
-    const row2Posts = allPosts.filter((_, i) => i % 3 === 1);
-    const row3Posts = allPosts.filter((_, i) => i % 3 === 2);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!email) return;
-
-        setIsLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setIsLoading(false);
-        setIsSubmitted(true);
-        setEmail('');
-        setTimeout(() => setIsSubmitted(false), 3000);
-    };
-
+// Social Pill Component - Minimalist Glass
+const SocialPill = ({ href, icon, label, isDark }: { href: string; icon: React.ReactNode; label: string; isDark: boolean }) => {
     return (
-        <div className="relative w-full bg-gradient-to-b from-background to-foreground/5 py-20 overflow-hidden">
-            {/* Top Gradient Fade */}
-            <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
-
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-[0.02]">
-                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <pattern id="marquee-dots" width="30" height="30" patternUnits="userSpaceOnUse">
-                            <circle cx="15" cy="15" r="1" fill="currentColor" />
-                        </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#marquee-dots)" />
-                </svg>
-            </div>
-
-            <div className="relative z-10 space-y-6">
-                {/* Marquee Row 1 */}
-                <MarqueeRow posts={row1Posts} direction="left" speed={50} />
-
-                {/* Newsletter Section - Centered */}
-                <div className="relative py-12">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="container mx-auto px-6 md:px-12"
-                    >
-                        <div className="max-w-3xl mx-auto bg-gradient-to-br from-foreground/10 via-foreground/5 to-transparent backdrop-blur-xl border border-foreground/20 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-                            {/* Decorative Glow */}
-                            <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 blur-[80px] rounded-full" />
-                            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-secondary/20 blur-[80px] rounded-full" />
-
-                            <div className="relative z-10 text-center">
-                                {/* Icon */}
-                                <motion.div
-                                    animate={{
-                                        scale: [1, 1.05, 1],
-                                        rotate: [0, 2, -2, 0]
-                                    }}
-                                    transition={{
-                                        duration: 4,
-                                        repeat: Infinity,
-                                        ease: "easeInOut"
-                                    }}
-                                    className="inline-flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-primary to-secondary rounded-2xl shadow-lg"
-                                >
-                                    <Mail className="w-8 h-8 text-primary-foreground" />
-                                </motion.div>
-
-                                {/* Heading */}
-                                <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-4">
-                                    Stay Updated
-                                </h2>
-                                <p className="text-muted-foreground font-mono text-sm md:text-base mb-8 max-w-lg mx-auto">
-                                    Get notified when I drop new content. No spam, just pure knowledge.
-                                </p>
-
-                                {/* Newsletter Form */}
-                                <AnimatePresence mode="wait">
-                                    {!isSubmitted ? (
-                                        <motion.form
-                                            key="form"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            onSubmit={handleSubmit}
-                                            className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
-                                        >
-                                            <input
-                                                type="email"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                placeholder="your@email.com"
-                                                required
-                                                disabled={isLoading}
-                                                className="flex-1 px-6 py-4 bg-background border-2 border-foreground/20 rounded-2xl focus:outline-none focus:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed font-mono text-sm"
-                                            />
-                                            <motion.button
-                                                type="submit"
-                                                disabled={isLoading}
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-wider hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
-                                            >
-                                                {isLoading ? (
-                                                    <motion.div
-                                                        animate={{ rotate: 360 }}
-                                                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                                        className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full"
-                                                    />
-                                                ) : (
-                                                    <>
-                                                        <span>Subscribe</span>
-                                                        <Send className="w-4 h-4" />
-                                                    </>
-                                                )}
-                                            </motion.button>
-                                        </motion.form>
-                                    ) : (
-                                        <motion.div
-                                            key="success"
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.8 }}
-                                            className="flex flex-col items-center gap-4 py-4"
-                                        >
-                                            <motion.div
-                                                initial={{ scale: 0 }}
-                                                animate={{ scale: 1 }}
-                                                transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                                                className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
-                                            >
-                                                <Check className="w-10 h-10 text-white" strokeWidth={3} />
-                                            </motion.div>
-                                            <div className="text-center">
-                                                <p className="font-bold text-xl text-green-500 mb-2">
-                                                    Subscribed Successfully!
-                                                </p>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Check your inbox for confirmation.
-                                                </p>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-
-                                {/* Privacy Note */}
-                                <p className="mt-6 text-xs text-muted-foreground/60 font-mono">
-                                    🔒 No spam ever. Unsubscribe with one click.
-                                </p>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-
-                {/* Marquee Row 2 */}
-                <MarqueeRow posts={row2Posts} direction="right" speed={45} />
-
-                {/* Marquee Row 3 */}
-                <MarqueeRow posts={row3Posts} direction="left" speed={55} />
-            </div>
-
-            {/* Edge Fade Overlays */}
-            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-20 pointer-events-none" />
-            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-20 pointer-events-none" />
-        </div>
+        <Link
+            href={href}
+            target="_blank"
+            className={`
+                group relative flex items-center gap-3 px-8 py-4 
+                rounded-full backdrop-blur-md 
+                transition-all duration-300 transform hover:-translate-y-1
+                ${isDark
+                    ? 'bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]'
+                    : 'bg-white/80 hover:bg-white border border-gray-900/20 hover:border-blue-600 hover:shadow-[0_0_30px_rgba(37,99,235,0.1)]'
+                }
+            `}
+        >
+            <span className={`transition-colors ${isDark ? 'text-gray-300 group-hover:text-cyan-400' : 'text-gray-800 group-hover:text-blue-600'}`}>
+                {icon}
+            </span>
+            <span className={`font-semibold tracking-wide ${isDark ? 'text-gray-200 group-hover:text-white' : 'text-gray-900 group-hover:text-black'}`}>
+                {label}
+            </span>
+            <ArrowUpRight className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-all transform -translate-x-2 group-hover:translate-x-0 ${isDark ? 'text-gray-500 group-hover:text-cyan-400' : 'text-gray-500 group-hover:text-blue-600'}`} />
+        </Link>
     );
 };

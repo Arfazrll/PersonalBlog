@@ -43,63 +43,70 @@ export default function BlogPage() {
                 </div>
 
                 <div className="container mx-auto relative z-10">
-                    {/* Header Section */}
-                    <header className="mb-20">
-                        <div className="flex items-center gap-6 mb-8">
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-mono uppercase tracking-[0.8em] text-primary font-black opacity-40">INDEX_BLOG</span>
-                                <span className="text-[10px] font-mono uppercase tracking-[0.8em] text-primary/60 font-black">FILES_v1.0</span>
-                            </div>
-                            <div className="h-[2px] w-24 bg-gradient-to-r from-primary/40 to-transparent" />
+                    {/* Header Section - Natural & Organic Design */}
+                    <header className="mb-24 relative">
+                        <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none opacity-50" />
+
+                        <div className="relative z-10 max-w-4xl">
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-primary/5 border border-primary/10 text-primary/80 text-xs font-medium tracking-wide mb-8 backdrop-blur-sm"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-primary/60 animate-pulse" />
+                                The Digital Garden
+                            </motion.div>
+
+                            <motion.h1
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.7, delay: 0.1 }}
+                                className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 text-foreground"
+                            >
+                                Thoughts & <span className="font-serif italic font-light text-muted-foreground">Explorations</span>
+                            </motion.h1>
+
+                            <motion.p
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.7, delay: 0.2 }}
+                                className="text-muted-foreground text-lg md:text-xl leading-relaxed max-w-2xl"
+                            >
+                                Bridging technical complexity with practical implementation. A collection of insights on <span className="text-foreground">AI Agents</span>, <span className="text-foreground">Web3</span>, and modern <span className="text-foreground">Software Engineering</span>.
+                            </motion.p>
                         </div>
-
-                        <h1 className="text-4xl md:text-7xl lg:text-8xl font-black tracking-[-0.04em] uppercase italic leading-[0.9] md:leading-[0.8] mb-8 bg-gradient-to-br from-foreground to-foreground/50 bg-clip-text text-transparent transition-all">
-                            {t('title')}
-                        </h1>
-
-                        <div className="max-w-2xl border-l-2 border-primary/10 pl-8 py-4 bg-secondary/5 backdrop-blur-sm">
-                            <p className="text-muted-foreground font-mono text-xs uppercase tracking-[0.15em] leading-relaxed opacity-80">
-                                {t('subtitle')}
-                            </p>
-                        </div>
-
-                        {/* Gallery Navigator */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5 }}
-                            className="mt-12 flex justify-center md:justify-end"
-                        >
-                        </motion.div>
                     </header>
 
-                    {/* Filters & Search */}
-                    <div className="flex flex-col md:flex-row gap-6 mb-16 items-start md:items-center justify-between">
-                        <div className="flex flex-wrap gap-2">
+                    {/* Filters & Search - Glassmorphism Style */}
+                    <div className="flex flex-col md:flex-row gap-8 mb-20 items-start md:items-center justify-between sticky top-24 z-50 pointer-events-none">
+                        {/* Wrapper to allow pointer events only on children */}
+                        <div className="flex flex-wrap gap-2 pointer-events-auto">
                             {categories.map((cat) => (
                                 <button
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat)}
                                     className={cn(
-                                        "px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-full border",
+                                        "px-5 py-2.5 text-sm font-medium transition-all rounded-full border backdrop-blur-md",
                                         selectedCategory === cat
-                                            ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
-                                            : "bg-foreground/[0.03] dark:bg-secondary/10 text-muted-foreground border-foreground/10 dark:border-border/40 hover:border-primary/40"
+                                            ? "bg-primary/10 text-primary border-primary/50 shadow-[0_0_15px_-5px_hsl(var(--primary))]"
+                                            : "bg-background/40 hover:bg-background/60 text-muted-foreground border-border/40 hover:border-primary/20 hover:text-foreground"
                                     )}
                                 >
-                                    {t(`categories.${cat}`)}
+                                    {cat === 'all' ? 'All Posts' : t(`categories.${cat}`)}
                                 </button>
                             ))}
                         </div>
 
-                        <div className="relative w-full md:w-80 group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                        <div className="relative w-full md:w-80 group pointer-events-auto">
+                            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
                             <input
                                 type="text"
-                                placeholder={t('search')}
+                                placeholder="Search articles..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-foreground/[0.03] dark:bg-secondary/10 border border-foreground/10 dark:border-border/40 focus:border-primary/40 outline-none rounded-xl text-sm font-medium transition-all"
+                                className="relative w-full pl-12 pr-4 py-3 bg-background/50 backdrop-blur-md border border-border/40 focus:border-primary/30 outline-none rounded-2xl text-sm font-medium transition-all shadow-sm hover:shadow-md focus:shadow-lg hover:border-primary/20"
                             />
                         </div>
                     </div>
@@ -131,6 +138,7 @@ export default function BlogPage() {
             </div>
 
             {/* SECTION 3: MarqueeClosing */}
+            <div className="w-full h-20" /> {/* Spacer for visual separation */}
             <MarqueeClosing />
         </main>
     );

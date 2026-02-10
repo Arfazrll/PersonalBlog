@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
     ChevronUp,
@@ -123,23 +124,47 @@ export function Footer() {
         open: { opacity: 1 }
     };
 
+    const pathname = usePathname();
+    // Check if path contains 'blog' to handle locales (e.g. /en/blog) and trailing slashes
+    // Check if path contains 'blog' to handle locales (e.g. /en/blog) and trailing slashes
+    const isBlog = pathname?.includes('/blog');
+    // Check if it is a specific blog post (detail page) - usually implies URL has `/blog/slug`
+    // If it has '/blog/' or ends in something other than just 'blog', it's likely a detail page.
+    const isBlogDetail = pathname?.includes('/blog/') && pathname.split('/blog/')[1]?.length > 0;
+
+    // Hide footer completely on Blog Detail pages as per user request
+    if (isBlogDetail) return null;
+
     return (
         <>
             {/* Compact Footer - Always visible */}
-            <footer className="relative z-20 mt-auto">
-                <div className="container-creative py-6 md:py-8">
-                    <div className="glass-card px-6 md:px-8 py-4 md:py-6">
+            <footer className={`${isBlog ? 'absolute bottom-0 w-full border-t-0 pointer-events-none !bg-transparent z-20' : 'relative z-20 mt-auto'}`}>
+                <div className={`container-creative py-6 md:py-8 pointer-events-auto ${isBlog ? '!bg-transparent' : ''}`}>
+                    <div className={`
+                        px-6 md:px-8 py-4 md:py-6 transition-all duration-300
+                        ${isBlog
+                            ? 'bg-white/80 dark:bg-black/40 backdrop-blur-md border border-black/5 dark:border-white/5 rounded-3xl shadow-lg dark:shadow-black/20'
+                            : 'glass-card'
+                        }
+                    `}>
                         <div className="flex items-center justify-between flex-wrap gap-4">
                             <div className="flex items-center gap-4 md:gap-6">
                                 <motion.a
                                     href="https://drive.google.com/file/d/1mfYs2MOHpwEFLe-Ld4OCcgS1Lbo6wW7O/view?usp=sharing"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="group flex items-center gap-2 md:gap-3 px-4 md:px-5 py-2 md:py-2.5 rounded-full bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20 hover:border-primary/40 transition-all duration-300"
+                                    className={`
+                                        group flex items-center gap-2 md:gap-3 px-4 md:px-5 py-2 md:py-2.5 rounded-full 
+                                        transition-all duration-300
+                                        ${isBlog
+                                            ? 'bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
+                                            : 'bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20 hover:border-primary/40'
+                                        }
+                                    `}
                                     whileHover={{ scale: 1.02, y: -2 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
-                                    <span className="text-sm md:text-base font-bold text-gradient uppercase tracking-wide">
+                                    <span className={`text-sm md:text-base font-bold uppercase tracking-wide ${isBlog ? 'text-foreground dark:text-gray-300 group-hover:text-primary dark:group-hover:text-white' : 'text-gradient'}`}>
                                         View Resume
                                     </span>
                                     <svg

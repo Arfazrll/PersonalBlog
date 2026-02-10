@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { ChevronDown, TrendingUp, FileText, Calendar } from 'lucide-react';
+import { ChevronDown, TrendingUp, FileText, Calendar, ArrowRight, Library, Code2, Bookmark } from 'lucide-react';
 import { portfolioData } from '@/data/portfolio';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -49,7 +49,7 @@ export const BentoHero = () => {
             </div>
 
             {/* Grid Pattern */}
-            <div className="absolute inset-0 opacity-[0.02]">
+            <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]">
                 <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <pattern id="bento-grid" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -60,7 +60,7 @@ export const BentoHero = () => {
                 </svg>
             </div>
 
-            <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-24 pt-32 pb-32">
+            <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-24 pt-24 md:pt-32 pb-24 md:pb-32">
                 {/* Header - Flex Layout with Gallery Button */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -121,7 +121,7 @@ export const BentoHero = () => {
                     >
                         <Link
                             href={`/blog/${currentPost?.slug || '#'}`}
-                            className="block h-full bg-gradient-to-br from-foreground/5 to-foreground/[0.02] border border-foreground/10 rounded-2xl hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 relative"
+                            className="block h-full bg-gradient-to-br from-foreground/5 to-foreground/[0.02] border border-foreground/20 dark:border-foreground/10 rounded-2xl hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 relative"
                         >
                             {/* Featured Image */}
                             <AnimatePresence mode="wait">
@@ -176,8 +176,6 @@ export const BentoHero = () => {
                                                 <Calendar className="w-3 h-3" />
                                                 {currentPost?.date || 'Recent'}
                                             </span>
-                                            <span>•</span>
-                                            <span>{currentPost?.readTime || '5 min read'}</span>
                                         </div>
                                     </motion.div>
                                 </AnimatePresence>
@@ -242,31 +240,81 @@ export const BentoHero = () => {
                         </div>
                     </motion.div>
 
-                    {/* Recent Posts - Small Cards */}
-                    {recentPosts.map((post, i) => (
-                        <motion.div
-                            key={post.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.5 + i * 0.1 }}
-                            className="md:col-span-4 group"
-                        >
-                            <Link
-                                href={`/blog/${post.slug}`}
-                                className="block h-full bg-foreground/5 border border-foreground/10 rounded-2xl p-6 hover:border-primary/40 transition-all duration-300 hover:shadow-lg"
-                            >
-                                <span className="text-[10px] font-mono text-primary uppercase tracking-wider">
-                                    {post.category}
-                                </span>
-                                <h3 className="text-lg font-black uppercase mt-2 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                                    {post.title}
-                                </h3>
-                                <p className="text-xs text-muted-foreground font-mono">
-                                    {post.date} • {post.readTime}
-                                </p>
-                            </Link>
-                        </motion.div>
-                    ))}
+                    {/* Blog Features Cards */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.5 }}
+                        className="md:col-span-4 group relative overflow-hidden"
+                    >
+                        <div className="block h-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-6 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 cursor-default">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/20 transition-colors" />
+                            <div className="relative z-10 flex flex-col justify-between h-full">
+                                <div>
+                                    <span className="inline-flex items-center gap-2 text-xs font-mono text-primary uppercase tracking-wider mb-4">
+                                        <Library className="w-4 h-4" />
+                                        Series
+                                    </span>
+                                    <h3 className="text-xl font-black uppercase mb-2 group-hover:text-primary transition-colors">
+                                        Learning Paths
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">
+                                        Curated multi-part guides on complex technical topics.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.6 }}
+                        className="md:col-span-4 group relative overflow-hidden"
+                    >
+                        <div className="block h-full bg-foreground/5 border border-foreground/10 rounded-2xl p-6 hover:border-primary/40 transition-all duration-300 hover:shadow-lg cursor-default">
+                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-foreground/5 blur-[40px] rounded-full translate-y-1/2 -translate-x-1/2" />
+                            <div className="relative z-10 flex flex-col justify-between h-full">
+                                <div>
+                                    <span className="inline-flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-4">
+                                        <Code2 className="w-4 h-4 text-primary" />
+                                        Code Snippets
+                                    </span>
+                                    <h3 className="text-xl font-black uppercase mb-2 group-hover:text-primary transition-colors">
+                                        Quick Bytes
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">
+                                        Reusable solutions for common development challenges.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.7 }}
+                        className="md:col-span-4 group relative overflow-hidden"
+                    >
+                        <div className="block h-full bg-gradient-to-br from-secondary/10 to-secondary/5 border border-foreground/10 rounded-2xl p-6 hover:border-primary/40 transition-all duration-300 hover:shadow-lg cursor-default">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="relative z-10 flex flex-col justify-between h-full">
+                                <div>
+                                    <span className="inline-flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-4">
+                                        <Bookmark className="w-4 h-4 text-green-500" />
+                                        Resources
+                                    </span>
+                                    <h3 className="text-xl font-black uppercase mb-2 group-hover:text-primary transition-colors">
+                                        My Toolkit
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">
+                                        Essential libraries, tools, and reading materials I use daily.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
 
                 {/* Scroll Indicator - Moved Lower */}
