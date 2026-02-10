@@ -71,40 +71,6 @@ function AnimatedBackground() {
 
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Particles Removed */}
-            {/* Gradient orbs - Reduced on mobile */}
-            <motion.div
-                className="absolute w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full blur-[60px] md:blur-[100px]"
-                style={{
-                    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%)',
-                    top: '10%',
-                    left: '-10%',
-                    willChange: 'transform',
-                }}
-                animate={isMobile ? {} : {
-                    x: [0, 30, 0],
-                    y: [0, 20, 0],
-                    scale: [1, 1.1, 1],
-                }}
-                transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            {!isMobile && (
-                <motion.div
-                    className="absolute w-[500px] h-[500px] rounded-full blur-[80px]"
-                    style={{
-                        background: 'radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, transparent 70%)',
-                        bottom: '20%',
-                        right: '-5%',
-                        willChange: 'transform',
-                    }}
-                    animate={{
-                        x: [0, -25, 0],
-                        y: [0, -30, 0],
-                    }}
-                    transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-                />
-            )}
-
             {/* Grid pattern - works for both light and dark */}
             <div
                 className="absolute inset-0 opacity-[0.04] dark:opacity-[0.02]"
