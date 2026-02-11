@@ -263,6 +263,14 @@ export function Navbar() {
                                     {t('home')}
                                 </Link>
 
+                                <Link
+                                    href="/contact"
+                                    onClick={closeMenu}
+                                    className="text-3xl font-black text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    {t('contact')}
+                                </Link>
+
                                 {/* Mobile Links grouped by Categories */}
                                 {navItems.map((category) => (
                                     <div key={category.label} className="flex flex-col items-center gap-4 py-4 border-b border-white/5 w-full last:border-0 text-center">

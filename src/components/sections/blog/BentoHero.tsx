@@ -98,7 +98,7 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.4 }}
-                        className="hidden lg:block lg:col-span-4 shrink-0"
+                        className="lg:col-span-4 shrink-0 mt-8 lg:mt-0"
                     >
                         <GalleryButton
                             galleryImages={portfolioData.gallery
