@@ -307,6 +307,10 @@ export default function ContactPage() {
         offset: ["start end", "end end"]
     });
 
+    const headerOpacity = useTransform(showFAQ, [0, 0.4], [1, 0.6]);
+    const headerScale = useTransform(showFAQ, [0, 0.4], [1, 0.98]);
+    const headerFilter = useTransform(showFAQ, [0, 0.4], ["blur(0px)", "blur(2px)"]);
+
 
     return (
         <div ref={containerRef} className="relative bg-background selection:bg-primary/20">
@@ -321,9 +325,9 @@ export default function ContactPage() {
             <motion.div
                 className="relative z-10"
                 style={{
-                    opacity: useTransform(showFAQ, [0, 0.4], [1, 0.6]),
-                    scale: isLowPowerMode ? 1 : useTransform(showFAQ, [0, 0.4], [1, 0.98]),
-                    filter: isLowPowerMode ? "none" : useTransform(showFAQ, [0, 0.4], ["blur(0px)", "blur(2px)"]),
+                    opacity: headerOpacity,
+                    scale: isLowPowerMode ? 1 : headerScale,
+                    filter: isLowPowerMode ? "none" : headerFilter,
                 }}
             >
 

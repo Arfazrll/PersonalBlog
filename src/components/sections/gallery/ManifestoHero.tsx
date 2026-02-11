@@ -39,8 +39,8 @@ export default function ManifestoHero({ isLowPowerMode }: { isLowPowerMode?: boo
                     <div className="flex flex-col gap-2 md:gap-6">
                         <div className="overflow-hidden">
                             <motion.h1
-                                initial={isLowPowerMode ? { opacity: 0 } : { y: 100 }}
-                                animate={isLowPowerMode ? { opacity: 1 } : { y: 0 }}
+                                initial={isLowPowerMode ? { opacity: 0 } : { y: 100, opacity: 0 }}
+                                animate={isLowPowerMode ? { opacity: 1 } : { y: 0, opacity: 1 }}
                                 transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-6xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8]"
                             >
@@ -73,8 +73,8 @@ export default function ManifestoHero({ isLowPowerMode }: { isLowPowerMode?: boo
 
                         <div className="overflow-hidden">
                             <motion.h1
-                                initial={isLowPowerMode ? { opacity: 0 } : { y: -100 }}
-                                animate={isLowPowerMode ? { opacity: 1 } : { y: 0 }}
+                                initial={isLowPowerMode ? { opacity: 0 } : { y: -100, opacity: 0 }}
+                                animate={isLowPowerMode ? { opacity: 1 } : { y: 0, opacity: 1 }}
                                 transition={{ duration: 1, delay: isLowPowerMode ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-6xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8]"
                             >
