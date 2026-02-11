@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
  * - isLowPowerMode: Mobile or Tablet or explicitly set.
  */
 export function usePerformance() {
+    const [hasMounted, setHasMounted] = useState(false);
     const [state, setState] = useState({
         isMobile: false,
         isTablet: false,
@@ -14,6 +15,7 @@ export function usePerformance() {
     });
 
     useEffect(() => {
+        setHasMounted(true);
         const checkPerformance = () => {
             const width = window.innerWidth;
             const isMobile = width < 768;
@@ -32,5 +34,16 @@ export function usePerformance() {
         return () => window.removeEventListener('resize', checkPerformance);
     }, []);
 
+    // During SSR and until hydration is complete, return false for all checks
+    // to match the initial server render and avoid hydration mismatches.
+    if (!hasMounted) {
+        return {
+            isMobile: false,
+            isTablet: false,
+            isLowPowerMode: false,
+        };
+    }
+
     return state;
 }
+
