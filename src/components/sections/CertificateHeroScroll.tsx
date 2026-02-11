@@ -31,6 +31,7 @@ interface Positions {
 
 interface CertificateHeroScrollProps {
     onDownloadClick?: () => void;
+    isLowPowerMode?: boolean;
 }
 
 const CERTIFICATES: ImageItem[] = [
@@ -66,12 +67,13 @@ const CERTIFICATES: ImageItem[] = [
     },
 ];
 
-const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick }) => {
+const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick, isLowPowerMode: isLowPowerModeProp }) => {
     const spacerRef = useRef<HTMLDivElement>(null);
     const fixedContainerRef = useRef<HTMLDivElement>(null);
     const heroContentRef = useRef<HTMLDivElement>(null);
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const { isLowPowerMode, isMobile } = usePerformance();
+    const { isLowPowerMode: performanceLowPower, isMobile } = usePerformance();
+    const isLowPowerMode = isLowPowerModeProp ?? performanceLowPower;
 
     const getPositions = useCallback((): Positions => {
         const vw = typeof window !== "undefined" ? window.innerWidth : 1920;

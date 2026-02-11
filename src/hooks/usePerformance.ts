@@ -11,7 +11,7 @@ export function usePerformance() {
     const [state, setState] = useState({
         isMobile: false,
         isTablet: false,
-        isLowPowerMode: false,
+        isLowPowerMode: true, // Default to true (safe mode) initially
     });
 
     useEffect(() => {
@@ -34,15 +34,16 @@ export function usePerformance() {
         return () => window.removeEventListener('resize', checkPerformance);
     }, []);
 
-    // During SSR and until hydration is complete, return false for all checks
-    // to match the initial server render and avoid hydration mismatches.
+    // During SSR and until hydration is complete, return true (safe mode)
+    // to prevent any accidental heavy component initialization on mobile.
     if (!hasMounted) {
         return {
             isMobile: false,
             isTablet: false,
-            isLowPowerMode: false,
+            isLowPowerMode: true,
         };
     }
+
 
     return state;
 }
