@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { usePerformance } from "@/hooks/usePerformance";
 import { ChevronDown } from "lucide-react";
 
 interface ImageItem {
@@ -70,14 +71,14 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
     const fixedContainerRef = useRef<HTMLDivElement>(null);
     const heroContentRef = useRef<HTMLDivElement>(null);
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const { resolvedTheme } = useTheme();
+    const { isLowPowerMode, isMobile } = usePerformance();
 
     const getPositions = useCallback((): Positions => {
         const vw = typeof window !== "undefined" ? window.innerWidth : 1920;
         const vh = typeof window !== "undefined" ? window.innerHeight : 1080;
-        const isMobile = vw < 768;
+        const isCurrentlyMobile = vw < 768;
 
-        // Desktop Initial Positions
+        // ... (Desktop positions)
         const desktopInitial: Record<string, Position> = {
             cert1: { top: vh * 0.15, left: vw * 0.05, width: vw * 0.22, height: vh * 0.22, borderRadius: 12, zIndex: 1 },
             cert2: { top: vh * 0.12, left: vw * 0.38, width: vw * 0.2, height: vh * 0.2, borderRadius: 12, zIndex: 1 },
@@ -87,7 +88,6 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             cert6: { top: vh * 0.65, left: vw * 0.75, width: vw * 0.18, height: vh * 0.25, borderRadius: 12, zIndex: 1 },
         };
 
-        // Mobile Initial Positions (Larger relative size, centrally distributed)
         const mobileInitial: Record<string, Position> = {
             cert1: { top: vh * 0.15, left: vw * 0.05, width: vw * 0.42, height: vh * 0.18, borderRadius: 8, zIndex: 1 },
             cert2: { top: vh * 0.12, left: vw * 0.52, width: vw * 0.4, height: vh * 0.15, borderRadius: 8, zIndex: 1 },
@@ -97,9 +97,8 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             cert6: { top: vh * 0.40, left: vw * 0.50, width: vw * 0.35, height: vh * 0.20, borderRadius: 8, zIndex: 1 },
         };
 
-        const initial = isMobile ? mobileInitial : desktopInitial;
+        const initial = isCurrentlyMobile ? mobileInitial : desktopInitial;
 
-        // Desktop Grid
         const gridW = Math.min(vw * 0.85, 1400);
         const gridH = vh * 0.7;
         const startX = (vw - gridW) / 2;
@@ -109,7 +108,6 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
         const col2W = (gridW - 2 * gap) * 0.3;
         const col3W = (gridW - 2 * gap) * 0.3;
 
-        // Desktop Final Positions
         const desktopFinal: Record<string, Position> = {
             cert1: { top: startY, left: startX, width: col1W, height: (gridH - gap) * 0.55, borderRadius: 8, zIndex: 10 },
             cert2: { top: startY + (gridH - gap) * 0.55 + gap, left: startX, width: col1W, height: (gridH - gap) * 0.45, borderRadius: 8, zIndex: 10 },
@@ -119,12 +117,11 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             cert6: { top: startY + (gridH - gap) * 0.65 + gap, left: startX + col1W + col2W + 2 * gap, width: col3W, height: (gridH - gap) * 0.35, borderRadius: 8, zIndex: 10 },
         };
 
-        // Mobile Final Positions (Simple 2-column grid, larger images)
         const mGap = 10;
         const mGridW = vw * 0.9;
         const mStartX = (vw - mGridW) / 2;
         const mColW = (mGridW - mGap) / 2;
-        const mStartY = vh * 0.2; // Start higher
+        const mStartY = vh * 0.2;
 
         const mobileFinal: Record<string, Position> = {
             cert1: { top: mStartY, left: mStartX, width: mColW, height: 160, borderRadius: 8, zIndex: 10 },
@@ -135,7 +132,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             cert6: { top: mStartY + 340, left: mStartX + mColW + mGap, width: mColW, height: 160, borderRadius: 8, zIndex: 10 },
         };
 
-        const final = isMobile ? mobileFinal : desktopFinal;
+        const final = isCurrentlyMobile ? mobileFinal : desktopFinal;
 
         return { initial, final };
     }, []);
@@ -149,7 +146,6 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
         const imageElements = imageRefs.current.filter((el): el is HTMLDivElement => el !== null);
 
         const ctx = gsap.context(() => {
-            // Initial setup
             imageElements.forEach((img, index) => {
                 const pos = initial[`cert${index + 1}`];
                 if (pos) {
@@ -167,22 +163,20 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                 }
             });
 
-            // Intro
             gsap.to(imageElements, {
                 opacity: 0.8,
                 scale: 1,
-                duration: 1.2,
-                stagger: 0.1,
+                duration: isLowPowerMode ? 0.6 : 1.2,
+                stagger: isLowPowerMode ? 0.05 : 0.1,
                 ease: "power2.out",
             });
 
-            // Scroll Animation tied to SPACER
             const mainTL = gsap.timeline({
                 scrollTrigger: {
                     trigger: spacerRef.current,
                     start: "top top",
                     end: "bottom bottom",
-                    scrub: 2.5,
+                    scrub: isLowPowerMode ? 1 : 2.5,
                 },
             });
 
@@ -227,7 +221,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                 }
             });
 
-        }, spacerRef); // scope to spacer
+        }, spacerRef);
 
         // FADE OUT HERO when scrolling past the component
         ScrollTrigger.create({

@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import Matter from 'matter-js';
+import { usePerformance } from '@/hooks/usePerformance';
 
 interface FallingTextProps {
     text?: string;
@@ -42,6 +43,8 @@ export default function FallingText({
     const wordBodiesRef = useRef<Array<{ elem: HTMLElement; body: Matter.Body }>>([]);
     const animationFrameIdRef = useRef<number | null>(null);
 
+    const { isLowPowerMode } = usePerformance();
+
     const createTextHTML = useCallback(() => {
         if (!textRef.current) return;
 
@@ -56,7 +59,16 @@ export default function FallingText({
             .join(' ');
 
         textRef.current.innerHTML = newHTML;
-    }, [text, highlightWords, textColor, highlightColor, fontWeight]);
+
+        // If low power mode, we don't need to position absolute
+        if (isLowPowerMode) {
+            const spans = textRef.current.querySelectorAll('span');
+            spans.forEach(span => {
+                span.style.position = 'static';
+                span.style.transform = 'none';
+            });
+        }
+    }, [text, highlightWords, textColor, highlightColor, fontWeight, isLowPowerMode]);
 
     const cleanup = useCallback(() => {
         if (animationFrameIdRef.current) {
@@ -89,7 +101,7 @@ export default function FallingText({
     }, []);
 
     const startPhysics = useCallback(async () => {
-        if (!containerRef.current || !canvasContainerRef.current || !textRef.current) return;
+        if (!containerRef.current || !canvasContainerRef.current || !textRef.current || isLowPowerMode) return;
 
         await new Promise(resolve => requestAnimationFrame(resolve));
 

@@ -1,27 +1,26 @@
 'use client';
 
-import { useEffect, useRef, useState, HTMLAttributes } from 'react';
+import { useRef, useState, useEffect, type FC } from "react";
+import Image from "next/image";
+import { usePerformance } from "@/hooks/usePerformance";
 
-
-
-
-
-
-
-interface SplineSceneProps extends HTMLAttributes<HTMLDivElement> {
+interface SplineSceneProps {
     scene: string;
     className?: string;
 }
 
 
 
-export function SplineScene({ scene, className, ...props }: SplineSceneProps) {
-    const splineRef = useRef<HTMLElement>(null);
+export const SplineScene: FC<SplineSceneProps> = ({ scene, className }) => {
+    const splineRef = useRef<any>(null);
     const isMounted = useRef(true);
+    const { isLowPowerMode } = usePerformance();
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         isMounted.current = true;
+
+        if (isLowPowerMode) return; // Skip script loading in low power mode
 
         const SCRIPT_ID = 'spline-viewer-script';
         let script = document.getElementById(SCRIPT_ID) as HTMLScriptElement;
@@ -50,10 +49,12 @@ export function SplineScene({ scene, className, ...props }: SplineSceneProps) {
             isMounted.current = false;
             if (script) script.removeEventListener('load', handleLoad);
         };
-    }, []);
+    }, [isLowPowerMode]); // Re-run if low power mode changes
 
     // Inject CSS into Shadow DOM non-destructively
     useEffect(() => {
+        if (isLowPowerMode) return; // Skip CSS injection in low power mode
+
         let intervalId: NodeJS.Timeout;
 
         const injectStyles = () => {
@@ -104,12 +105,17 @@ export function SplineScene({ scene, className, ...props }: SplineSceneProps) {
             if (currentRef) currentRef.removeEventListener('load', injectStyles);
             if (intervalId) clearInterval(intervalId);
         };
-    }, []);
+    }, [isLowPowerMode]); // Re-run if low power mode changes
 
+    // The visibility observer is not strictly needed if we're conditionally rendering the spline-viewer
+    // but keeping it for potential future use or if the component is rendered but hidden.
+    // However, for low power mode, we return early, so this won't run.
     const containerRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
+        if (isLowPowerMode) return; // Skip observer setup in low power mode
+
         let resizeObserver: ResizeObserver | null = null;
         let intersectionObserver: IntersectionObserver | null = null;
         const state = { isIntersecting: false };
@@ -146,10 +152,22 @@ export function SplineScene({ scene, className, ...props }: SplineSceneProps) {
             intersectionObserver?.disconnect();
             resizeObserver?.disconnect();
         };
-    }, []);
+    }, [isLowPowerMode]); // Re-run if low power mode changes
+
+    if (isLowPowerMode) {
+        return (
+            <div className={`relative w-full h-full bg-background overflow-hidden ${className}`}>
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-20" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                    {/* Minimal decorative element for mobile instead of 3D */}
+                    <div className="w-64 h-64 bg-primary/10 blur-[100px] rounded-full animate-pulse-slow" />
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div ref={containerRef} className={`relative w-full h-full overflow-hidden ${className || ''}`} {...props}>
+        <div ref={containerRef} className={`relative w-full h-full overflow-hidden ${className || ''}`}>
             <div className="w-full h-full pt-20">
                 <spline-viewer
                     ref={splineRef}

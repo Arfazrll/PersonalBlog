@@ -8,16 +8,19 @@ import { twMerge } from 'tailwind-merge';
 import { portfolioData } from '@/data/portfolio';
 
 // --- MAIN WRAPPER COMPONENT ---
-export const ProjectContact = () => {
+export const ProjectContact = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
     return (
         <section className="relative z-10 w-full bg-transparent px-4 py-20 md:py-24 flex flex-col md:flex-row items-center justify-center gap-12 md:gap-32 overflow-hidden">
 
             {/* Ambient Background Glow - Smoother */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[180px] pointer-events-none" />
+            {!isLowPowerMode && (
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[180px] pointer-events-none" />
+            )}
 
             <div className="relative z-10">
                 <BlockInTextCard
                     tag="/ Let's Connect"
+                    isLowPowerMode={isLowPowerMode}
                     text={
                         <>
                             <strong>Ready to build something extra ordinary?</strong> wether it's AI, Blockchain, or a wild 3D web experience. I'm always open to discussing new ideas.
@@ -33,6 +36,7 @@ export const ProjectContact = () => {
 
             <div className="relative z-10">
                 <LogoRolodex
+                    isLowPowerMode={isLowPowerMode}
                     items={[
                         // GitHub - White/Black
                         <LogoItem key={1} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-800 dark:border-zinc-200">
@@ -66,10 +70,12 @@ const BlockInTextCard = ({
     tag,
     text,
     examples,
+    isLowPowerMode,
 }: {
     tag: string;
     text: ReactNode;
     examples: string[];
+    isLowPowerMode?: boolean;
 }) => {
     return (
         <div className="w-full max-w-2xl space-y-10 border-none">
@@ -82,7 +88,7 @@ const BlockInTextCard = ({
             </div>
 
             <div className="w-full border-none">
-                <Typewrite examples={examples} />
+                <Typewrite examples={examples} isLowPowerMode={isLowPowerMode} />
 
                 <div className="pt-6"> {/* Replaced border-div with padding */}
                     <a
@@ -109,7 +115,7 @@ const FADE_DELAY = 5;
 const MAIN_FADE_DURATION = 0.25;
 const SWAP_DELAY_IN_MS = 5500;
 
-const Typewrite = ({ examples }: { examples: string[] }) => {
+const Typewrite = ({ examples, isLowPowerMode }: { examples: string[]; isLowPowerMode?: boolean }) => {
     const [exampleIndex, setExampleIndex] = useState(0);
 
     useEffect(() => {
@@ -122,13 +128,13 @@ const Typewrite = ({ examples }: { examples: string[] }) => {
 
     return (
         <div className="flex items-start gap-4">
-            <span className="mt-1.5 shrink-0 size-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className={twMerge("mt-1.5 shrink-0 size-2 rounded-full bg-emerald-500", !isLowPowerMode && "animate-pulse")} />
             <div className="flex-1">
                 <p className="text-xs font-mono text-muted-foreground mb-2 uppercase tracking-widest">
                     DISCUSSION TOPIC:
                 </p>
                 <div className="min-h-[3rem] text-lg font-medium text-foreground">
-                    {examples[exampleIndex].split("").map((l, i) => (
+                    {isLowPowerMode ? examples[exampleIndex] : examples[exampleIndex].split("").map((l, i) => (
                         <motion.span
                             initial={{ opacity: 1 }}
                             animate={{ opacity: 0 }}
@@ -171,14 +177,14 @@ const Typewrite = ({ examples }: { examples: string[] }) => {
 const DELAY_IN_MS = 2500;
 const TRANSITION_DURATION_IN_SECS = 1.5;
 
-const LogoRolodex = ({ items }: { items: ReactElement[] }) => {
+const LogoRolodex = ({ items, isLowPowerMode }: { items: ReactElement[]; isLowPowerMode?: boolean }) => {
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
         intervalRef.current = setInterval(() => {
             setIndex((pv) => pv + 1);
-        }, DELAY_IN_MS);
+        }, isLowPowerMode ? DELAY_IN_MS * 1.5 : DELAY_IN_MS);
 
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
@@ -197,42 +203,44 @@ const LogoRolodex = ({ items }: { items: ReactElement[] }) => {
                     style={{
                         y: "-50%",
                         x: "-50%",
-                        clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)",
+                        clipPath: isLowPowerMode ? "none" : "polygon(0 0, 100% 0, 100% 50%, 0 50%)",
                         zIndex: -index,
                         backfaceVisibility: "hidden",
                     }}
                     key={index}
                     transition={{
-                        duration: TRANSITION_DURATION_IN_SECS,
+                        duration: isLowPowerMode ? 0.5 : TRANSITION_DURATION_IN_SECS,
                         ease: "easeInOut",
                     }}
-                    initial={{ rotateX: "0deg" }}
-                    animate={{ rotateX: "0deg" }}
-                    exit={{ rotateX: "-180deg" }}
+                    initial={isLowPowerMode ? { opacity: 0 } : { rotateX: "0deg" }}
+                    animate={isLowPowerMode ? { opacity: 1 } : { rotateX: "0deg" }}
+                    exit={isLowPowerMode ? { opacity: 0 } : { rotateX: "-180deg" }}
                     className="absolute left-1/2 top-1/2"
                 >
                     {items[index % items.length]}
                 </motion.div>
-                <motion.div
-                    style={{
-                        y: "-50%",
-                        x: "-50%",
-                        clipPath: "polygon(0 50%, 100% 50%, 100% 100%, 0 100%)",
-                        zIndex: index,
-                        backfaceVisibility: "hidden",
-                    }}
-                    key={(index + 1) * 2}
-                    initial={{ rotateX: "180deg" }}
-                    animate={{ rotateX: "0deg" }}
-                    exit={{ rotateX: "0deg" }}
-                    transition={{
-                        duration: TRANSITION_DURATION_IN_SECS,
-                        ease: "easeInOut",
-                    }}
-                    className="absolute left-1/2 top-1/2"
-                >
-                    {items[index % items.length]}
-                </motion.div>
+                {!isLowPowerMode && (
+                    <motion.div
+                        style={{
+                            y: "-50%",
+                            x: "-50%",
+                            clipPath: "polygon(0 50%, 100% 50%, 100% 100%, 0 100%)",
+                            zIndex: index,
+                            backfaceVisibility: "hidden",
+                        }}
+                        key={(index + 1) * 2}
+                        initial={{ rotateX: "180deg" }}
+                        animate={{ rotateX: "0deg" }}
+                        exit={{ rotateX: "0deg" }}
+                        transition={{
+                            duration: TRANSITION_DURATION_IN_SECS,
+                            ease: "easeInOut",
+                        }}
+                        className="absolute left-1/2 top-1/2"
+                    >
+                        {items[index % items.length]}
+                    </motion.div>
+                )}
             </AnimatePresence>
 
 

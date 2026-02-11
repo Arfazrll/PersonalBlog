@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes';
 interface BlogCardProps {
     post: BlogPost;
     index: number;
+    isLowPowerMode?: boolean;
 }
 
 const CategoryIcon = ({ category, className }: { category: string; className?: string }) => {
@@ -20,7 +21,7 @@ const CategoryIcon = ({ category, className }: { category: string; className?: s
     }
 };
 
-export function BlogCard({ post, index }: BlogCardProps) {
+export function BlogCard({ post, index, isLowPowerMode }: BlogCardProps) {
     const t = useTranslations('blog');
     const { theme } = useTheme();
     const isDark = theme === 'dark';
@@ -30,6 +31,7 @@ export function BlogCard({ post, index }: BlogCardProps) {
     const mouseY = useMotionValue(0);
 
     const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent) => {
+        if (isLowPowerMode) return;
         const { left, top } = currentTarget.getBoundingClientRect();
         mouseX.set(clientX - left);
         mouseY.set(clientY - top);
@@ -38,10 +40,10 @@ export function BlogCard({ post, index }: BlogCardProps) {
     return (
         <Link href={`/blog/${post.slug}`} className="block h-full cursor-pointer">
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: isLowPowerMode ? 0 : index * 0.1 }}
                 onMouseMove={handleMouseMove}
                 className={cn(
                     "group relative flex flex-col h-full transition-all duration-500 rounded-[2rem] overflow-hidden p-8 lg:p-10",
@@ -50,19 +52,21 @@ export function BlogCard({ post, index }: BlogCardProps) {
                     "shadow-sm hover:shadow-xl dark:shadow-none transition-shadow"
                 )}
             >
-                {/* Spotlight Glow Effect */}
-                <motion.div
-                    className="pointer-events-none absolute -inset-px rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
-                    style={{
-                        background: useMotionTemplate`
-                            radial-gradient(
-                                600px circle at ${mouseX}px ${mouseY}px,
-                                rgba(var(--primary-rgb), ${isDark ? '0.1' : '0.05'}),
-                                transparent 80%
-                            )
-                        `,
-                    }}
-                />
+                {/* Spotlight Glow Effect - Hidden in Low Power Mode */}
+                {!isLowPowerMode && (
+                    <motion.div
+                        className="pointer-events-none absolute -inset-px rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
+                        style={{
+                            background: useMotionTemplate`
+                                radial-gradient(
+                                    600px circle at ${mouseX}px ${mouseY}px,
+                                    rgba(var(--primary-rgb), ${isDark ? '0.1' : '0.05'}),
+                                    transparent 80%
+                                )
+                            `,
+                        }}
+                    />
+                )}
 
                 {/* Background Decorative Icon - Subtle & Large */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] dark:opacity-[0.02] group-hover:opacity-[0.06] dark:group-hover:opacity-[0.04] transition-opacity duration-700 pointer-events-none z-0 scale-[2.5] blur-[1px]">

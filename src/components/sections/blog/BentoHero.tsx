@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 
-export const BentoHero = () => {
+export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
     const t = useTranslations('blog');
     const { theme } = useTheme();
     const isDark = theme === 'dark';
@@ -30,7 +30,7 @@ export const BentoHero = () => {
     const mouseY = useMotionValue(0);
 
     const handleMouseMove = (e: React.MouseEvent) => {
-        if (!containerRef.current) return;
+        if (!containerRef.current || isLowPowerMode) return;
         const { left, top } = containerRef.current.getBoundingClientRect();
         mouseX.set(e.clientX - left);
         mouseY.set(e.clientY - top);
@@ -55,14 +55,16 @@ export const BentoHero = () => {
             ref={containerRef}
             onMouseMove={handleMouseMove}
             className="relative min-h-screen w-full overflow-hidden bg-background dark:bg-black flex flex-col"
-            style={{ opacity, y }}
+            style={isLowPowerMode ? { opacity: 1, y: 0 } : { opacity, y }}
         >
-            {/* Ambient Background - Hidden in Dark Mode for Pitch Black */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/10 blur-[200px] rounded-full opacity-40 dark:opacity-0 translate-x-1/4 -translate-y-1/4" />
-                <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[180px] rounded-full opacity-30 dark:opacity-0 -translate-x-1/4 translate-y-1/4" />
-                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] dark:opacity-0 mix-blend-overlay" />
-            </div>
+            {/* Ambient Background - Hidden in Low Power Mode */}
+            {!isLowPowerMode && (
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/10 blur-[200px] rounded-full opacity-40 dark:opacity-0 translate-x-1/4 -translate-y-1/4" />
+                    <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[180px] rounded-full opacity-30 dark:opacity-0 -translate-x-1/4 translate-y-1/4" />
+                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] dark:opacity-0 mix-blend-overlay" />
+                </div>
+            )}
 
             {/* Content Container */}
             <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-24 pt-32 pb-20 flex-grow flex flex-col">
@@ -115,10 +117,10 @@ export const BentoHero = () => {
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={currentSlide}
-                                initial={{ opacity: 0, scale: 1.05 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.8 }}
+                                initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, scale: 1.05 }}
+                                animate={isLowPowerMode ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+                                exit={isLowPowerMode ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
+                                transition={{ duration: isLowPowerMode ? 0.4 : 0.8 }}
                                 className="absolute inset-0 z-0"
                             >
                                 <Image
@@ -136,9 +138,9 @@ export const BentoHero = () => {
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentSlide}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
+                                    initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: 20 }}
+                                    animate={isLowPowerMode ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                                    exit={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: -20 }}
                                     className="max-w-2xl"
                                 >
                                     <div className="flex items-center gap-3 mb-6">
@@ -247,13 +249,15 @@ export const BentoHero = () => {
 
             </div>
 
-            {/* Ambient Spotlight Glow (Mouse-Reactive) */}
-            <motion.div
-                className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
-                style={{
-                    background: useMotionTemplate`radial-gradient(1000px circle at ${mouseX}px ${mouseY}px, rgba(var(--primary-rgb), ${isDark ? '0.1' : '0.05'}), transparent 80%)`,
-                }}
-            />
+            {/* Ambient Spotlight Glow (Mouse-Reactive) - Hidden in Low Power Mode */}
+            {!isLowPowerMode && (
+                <motion.div
+                    className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
+                    style={{
+                        background: useMotionTemplate`radial-gradient(1000px circle at ${mouseX}px ${mouseY}px, rgba(var(--primary-rgb), ${isDark ? '0.1' : '0.05'}), transparent 80%)`,
+                    }}
+                />
+            )}
         </motion.section>
     );
 };

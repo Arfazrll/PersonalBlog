@@ -7,10 +7,12 @@ export const HeroHighlight = ({
   children,
   className,
   containerClassName,
+  isLowPowerMode = false,
 }: {
   children: React.ReactNode;
   className?: string;
   containerClassName?: string;
+  isLowPowerMode?: boolean;
 }) => {
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
@@ -32,7 +34,7 @@ export const HeroHighlight = ({
     clientX,
     clientY,
   }: React.MouseEvent<HTMLDivElement>) {
-    if (!currentTarget) return;
+    if (!currentTarget || isLowPowerMode) return;
     let { left, top } = currentTarget.getBoundingClientRect();
 
     mouseX.set(clientX - left);

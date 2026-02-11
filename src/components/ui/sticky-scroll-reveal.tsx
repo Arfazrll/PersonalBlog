@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 export const StickyScroll = ({
   content,
   contentClassName,
+  isLowPowerMode = false,
 }: {
   content: {
     title: string;
@@ -15,6 +16,7 @@ export const StickyScroll = ({
     label?: string;
   }[];
   contentClassName?: string;
+  isLowPowerMode?: boolean;
 }) => {
   const [activeCard, setActiveCard] = React.useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -101,14 +103,14 @@ export const StickyScroll = ({
                 </AnimatePresence>
 
                 <motion.h2
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: isLowPowerMode ? 0 : 10 }}
                   animate={{
                     opacity: activeCard === index ? 1 : 0.15,
-                    y: activeCard === index ? 0 : 5,
-                    scale: activeCard === index ? 1 : 0.98,
-                    x: activeCard === index ? 0 : -5,
+                    y: activeCard === index ? 0 : (isLowPowerMode ? 0 : 5),
+                    scale: activeCard === index ? 1 : (isLowPowerMode ? 1 : 0.98),
+                    x: activeCard === index ? 0 : (isLowPowerMode ? 0 : -5),
                   }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: isLowPowerMode ? 0 : 0.5 }}
                   className="text-3xl md:text-5xl lg:text-6xl font-black text-foreground tracking-tighter uppercase italic overflow-visible leading-[0.85] select-none"
                 >
                   {item.title}
@@ -117,6 +119,7 @@ export const StickyScroll = ({
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: activeCard === index ? 1 : 0.1 }}
+                  transition={{ duration: isLowPowerMode ? 0 : 0.3 }}
                   className="mt-8 relative"
                 >
                   {/* Decorative Quote-like bar */}
@@ -146,11 +149,11 @@ export const StickyScroll = ({
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeCard}
-                initial={{ opacity: 0, scale: 0.95, y: 20, filter: "blur(10px)" }}
+                initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 20, filter: "blur(10px)" }}
                 animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: 1.05, y: -20, filter: "blur(10px)" }}
+                exit={isLowPowerMode ? { opacity: 0 } : { opacity: 0, scale: 1.05, y: -20, filter: "blur(10px)" }}
                 transition={{
-                  duration: 0.6,
+                  duration: isLowPowerMode ? 0.2 : 0.6,
                   ease: [0.22, 1, 0.36, 1]
                 }}
                 className="w-full h-full"

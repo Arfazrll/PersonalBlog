@@ -12,23 +12,29 @@ interface MeteorsProps {
   maxDuration?: number
   angle?: number
   className?: string
+  isLowPowerMode?: boolean
 }
 
 export const Meteors = ({
-  number = 20,
+  number,
+  className,
   minDelay = 0.2,
-  maxDelay = 1.2,
+  maxDelay = 7,
   minDuration = 2,
   maxDuration = 10,
   angle = 215,
-  className,
+  isLowPowerMode,
 }: MeteorsProps) => {
   const [meteorStyles, setMeteorStyles] = useState<Array<React.CSSProperties>>(
     []
   )
 
   useEffect(() => {
-    const styles = [...new Array(number)].map(() => ({
+    if (isLowPowerMode) {
+      setMeteorStyles([]);
+      return;
+    }
+    const styles = [...new Array(number || 20)].map(() => ({
       "--angle": -angle + "deg",
       top: "-5%",
       left: `${Math.floor(Math.random() * 100)}%`, // Use percentage for better responsiveness
@@ -38,7 +44,11 @@ export const Meteors = ({
         "s",
     }))
     setMeteorStyles(styles)
-  }, [number, minDelay, maxDelay, minDuration, maxDuration, angle])
+  }, [number, minDelay, maxDelay, minDuration, maxDuration, angle, isLowPowerMode])
+
+  if (isLowPowerMode) {
+    return null;
+  }
 
   return (
     <>

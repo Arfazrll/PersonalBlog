@@ -6,8 +6,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { portfolioData } from "@/data/portfolio";
+import { cn } from "@/lib/utils";
 
-export default function BlogPortalFooter() {
+export default function BlogPortalFooter({ isLowPowerMode }: { isLowPowerMode?: boolean }) {
     const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
 
     // Get latest 3 blogs
@@ -43,18 +44,24 @@ export default function BlogPortalFooter() {
                         <Link key={blog.id} href={`/blog/${blog.slug}`} className="group relative">
                             <div
                                 className="flex flex-col md:flex-row items-baseline py-12 border-b border-neutral-500 dark:border-white/20 group-hover:border-cyan-500/50 transition-colors"
-                                onMouseEnter={() => setHoveredBlog(blog.image)}
-                                onMouseLeave={() => setHoveredBlog(null)}
+                                onMouseEnter={() => !isLowPowerMode && setHoveredBlog(blog.image)}
+                                onMouseLeave={() => !isLowPowerMode && setHoveredBlog(null)}
                             >
                                 <span className="font-mono text-xs text-muted-foreground w-24 mb-4 md:mb-0">
                                     0{index + 1} //
                                 </span>
 
                                 <div className="flex-1">
-                                    <h3 className="text-3xl md:text-5xl font-medium mb-2 group-hover:translate-x-4 transition-transform duration-500 ease-out">
+                                    <h3 className={cn(
+                                        "text-3xl md:text-5xl font-medium mb-2 transition-transform duration-500 ease-out",
+                                        !isLowPowerMode && "group-hover:translate-x-4"
+                                    )}>
                                         {blog.title}
                                     </h3>
-                                    <div className="flex gap-4 text-xs font-mono text-muted-foreground uppercase tracking-wider group-hover:translate-x-4 transition-transform duration-500 ease-out delay-75">
+                                    <div className={cn(
+                                        "flex gap-4 text-xs font-mono text-muted-foreground uppercase tracking-wider transition-transform duration-500 ease-out delay-75",
+                                        !isLowPowerMode && "group-hover:translate-x-4"
+                                    )}>
                                         <span className="text-cyan-500">{blog.category}</span>
                                         <span>{blog.readTime} min read</span>
                                     </div>

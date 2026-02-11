@@ -9,6 +9,7 @@ import { portfolioData } from '@/data/portfolio';
 import { Achievement } from '@/types';
 import FallingText from '@/components/effects/FallingText';
 import CertificateHeroScroll from '@/components/sections/CertificateHeroScroll';
+import { usePerformance } from '@/hooks/usePerformance';
 
 const staggerContainer = {
     hidden: { opacity: 0 },
@@ -27,8 +28,9 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
     achievement: Achievement;
     onClick: () => void;
     index: number;
+    isLowPowerMode?: boolean;
 }>(
-    ({ achievement, onClick, index }, ref) => {
+    ({ achievement, onClick, index, isLowPowerMode }, ref) => {
         const [isHovered, setIsHovered] = useState(false);
         const mouseX = useMotionValue(0);
         const mouseY = useMotionValue(0);
@@ -85,18 +87,20 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
                     className="relative bg-card/90 dark:bg-card/40 backdrop-blur-xl rounded-2xl overflow-hidden border border-border/40 group-hover:border-foreground/20 transition-all duration-500 shadow-lg group-hover:shadow-2xl z-20 cursor-pointer"
                 >
                     {/* Animated Spotlight Effect */}
-                    <motion.div
-                        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-                        style={{
-                            background: useMotionTemplate`
-                                radial-gradient(
-                                    350px circle at ${mouseXSpring}px ${mouseYSpring}px,
-                                    var(--accent-spotlight, rgba(255, 255, 255, 0.08)),
-                                    transparent 80%
-                                )
-                            `,
-                        }}
-                    />
+                    {!isLowPowerMode && (
+                        <motion.div
+                            className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                            style={{
+                                background: useMotionTemplate`
+                                    radial-gradient(
+                                        350px circle at ${mouseXSpring}px ${mouseYSpring}px,
+                                        var(--accent-spotlight, rgba(255, 255, 255, 0.08)),
+                                        transparent 80%
+                                    )
+                                `,
+                            }}
+                        />
+                    )}
 
                     {/* Integrated Header: Image + Gradient/Icon */}
                     <div className={cn(
@@ -242,13 +246,16 @@ function NavItem({ label, active, onClick, count }: { label: string; active: boo
     );
 }
 
-function AchievementModal({ achievement, onClose }: { achievement: Achievement; onClose: () => void }) {
+function AchievementModal({ achievement, onClose, isLowPowerMode }: { achievement: Achievement; onClose: () => void; isLowPowerMode?: boolean }) {
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 lg:p-12"
+            className={cn(
+                "fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-12 bg-black/90",
+                isLowPowerMode ? "backdrop-blur-md" : "backdrop-blur-xl"
+            )}
             onClick={onClose}
         >
             <motion.div
@@ -256,7 +263,10 @@ function AchievementModal({ achievement, onClose }: { achievement: Achievement; 
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.98, opacity: 0, y: 5 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 400 }}
-                className="bg-background/80 dark:bg-zinc-900/60 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.4)] border border-foreground/10 max-w-5xl w-full max-h-[90vh] lg:max-h-[80vh] flex flex-col lg:flex-row relative"
+                className={cn(
+                    "bg-background/80 dark:bg-zinc-900/60 rounded-[32px] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.4)] border border-foreground/10 max-w-5xl w-full max-h-[90vh] lg:max-h-[80vh] flex flex-col lg:flex-row relative",
+                    isLowPowerMode ? "backdrop-blur-lg" : "backdrop-blur-3xl"
+                )}
                 onClick={e => e.stopPropagation()}
             >
                 {/* Close Button */}
@@ -418,6 +428,7 @@ function AchievementModal({ achievement, onClose }: { achievement: Achievement; 
 
 export default function AchievementsPage() {
     const t = useTranslations('achievements');
+    const { isLowPowerMode } = usePerformance();
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [activeCategory, setActiveCategory] = useState('all');
@@ -465,19 +476,22 @@ export default function AchievementsPage() {
 
             {/* Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                {/* ... existing background blobs ... */}
                 <motion.div
-                    className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-foreground/[0.02] blur-3xl"
-                    animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
+                    className={cn(
+                        "absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-foreground/[0.02]",
+                        isLowPowerMode ? "blur-xl" : "blur-3xl"
+                    )}
+                    animate={isLowPowerMode ? {} : { scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
                     transition={{ duration: 5, repeat: Infinity }}
                 />
                 <motion.div
-                    className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-foreground/[0.015] blur-3xl"
-                    animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
+                    className={cn(
+                        "absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-foreground/[0.015]",
+                        isLowPowerMode ? "blur-xl" : "blur-3xl"
+                    )}
+                    animate={isLowPowerMode ? {} : { scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
                     transition={{ duration: 6, repeat: Infinity, delay: 1 }}
                 />
-
-
             </div>
 
             {/* CONTINUOUS CURTAIN LAYER: Covers the fixed hero */}
@@ -612,6 +626,7 @@ export default function AchievementsPage() {
                                         achievement={achievement}
                                         onClick={() => setSelectedAchievement(achievement)}
                                         index={index}
+                                        isLowPowerMode={isLowPowerMode}
                                     />
                                 ))}
                             </AnimatePresence>
@@ -682,6 +697,7 @@ export default function AchievementsPage() {
                     <AchievementModal
                         achievement={selectedAchievement}
                         onClose={() => setSelectedAchievement(null)}
+                        isLowPowerMode={isLowPowerMode}
                     />
                 )}
             </AnimatePresence>

@@ -51,6 +51,9 @@ export const MaskContainer = ({
     // Initial rect calculation
     updateRect();
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) return; // Optimization: Disable on mobile
+
     const container = containerRef.current;
     if (!container) return;
 

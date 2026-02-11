@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { usePerformance } from '@/hooks/usePerformance';
 
 interface TextPressureProps {
     text: string;
@@ -214,8 +215,21 @@ export function TextPressure({
         return () => window.removeEventListener('resize', updateCachedMeasures);
     }, [updateCachedMeasures]);
 
+    const { isLowPowerMode } = usePerformance();
+
     useEffect(() => {
-        if (!isVisible) return;
+        if (!isVisible || isLowPowerMode) {
+            // If in low power mode, we just set a default state and don't animate
+            if (isLowPowerMode && titleRef.current) {
+                spansRef.current.forEach((span) => {
+                    if (span) {
+                        span.style.fontVariationSettings = `'wght' ${400}, 'wdth' ${100}, 'ital' 0`;
+                        span.style.opacity = '1';
+                    }
+                });
+            }
+            return;
+        }
 
         let rafId: number;
         let lastFrameTime = 0;
@@ -279,7 +293,7 @@ export function TextPressure({
                 cancelAnimationFrame(rafId);
             }
         };
-    }, [isVisible, width, weight, italic, alpha]);
+    }, [isVisible, width, weight, italic, alpha, isLowPowerMode]);
 
     const titleStyle: React.CSSProperties = {
         fontFamily: fontFamily,

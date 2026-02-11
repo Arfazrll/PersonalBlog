@@ -165,7 +165,7 @@ const Typewriter = ({ examples }: { examples: string[] }) => {
     );
 };
 
-export function ProjectDetail({ project, onClose }: { project: Project; onClose: () => void }) {
+export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: Project; onClose: () => void; isLowPowerMode?: boolean }) {
     const t = useTranslations('projects');
     const isOngoing = project.status === 'ongoing';
     const [activeSection, setActiveSection] = useState<'overview' | 'tech' | 'features' | 'gallery' | 'install'>('overview');
@@ -197,16 +197,16 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2
+                staggerChildren: isLowPowerMode ? 0.05 : 0.1,
+                delayChildren: isLowPowerMode ? 0.1 : 0.2
             }
         },
         exit: { opacity: 0 }
     };
 
     const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+        hidden: { opacity: 0, y: isLowPowerMode ? 10 : 20 },
+        visible: { opacity: 1, y: 0, transition: { type: isLowPowerMode ? "tween" : "spring", stiffness: 300, damping: 24, duration: 0.3 } }
     };
 
     return (

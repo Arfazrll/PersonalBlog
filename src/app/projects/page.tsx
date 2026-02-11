@@ -15,17 +15,20 @@ import { Meteors } from '@/components/ui/meteors';
 import { ProjectContact } from '@/components/sections/ProjectContact';
 import { ProjectDetail } from '@/components/projects/ProjectDetail';
 import { ProjectStats } from '@/components/sections/ProjectStats';
+import { usePerformance } from '@/hooks/usePerformance';
 
 type FilterType = 'all' | 'ongoing' | 'completed';
 
 function ProjectListItem({
     project,
     onClick,
-    index
+    index,
+    isLowPowerMode
 }: {
     project: Project;
     onClick: () => void;
     index: number;
+    isLowPowerMode?: boolean;
 }) {
     const itemRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
@@ -67,13 +70,15 @@ function ProjectListItem({
                 whileHover={{ scale: 1.002 }} /* Micro interaction */
             >
                 {/* Spotlight */}
-                <motion.div
-                    className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
-                    style={{
-                        opacity: isHovered ? 1 : 0,
-                        background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.06)' : 'rgba(59, 130, 246, 0.06)'}, transparent 40%)`
-                    }}
-                />
+                {!isLowPowerMode && (
+                    <motion.div
+                        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
+                        style={{
+                            opacity: isHovered ? 1 : 0,
+                            background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.06)' : 'rgba(59, 130, 246, 0.06)'}, transparent 40%)`
+                        }}
+                    />
+                )}
 
                 {/* Content */}
                 <div className="relative z-10 flex items-center gap-4 sm:gap-8 py-6 sm:py-10 px-4 sm:px-8">
@@ -133,79 +138,83 @@ function ProjectListItem({
                 </div>
 
                 {/* Tech Marquee on Hover */}
+                {!isLowPowerMode && (
+                    <AnimatePresence>
+                        {isHovered && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                className="overflow-hidden border-t border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02]"
+                            >
+                                <div className="relative py-3 overflow-hidden">
+                                    <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
+                                    <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent z-10" />
+                                    <motion.div
+                                        className="flex whitespace-nowrap"
+                                        animate={{ x: [0, -500] }}
+                                        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                                    >
+                                        {[...Array(4)].map((_, i) => (
+                                            <span key={i} className={cn("mx-4 text-sm font-mono tracking-wider", isOngoing ? "text-emerald-600/60 dark:text-emerald-400/60" : "text-blue-600/60 dark:text-blue-400/60")}>
+                                                {techText} •
+                                            </span>
+                                        ))}
+                                    </motion.div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                )}
+            </motion.div>
+
+            {/* Floating Preview */}
+            {!isLowPowerMode && (
                 <AnimatePresence>
                     {isHovered && (
                         <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: 'easeInOut' }}
-                            className="overflow-hidden border-t border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02]"
+                            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                            transition={{ duration: 0.3 }}
+                            className="fixed pointer-events-none z-50 hidden lg:block"
+                            style={{
+                                left: mousePos.x + (itemRef.current?.getBoundingClientRect().left || 0) + 20,
+                                top: mousePos.y + (itemRef.current?.getBoundingClientRect().top || 0) - 60,
+                            }}
                         >
-                            <div className="relative py-3 overflow-hidden">
-                                <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
-                                <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent z-10" />
-                                <motion.div
-                                    className="flex whitespace-nowrap"
-                                    animate={{ x: [0, -500] }}
-                                    transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                                >
-                                    {[...Array(4)].map((_, i) => (
-                                        <span key={i} className={cn("mx-4 text-sm font-mono tracking-wider", isOngoing ? "text-emerald-600/60 dark:text-emerald-400/60" : "text-blue-600/60 dark:text-blue-400/60")}>
-                                            {techText} •
+                            <div className={cn(
+                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl", // increased rounded
+                                isOngoing ? "border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/80" : "border-blue-500/20 bg-blue-500/5 dark:bg-blue-950/80"
+                            )}>
+                                {project.image ? (
+                                    <img
+                                        src={project.image}
+                                        alt={project.title}
+                                        className="absolute inset-0 w-full h-full object-cover opacity-90 block"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-zinc-900/50">
+                                        <span className={cn("text-6xl font-black", isOngoing ? "text-emerald-400/20" : "text-blue-400/20")}>
+                                            {project.title.charAt(0)}
                                         </span>
-                                    ))}
-                                </motion.div>
+                                    </div>
+                                )}
+
+                                {/* Overlay Gradient for better text readability if we add text later, or just style */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </motion.div>
-
-            {/* Floating Preview */}
-            <AnimatePresence>
-                {isHovered && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                        transition={{ duration: 0.3 }}
-                        className="fixed pointer-events-none z-50 hidden lg:block"
-                        style={{
-                            left: mousePos.x + (itemRef.current?.getBoundingClientRect().left || 0) + 20,
-                            top: mousePos.y + (itemRef.current?.getBoundingClientRect().top || 0) - 60,
-                        }}
-                    >
-                        <div className={cn(
-                            "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl", // increased rounded
-                            isOngoing ? "border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/80" : "border-blue-500/20 bg-blue-500/5 dark:bg-blue-950/80"
-                        )}>
-                            {project.image ? (
-                                <img
-                                    src={project.image}
-                                    alt={project.title}
-                                    className="absolute inset-0 w-full h-full object-cover opacity-90 block"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-zinc-900/50">
-                                    <span className={cn("text-6xl font-black", isOngoing ? "text-emerald-400/20" : "text-blue-400/20")}>
-                                        {project.title.charAt(0)}
-                                    </span>
-                                </div>
-                            )}
-
-                            {/* Overlay Gradient for better text readability if we add text later, or just style */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            )}
         </motion.div>
     );
 }
 
 // Featured Project Card - Hero style with particles, spotlight, 3D tilt
-function FeaturedCard({ project, onClick, index }: { project: Project; onClick: () => void; index: number }) {
+function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean }) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -213,8 +222,8 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
     // 3D Tilt effect
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
-    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [8, -8]), { stiffness: 300, damping: 30 });
-    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 300, damping: 30 });
+    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [8, -8]), { stiffness: 300, damping: 30 });
+    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [-8, 8]), { stiffness: 300, damping: 30 });
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!cardRef.current) return;
@@ -236,106 +245,126 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
 
     return (
         <motion.article
-            initial={{ opacity: 0, y: 80, scale: 0.95 }}
+            initial={{ opacity: 0, y: isLowPowerMode ? 40 : 80, scale: isLowPowerMode ? 1 : 0.95 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: isLowPowerMode ? 0.6 : 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="md:col-span-2 group cursor-pointer perspective-1000"
             onClick={onClick}
         >
             <motion.div
                 ref={cardRef}
                 className="relative h-full min-h-[450px] sm:min-h-[550px] rounded-3xl overflow-hidden"
-                style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+                style={isLowPowerMode ? {} : { rotateX, rotateY, transformStyle: 'preserve-3d' }}
                 onMouseMove={handleMouseMove}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={handleMouseLeave}
-                whileHover={{ scale: 1.02 }}
+                whileHover={isLowPowerMode ? {} : { scale: 1.02 }}
                 transition={{ duration: 0.3 }}
             >
                 {/* Animated Gradient Border */}
-                <motion.div
-                    className="absolute -inset-[2px] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0"
-                    style={{
-                        background: isOngoing
-                            ? 'linear-gradient(135deg, #10b981, #06b6d4, #3b82f6, #10b981)'
-                            : 'linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6)',
-                        backgroundSize: '300% 300%',
-                    }}
-                    animate={{ backgroundPosition: isHovered ? ['0% 50%', '100% 50%', '0% 50%'] : '0% 50%' }}
-                    transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                />
+                {!isLowPowerMode && (
+                    <motion.div
+                        className="absolute -inset-[2px] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0"
+                        style={{
+                            background: isOngoing
+                                ? 'linear-gradient(135deg, #10b981, #06b6d4, #3b82f6, #10b981)'
+                                : 'linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6)',
+                            backgroundSize: '300% 300%',
+                        }}
+                        animate={{ backgroundPosition: isHovered ? ['0% 50%', '100% 50%', '0% 50%'] : '0% 50%' }}
+                        transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                    />
+                )}
 
                 {/* Main Card Body */}
                 <div className="relative h-full bg-white/50 dark:bg-black/40 backdrop-blur-2xl rounded-3xl overflow-hidden border border-black/5 dark:border-white/10 transition-colors duration-500">
 
                     {/* Spotlight Effect */}
-                    <motion.div
-                        className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-500"
-                        style={{
-                            opacity: isHovered ? 1 : 0,
-                            background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}, transparent 40%)`
-                        }}
-                    />
+                    {!isLowPowerMode && (
+                        <motion.div
+                            className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-500"
+                            style={{
+                                opacity: isHovered ? 1 : 0,
+                                background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}, transparent 40%)`
+                            }}
+                        />
+                    )}
 
+                    {/* Meteors Effect */}
+                    {!isLowPowerMode && (
+                        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                            <Meteors number={10} isLowPowerMode={isLowPowerMode} />
+                        </div>
+                    )}
                     {/* Meteors on Hover */}
-                    <AnimatePresence>
-                        {isHovered && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 z-10 overflow-hidden mix-blend-screen"
-                            >
-                                <Meteors number={12} minDuration={3} maxDuration={8} />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {!isLowPowerMode && (
+                        <AnimatePresence>
+                            {isHovered && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="absolute inset-0 z-10 overflow-hidden mix-blend-screen"
+                                >
+                                    <Meteors number={12} minDuration={3} maxDuration={8} isLowPowerMode={isLowPowerMode} />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    )}
 
                     {/* Floating Orbs - Subtle Blending */}
-                    <motion.div
-                        className={cn(
-                            "absolute w-40 h-40 rounded-full blur-[80px] z-0 opacity-40",
-                            isOngoing ? "bg-emerald-500/20" : "bg-blue-500/20"
-                        )}
-                        style={{ top: '10%', right: '15%' }}
-                        animate={{
-                            scale: isHovered ? [1, 1.4, 1] : 1,
-                            x: isHovered ? [0, 30, 0] : 0,
-                            y: isHovered ? [0, -20, 0] : 0,
-                        }}
-                        transition={{ duration: 4, repeat: Infinity }}
-                    />
-                    <motion.div
-                        className="absolute w-32 h-32 rounded-full bg-violet-500/20 blur-[60px] z-0 opacity-40"
-                        style={{ bottom: '20%', left: '10%' }}
-                        animate={{
-                            scale: isHovered ? [1, 1.3, 1] : 1,
-                            x: isHovered ? [0, -20, 0] : 0,
-                        }}
-                        transition={{ duration: 5, repeat: Infinity, delay: 0.5 }}
-                    />
+                    {!isLowPowerMode && (
+                        <>
+                            <motion.div
+                                className={cn(
+                                    "absolute w-40 h-40 rounded-full blur-[80px] z-0 opacity-40",
+                                    isOngoing ? "bg-emerald-500/20" : "bg-blue-500/20"
+                                )}
+                                style={{ top: '10%', right: '15%' }}
+                                animate={{
+                                    scale: isHovered ? [1, 1.4, 1] : 1,
+                                    x: isHovered ? [0, 30, 0] : 0,
+                                    y: isHovered ? [0, -20, 0] : 0,
+                                }}
+                                transition={{ duration: 4, repeat: Infinity }}
+                            />
+                            <motion.div
+                                className="absolute w-32 h-32 rounded-full bg-violet-500/20 blur-[60px] z-0 opacity-40"
+                                style={{ bottom: '20%', left: '10%' }}
+                                animate={{
+                                    scale: isHovered ? [1, 1.3, 1] : 1,
+                                    x: isHovered ? [0, -20, 0] : 0,
+                                }}
+                                transition={{ duration: 5, repeat: Infinity, delay: 0.5 }}
+                            />
+                        </>
+                    )}
 
                     {/* Grid Pattern - Very Subtle */}
-                    <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style={{
-                        backgroundImage: `linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)`,
-                        backgroundSize: '40px 40px'
-                    }} />
+                    {!isLowPowerMode && (
+                        <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style={{
+                            backgroundImage: `linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)`,
+                            backgroundSize: '40px 40px'
+                        }} />
+                    )}
 
                     {/* Floating Initial Letter */}
-                    <motion.div
-                        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
-                        animate={{
-                            scale: isHovered ? 1.15 : 1,
-                            rotate: isHovered ? 8 : 0,
-                            y: isHovered ? -10 : 0,
-                        }}
-                        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                        <span className="text-[14rem] sm:text-[18rem] md:text-[22rem] font-black text-black/[0.02] dark:text-white/[0.025] select-none leading-none">
-                            {project.title.charAt(0)}
-                        </span>
-                    </motion.div>
+                    {!isLowPowerMode && (
+                        <motion.div
+                            className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
+                            animate={{
+                                scale: isHovered ? 1.15 : 1,
+                                rotate: isHovered ? 8 : 0,
+                                y: isHovered ? -10 : 0,
+                            }}
+                            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                            <span className="text-[14rem] sm:text-[18rem] md:text-[22rem] font-black text-black/[0.02] dark:text-white/[0.025] select-none leading-none">
+                                {project.title.charAt(0)}
+                            </span>
+                        </motion.div>
+                    )}
 
                     {/* Content */}
                     <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-10 md:p-14 z-30">
@@ -443,7 +472,7 @@ function FeaturedCard({ project, onClick, index }: { project: Project; onClick: 
 }
 
 // Standard Project Card - with spotlight and 3D tilt
-function ProjectCard({ project, onClick, index }: { project: Project; onClick: () => void; index: number }) {
+function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean }) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -452,8 +481,8 @@ function ProjectCard({ project, onClick, index }: { project: Project; onClick: (
     // 3D Tilt
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
-    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [6, -6]), { stiffness: 400, damping: 25 });
-    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-6, 6]), { stiffness: 400, damping: 25 });
+    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [6, -6]), { stiffness: 400, damping: 25 });
+    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [-6, 6]), { stiffness: 400, damping: 25 });
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!cardRef.current) return;
@@ -475,32 +504,34 @@ function ProjectCard({ project, onClick, index }: { project: Project; onClick: (
 
     return (
         <motion.article
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: isLowPowerMode ? 25 : 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-30px" }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
+            transition={{ duration: isLowPowerMode ? 0.4 : 0.6, delay: index * 0.1 }}
             className="group cursor-pointer perspective-1000"
             onClick={onClick}
         >
             <motion.div
                 ref={cardRef}
                 className="relative h-full min-h-[320px] sm:min-h-[380px] rounded-2xl overflow-hidden"
-                style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+                style={isLowPowerMode ? {} : { rotateX, rotateY, transformStyle: 'preserve-3d' }}
                 onMouseMove={handleMouseMove}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={handleMouseLeave}
-                whileHover={{ scale: 1.03, y: -8 }}
+                whileHover={isLowPowerMode ? {} : { scale: 1.03, y: -8 }}
                 transition={{ duration: 0.3 }}
             >
                 {/* Gradient Border */}
-                <motion.div
-                    className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                        background: isOngoing
-                            ? 'linear-gradient(135deg, #10b981, #06b6d4)'
-                            : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                    }}
-                />
+                {!isLowPowerMode && (
+                    <motion.div
+                        className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{
+                            background: isOngoing
+                                ? 'linear-gradient(135deg, #10b981, #06b6d4)'
+                                : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                        }}
+                    />
+                )}
 
                 {/* Card Body */}
                 <div className="relative h-full bg-zinc-950/95 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden">
@@ -520,13 +551,15 @@ function ProjectCard({ project, onClick, index }: { project: Project; onClick: (
                     )}
 
                     {/* Spotlight */}
-                    <div
-                        className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300"
-                        style={{
-                            opacity: isHovered ? 1 : 0,
-                            background: `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.12)'}, transparent 40%)`
-                        }}
-                    />
+                    {!isLowPowerMode && (
+                        <div
+                            className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300"
+                            style={{
+                                opacity: isHovered ? 1 : 0,
+                                background: `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.12)'}, transparent 40%)`
+                            }}
+                        />
+                    )}
 
                     {/* Background Gradient */}
                     <div className={cn(
@@ -728,6 +761,7 @@ export default function ProjectsPage() {
     const [filter, setFilter] = useState<FilterType>('all');
     const [visibleCount, setVisibleCount] = useState(10);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const { isLowPowerMode } = usePerformance();
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -846,10 +880,10 @@ export default function ProjectsPage() {
 
     return (
         <div className="min-h-screen bg-background relative overflow-hidden" style={{ position: 'relative' }}>
-            <HeroParallax products={products} />
+            <HeroParallax products={products} isLowPowerMode={isLowPowerMode} />
 
             {/* Project Stats - Impressive Metrics */}
-            <ProjectStats />
+            <ProjectStats isLowPowerMode={isLowPowerMode} />
 
             <div className="container-creative relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
                 {/* Search & Filter Control Bar */}
@@ -996,6 +1030,7 @@ export default function ProjectsPage() {
                                         project={project}
                                         onClick={() => handleOpenProject(project)}
                                         index={index}
+                                        isLowPowerMode={isLowPowerMode}
                                     />
                                 ))}
                             </AnimatePresence>
@@ -1009,6 +1044,7 @@ export default function ProjectsPage() {
                                         project={project}
                                         onClick={() => handleOpenProject(project)}
                                         index={index}
+                                        isLowPowerMode={isLowPowerMode}
                                     />
                                 ))}
                             </AnimatePresence>
@@ -1048,10 +1084,10 @@ export default function ProjectsPage() {
                     )
                 }
                 {/* Contact Section */}
-                <ProjectContact />
+                <ProjectContact isLowPowerMode={isLowPowerMode} />
             </div >
 
-            <AnimatePresence>{selectedProject && <ProjectDetail project={selectedProject} onClose={handleCloseModal} />}</AnimatePresence>
+            <AnimatePresence>{selectedProject && <ProjectDetail project={selectedProject} onClose={handleCloseModal} isLowPowerMode={isLowPowerMode} />}</AnimatePresence>
         </div >
     );
 }

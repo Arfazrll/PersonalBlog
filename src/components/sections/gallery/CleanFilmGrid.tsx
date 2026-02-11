@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 type FilterType = 'all' | 'image' | 'video';
 type SortType = 'newest' | 'oldest';
 
-export default function CleanFilmGrid() {
+export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boolean }) {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [filter, setFilter] = useState<FilterType>('all');
     const [sort, setSort] = useState<SortType>('newest');
@@ -263,16 +263,19 @@ export default function CleanFilmGrid() {
                                     ref={el => {
                                         scrollContainerRef.current[category] = el;
                                     }}
-                                    className="flex gap-4 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide px-1"
+                                    className={cn(
+                                        "flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-1",
+                                        !isLowPowerMode && "snap-x snap-mandatory"
+                                    )}
                                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                                 >
                                     {groupedItems[category].map((item, index) => (
                                         <motion.div
                                             key={item.id}
-                                            initial={{ opacity: 0, x: 20 }}
+                                            initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, x: 20 }}
                                             whileInView={{ opacity: 1, x: 0 }}
                                             viewport={{ once: true, margin: "0px -50px 0px 0px" }}
-                                            transition={{ duration: 0.5, delay: index * 0.1 }}
+                                            transition={{ duration: 0.5, delay: isLowPowerMode ? 0 : index * 0.1 }}
                                             className="relative flex-none w-[85vw] md:w-[400px] aspect-video snap-center group/card cursor-pointer"
                                             onClick={() => openLightbox(item.id)}
                                         >
@@ -281,7 +284,10 @@ export default function CleanFilmGrid() {
                                                     src={item.thumbnail || item.url}
                                                     alt={item.title}
                                                     fill
-                                                    className="object-cover transition-transform duration-700 group-hover/card:scale-110"
+                                                    className={cn(
+                                                        "object-cover transition-transform duration-700",
+                                                        !isLowPowerMode && "group-hover/card:scale-110"
+                                                    )}
                                                 />
 
                                                 {/* Type Badge */}
@@ -290,11 +296,17 @@ export default function CleanFilmGrid() {
                                                     <span>{item.type}</span>
                                                 </div>
 
-                                                {/* Hover Overlay */}
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-all duration-300 flex items-center justify-center z-10">
+                                                {/* Hover Overlay - Simplified in Low Power Mode */}
+                                                <div className={cn(
+                                                    "absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-all duration-300 flex items-center justify-center z-10",
+                                                    isLowPowerMode && "hidden md:flex" // Only show on large screens in low power if at all
+                                                )}>
                                                     <motion.div
-                                                        whileHover={{ scale: 1.1 }}
-                                                        className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-full"
+                                                        whileHover={isLowPowerMode ? {} : { scale: 1.1 }}
+                                                        className={cn(
+                                                            "border border-white/20 p-4 rounded-full",
+                                                            isLowPowerMode ? "bg-white/20" : "bg-white/10 backdrop-blur-md"
+                                                        )}
                                                     >
                                                         {item.type === 'video' ? (
                                                             <Play className="w-6 h-6 text-white fill-current" />
@@ -336,10 +348,10 @@ export default function CleanFilmGrid() {
                                 {visibleItems.map((item, index) => (
                                     <motion.div
                                         key={item.id}
-                                        initial={{ opacity: 0, y: 20 }}
+                                        initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: 20 }}
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true, margin: "-10%" }}
-                                        transition={{ duration: 0.4, delay: index * 0.05 }}
+                                        transition={{ duration: 0.4, delay: isLowPowerMode ? 0 : index * 0.05 }}
                                         className="relative group break-inside-avoid cursor-pointer p-3 rounded-xl border border-neutral-400 dark:border-transparent bg-muted/20 dark:bg-transparent transition-all hover:shadow-md"
                                         onClick={() => openLightbox(item.id)}
                                     >
@@ -349,7 +361,10 @@ export default function CleanFilmGrid() {
                                                 alt={item.title}
                                                 width={800}
                                                 height={600}
-                                                className="w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                className={cn(
+                                                    "w-full object-cover transition-transform duration-700",
+                                                    !isLowPowerMode && "group-hover:scale-105"
+                                                )}
                                             />
 
                                             {/* Type Badge */}
@@ -423,7 +438,8 @@ export default function CleanFilmGrid() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className={cn(
-                            "fixed inset-0 z-[100] bg-background/95 backdrop-blur-xl flex flex-col items-center justify-center transition-all duration-300",
+                            "fixed inset-0 z-[100] bg-background/95 flex flex-col items-center justify-center transition-all duration-300",
+                            !isLowPowerMode && "backdrop-blur-xl",
                             isLightboxMaximized ? "bg-black" : ""
                         )}
                         onClick={closeLightbox}
