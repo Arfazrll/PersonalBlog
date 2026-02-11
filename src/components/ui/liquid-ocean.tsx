@@ -5,24 +5,19 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLightUniformsLib.js";
 import * as THREE from "three";
 import { cn } from "@/lib/utils";
+import { usePerformance } from "@/hooks/usePerformance";
 
 // Initialize RectAreaLight uniforms
 if (typeof window !== "undefined") {
     RectAreaLightUniformsLib.init();
 }
 
-// =============================================================================
-// DEFAULT THEME (Original "Little Boxes" Style - DO NOT CHANGE)
-// =============================================================================
 const DEFAULT_THEME = {
     background: 0x000000,
     gridColor: 0x333333,
-    accentColor: 0xF00589, // The original pinkish color
+    accentColor: 0xF00589,
 };
 
-// =============================================================================
-// OCEAN MESH COMPONENT
-// =============================================================================
 interface OceanMeshProps {
     geoSize: number;
     geoFragments: number;
@@ -43,7 +38,6 @@ function OceanMesh({
     opacity,
 }: OceanMeshProps) {
     const meshRef = useRef<THREE.Mesh>(null);
-    const wireRef = useRef<THREE.Mesh>(null);
 
     const { geometry, waves } = useMemo(() => {
         const geo = new THREE.PlaneGeometry(geoSize, geoSize, geoFragments, geoFragments);
@@ -89,18 +83,18 @@ function OceanMesh({
 
     const wireframeMaterial = useMemo(
         () =>
-            new THREE.MeshPhysicalMaterial({
+            new THREE.MeshBasicMaterial({ // Swapped from Physical to Basic for performance
                 color: accentColor,
                 wireframe: true,
-                transparent: false,
-                opacity: 1,
+                transparent: true,
+                opacity: 0.5,
             }),
         [accentColor]
     );
 
     const surfaceMaterial = useMemo(
         () =>
-            new THREE.MeshPhysicalMaterial({
+            new THREE.MeshStandardMaterial({ // Swapped from Physical to Standard
                 color: accentColor,
                 transparent: true,
                 opacity: opacity,
@@ -113,25 +107,13 @@ function OceanMesh({
         <group rotation={[-90 * Math.PI / 180, 0, 0]}>
             <mesh ref={meshRef} geometry={geometry} material={surfaceMaterial} receiveShadow />
             {showWireframe && (
-                <mesh ref={wireRef} geometry={geometry} material={wireframeMaterial} />
+                <mesh geometry={geometry} material={wireframeMaterial} />
             )}
         </group>
     );
 }
 
-// =============================================================================
-// BOAT / FLOATING BOXES COMPONENT
-// =============================================================================
-interface BoatData {
-    position: [number, number, number];
-    scale: [number, number, number];
-    rotationY: number;
-    vel: number;
-    amp: number;
-    pos: number;
-}
-
-function Boat({ data, color }: { data: BoatData; color: number }) {
+function Boat({ data, color }: { data: any; color: number }) {
     const meshRef = useRef<THREE.Mesh>(null);
 
     useFrame(({ clock }) => {
@@ -159,7 +141,7 @@ function Boat({ data, color }: { data: BoatData; color: number }) {
 
 function BoatGroup({ count, spreadRange, color }: { count: number; spreadRange: number; color: number }) {
     const boats = useMemo(() => {
-        const items: BoatData[] = [];
+        const items: any[] = [];
         for (let i = 0; i < count; i++) {
             const x = -Math.random() * spreadRange + Math.random() * spreadRange;
             const z = -Math.random() * spreadRange + Math.random() * spreadRange;
@@ -187,29 +169,8 @@ function BoatGroup({ count, spreadRange, color }: { count: number; spreadRange: 
     );
 }
 
-// =============================================================================
-// SCENE CONTENT
-// =============================================================================
-interface SceneContentProps {
-    backgroundColor: number;
-    gridColor: number;
-    accentColor: number;
-    rotationSpeed: number;
-    showGrid: boolean;
-    showBoats: boolean;
-    boatCount: number;
-    boatSpread: number;
-    oceanSize: number;
-    oceanFragments: number;
-    waveAmplitude: number;
-    waveSpeed: number;
-    showWireframe: boolean;
-    oceanOpacity: number;
-}
-
 function SceneContent({
     backgroundColor,
-    gridColor,
     accentColor,
     rotationSpeed,
     showGrid,
@@ -222,9 +183,8 @@ function SceneContent({
     waveSpeed,
     showWireframe,
     oceanOpacity,
-}: SceneContentProps) {
+}: any) {
     const { scene, camera } = useThree();
-    const rectLightRef = useRef<THREE.RectAreaLight>(null);
     const groupRef = useRef<THREE.Group>(null);
 
     useEffect(() => {
@@ -234,9 +194,6 @@ function SceneContent({
 
     useFrame(() => {
         camera.lookAt(0, 0, 0);
-        if (rectLightRef.current) {
-            rectLightRef.current.lookAt(0, 0, 0);
-        }
         if (groupRef.current) {
             groupRef.current.rotation.y += rotationSpeed;
         }
@@ -244,19 +201,11 @@ function SceneContent({
 
     return (
         <>
-            {/* Lighting - Original setup */}
-            <hemisphereLight args={[0xFFD3D3, accentColor, 2]} />
-            <pointLight args={[accentColor, 1]} position={[-5, -20, -20]} />
-            <rectAreaLight
-                ref={rectLightRef}
-                args={[accentColor, 20, 3, 3]}
-                position={[2, 2, -20]}
-            />
-            <pointLight args={[accentColor, 0.1]} position={[0, 2, -2]} />
+            <hemisphereLight args={[0xFFD3D3, accentColor, 1]} />
+            <pointLight args={[accentColor, 1]} position={[-5, -10, -10]} />
 
-            {/* Rotating Group */}
             <group ref={groupRef}>
-                {showGrid && <gridHelper args={[20, 20]} position={[0, -1, 0]} />}
+                {showGrid && <gridHelper args={[20, 20, 0x444444, 0x222222]} position={[0, -1, 0]} />}
                 {showBoats && <BoatGroup count={boatCount} spreadRange={boatSpread} color={accentColor} />}
                 <OceanMesh
                     geoSize={oceanSize}
@@ -272,53 +221,30 @@ function SceneContent({
     );
 }
 
-// =============================================================================
-// MAIN COMPONENT - Props for reusability, defaults match original exactly
-// =============================================================================
 export interface LiquidOceanProps {
-    /** Additional CSS classes */
     className?: string;
-    /** Background color as hex number (default: 0x000000 - black) */
     backgroundColor?: number;
-    /** Grid line color as hex number (default: 0x333333) */
     gridColor?: number;
-    /** Accent color for ocean, boats, lights as hex number (default: 0xF00589 - pink) */
     accentColor?: number;
-    /** Camera field of view (default: 20) */
     fov?: number;
-    /** Scene rotation speed per frame (default: 0.001) */
     rotationSpeed?: number;
-    /** Show grid helper (default: true) */
     showGrid?: boolean;
-    /** Show floating boxes/boats (default: true) */
     showBoats?: boolean;
-    /** Number of floating boxes (default: 5) */
     boatCount?: number;
-    /** Spread range for floating boxes (default: 5) */
     boatSpread?: number;
-    /** Ocean plane size (default: 25) */
     oceanSize?: number;
-    /** Ocean geometry fragments/subdivisions (default: 25) */
     oceanFragments?: number;
-    /** Maximum wave amplitude (default: 0.2) */
     waveAmplitude?: number;
-    /** Wave animation speed multiplier (default: 0.05) */
     waveSpeed?: number;
-    /** Show wireframe overlay on ocean (default: true) */
     showWireframe?: boolean;
-    /** Ocean surface opacity (default: 0.85) */
     oceanOpacity?: number;
-    /** Overlay content (e.g., title text) */
     children?: React.ReactNode;
 }
 
 export function LiquidOcean({
     className,
-    // Original colors - DO NOT CHANGE DEFAULTS
     backgroundColor = DEFAULT_THEME.background,
-    gridColor = DEFAULT_THEME.gridColor,
     accentColor = DEFAULT_THEME.accentColor,
-    // Original settings - DO NOT CHANGE DEFAULTS
     fov = 20,
     rotationSpeed = 0.001,
     showGrid = true,
@@ -326,7 +252,7 @@ export function LiquidOcean({
     boatCount = 5,
     boatSpread = 5,
     oceanSize = 25,
-    oceanFragments = 25,
+    oceanFragments = 15, // Desktop optimization: Reduced from 25/40 to 15
     waveAmplitude = 0.2,
     waveSpeed = 0.05,
     showWireframe = true,
@@ -335,31 +261,48 @@ export function LiquidOcean({
 }: LiquidOceanProps) {
     const [isVisible, setIsVisible] = React.useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const { isLowPowerMode } = usePerformance();
 
     useEffect(() => {
         const observer = new IntersectionObserver(
-            ([entry]) => {
-                setIsVisible(entry.isIntersecting);
-            },
+            ([entry]) => setIsVisible(entry.isIntersecting),
             { threshold: 0 }
         );
         if (containerRef.current) observer.observe(containerRef.current);
         return () => observer.disconnect();
     }, []);
 
+    // Mobile Fallback: Lightweight CSS Gradient
+    if (isLowPowerMode) {
+        return (
+            <div
+                ref={containerRef}
+                className={cn("relative w-full h-full min-h-[400px] overflow-hidden bg-black", className)}
+                style={{
+                    backgroundColor: `#${backgroundColor.toString(16).padStart(6, '0')}`
+                }}
+            >
+                <div className="absolute inset-0 opacity-20"
+                    style={{
+                        backgroundImage: `radial-gradient(circle at 50% 120%, #${accentColor.toString(16).padStart(6, '0')}, transparent)`
+                    }}
+                />
+                {children}
+            </div>
+        );
+    }
+
     return (
-        <div ref={containerRef} className={cn("relative w-full h-full min-h-[400px] overflow-hidden bg-background cursor-crosshair", className)}>
+        <div ref={containerRef} className={cn("relative w-full h-full min-h-[400px] overflow-hidden bg-black cursor-crosshair", className)}>
             <Canvas
-                shadows
                 dpr={1}
                 frameloop={isVisible ? "always" : "never"}
                 camera={{ position: [0, 2, 10], fov }}
-                gl={{ antialias: false, alpha: false }}
+                gl={{ antialias: false, alpha: false, powerPreference: 'high-performance' }}
                 style={{ position: "absolute", inset: 0 }}
             >
                 <SceneContent
                     backgroundColor={backgroundColor}
-                    gridColor={gridColor}
                     accentColor={accentColor}
                     rotationSpeed={rotationSpeed}
                     showGrid={showGrid}
@@ -367,7 +310,7 @@ export function LiquidOcean({
                     boatCount={boatCount}
                     boatSpread={boatSpread}
                     oceanSize={oceanSize}
-                    oceanFragments={isVisible ? oceanFragments : 5}
+                    oceanFragments={oceanFragments}
                     waveAmplitude={waveAmplitude}
                     waveSpeed={waveSpeed}
                     showWireframe={showWireframe}
@@ -375,9 +318,8 @@ export function LiquidOcean({
                 />
             </Canvas>
 
-            {/* Overlay Content */}
             {children && (
-                <div className="absolute inset-0 pointer-events-none select-none">
+                <div className="absolute inset-0 pointer-events-none select-none z-10">
                     {children}
                 </div>
             )}
