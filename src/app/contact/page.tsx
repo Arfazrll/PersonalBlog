@@ -313,7 +313,7 @@ export default function ContactPage() {
             <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none z-0" />
             <div className="fixed inset-0 bg-background/60 backdrop-blur-[2px] pointer-events-none z-0" />
             <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
-                <Meteors number={isLowPowerMode ? 20 : 100} />
+                {!isLowPowerMode && <Meteors number={100} />}
             </div>
 
             {/* 3. MAIN CONTENT: (Header + Form + Lanyard) */}
@@ -347,7 +347,17 @@ export default function ContactPage() {
                         {/* Shorter height 600px to raise bottom, top sticky align */}
                         <div className="hidden lg:flex lg:col-span-4 sticky top-20 h-[600px] pointer-events-none">
                             <div className="w-full h-full pointer-events-auto">
-                                <Lanyard isLowPowerMode={isLowPowerMode} />
+                                {!isLowPowerMode ? (
+                                    <Lanyard isLowPowerMode={isLowPowerMode} />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center p-8">
+                                        <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-primary/5">
+                                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 italic font-serif">
+                                                Archive ID // Static
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -378,7 +388,17 @@ export default function ContactPage() {
 
                             {/* Mobile Lanyard Fallback */}
                             <div className="lg:hidden h-[400px] w-full relative">
-                                <Lanyard isLowPowerMode={isLowPowerMode} />
+                                {!isLowPowerMode ? (
+                                    <Lanyard isLowPowerMode={isLowPowerMode} />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center p-8">
+                                        <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-primary/5">
+                                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 italic font-serif">
+                                                Archive ID // Static
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -399,9 +419,9 @@ export default function ContactPage() {
                 }
             >
                 {/* Dedicated Meteors for FAQ Section */}
-                < div className="absolute inset-0 pointer-events-none z-0 opacity-40" >
-                    <Meteors number={isLowPowerMode ? 10 : 60} />
-                </div >
+                <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
+                    {!isLowPowerMode && <Meteors number={60} />}
+                </div>
 
                 {/* Ultra-Smooth Sheet Edge: Tallest gradient for deep cinematic transition */}
                 < div className="absolute top-0 left-0 right-0 h-[40rem] bg-gradient-to-t from-background via-background/95 to-transparent -translate-y-full pointer-events-none" />

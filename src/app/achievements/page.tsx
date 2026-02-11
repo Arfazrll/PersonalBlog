@@ -472,7 +472,14 @@ export default function AchievementsPage() {
 
         <div className="min-h-screen bg-background text-foreground overflow-y-auto overflow-x-hidden">
             {/* Hero Scroll Section */}
-            <CertificateHeroScroll />
+            {!isLowPowerMode ? (
+                <CertificateHeroScroll isLowPowerMode={isLowPowerMode} />
+            ) : (
+                <div className="w-full h-[60vh] flex flex-col items-center justify-center p-8 bg-background border-b border-border/10">
+                    <div className="opacity-20 italic font-serif text-2xl mb-4">The Achievement Record</div>
+                    <div className="h-px w-24 bg-primary/20" />
+                </div>
+            )}
 
             {/* Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -677,15 +684,23 @@ export default function AchievementsPage() {
                             viewport={{ once: true }}
                             className="relative w-full mx-auto h-[400px]"
                         >
-                            <FallingText
-                                text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
-                                highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
-                                trigger="scroll"
-                                gravity={0.8}
-                                mouseConstraintStiffness={0.2}
-                                fontSize="1.5rem"
-                                fontWeight="900"
-                            />
+                            {!isLowPowerMode ? (
+                                <FallingText
+                                    text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
+                                    highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
+                                    trigger="scroll"
+                                    gravity={0.8}
+                                    mouseConstraintStiffness={0.2}
+                                    fontSize="1.5rem"
+                                    fontWeight="900"
+                                />
+                            ) : (
+                                <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-4 px-8 opacity-20">
+                                    {"Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus".split(' ').map((word, i) => (
+                                        <span key={i} className="text-xl font-black uppercase tracking-tighter">{word}</span>
+                                    ))}
+                                </div>
+                            )}
                         </motion.div>
                     </div>
                 </motion.section>

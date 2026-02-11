@@ -46,22 +46,28 @@ export const MarqueeClosing = ({ isLowPowerMode }: { isLowPowerMode?: boolean })
 
             {/* Background Ocean - Full Immersive */}
             <div className="absolute inset-0 z-0">
-                <LiquidOcean
-                    key={isDark ? 'dark' : 'light'}
-                    backgroundColor={oceanConfig.bg}
-                    gridColor={oceanConfig.grid}
-                    accentColor={oceanConfig.accent}
-                    oceanSize={60}
-                    oceanFragments={40}
-                    waveAmplitude={isDark ? 0.8 : 0.5} // Calmer waves in light mode
-                    waveSpeed={0.015}
-                    showBoats={true}
-                    boatCount={6}
-                    boatSpread={20}
-                    showWireframe={!isLowPowerMode} // Disable wireframe for performance
-                    oceanOpacity={oceanConfig.opacity}
-                    isLowPowerMode={isLowPowerMode}
-                />
+                {isLowPowerMode ? (
+                    <div className={cn("absolute inset-0 transition-opacity duration-1000", isDark ? "bg-black" : "bg-white")}>
+                        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `radial-gradient(circle at 50% 120%, ${isDark ? '#06b6d4' : '#3b82f6'}, transparent)` }} />
+                    </div>
+                ) : (
+                    <LiquidOcean
+                        key={isDark ? 'dark' : 'light'}
+                        backgroundColor={oceanConfig.bg}
+                        gridColor={oceanConfig.grid}
+                        accentColor={oceanConfig.accent}
+                        oceanSize={60}
+                        oceanFragments={40}
+                        waveAmplitude={isDark ? 0.8 : 0.5} // Calmer waves in light mode
+                        waveSpeed={0.015}
+                        showBoats={true}
+                        boatCount={6}
+                        boatSpread={20}
+                        showWireframe={false} // Wireframe is heavy, always off for this section
+                        oceanOpacity={oceanConfig.opacity}
+                        isLowPowerMode={isLowPowerMode}
+                    />
+                )}
 
                 {/* Top Fade Only - Seamless Integration */}
                 {/* Top Fade - Gradient Bridge from Page Background to Ocean */}
