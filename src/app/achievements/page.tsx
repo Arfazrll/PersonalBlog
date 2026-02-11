@@ -27,16 +27,14 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
     achievement: Achievement;
     onClick: () => void;
     index: number;
-    onMouseEnter: () => void;
-    onMouseLeave: () => void;
-    isHovered: boolean;
 }>(
-    ({ achievement, onClick, index, onMouseEnter, onMouseLeave, isHovered }, ref) => {
+    ({ achievement, onClick, index }, ref) => {
+        const [isHovered, setIsHovered] = useState(false);
         const mouseX = useMotionValue(0);
         const mouseY = useMotionValue(0);
 
         const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-            const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+            const { left, top } = e.currentTarget.getBoundingClientRect();
             mouseX.set(e.clientX - left);
             mouseY.set(e.clientY - top);
         };
@@ -59,30 +57,19 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
         return (
             <div
                 className="relative group block p-2 h-full w-full"
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
                 onMouseMove={handleMouseMove}
                 onClick={onClick}
             >
                 <AnimatePresence>
                     {isHovered && (
                         <motion.span
-                            className="absolute inset-0 h-full w-full bg-foreground/[0.05] dark:bg-slate-800/[0.8] block rounded-3xl z-0"
+                            className="absolute inset-0 h-full w-full bg-foreground/[0.05] dark:bg-slate-800/[0.2] block rounded-3xl z-0"
                             layoutId="hoverBackground"
                             initial={{ opacity: 0 }}
-                            animate={{
-                                opacity: 1,
-                                transition: { duration: 0.15 },
-                            }}
-                            exit={{
-                                opacity: 0,
-                                transition: { duration: 0.15, delay: 0.2 },
-                            }}
-                            transition={{
-                                type: "spring",
-                                stiffness: 200,
-                                damping: 25,
-                            }}
+                            animate={{ opacity: 1, transition: { duration: 0.15 } }}
+                            exit={{ opacity: 0, transition: { duration: 0.15, delay: 0.2 } }}
                         />
                     )}
                 </AnimatePresence>
@@ -95,7 +82,7 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: index * 0.05, duration: 0.5, type: "spring", stiffness: 100 }}
                     whileHover={{ y: -4 }}
-                    className="relative bg-card/90 dark:bg-card/70 backdrop-blur-xl rounded-2xl overflow-hidden border border-border/40 group-hover:border-foreground/20 transition-all duration-500 shadow-lg group-hover:shadow-2xl z-20"
+                    className="relative bg-card/90 dark:bg-card/40 backdrop-blur-xl rounded-2xl overflow-hidden border border-border/40 group-hover:border-foreground/20 transition-all duration-500 shadow-lg group-hover:shadow-2xl z-20 cursor-pointer"
                 >
                     {/* Animated Spotlight Effect */}
                     <motion.div
@@ -103,68 +90,99 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
                         style={{
                             background: useMotionTemplate`
                                 radial-gradient(
-                                    250px circle at ${mouseXSpring}px ${mouseYSpring}px,
-                                    rgba(255, 255, 255, 0.06),
+                                    350px circle at ${mouseXSpring}px ${mouseYSpring}px,
+                                    var(--accent-spotlight, rgba(255, 255, 255, 0.08)),
                                     transparent 80%
                                 )
                             `,
                         }}
                     />
 
-                    <div className={`relative h-28 w-full overflow-hidden bg-gradient-to-br ${config.gradient}`}>
-                        <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                            initial={{ x: '-100%' }}
-                            whileHover={{ x: '100%' }}
-                            transition={{ duration: 0.6 }}
-                        />
+                    {/* Integrated Header: Image + Gradient/Icon */}
+                    <div className={cn(
+                        "relative h-44 w-full overflow-hidden transition-all duration-500 bg-gradient-to-br",
+                        config.gradient
+                    )}>
+                        {achievement.image ? (
+                            <>
+                                <img
+                                    src={achievement.image}
+                                    alt={achievement.title}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-100"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            </>
+                        ) : (
+                            <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                                initial={{ x: '-100%' }}
+                                whileHover={{ x: '100%' }}
+                                transition={{ duration: 0.6 }}
+                            />
+                        )}
 
+                        {/* Category Icon Badge */}
                         <motion.div
-                            className="absolute top-3 right-3 p-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20"
+                            className="absolute top-4 right-4 p-2.5 rounded-xl bg-foreground/10 backdrop-blur-md border border-foreground/10 shadow-xl z-20"
                             whileHover={{ rotate: 15, scale: 1.1 }}
                         >
-                            <IconComponent className="w-4 h-4 text-white" />
+                            <IconComponent className="w-4 h-4 text-foreground/80 dark:text-white" />
                         </motion.div>
 
-                        <div className="absolute top-3 left-3">
-                            <span className="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider bg-black/30 backdrop-blur-md border border-white/20 text-white">
-                                {achievement.category}
+                        {/* Type/Category Tags in Header */}
+                        <div className="absolute top-4 left-4 flex gap-2 z-20">
+                            <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-foreground/10 backdrop-blur-md border border-foreground/10 text-foreground/90 dark:text-white/90">
+                                {achievement.type || achievement.category}
                             </span>
                         </div>
 
-                        <div className="absolute -bottom-2 -right-1 opacity-10">
-                            <span className="text-7xl font-black text-white leading-none select-none">
-                                {achievement.title.charAt(0)}
-                            </span>
+                        {/* Credential ID - Mono style */}
+                        <div className="absolute bottom-4 left-4 z-20">
+                            <div className="text-[10px] font-mono text-foreground/50 dark:text-white/50 uppercase tracking-widest mb-1">
+                                {achievement.credentialId ? achievement.credentialId : "Verified Credential"}
+                            </div>
                         </div>
 
-                        <div className="absolute bottom-2 left-3 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm border border-white/10">
-                            <Calendar className="w-2.5 h-2.5 text-white/80" />
-                            <span className="text-[9px] text-white/90 font-semibold">{formatDate(achievement.date)}</span>
+                        {/* Date Overlay */}
+                        <div className="absolute bottom-4 right-4 z-20 px-2.5 py-1 rounded-lg bg-foreground/10 backdrop-blur-md border border-foreground/10">
+                            <div className="flex items-center gap-1.5">
+                                <Calendar className="w-3 h-3 text-foreground/60 dark:text-white/60" />
+                                <span className="text-[10px] text-foreground/90 dark:text-white/90 font-bold">
+                                    {new Date(achievement.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="p-4 relative z-20">
-                        <h3 className="text-sm font-bold leading-snug mb-2 group-hover:text-foreground transition-colors line-clamp-2 min-h-[2.5rem]">
+                    <div className="p-6 relative z-20 bg-gradient-to-b from-transparent to-card/20">
+                        <h3 className="text-lg font-bold leading-tight mb-3 group-hover:text-foreground transition-colors line-clamp-2 min-h-[3rem]">
                             {achievement.title}
                         </h3>
 
-                        <div className="flex items-center gap-1.5 mb-3">
-                            <Building2 className="w-3 h-3 text-muted-foreground" />
-                            <span className="text-[10px] text-muted-foreground line-clamp-1 font-medium">{achievement.issuer}</span>
+                        <div className="flex items-center gap-2 mb-4">
+                            <Building2 className="w-3.5 h-3.5 text-muted-foreground/60" />
+                            <span className="text-[11px] text-muted-foreground font-medium">{achievement.issuer}</span>
                         </div>
 
-                        <div className="flex items-center justify-between pt-3 border-t border-border/30">
-                            <div className="flex items-center gap-1.5">
-                                <Eye className="w-3 h-3 text-muted-foreground/50" />
-                                <span className="text-[9px] text-muted-foreground/60 font-medium">View Details</span>
+                        {/* Tags section below issuer */}
+                        {achievement.tags && (
+                            <div className="flex flex-wrap gap-1.5 mb-2">
+                                {achievement.tags.slice(0, 3).map(tag => (
+                                    <span key={tag} className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight">#{tag}</span>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="flex items-center justify-between pt-4 border-t border-border/20">
+                            <div className="flex items-center gap-2">
+                                <Eye className="w-4 h-4 text-muted-foreground/40" />
+                                <span className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-wider">Expand Archive</span>
                             </div>
                             <motion.div
-                                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                animate={{ x: [0, 4, 0] }}
+                                animate={{ x: isHovered ? [0, 4, 0] : 0 }}
                                 transition={{ duration: 1.2, repeat: Infinity }}
                             >
-                                <ChevronRight className="w-3.5 h-3.5 text-foreground/70" />
+                                <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
                             </motion.div>
                         </div>
                     </div>
@@ -225,122 +243,171 @@ function NavItem({ label, active, onClick, count }: { label: string; active: boo
 }
 
 function AchievementModal({ achievement, onClose }: { achievement: Achievement; onClose: () => void }) {
-    const categoryGradients: Record<string, string> = {
-        certification: 'from-zinc-700 via-zinc-600 to-zinc-500',
-        award: 'from-neutral-800 via-neutral-700 to-neutral-600',
-        recognition: 'from-stone-700 via-stone-600 to-stone-500',
-        publication: 'from-slate-700 via-slate-600 to-slate-500',
-        competition: 'from-gray-700 via-gray-600 to-gray-500'
-    };
-    const gradient = categoryGradients[achievement.category.toLowerCase()] || categoryGradients.award;
-
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 lg:p-8"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 lg:p-12"
             onClick={onClose}
         >
             <motion.div
-                initial={{ scale: 0.85, opacity: 0, y: 50 }}
+                initial={{ scale: 0.98, opacity: 0, y: 10 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="bg-card rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-border/50"
+                exit={{ scale: 0.98, opacity: 0, y: 5 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 400 }}
+                className="bg-background/80 dark:bg-zinc-900/60 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.4)] border border-foreground/10 max-w-5xl w-full max-h-[90vh] lg:max-h-[80vh] flex flex-col lg:flex-row relative"
                 onClick={e => e.stopPropagation()}
             >
-                <div className={`relative h-52 sm:h-60 bg-gradient-to-br ${gradient} overflow-hidden`}>
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(255,255,255,0.15),transparent_50%)]" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                {/* Close Button */}
+                <motion.button
+                    onClick={onClose}
+                    whileHover={{ scale: 1.1, rotate: 90 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="absolute top-6 right-6 p-2.5 bg-foreground/5 hover:bg-foreground/10 rounded-full text-foreground/40 hover:text-foreground transition-all z-50 border border-foreground/10 backdrop-blur-md"
+                >
+                    <X className="w-5 h-5" />
+                </motion.button>
 
-                    <motion.button
-                        onClick={onClose}
-                        whileHover={{ scale: 1.1, rotate: 90 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="absolute top-5 right-5 p-3 bg-black/40 hover:bg-black/60 rounded-full text-white z-20 transition-colors backdrop-blur-md border border-white/10"
-                    >
-                        <X className="w-5 h-5" />
-                    </motion.button>
+                {/* Left: Cinematic Image container with standardized alignment */}
+                <div className="lg:w-1/2 relative aspect-video lg:aspect-auto bg-black/20 flex items-center justify-center border-r border-white/5 group overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/30" />
 
-                    <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="absolute top-5 right-20 p-3 bg-black/40 hover:bg-black/60 rounded-full text-white z-20 transition-colors backdrop-blur-md border border-white/10"
-                    >
-                        <Share2 className="w-5 h-5" />
-                    </motion.button>
-
-                    <div className="absolute -bottom-6 -right-4 opacity-10">
-                        <span className="text-[10rem] font-black text-white leading-none select-none">
-                            {achievement.title.charAt(0)}
-                        </span>
+                    {/* Watermark Centered */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] dark:opacity-[0.02] select-none pointer-events-none overflow-hidden text-foreground">
+                        <span className="text-[12rem] font-black uppercase tracking-tighter rotate-[-10deg]">Archive</span>
                     </div>
 
-                    <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
-                        <div className="flex items-center gap-3 mb-3">
-                            <span className="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest bg-white/20 backdrop-blur-md border border-white/30 text-white">
-                                {achievement.category}
-                            </span>
-                            <span className="px-2.5 py-1 rounded-full text-[9px] font-medium bg-black/30 backdrop-blur-md text-white/80">
-                                {formatDate(achievement.date)}
-                            </span>
-                        </div>
-                        <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight max-w-xl">
-                            {achievement.title}
-                        </h2>
+                    <div className="relative z-10 flex flex-col items-center gap-6 p-12">
+                        {achievement.image ? (
+                            <motion.img
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.8 }}
+                                src={achievement.image}
+                                alt={achievement.title}
+                                className="w-full h-auto max-h-[50vh] object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+                            />
+                        ) : (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="flex flex-col items-center"
+                            >
+                                <Award className="w-24 h-24 text-foreground/5 mb-4" />
+                                <div className="px-4 py-1.5 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
+                                    Digital Representation
+                                </div>
+                            </motion.div>
+                        )}
                     </div>
                 </div>
 
-                <div className="p-6 sm:p-8 overflow-y-auto max-h-[calc(90vh-15rem)]">
-                    <div className="flex items-center gap-4 p-4 rounded-xl bg-secondary/30 border border-border/50 mb-6">
-                        <div className="p-2.5 rounded-lg bg-foreground/10">
-                            <Building2 className="w-5 h-5 text-foreground/70" />
-                        </div>
-                        <div>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Issued by</p>
-                            <p className="text-base font-bold">{achievement.issuer}</p>
-                        </div>
-                    </div>
-
-                    <div className="mb-6">
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">About</h3>
-                        <p className="text-foreground/80 leading-relaxed">
-                            {achievement.description || "This achievement represents a significant milestone in my professional journey, demonstrating dedication, expertise, and commitment to excellence."}
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="p-3 rounded-lg bg-secondary/20 border border-border/30">
-                            <Calendar className="w-4 h-4 text-foreground/50 mb-1.5" />
-                            <p className="text-[10px] text-muted-foreground mb-0.5">Date</p>
-                            <p className="text-sm font-bold">{formatDate(achievement.date)}</p>
-                        </div>
-                        <div className="p-3 rounded-lg bg-secondary/20 border border-border/30">
-                            <Trophy className="w-4 h-4 text-foreground/50 mb-1.5" />
-                            <p className="text-[10px] text-muted-foreground mb-0.5">Category</p>
-                            <p className="text-sm font-bold capitalize">{achievement.category}</p>
-                        </div>
-                    </div>
-
-                    {achievement.credentialUrl && (
-                        <motion.a
-                            href={achievement.credentialUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="inline-flex items-center gap-2 px-5 py-3 bg-foreground text-background font-bold rounded-xl text-sm relative overflow-hidden group"
+                {/* Right: Detailed Metadata Panel - Scrollable if content overflow */}
+                <div className="lg:w-1/2 p-10 lg:p-12 flex flex-col overflow-y-auto bg-gradient-to-b from-white/[0.03] to-transparent scrollbar-hide">
+                    <div className="mb-10">
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="flex items-center gap-2.5 mb-5"
                         >
+                            <span className="px-2.5 py-1 bg-foreground/10 rounded-lg text-[9px] font-black tracking-widest uppercase border border-foreground/10 text-foreground/80">
+                                {achievement.category}
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-foreground/20" />
+                            <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {formatDate(achievement.date)}
+                            </span>
+                        </motion.div>
+
+                        <motion.h2
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="text-3xl lg:text-4xl font-black text-foreground mb-6 leading-[1.05] tracking-tight"
+                        >
+                            {achievement.title}
+                        </motion.h2>
+
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                            className="flex items-center gap-3.5 p-4 rounded-2xl bg-foreground/[0.03] border border-foreground/5"
+                        >
+                            <Building2 className="w-5 h-5 text-muted-foreground/30" />
+                            <p className="text-base text-muted-foreground font-bold tracking-tight">
+                                {achievement.issuer}
+                            </p>
+                        </motion.div>
+                    </div>
+
+                    <div className="space-y-10 flex-1">
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                        >
+                            <div className="text-[9px] text-muted-foreground/30 uppercase tracking-[0.3em] font-black mb-5 flex items-center gap-2.5">
+                                <div className="w-5 h-[1px] bg-foreground/20" />
+                                Credential Metadata
+                            </div>
+                            <div className="grid grid-cols-2 gap-6">
+                                <div>
+                                    <p className="text-[8px] text-muted-foreground/40 uppercase font-black mb-1.5 tracking-wider">ID</p>
+                                    <p className="font-mono text-[11px] text-foreground/80 truncate bg-foreground/[0.04] px-3 py-2 rounded-xl border border-foreground/5">{achievement.credentialId || "N/A"}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[8px] text-muted-foreground/40 uppercase font-black mb-1.5 tracking-wider">Type</p>
+                                    <p className="text-[11px] text-foreground font-bold bg-foreground/[0.04] px-3 py-2 rounded-xl border border-foreground/5">{achievement.type || "Specialty"}</p>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {achievement.tags && achievement.tags.length > 0 && (
                             <motion.div
-                                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
-                                animate={{ x: ['-100%', '100%'] }}
-                                transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-                            />
-                            <span className="relative">View Credential</span>
-                            <ExternalLink className="w-4 h-4 relative" />
-                        </motion.a>
-                    )}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.6 }}
+                            >
+                                <div className="text-[9px] text-muted-foreground/30 uppercase tracking-[0.3em] font-black mb-5 flex items-center gap-2.5">
+                                    <div className="w-5 h-[1px] bg-foreground/20" />
+                                    Technology Stack
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {achievement.tags.map(tag => (
+                                        <span key={tag} className="px-3 py-1.5 bg-foreground/5 rounded-xl text-[9px] font-bold text-muted-foreground/60 border border-foreground/5 hover:bg-foreground/10 transition-colors">
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 }}
+                        className="mt-10"
+                    >
+                        {achievement.credentialUrl && (
+                            <motion.a
+                                href={achievement.credentialUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                whileHover={{ scale: 1.01 }}
+                                whileTap={{ scale: 0.99 }}
+                                className="group/btn relative w-full flex items-center justify-center gap-3 px-8 py-5 bg-foreground text-background font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] transition-all overflow-hidden shadow-xl"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/10 to-transparent -translate-x-full group-hover/btn:animate-shimmer" />
+                                <span className="relative">Verified Credential</span>
+                                <ExternalLink className="w-4 h-4 relative" />
+                            </motion.a>
+                        )}
+                    </motion.div>
                 </div>
             </motion.div>
         </motion.div>
@@ -355,7 +422,6 @@ export default function AchievementsPage() {
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [activeCategory, setActiveCategory] = useState('all');
     const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
-    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     const stats = useMemo(() => {
         const total = portfolioData.achievements.length;
@@ -538,7 +604,6 @@ export default function AchievementsPage() {
                             </div>
                         </motion.div>
 
-                        {/* Cards Grid */}
                         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <AnimatePresence mode="popLayout">
                                 {filteredAchievements.map((achievement, index) => (
@@ -547,9 +612,6 @@ export default function AchievementsPage() {
                                         achievement={achievement}
                                         onClick={() => setSelectedAchievement(achievement)}
                                         index={index}
-                                        onMouseEnter={() => setHoveredIndex(index)}
-                                        onMouseLeave={() => setHoveredIndex(null)}
-                                        isHovered={hoveredIndex === index}
                                     />
                                 ))}
                             </AnimatePresence>

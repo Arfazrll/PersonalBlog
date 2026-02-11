@@ -33,8 +33,9 @@ export interface Experience {
     endDate?: string;
     isOngoing: boolean;
     location?: string;
-    type: 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance';
+    type: 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance' | 'volunteer' | 'apprenticeship' | 'self-employed';
     logo?: string;
+    link?: string;
 }
 
 export interface Education {
@@ -59,13 +60,15 @@ export interface Achievement {
     image?: string;
     credentialUrl?: string;
     credentialId?: string;
+    tags?: string[];
+    type?: string;
     category: 'certification' | 'award' | 'recognition' | 'publication';
 }
 
 export interface Skill {
     name: string;
     level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-    category: 'frontend' | 'backend' | 'database' | 'devops' | 'mobile' | 'ai' | 'data' | 'blockchain' | 'software' | 'other';
+    category: 'frontend' | 'backend' | 'database' | 'devops' | 'mobile' | 'ai' | 'data' | 'blockchain' | 'software' | 'cloud' | 'other';
 }
 
 export interface TechStack {

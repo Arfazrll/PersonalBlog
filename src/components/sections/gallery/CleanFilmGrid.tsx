@@ -16,6 +16,7 @@ export default function CleanFilmGrid() {
     const [sort, setSort] = useState<SortType>('newest');
     const [viewMode, setViewMode] = useState<'rows' | 'grid'>('rows');
     const [isLightboxMaximized, setIsLightboxMaximized] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(12); // Start with 12 items
 
     // Initial Data
     const allItems = portfolioData.gallery;
@@ -56,6 +57,16 @@ export default function CleanFilmGrid() {
     const flattenedFilteredItems = useMemo(() => {
         return categories.flatMap(cat => groupedItems[cat]);
     }, [categories, groupedItems]);
+
+    // Reset visible count when filter changes
+    useEffect(() => {
+        setVisibleCount(12);
+    }, [filter]);
+
+    const visibleItems = useMemo(() => {
+        if (viewMode === 'rows') return []; // Not used in rows mode
+        return flattenedFilteredItems.slice(0, visibleCount);
+    }, [flattenedFilteredItems, visibleCount, viewMode]);
 
     const currentIndex = flattenedFilteredItems.findIndex(item => item.id === selectedId);
 
@@ -320,59 +331,78 @@ export default function CleanFilmGrid() {
 
                     {/* Grid View */}
                     {viewMode === 'grid' && (
-                        <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
-                            {flattenedFilteredItems.map((item, index) => (
-                                <motion.div
-                                    key={item.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: "-10%" }}
-                                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                                    className="relative group break-inside-avoid cursor-pointer p-3 rounded-xl border border-neutral-400 dark:border-transparent bg-muted/20 dark:bg-transparent transition-all hover:shadow-md"
-                                    onClick={() => openLightbox(item.id)}
-                                >
-                                    <div className="relative overflow-hidden bg-muted aspect-auto rounded-lg">
-                                        <Image
-                                            src={item.thumbnail || item.url}
-                                            alt={item.title}
-                                            width={800}
-                                            height={600}
-                                            className="w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                        />
+                        <div className="space-y-12">
+                            <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+                                {visibleItems.map((item, index) => (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: "-10%" }}
+                                        transition={{ duration: 0.4, delay: index * 0.05 }}
+                                        className="relative group break-inside-avoid cursor-pointer p-3 rounded-xl border border-neutral-400 dark:border-transparent bg-muted/20 dark:bg-transparent transition-all hover:shadow-md"
+                                        onClick={() => openLightbox(item.id)}
+                                    >
+                                        <div className="relative overflow-hidden bg-muted aspect-auto rounded-lg">
+                                            <Image
+                                                src={item.thumbnail || item.url}
+                                                alt={item.title}
+                                                width={800}
+                                                height={600}
+                                                className="w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            />
 
-                                        {/* Type Badge */}
-                                        <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-mono uppercase text-white tracking-wider flex items-center gap-1 z-10">
-                                            {item.type === 'video' ? <Video className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
-                                            <span>{item.type}</span>
-                                        </div>
+                                            {/* Type Badge */}
+                                            <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-mono uppercase text-white tracking-wider flex items-center gap-1 z-10">
+                                                {item.type === 'video' ? <Video className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
+                                                <span>{item.type}</span>
+                                            </div>
 
-                                        {/* Hover Overlay */}
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center z-10">
-                                            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                                {item.type === 'video' ? (
-                                                    <Play className="w-5 h-5 text-white fill-current" />
-                                                ) : (
-                                                    <Maximize2 className="w-5 h-5 text-white" />
-                                                )}
+                                            {/* Hover Overlay */}
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center z-10">
+                                                <div className="bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                                    {item.type === 'video' ? (
+                                                        <Play className="w-5 h-5 text-white fill-current" />
+                                                    ) : (
+                                                        <Maximize2 className="w-5 h-5 text-white" />
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="mt-4 flex justify-between items-start">
-                                        <div>
-                                            <h3 className="text-sm font-medium uppercase tracking-wide text-foreground group-hover:text-primary transition-colors">
-                                                {item.title}
-                                            </h3>
-                                            <p className="text-xs text-muted-foreground font-mono mt-1">
-                                                {item.category}
-                                            </p>
+                                        <div className="mt-4 flex justify-between items-start">
+                                            <div>
+                                                <h3 className="text-sm font-medium uppercase tracking-wide text-foreground group-hover:text-primary transition-colors">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="text-xs text-muted-foreground font-mono mt-1">
+                                                    {item.category}
+                                                </p>
+                                            </div>
+                                            <span className="text-xs font-mono text-muted-foreground opacity-50">
+                                                {item.date}
+                                            </span>
                                         </div>
-                                        <span className="text-xs font-mono text-muted-foreground opacity-50">
-                                            {item.date}
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* Load More Button */}
+                            {visibleCount < flattenedFilteredItems.length && (
+                                <div className="flex justify-center pt-8">
+                                    <button
+                                        onClick={() => setVisibleCount(prev => prev + 12)}
+                                        className="group flex flex-col items-center gap-2"
+                                    >
+                                        <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
+                                            Load More Archives
                                         </span>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                        <div className="w-12 h-12 rounded-full border border-neutral-500 dark:border-white/20 flex items-center justify-center group-hover:bg-foreground group-hover:text-background transition-all duration-300">
+                                            <ArrowDownUp className="w-4 h-4" />
+                                        </div>
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
 
