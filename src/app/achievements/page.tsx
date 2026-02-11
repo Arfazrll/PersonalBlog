@@ -347,21 +347,10 @@ function AchievementModal({ achievement, onClose }: { achievement: Achievement; 
     );
 }
 
-import { useTheme } from 'next-themes';
-import Particles from '@/components/ui/Particles';
+// Particles removed
 
 export default function AchievementsPage() {
     const t = useTranslations('achievements');
-    const { resolvedTheme } = useTheme();
-    const [color, setColor] = useState('#ffffff');
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        // Green for Dark, Light Blue (Sky) for Light
-        setColor(resolvedTheme === 'dark' ? '#22c55e' : '#0ea5e9');
-    }, [resolvedTheme]);
-
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [activeCategory, setActiveCategory] = useState('all');
@@ -422,33 +411,17 @@ export default function AchievementsPage() {
                     transition={{ duration: 6, repeat: Infinity, delay: 1 }}
                 />
 
-                {/* Interactive Particles Layer - Z-0 to sit behind Hero (Z-10) */}
-                {mounted && (
-                    <div className="fixed inset-0 z-0 pointer-events-none">
-                        <Particles
-                            particleColors={[color]}
-                            particleCount={300}
-                            particleSpread={10}
-                            speed={0.1}
-                            particleBaseSize={160}
-                            moveParticlesOnHover={true}
-                            alphaParticles={false}
-                            disableRotation={false}
-                            pixelRatio={1}
-                            className="w-full h-full"
-                        />
-                    </div>
-                )}
+
             </div>
 
             {/* CONTINUOUS CURTAIN LAYER: Covers the fixed hero */}
             <div className="relative z-50 bg-background shadow-[0_-20px_40px_rgba(0,0,0,0.2)]">
 
                 {/* Main Two-Panel Layout */}
-                <div className="flex flex-col lg:flex-row">
+                <div className="flex flex-col lg:flex-row relative items-start">
 
                     {/* LEFT PANEL: Navigation - Sticky */}
-                    <div className="lg:w-2/5 xl:w-1/3 h-auto lg:h-screen lg:sticky lg:top-0 flex flex-col pt-28 lg:pt-36">
+                    <div className="lg:w-2/5 xl:w-1/3 w-full h-auto lg:sticky lg:top-0 py-12 lg:py-36 flex flex-col z-40 bg-background/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none">
 
                         {/* Header */}
                         <motion.div
@@ -505,14 +478,14 @@ export default function AchievementsPage() {
                         </motion.div>
                     </div>
 
-                    {/* RIGHT PANEL: Cards with own scroll */}
-                    <div className="lg:w-3/5 xl:w-2/3 h-auto lg:h-screen flex flex-col pt-8 lg:pt-36 px-6 lg:px-10 pb-8">
+                    {/* RIGHT PANEL: Cards - Natural Flow */}
+                    <div className="lg:w-3/5 xl:w-2/3 w-full flex flex-col pt-8 lg:pt-36 px-6 lg:px-10 pb-20">
 
                         {/* Controls */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-6 shrink-0"
+                            className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-8 shrink-0 z-30 sticky top-20 lg:static"
                         >
                             {/* Stats */}
                             <div className="flex gap-2 flex-wrap">
@@ -565,63 +538,44 @@ export default function AchievementsPage() {
                             </div>
                         </motion.div>
 
-                        {/* Scrollable Cards Container - SEPARATE SCROLL WITH CUSTOM STYLING */}
-                        <div
-                            className="flex-1 pr-4 -mr-4 custom-scrollbar h-auto overflow-visible lg:overflow-y-auto lg:max-h-[calc(100vh-14.5rem)] lg:[mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] lg:[webkit-mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
-                        >
-                            <style jsx>{`
-                                .custom-scrollbar::-webkit-scrollbar {
-                                    width: 5px;
-                                }
-                                .custom-scrollbar::-webkit-scrollbar-track {
-                                    background: transparent;
-                                }
-                                .custom-scrollbar::-webkit-scrollbar-thumb {
-                                    background: hsl(var(--muted-foreground) / 0.3);
-                                    border-radius: 10px;
-                                }
-                                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                                    background: hsl(var(--muted-foreground) / 0.5);
-                                }
-                            `}</style>
-                            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5 pb-8">
-                                <AnimatePresence mode="popLayout">
-                                    {filteredAchievements.map((achievement, index) => (
-                                        <AchievementCard
-                                            key={achievement.id}
-                                            achievement={achievement}
-                                            onClick={() => setSelectedAchievement(achievement)}
-                                            index={index}
-                                            onMouseEnter={() => setHoveredIndex(index)}
-                                            onMouseLeave={() => setHoveredIndex(null)}
-                                            isHovered={hoveredIndex === index}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </motion.div>
+                        {/* Cards Grid */}
+                        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <AnimatePresence mode="popLayout">
+                                {filteredAchievements.map((achievement, index) => (
+                                    <AchievementCard
+                                        key={achievement.id}
+                                        achievement={achievement}
+                                        onClick={() => setSelectedAchievement(achievement)}
+                                        index={index}
+                                        onMouseEnter={() => setHoveredIndex(index)}
+                                        onMouseLeave={() => setHoveredIndex(null)}
+                                        isHovered={hoveredIndex === index}
+                                    />
+                                ))}
+                            </AnimatePresence>
+                        </motion.div>
 
-                            {filteredAchievements.length === 0 && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="flex flex-col items-center justify-center py-16 text-center"
-                                >
-                                    <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                                        <Award className="w-16 h-16 text-muted-foreground/20 mb-4" />
-                                    </motion.div>
-                                    <p className="text-sm font-medium text-muted-foreground/50">No achievements found</p>
+                        {filteredAchievements.length === 0 && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex flex-col items-center justify-center py-20 text-center"
+                            >
+                                <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                                    <Award className="w-16 h-16 text-muted-foreground/20 mb-4" />
                                 </motion.div>
-                            )}
-                        </div>
+                                <p className="text-sm font-medium text-muted-foreground/50">No achievements found</p>
+                            </motion.div>
+                        )}
                     </div>
                 </div>
 
-                {/* FALLING TEXT SECTION - Included in the curtain */}
+                {/* FALLING TEXT SECTION - Below contents */}
                 <motion.section
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true, margin: "-50px" }}
-                    className="w-full pt-12 pb-20"
+                    className="w-full py-24 border-t border-border/20"
                 >
                     <div className="max-w-5xl mx-auto px-6">
                         {/* Section header */}
@@ -629,7 +583,7 @@ export default function AchievementsPage() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="text-center mb-8"
+                            className="text-center mb-12"
                         >
                             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-3">
                                 Technical Universe
@@ -644,7 +598,7 @@ export default function AchievementsPage() {
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
-                            className="relative w-full mx-auto h-[300px] md:h-[400px]"
+                            className="relative w-full mx-auto h-[400px]"
                         >
                             <FallingText
                                 text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
