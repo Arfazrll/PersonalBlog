@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 import { usePerformance } from '@/hooks/usePerformance';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 export default function BlogPage() {
     const t = useTranslations('blog');
@@ -144,7 +145,9 @@ export default function BlogPage() {
 
             {/* SECTION 3: MarqueeClosing */}
             <div className="w-full h-20" /> {/* Spacer for visual separation */}
-            <MarqueeClosing isLowPowerMode={isLowPowerMode} />
+            <ErrorBoundary fallback={<div className="h-40 bg-background" />}>
+                <MarqueeClosing isLowPowerMode={isLowPowerMode} />
+            </ErrorBoundary>
         </main>
     );
 }

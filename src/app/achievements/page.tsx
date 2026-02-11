@@ -10,6 +10,7 @@ import { Achievement } from '@/types';
 import FallingText from '@/components/effects/FallingText';
 import CertificateHeroScroll from '@/components/sections/CertificateHeroScroll';
 import { usePerformance } from '@/hooks/usePerformance';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 const staggerContainer = {
     hidden: { opacity: 0 },
@@ -473,7 +474,9 @@ export default function AchievementsPage() {
         <div className="min-h-screen bg-background text-foreground overflow-y-auto overflow-x-hidden">
             {/* Hero Scroll Section */}
             {!isLowPowerMode ? (
-                <CertificateHeroScroll isLowPowerMode={isLowPowerMode} />
+                <ErrorBoundary fallback={<div className="h-[60vh] flex items-center justify-center">Hero Unavailable</div>}>
+                    <CertificateHeroScroll isLowPowerMode={isLowPowerMode} />
+                </ErrorBoundary>
             ) : (
                 <div className="w-full h-[60vh] flex flex-col items-center justify-center p-8 bg-background border-b border-border/10">
                     <div className="opacity-20 italic font-serif text-2xl mb-4">The Achievement Record</div>
@@ -685,15 +688,17 @@ export default function AchievementsPage() {
                             className="relative w-full mx-auto h-[400px]"
                         >
                             {!isLowPowerMode ? (
-                                <FallingText
-                                    text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
-                                    highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
-                                    trigger="scroll"
-                                    gravity={0.8}
-                                    mouseConstraintStiffness={0.2}
-                                    fontSize="1.5rem"
-                                    fontWeight="900"
-                                />
+                                <ErrorBoundary fallback={<div className="text-center opacity-50">Visuals Unavailable</div>}>
+                                    <FallingText
+                                        text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
+                                        highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
+                                        trigger="scroll"
+                                        gravity={0.8}
+                                        mouseConstraintStiffness={0.2}
+                                        fontSize="1.5rem"
+                                        fontWeight="900"
+                                    />
+                                </ErrorBoundary>
                             ) : (
                                 <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-4 px-8 opacity-20">
                                     {"Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus".split(' ').map((word, i) => (
