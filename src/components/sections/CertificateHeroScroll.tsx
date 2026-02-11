@@ -90,13 +90,19 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             cert6: { top: vh * 0.65, left: vw * 0.75, width: vw * 0.18, height: vh * 0.25, borderRadius: 12, zIndex: 1 },
         };
 
+        // Mobile Grid Calculations (Pre-calculated for initial state to match final sizes and avoid layout thrashing)
+        const mGap = 10;
+        const mGridW = vw * 0.9;
+        const mColW = (mGridW - mGap) / 2;
+        const fixedHeight = 160;
+
         const mobileInitial: Record<string, Position> = {
-            cert1: { top: vh * 0.15, left: vw * 0.05, width: vw * 0.42, height: vh * 0.18, borderRadius: 8, zIndex: 1 },
-            cert2: { top: vh * 0.12, left: vw * 0.52, width: vw * 0.4, height: vh * 0.15, borderRadius: 8, zIndex: 1 },
-            cert3: { top: vh * 0.35, left: vw * 0.08, width: vw * 0.38, height: vh * 0.18, borderRadius: 8, zIndex: 1 },
-            cert4: { top: vh * 0.60, left: vw * 0.10, width: vw * 0.42, height: vh * 0.20, borderRadius: 8, zIndex: 1 },
-            cert5: { top: vh * 0.65, left: vw * 0.55, width: vw * 0.38, height: vh * 0.15, borderRadius: 8, zIndex: 1 },
-            cert6: { top: vh * 0.40, left: vw * 0.50, width: vw * 0.35, height: vh * 0.20, borderRadius: 8, zIndex: 1 },
+            cert1: { top: vh * 0.15, left: vw * 0.05, width: mColW, height: fixedHeight, borderRadius: 8, zIndex: 1 },
+            cert2: { top: vh * 0.12, left: vw * 0.52, width: mColW, height: fixedHeight, borderRadius: 8, zIndex: 1 },
+            cert3: { top: vh * 0.35, left: vw * 0.08, width: mColW, height: fixedHeight, borderRadius: 8, zIndex: 1 },
+            cert4: { top: vh * 0.60, left: vw * 0.10, width: mColW, height: fixedHeight, borderRadius: 8, zIndex: 1 },
+            cert5: { top: vh * 0.65, left: vw * 0.55, width: mColW, height: fixedHeight, borderRadius: 8, zIndex: 1 },
+            cert6: { top: vh * 0.40, left: vw * 0.50, width: mColW, height: fixedHeight, borderRadius: 8, zIndex: 1 },
         };
 
         const initial = isCurrentlyMobile ? mobileInitial : desktopInitial;
@@ -119,10 +125,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             cert6: { top: startY + (gridH - gap) * 0.65 + gap, left: startX + col1W + col2W + 2 * gap, width: col3W, height: (gridH - gap) * 0.35, borderRadius: 8, zIndex: 10 },
         };
 
-        const mGap = 10;
-        const mGridW = vw * 0.9;
         const mStartX = (vw - mGridW) / 2;
-        const mColW = (mGridW - mGap) / 2;
         const mStartY = vh * 0.2;
 
         const mobileFinal: Record<string, Position> = {
@@ -289,7 +292,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                         }}
                         className="absolute overflow-hidden shadow-2xl border border-border/20 bg-card rounded-lg"
                         style={{
-                            willChange: "transform, width, height, top, left, opacity",
+                            willChange: "transform, opacity", // Optimized will-change
                             zIndex: 1 // Base z-index
                         }}
                     >
@@ -297,6 +300,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                             src={image.src}
                             alt={image.alt}
                             fill
+                            priority={true} // Priority loading
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover opacity-90 hover:opacity-100 transition-opacity"
                         />

@@ -168,9 +168,9 @@ export default function FallingText({
 
         wordBodiesRef.current.forEach(({ elem, body }) => {
             elem.style.position = 'absolute';
-            elem.style.left = `${body.position.x - (body.bounds.max.x - body.bounds.min.x) / 2}px`;
-            elem.style.top = `${body.position.y - (body.bounds.max.y - body.bounds.min.y) / 2}px`;
-            elem.style.transform = 'none';
+            elem.style.left = '0';
+            elem.style.top = '0';
+            elem.style.transform = `translate3d(${body.position.x}px, ${body.position.y}px, 0) translate(-50%, -50%)`;
         });
 
         const mouse = Mouse.create(containerRef.current);
@@ -202,9 +202,8 @@ export default function FallingText({
 
             wordBodiesRef.current.forEach(({ body, elem }) => {
                 const { x, y } = body.position;
-                elem.style.left = `${x}px`;
-                elem.style.top = `${y}px`;
-                elem.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
+                // Use transform-only for performance (prevents layout thrashing)
+                elem.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${body.angle}rad)`;
             });
 
             animationFrameIdRef.current = requestAnimationFrame(syncLoop);

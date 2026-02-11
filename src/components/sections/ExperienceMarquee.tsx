@@ -108,8 +108,8 @@ export default function ExperienceMarquee() {
     // Select specific experiences matching the 10 uploaded logos
     const experiences = portfolioData.experiences;
 
-    const topIds = ['exp-1', 'exp-2', 'exp-3', 'exp-4', 'exp-5'];
-    const bottomIds = ['exp-7', 'exp-10', 'exp-12', 'exp-14', 'exp-9'];
+    const topIds = ['prof-1', 'prof-2', 'prof-3', 'prof-4', 'prof-5'];
+    const bottomIds = ['prof-6', 'lead-2', 'lead-5', 'vol-1', 'cert-1'];
 
     const row1 = experiences.filter((exp: Experience) => topIds.includes(exp.id));
     const row2 = experiences.filter((exp: Experience) => bottomIds.includes(exp.id));
