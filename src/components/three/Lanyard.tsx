@@ -198,8 +198,9 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
     );
 }
 
-export function Lanyard() {
-    const { isLowPowerMode } = usePerformance();
+export function Lanyard({ isLowPowerMode: isLowPowerModeProp }: { isLowPowerMode?: boolean }) {
+    const { isLowPowerMode: isLowPowerModeHook } = usePerformance();
+    const isLowPowerMode = isLowPowerModeProp ?? isLowPowerModeHook;
 
     if (isLowPowerMode) {
         return (

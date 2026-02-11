@@ -1,17 +1,19 @@
-'use client';
-
 import { motion, useMotionValue } from 'framer-motion';
 import { useRef } from 'react';
 import { MoveRight } from 'lucide-react';
 import Link from 'next/link';
 import { Terminal, TypingAnimation, AnimatedSpan } from '@/components/ui/terminal';
+import { usePerformance } from '@/hooks/usePerformance';
+import { cn } from '@/lib/utils';
 
 export const SkillsClosing = () => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const { isLowPowerMode } = usePerformance();
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isLowPowerMode) return;
         const rect = e.currentTarget.getBoundingClientRect();
         mouseX.set(e.clientX - rect.left);
         mouseY.set(e.clientY - rect.top);
@@ -29,9 +31,12 @@ export const SkillsClosing = () => {
             {/* 2. KINETIC TYPOGRAPHY (Marquee) */}
             <div className="absolute top-12 left-0 w-full overflow-hidden opacity-10 dark:opacity-5 pointer-events-none">
                 <motion.div
-                    animate={{ x: ["0%", "-50%"] }}
-                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                    className="flex whitespace-nowrap gap-24 text-[12vw] font-black uppercase leading-none text-foreground"
+                    animate={isLowPowerMode ? {} : { x: ["0%", "-50%"] }}
+                    transition={isLowPowerMode ? {} : { duration: 30, repeat: Infinity, ease: "linear" }}
+                    className={cn(
+                        "flex whitespace-nowrap gap-24 text-[12vw] font-black uppercase leading-none text-foreground",
+                        isLowPowerMode && "animate-marquee"
+                    )}
                 >
                     <span>System Architecture</span>
                     <span>System Architecture</span>
@@ -40,9 +45,12 @@ export const SkillsClosing = () => {
 
             <div className="absolute bottom-12 left-0 w-full overflow-hidden opacity-10 dark:opacity-5 pointer-events-none">
                 <motion.div
-                    animate={{ x: ["-50%", "0%"] }}
-                    transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-                    className="flex whitespace-nowrap gap-24 text-[12vw] font-black uppercase leading-none text-foreground"
+                    animate={isLowPowerMode ? {} : { x: ["-50%", "0%"] }}
+                    transition={isLowPowerMode ? {} : { duration: 35, repeat: Infinity, ease: "linear" }}
+                    className={cn(
+                        "flex whitespace-nowrap gap-24 text-[12vw] font-black uppercase leading-none text-foreground",
+                        isLowPowerMode && "animate-marquee-reverse"
+                    )}
                 >
                     <span>Creative Engineering</span>
                     <span>Creative Engineering</span>

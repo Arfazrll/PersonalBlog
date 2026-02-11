@@ -2,8 +2,9 @@
 import React from "react";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
 import { GraduationCap, BookOpen, Star, Binary, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export default function ExperienceStickyScroll() {
+export default function ExperienceStickyScroll({ isLowPowerMode = false }: { isLowPowerMode?: boolean }) {
     const journeyContent = [
         {
             label: "Higher Education • Current",
@@ -18,8 +19,8 @@ export default function ExperienceStickyScroll() {
 
                     <div className="relative z-10 flex flex-col items-center">
                         <div className="relative mb-6">
-                            <GraduationCap className="w-20 h-20 text-primary animate-pulse" />
-                            <Binary className="w-8 h-8 text-blue-500 absolute -top-2 -right-2 animate-bounce opacity-50" />
+                            <GraduationCap className={cn("w-20 h-20 text-primary", !isLowPowerMode && "animate-pulse")} />
+                            <Binary className={cn("w-8 h-8 text-blue-500 absolute -top-2 -right-2 opacity-50", !isLowPowerMode && "animate-bounce")} />
                         </div>
 
                         <div className="flex flex-wrap gap-2 justify-center mb-4">
@@ -33,7 +34,9 @@ export default function ExperienceStickyScroll() {
                     </div>
 
                     {/* Holographic Scan Effect */}
-                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-scan z-20" />
+                    {!isLowPowerMode && (
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-scan z-20" />
+                    )}
                 </div>
             ),
         },
@@ -50,7 +53,7 @@ export default function ExperienceStickyScroll() {
                     <div className="relative z-10 flex flex-col items-center">
                         <div className="relative mb-6">
                             <BookOpen className="w-20 h-20 text-orange-500 hover:rotate-6 transition-transform duration-500" />
-                            <Sparkles className="w-6 h-6 text-yellow-500 absolute -bottom-2 -left-2 animate-pulse" />
+                            <Sparkles className={cn("w-6 h-6 text-yellow-500 absolute -bottom-2 -left-2", !isLowPowerMode && "animate-pulse")} />
                         </div>
 
                         <div className="flex flex-wrap gap-2 justify-center mb-4">
@@ -69,7 +72,7 @@ export default function ExperienceStickyScroll() {
 
     return (
         <div className="w-full">
-            <StickyScroll content={journeyContent} />
+            <StickyScroll content={journeyContent} isLowPowerMode={isLowPowerMode} />
         </div>
     );
 }

@@ -372,11 +372,11 @@
 }
 
 .animate-marquee {
-  animation: marquee linear infinite;
+  animation: marquee 20s linear infinite;
 }
 
 .animate-marquee-reverse {
-  animation: marquee-reverse linear infinite;
+  animation: marquee-reverse 20s linear infinite;
 }
 
 @keyframes spin {

@@ -9,7 +9,7 @@ import { portfolioData } from '@/data/portfolio';
 import dynamic from 'next/dynamic';
 import ScrollVelocity from '@/components/ui/ScrollVelocity';
 
-const Lanyard = dynamic(() => import('@/components/three/Lanyard').then(mod => mod.Lanyard), {
+const Lanyard = dynamic<{ isLowPowerMode?: boolean }>(() => import('@/components/three/Lanyard').then(mod => mod.Lanyard), {
     ssr: false,
     loading: () => <div className="w-full h-full flex items-center justify-center bg-transparent"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>
 });
@@ -17,13 +17,13 @@ const Lanyard = dynamic(() => import('@/components/three/Lanyard').then(mod => m
 import { Meteors } from '@/components/ui/meteors';
 
 // Custom Marquee Component
-function SocialTicker({ items, direction = 'left', speed = 30 }: { items: any[], direction?: 'left' | 'right', speed?: number }) {
+function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = false }: { items: any[], direction?: 'left' | 'right', speed?: number, isLowPowerMode?: boolean }) {
     return (
         <div className="flex overflow-hidden relative w-full group py-4 select-none">
             <motion.div
                 className="flex gap-4 flex-nowrap"
                 initial={{ x: direction === 'left' ? 0 : '-25%' }}
-                animate={{ x: direction === 'left' ? '-50%' : 0 }}
+                animate={isLowPowerMode ? { x: direction === 'left' ? 0 : '-25%' } : { x: direction === 'left' ? '-50%' : 0 }}
                 transition={{
                     ease: "linear",
                     duration: speed,
@@ -273,8 +273,11 @@ const socialDescriptions: Record<string, string> = {
     Spotify: "Music"
 };
 
+import { usePerformance } from '@/hooks/usePerformance';
+
 export default function ContactPage() {
     const t = useTranslations('contact');
+    const { isLowPowerMode } = usePerformance();
 
     // Example Socials
     const getSocialItem = (platform: string) => {
@@ -310,7 +313,7 @@ export default function ContactPage() {
             <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none z-0" />
             <div className="fixed inset-0 bg-background/60 backdrop-blur-[2px] pointer-events-none z-0" />
             <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
-                <Meteors number={100} />
+                <Meteors number={isLowPowerMode ? 20 : 100} />
             </div>
 
             {/* 3. MAIN CONTENT: (Header + Form + Lanyard) */}
@@ -318,8 +321,8 @@ export default function ContactPage() {
                 className="relative z-10"
                 style={{
                     opacity: useTransform(showFAQ, [0, 0.4], [1, 0.6]),
-                    scale: useTransform(showFAQ, [0, 0.4], [1, 0.98]),
-                    filter: useTransform(showFAQ, [0, 0.4], ["blur(0px)", "blur(2px)"]),
+                    scale: isLowPowerMode ? 1 : useTransform(showFAQ, [0, 0.4], [1, 0.98]),
+                    filter: isLowPowerMode ? "none" : useTransform(showFAQ, [0, 0.4], ["blur(0px)", "blur(2px)"]),
                 }}
             >
 
@@ -330,6 +333,7 @@ export default function ContactPage() {
                             texts={[t('hero.ticker.build'), t('hero.ticker.freelance')]}
                             velocity={20}
                             className="text-7xl md:text-[9rem] font-black tracking-tight uppercase whitespace-nowrap"
+                            isLowPowerMode={isLowPowerMode}
                         />
                     </div>
                 </div>
@@ -343,7 +347,7 @@ export default function ContactPage() {
                         {/* Shorter height 600px to raise bottom, top sticky align */}
                         <div className="hidden lg:flex lg:col-span-4 sticky top-20 h-[600px] pointer-events-none">
                             <div className="w-full h-full pointer-events-auto">
-                                <Lanyard />
+                                <Lanyard isLowPowerMode={isLowPowerMode} />
                             </div>
                         </div>
 
@@ -358,8 +362,8 @@ export default function ContactPage() {
                                 viewport={{ once: true }}
                             >
                                 <div className="flex flex-col gap-6">
-                                    <SocialTicker items={row1Real} direction="right" speed={50} />
-                                    <SocialTicker items={row2Real} direction="left" speed={50} />
+                                    <SocialTicker items={row1Real} direction="right" speed={50} isLowPowerMode={isLowPowerMode} />
+                                    <SocialTicker items={row2Real} direction="left" speed={50} isLowPowerMode={isLowPowerMode} />
                                 </div>
                             </motion.div>
 
@@ -374,7 +378,7 @@ export default function ContactPage() {
 
                             {/* Mobile Lanyard Fallback */}
                             <div className="lg:hidden h-[400px] w-full relative">
-                                <Lanyard />
+                                <Lanyard isLowPowerMode={isLowPowerMode} />
                             </div>
                         </div>
                     </div>
@@ -396,7 +400,7 @@ export default function ContactPage() {
             >
                 {/* Dedicated Meteors for FAQ Section */}
                 < div className="absolute inset-0 pointer-events-none z-0 opacity-40" >
-                    <Meteors number={60} />
+                    <Meteors number={isLowPowerMode ? 10 : 60} />
                 </div >
 
                 {/* Ultra-Smooth Sheet Edge: Tallest gradient for deep cinematic transition */}

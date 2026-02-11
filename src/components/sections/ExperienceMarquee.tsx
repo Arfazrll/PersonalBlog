@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef } from "react";
 import {
     motion,
@@ -8,19 +6,22 @@ import {
     useTransform,
     useMotionValue,
     useVelocity,
-    useAnimationFrame
-} from "framer-motion"; // Changed to framer-motion as motion/react usage might be inconsistent in this codebase
-import { wrap } from "framer-motion";
+    useAnimationFrame,
+    wrap
+} from "framer-motion";
 import Image from "next/image";
 import { portfolioData } from "@/data/portfolio";
 import { Experience } from "@/types";
+import { usePerformance } from "@/hooks/usePerformance";
+import { cn } from "@/lib/utils";
 
 interface ParallaxProps {
     children: React.ReactNode;
     baseVelocity: number;
+    isLowPowerMode?: boolean;
 }
 
-function ParallaxText({ children, baseVelocity = 100 }: ParallaxProps) {
+function ParallaxText({ children, baseVelocity = 100, isLowPowerMode = false }: ParallaxProps) {
     const baseX = useMotionValue(0);
     const { scrollY } = useScroll();
     const scrollVelocity = useVelocity(scrollY);
@@ -38,7 +39,7 @@ function ParallaxText({ children, baseVelocity = 100 }: ParallaxProps) {
     const isHovered = useRef(false);
 
     useAnimationFrame((t, delta) => {
-        if (isHovered.current) return;
+        if (isHovered.current || isLowPowerMode) return;
 
         let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
 
@@ -52,6 +53,22 @@ function ParallaxText({ children, baseVelocity = 100 }: ParallaxProps) {
 
         baseX.set(baseX.get() + moveBy);
     });
+
+    if (isLowPowerMode) {
+        return (
+            <div className="overflow-hidden whitespace-nowrap w-full py-1">
+                <div className={cn(
+                    "flex gap-4",
+                    baseVelocity > 0 ? "animate-marquee" : "animate-marquee-reverse"
+                )}>
+                    {children}
+                    {children}
+                    {children}
+                    {children}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div
@@ -87,14 +104,11 @@ const GalleryItem = ({ exp, index }: { exp: Experience; index: number }) => {
 };
 
 export default function ExperienceMarquee() {
+    const { isLowPowerMode } = usePerformance();
     // Select specific experiences matching the 10 uploaded logos
     const experiences = portfolioData.experiences;
 
-    // Explicitly filtering by ID or Company to match the 10 logos we have
-    // Top 5: CPS, HUMIC, ASE, IF LAB, DICODING
     const topIds = ['exp-1', 'exp-2', 'exp-3', 'exp-4', 'exp-5'];
-
-    // Bottom 5: DIGISTAR, GDSC, AIESEC, HMIT (TelU Logo), CODING CAMP (Microsoft Logo)
     const bottomIds = ['exp-7', 'exp-10', 'exp-12', 'exp-14', 'exp-9'];
 
     const row1 = experiences.filter((exp: Experience) => topIds.includes(exp.id));
@@ -103,8 +117,7 @@ export default function ExperienceMarquee() {
     const ensureLength = (items: Experience[]) => {
         if (items.length < 4) return [...items, ...items, ...items];
         return items;
-    }
-
+    };
     return (
         <section className="py-4 md:py-8 bg-background relative z-10 overflow-hidden">
             {/* Fog/Blur Blending Effect */}
@@ -112,13 +125,13 @@ export default function ExperienceMarquee() {
             <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background via-background/80 to-transparent z-20 pointer-events-none" />
 
             <div className="flex flex-col gap-2">
-                <ParallaxText baseVelocity={2}>
+                <ParallaxText baseVelocity={2} isLowPowerMode={isLowPowerMode}>
                     {ensureLength(row1).map((exp: Experience, idx: number) => (
                         <GalleryItem key={`r1-${idx}`} exp={exp} index={idx} />
                     ))}
                 </ParallaxText>
 
-                <ParallaxText baseVelocity={-2}>
+                <ParallaxText baseVelocity={-2} isLowPowerMode={isLowPowerMode}>
                     {ensureLength(row2).map((exp: Experience, idx: number) => (
                         <GalleryItem key={`r2-${idx}`} exp={exp} index={idx + 4} />
                     ))}

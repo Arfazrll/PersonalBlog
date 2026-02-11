@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
-export const MarqueeClosing = () => {
+export const MarqueeClosing = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
     const { theme, systemTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
@@ -58,8 +58,9 @@ export const MarqueeClosing = () => {
                     showBoats={true}
                     boatCount={6}
                     boatSpread={20}
-                    showWireframe={true}
+                    showWireframe={!isLowPowerMode} // Disable wireframe for performance
                     oceanOpacity={oceanConfig.opacity}
+                    isLowPowerMode={isLowPowerMode}
                 />
 
                 {/* Top Fade Only - Seamless Integration */}
@@ -74,9 +75,9 @@ export const MarqueeClosing = () => {
             <div className="relative z-10 flex-1 flex flex-col items-center justify-center container px-6 py-20 text-center space-y-12">
 
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: isLowPowerMode ? 0.5 : 1, ease: [0.22, 1, 0.36, 1] }}
                     viewport={{ once: true }}
                     className="flex flex-col items-center gap-8 max-w-4xl mx-auto"
                 >
@@ -146,7 +147,7 @@ export const MarqueeClosing = () => {
                     </div>
                 </motion.div>
             </div>
-        </div>
+        </div >
     );
 };
 

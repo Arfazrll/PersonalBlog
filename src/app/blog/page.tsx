@@ -11,10 +11,13 @@ import { Search, Filter, Grid3X3, List, ImageIcon, ArrowRight } from 'lucide-rea
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
+import { usePerformance } from '@/hooks/usePerformance';
+
 export default function BlogPage() {
     const t = useTranslations('blog');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
+    const { isLowPowerMode } = usePerformance();
 
     const categories = ['all', 'ai', 'web3', 'coding', 'other'];
 
@@ -31,16 +34,18 @@ export default function BlogPage() {
     return (
         <main className="min-h-screen bg-background overflow-hidden selection:bg-primary/30">
             {/* SECTION 1: BentoHero */}
-            <BentoHero />
+            <BentoHero isLowPowerMode={isLowPowerMode} />
 
             {/* SECTION 2: Blog Cards Content */}
             <div className="relative z-10 pt-12 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-background via-background/80 to-background dark:from-black dark:via-black dark:to-black">
-                {/* Background Effects */}
-                <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                    <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/5 blur-[200px] rounded-full opacity-40 dark:opacity-0 -translate-y-1/2 translate-x-1/2" />
-                    <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[200px] rounded-full opacity-30 dark:opacity-0 translate-y-1/2 -translate-x-1/2" />
-                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] dark:opacity-0 mix-blend-overlay" />
-                </div>
+                {/* Background Effects - Hidden in Low Power Mode */}
+                {!isLowPowerMode && (
+                    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/5 blur-[200px] rounded-full opacity-40 dark:opacity-0 -translate-y-1/2 translate-x-1/2" />
+                        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[200px] rounded-full opacity-30 dark:opacity-0 translate-y-1/2 -translate-x-1/2" />
+                        <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] dark:opacity-0 mix-blend-overlay" />
+                    </div>
+                )}
 
                 <div className="container mx-auto relative z-10">
                     {/* Header Section - Modern Editorial */}
@@ -115,7 +120,7 @@ export default function BlogPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <AnimatePresence mode="popLayout">
                             {filteredPosts.map((post, idx) => (
-                                <BlogCard key={post.id} post={post} index={idx} />
+                                <BlogCard key={post.id} post={post} index={idx} isLowPowerMode={isLowPowerMode} />
                             ))}
                         </AnimatePresence>
                     </div>
@@ -139,7 +144,7 @@ export default function BlogPage() {
 
             {/* SECTION 3: MarqueeClosing */}
             <div className="w-full h-20" /> {/* Spacer for visual separation */}
-            <MarqueeClosing />
+            <MarqueeClosing isLowPowerMode={isLowPowerMode} />
         </main>
     );
 }

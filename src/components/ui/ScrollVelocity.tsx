@@ -45,6 +45,7 @@ interface ScrollVelocityProps {
     scrollerClassName?: string;
     parallaxStyle?: React.CSSProperties;
     scrollerStyle?: React.CSSProperties;
+    isLowPowerMode?: boolean;
 }
 
 function useElementWidth(ref: React.RefObject<HTMLElement | null>): number {
@@ -77,6 +78,7 @@ export const ScrollVelocity: React.FC<ScrollVelocityProps> = ({
     scrollerClassName,
     parallaxStyle,
     scrollerStyle,
+    isLowPowerMode = false,
 }) => {
     function VelocityText({
         children,
@@ -91,7 +93,8 @@ export const ScrollVelocity: React.FC<ScrollVelocityProps> = ({
         scrollerClassName,
         parallaxStyle,
         scrollerStyle,
-    }: VelocityTextProps) {
+        isLowPowerMode,
+    }: VelocityTextProps & { isLowPowerMode: boolean }) {
         const baseX = useMotionValue(0);
         const scrollOptions = scrollContainerRef ? { container: scrollContainerRef } : {};
         const { scrollY } = useScroll(scrollOptions);
@@ -123,6 +126,8 @@ export const ScrollVelocity: React.FC<ScrollVelocityProps> = ({
 
         const directionFactor = useRef<number>(1);
         useAnimationFrame((t, delta) => {
+            if (isLowPowerMode) return; // Completely freeze the ticker in low power mode to save CPU
+
             let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
 
             /**
@@ -179,6 +184,7 @@ export const ScrollVelocity: React.FC<ScrollVelocityProps> = ({
                     scrollerClassName={scrollerClassName}
                     parallaxStyle={parallaxStyle}
                     scrollerStyle={scrollerStyle}
+                    isLowPowerMode={isLowPowerMode}
                 >
                     {text}
                 </VelocityText>

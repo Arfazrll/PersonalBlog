@@ -7,26 +7,29 @@ import {
     useSpring,
     MotionValue,
 } from "framer-motion";
-import { FiMapPin } from "react-icons/fi";
-import { ChevronDown } from "lucide-react";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
+import { usePerformance } from "@/hooks/usePerformance";
 
 export const SmoothScrollHero = () => {
+    const { isLowPowerMode } = usePerformance();
     return (
         <div className="bg-background text-zinc-900 dark:text-zinc-50 relative z-0">
-            <Hero />
+            <Hero isLowPowerMode={isLowPowerMode} />
         </div>
     );
 };
 
 const SECTION_HEIGHT = 1500;
 
-const Hero = () => {
+const Hero = ({ isLowPowerMode }: { isLowPowerMode: boolean }) => {
     const { scrollY } = useScroll();
 
-    // Single source of truth for smooth scroll physics
-    const smoothScrollY = useSpring(scrollY, {
+    // Simplify physics for low power mode
+    const smoothScrollY = useSpring(scrollY, isLowPowerMode ? {
+        stiffness: 50,
+        damping: 30
+    } : {
         mass: 0.1,
         stiffness: 100,
         damping: 20
@@ -39,11 +42,10 @@ const Hero = () => {
         >
             <CenterImage scrollY={smoothScrollY} />
 
-            <ParallaxImages scrollY={smoothScrollY} />
+            {!isLowPowerMode && <ParallaxImages scrollY={smoothScrollY} />}
 
             <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent to-background z-20 pointer-events-none" />
 
-            {/* Scroll Indicator - Shifted left to match 'About' nav alignment */}
             <motion.div
                 className="fixed bottom-6 left-1/2 -translate-x-[65%] z-50 hidden md:flex flex-col items-center gap-2 cursor-pointer pointer-events-auto"
                 initial={{ opacity: 0, y: 20 }}

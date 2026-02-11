@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
 
+import { usePerformance } from '@/hooks/usePerformance';
+
 // Logo mapping
 const toolLogos: Record<string, string> = {
     'VS Code': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg',
@@ -22,10 +24,12 @@ const toolLogos: Record<string, string> = {
 
 export const ToolsSection = () => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const { isLowPowerMode } = usePerformance();
     const mouseX = useMotionValue(-1000);
     const mouseY = useMotionValue(-1000);
 
     const handleMouseMove = (e: React.MouseEvent) => {
+        if (isLowPowerMode) return;
         if (containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
             mouseX.set(e.clientX - rect.left);
@@ -42,7 +46,6 @@ export const ToolsSection = () => {
             className="py-32 relative bg-background min-h-screen flex flex-col items-center justify-center overflow-hidden"
         >
             {/* BACKGROUND AMBIENCE */}
-            {/* Deep subtle gradient to give depth to the void */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--background)_0%,_#050505_100%)] z-0" />
 
             {/* NOISE FILTER for Texture */}
@@ -86,6 +89,7 @@ export const ToolsSection = () => {
                         mouseX={mouseX}
                         mouseY={mouseY}
                         index={index}
+                        isLowPowerMode={isLowPowerMode}
                     />
                 ))}
             </div>
@@ -99,15 +103,14 @@ export const ToolsSection = () => {
     );
 };
 
-const MistItem = ({ tool, mouseX, mouseY, index = 0 }: { tool: any, mouseX: any, mouseY: any, index?: number }) => {
+const MistItem = ({ tool, mouseX, mouseY, index = 0, isLowPowerMode }: { tool: any, mouseX: any, mouseY: any, index?: number, isLowPowerMode?: boolean }) => {
     const itemRef = useRef<HTMLDivElement>(null);
     const iconUrl = toolLogos[tool.name] || (tool.icon?.includes('http') ? tool.icon : `https://cdn.simpleicons.org/${tool.name.toLowerCase().replace(/[\s.]/g, '')}`);
 
-    // Distance Calculation
+    // Distance Calculation (Memoized or conditional)
     const distance = useTransform([mouseX, mouseY], ([x, y]) => {
-        if (!itemRef.current) return 1000;
+        if (isLowPowerMode || !itemRef.current) return 1000;
 
-        // Use simpler bounding check relative to viewport/container logic
         const rect = itemRef.current.getBoundingClientRect();
         const container = itemRef.current.parentElement?.getBoundingClientRect();
         if (!container) return 1000;
@@ -121,18 +124,14 @@ const MistItem = ({ tool, mouseX, mouseY, index = 0 }: { tool: any, mouseX: any,
     });
 
     // --- ANIMATIONS ---
-    // 1. VISIBILITY: Improved clarity. 
-    // - Blur is very subtle (max 2px instead of 12px)
-    // - Opacity is higher (min 0.4 instead of 0.05) so items are always visible
     const blur = useTransform(distance, [0, 500], [0, 2]);
     const opacity = useTransform(distance, [0, 400], [1, 0.4]);
     const scale = useTransform(distance, [0, 300], [1.1, 0.9]);
-
-    // 2. COLOR: Grayscale works well for focus, keeping it but softer
     const grayscale = useTransform(distance, [0, 200], [0, 80]);
-
-    // 3. MAGNETIC PULL: Subtle lift
     const y = useTransform(distance, [0, 300], [-10, 0]);
+
+    // Use motion templates conditionally or handle in style
+    const filterValue = useMotionTemplate`blur(${blur}px) grayscale(${grayscale}%)`;
 
     return (
         <motion.div
@@ -141,8 +140,7 @@ const MistItem = ({ tool, mouseX, mouseY, index = 0 }: { tool: any, mouseX: any,
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: index * 0.05, ease: "easeOut" }}
-            style={{
-                // Removed filter from here, kept opacity/scale/y
+            style={isLowPowerMode ? { opacity: 1, scale: 1, y: 0 } : {
                 opacity,
                 scale,
                 y,
@@ -152,8 +150,8 @@ const MistItem = ({ tool, mouseX, mouseY, index = 0 }: { tool: any, mouseX: any,
             {/* ICON CONTAINER - Filter applied here */}
             <motion.div
                 className="relative w-20 h-20 md:w-24 md:h-24 transition-transform duration-500 ease-out"
-                style={{
-                    filter: useMotionTemplate`blur(${blur}px) grayscale(${grayscale}%)`
+                style={isLowPowerMode ? { filter: 'none' } : {
+                    filter: filterValue
                 }}
             >
                 <Image

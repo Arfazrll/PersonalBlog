@@ -55,7 +55,7 @@ const DAMPING = 0.96;
 const CENTER_PULL = 0.002;
 const MAX_SPEED = 12;
 
-export function TechStack({ techStack, tools }: TechStackProps) {
+export function TechStack({ techStack, tools, isLowPowerMode }: TechStackProps & { isLowPowerMode?: boolean }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [bodies, setBodies] = useState<PhysicsBody[]>([]);
     const [mousePos, setMousePos] = useState({ x: -9999, y: -9999 });
@@ -64,7 +64,7 @@ export function TechStack({ techStack, tools }: TechStackProps) {
 
     // --- Physics Initialization & Loop ---
     useEffect(() => {
-        if (!containerRef.current) return;
+        if (!containerRef.current || isLowPowerMode) return;
 
         const HERO_TECHS = ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Three.js', 'Node.js', 'Go', 'Python'];
         const width = containerRef.current.offsetWidth;
@@ -172,13 +172,17 @@ export function TechStack({ techStack, tools }: TechStackProps) {
                 return { ...body, x, y, vx, vy };
             });
         });
-        requestRef.current = requestAnimationFrame(updatePhysics);
+        if (!isLowPowerMode) {
+            requestRef.current = requestAnimationFrame(updatePhysics);
+        }
     };
 
     useEffect(() => {
-        requestRef.current = requestAnimationFrame(updatePhysics);
+        if (!isLowPowerMode) {
+            requestRef.current = requestAnimationFrame(updatePhysics);
+        }
         return () => cancelAnimationFrame(requestRef.current);
-    }, [mousePos, gravityOn]);
+    }, [mousePos, gravityOn, isLowPowerMode]);
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!containerRef.current) return;
@@ -217,55 +221,99 @@ export function TechStack({ techStack, tools }: TechStackProps) {
                     </div>
 
                     {/* Controls */}
-                    <div className="absolute top-4 right-4 z-50 flex gap-2">
-                        <motion.button onClick={() => setGravityOn(!gravityOn)}
-                            className={cn(
-                                "p-2 rounded-full border backdrop-blur-md transition-all",
-                                gravityOn
-                                    ? "bg-emerald-100 dark:bg-emerald-500/20 border-emerald-600 dark:border-emerald-500 text-emerald-700 dark:text-emerald-400"
-                                    : "bg-white dark:bg-white/5 border-zinc-400 dark:border-white/10 text-zinc-800 dark:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-white/10"
-                            )}>
-                            <ArrowDown className="w-4 h-4" />
-                        </motion.button>
-                        <motion.button onClick={resetPositions}
-                            className="p-2 rounded-full bg-white dark:bg-white/5 border border-zinc-400 dark:border-white/10 text-zinc-800 dark:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-white/10">
-                            <RefreshCw className="w-4 h-4" />
-                        </motion.button>
-                    </div>
+                    {!isLowPowerMode && (
+                        <div className="absolute top-4 right-4 z-50 flex gap-2">
+                            <motion.button onClick={() => setGravityOn(!gravityOn)}
+                                className={cn(
+                                    "p-2 rounded-full border backdrop-blur-md transition-all",
+                                    gravityOn
+                                        ? "bg-emerald-100 dark:bg-emerald-500/20 border-emerald-600 dark:border-emerald-500 text-emerald-700 dark:text-emerald-400"
+                                        : "bg-white dark:bg-white/5 border-zinc-400 dark:border-white/10 text-zinc-800 dark:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-white/10"
+                                )}>
+                                <ArrowDown className="w-4 h-4" />
+                            </motion.button>
+                            <motion.button onClick={resetPositions}
+                                className="p-2 rounded-full bg-white dark:bg-white/5 border border-zinc-400 dark:border-white/10 text-zinc-800 dark:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-white/10">
+                                <RefreshCw className="w-4 h-4" />
+                            </motion.button>
+                        </div>
+                    )}
 
-                    {/* Bodies */}
-                    {bodies.map((body) => (
-                        <div key={body.id}
-                            className={cn(
-                                "absolute flex items-center justify-center rounded-full shadow-lg backdrop-blur-sm border transition-colors select-none",
-                                body.isHero
-                                    ? "bg-emerald-50/80 dark:bg-white/10 border-emerald-200 dark:border-emerald-500 shadow-[0_4px_20px_rgba(16,185,129,0.1)] dark:shadow-[0_0_15px_rgba(16,185,129,0.2)] text-emerald-900 dark:text-emerald-100"
-                                    : "bg-white/80 dark:bg-white/5 border-zinc-200 dark:border-white/5 text-zinc-700 dark:text-white/80"
-                            )}
-                            style={{
-                                width: body.radius * 2, height: body.radius * 2,
-                                transform: `translate(${body.x - body.radius}px, ${body.y - body.radius}px)`,
-                            }}
-                        >
-                            <div className={cn("relative flex items-center justify-center overflow-hidden", body.isHero ? "w-[65%] h-[65%]" : "w-[60%] h-[60%]")}>
-                                {body.icon ? (
-                                    <img
-                                        src={body.icon}
-                                        alt={body.id}
-                                        className={cn(
-                                            "w-full h-full object-contain pointer-events-none opacity-90 dark:opacity-90",
-                                            ["Next.js", "GitHub"].includes(body.id.replace('-tool', '')) && "dark:invert"
-                                        )}
-                                    />
-                                ) : (
-                                    <span className={cn(
-                                        "text-[10px] font-bold text-center leading-tight px-1",
-                                        body.isHero ? "text-emerald-950 dark:text-white" : "text-black dark:text-white/60"
-                                    )}>{body.id.replace('-tool', '')}</span>
-                                )}
+                    {/* Bodies / Fallback Grid */}
+                    {isLowPowerMode ? (
+                        <div className="absolute inset-0 flex items-center justify-center p-8">
+                            <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4 sm:gap-6 max-w-5xl mx-auto">
+                                {[...techStack, ...(tools || [])].map((item, idx) => {
+                                    const icon = portfolioData.techStack.find((t: TechStackType) => t.name.toLowerCase() === item.toLowerCase())?.icon ||
+                                        portfolioData.tools.find((t: Tool) => t.name.toLowerCase() === item.toLowerCase())?.icon;
+                                    const isHero = ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Three.js', 'Node.js', 'Go', 'Python'].includes(item);
+
+                                    return (
+                                        <motion.div
+                                            key={item}
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: idx * 0.02 }}
+                                            className={cn(
+                                                "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center border shadow-sm",
+                                                isHero
+                                                    ? "bg-emerald-50/50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30"
+                                                    : "bg-white/50 dark:bg-white/5 border-zinc-100 dark:border-white/5"
+                                            )}
+                                        >
+                                            <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center overflow-hidden">
+                                                {icon ? (
+                                                    <img
+                                                        src={icon}
+                                                        alt={item}
+                                                        className={cn(
+                                                            "w-full h-full object-contain opacity-90",
+                                                            ["Next.js", "GitHub"].includes(item) && "dark:invert"
+                                                        )}
+                                                    />
+                                                ) : (
+                                                    <span className="text-xs font-bold opacity-50">{item[0]}</span>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
                         </div>
-                    ))}
+                    ) : (
+                        bodies.map((body) => (
+                            <div key={body.id}
+                                className={cn(
+                                    "absolute flex items-center justify-center rounded-full shadow-lg backdrop-blur-sm border transition-colors select-none",
+                                    body.isHero
+                                        ? "bg-emerald-50/80 dark:bg-white/10 border-emerald-200 dark:border-emerald-500 shadow-[0_4px_20px_rgba(16,185,129,0.1)] dark:shadow-[0_0_15px_rgba(16,185,129,0.2)] text-emerald-900 dark:text-emerald-100"
+                                        : "bg-white/80 dark:bg-white/5 border-zinc-200 dark:border-white/5 text-zinc-700 dark:text-white/80"
+                                )}
+                                style={{
+                                    width: body.radius * 2, height: body.radius * 2,
+                                    transform: `translate(${body.x - body.radius}px, ${body.y - body.radius}px)`,
+                                }}
+                            >
+                                <div className={cn("relative flex items-center justify-center overflow-hidden", body.isHero ? "w-[65%] h-[65%]" : "w-[60%] h-[60%]")}>
+                                    {body.icon ? (
+                                        <img
+                                            src={body.icon}
+                                            alt={body.id}
+                                            className={cn(
+                                                "w-full h-full object-contain pointer-events-none opacity-90 dark:opacity-90",
+                                                ["Next.js", "GitHub"].includes(body.id.replace('-tool', '')) && "dark:invert"
+                                            )}
+                                        />
+                                    ) : (
+                                        <span className={cn(
+                                            "text-[10px] font-bold text-center leading-tight px-1",
+                                            body.isHero ? "text-emerald-950 dark:text-white" : "text-black dark:text-white/60"
+                                        )}>{body.id.replace('-tool', '')}</span>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    )}
 
                     {/* Scroll Hint (Lowered) */}
                     <div className="absolute bottom-20 left-0 right-0 flex justify-center animate-bounce opacity-50 pointer-events-none">

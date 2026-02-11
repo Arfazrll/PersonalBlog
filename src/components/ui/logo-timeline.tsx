@@ -6,9 +6,56 @@ import { motion, stagger, useAnimate, useInView } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Icons } from "../icons"
 
+export type LogoIconType =
+  | "discord"
+  | "twitter"
+  | "gitHub"
+  | "react"
+  | "ts"
+  | "tailwind"
+  | "radix"
+  | "googleDrive"
+  | "notion"
+  | "whatsapp"
+  | "messenger"
+  | "openai"
+  | "zapier"
+  | "v0"
+  | "paypal"
+  | "applePay"
+  | "server"
+  | "unknown"
+  | "nextjs"
+  | "typescript"
+  | "nodejs"
+  | "express"
+  | "postgresql"
+  | "mongodb"
+  | "graphql"
+  | "apollo"
+  | "docker"
+  | "kubernetes"
+  | "aws"
+  | "azure"
+  | "gcp"
+  | "figma"
+  | "vercel"
+  | "git"
+  | "github"
+  | "vscode"
+  | "jira"
+  | "slack"
+  | "postman"
+  | "framer"
+  | "storybook"
+  | "netlify"
+  | "stripe"
+  | "auth0"
+  | string;
+
 export interface LogoItem {
   label: string
-  icon: keyof typeof Icons
+  icon: LogoIconType
   animationDelay: number
   animationDuration: number
   row: number
@@ -21,29 +68,81 @@ interface LogoTimelineProps {
   height?: string
   className?: string
   iconSize?: number
+  isLowPowerMode?: boolean
 }
 
 export function LogoTimeline({
-  items,
   title,
   subtitle = "The technologies and tools I use to build amazing projects",
   height = "h-[280px] sm:h-[350px] md:h-[400px] lg:h-[480px]",
   className,
   iconSize = 16,
-}: LogoTimelineProps) {
+  isLowPowerMode,
+}: {
+  title?: string;
+  subtitle?: string;
+  height?: string;
+  className?: string;
+  iconSize?: number;
+  isLowPowerMode?: boolean;
+}) {
   const [scope, animate] = useAnimate()
   const isInView = useInView(scope, { once: true })
 
+  // Define internal items for the timeline, categorized for flexible use
+  const techItems: LogoItem[] = [
+    { label: "React", icon: "react" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 0 },
+    { label: "Next.js", icon: "nextjs" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 0 },
+    { label: "TypeScript", icon: "typescript" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 0 },
+    { label: "Tailwind CSS", icon: "tailwind" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 0 },
+    { label: "Node.js", icon: "nodejs" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 1 },
+    { label: "Express", icon: "express" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 1 },
+    { label: "PostgreSQL", icon: "postgresql" as LogoIconType, animationDelay: 0, animationDuration: 21, row: 1 },
+    { label: "MongoDB", icon: "mongodb" as LogoIconType, animationDelay: 0, animationDuration: 24, row: 1 },
+    { label: "GraphQL", icon: "graphql" as LogoIconType, animationDelay: 0, animationDuration: 27, row: 2 },
+    { label: "Apollo", icon: "apollo" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 2 },
+    { label: "Docker", icon: "docker" as LogoIconType, animationDelay: 0, animationDuration: 29, row: 2 },
+    { label: "Kubernetes", icon: "kubernetes" as LogoIconType, animationDelay: 0, animationDuration: 30, row: 3 },
+    { label: "AWS", icon: "aws" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 3 },
+    { label: "Azure", icon: "azure" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 3 },
+    { label: "GCP", icon: "gcp" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 4 },
+    { label: "Figma", icon: "figma" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 4 },
+    { label: "Vercel", icon: "vercel" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 4 },
+  ];
+
+  const toolItems: LogoItem[] = [
+    { label: "Git", icon: "git" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 0 },
+    { label: "GitHub", icon: "github" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 0 },
+    { label: "VS Code", icon: "vscode" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 0 },
+    { label: "Jira", icon: "jira" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 1 },
+    { label: "Slack", icon: "slack" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 1 },
+    { label: "Postman", icon: "postman" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 2 },
+    { label: "Framer Motion", icon: "framer" as LogoIconType, animationDelay: 0, animationDuration: 21, row: 2 },
+    { label: "Storybook", icon: "storybook" as LogoIconType, animationDelay: 0, animationDuration: 24, row: 3 },
+    { label: "Netlify", icon: "netlify" as LogoIconType, animationDelay: 0, animationDuration: 27, row: 3 },
+    { label: "Stripe", icon: "stripe" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 4 },
+    { label: "Auth0", icon: "auth0" as LogoIconType, animationDelay: 0, animationDuration: 29, row: 4 },
+  ];
+
   const rows = React.useMemo(() => {
-    const grouped: Record<number, LogoItem[]> = {}
-    items.forEach((item) => {
-      if (!grouped[item.row]) grouped[item.row] = []
-      grouped[item.row].push(item)
-    })
-    return Object.keys(grouped)
-      .sort((a, b) => Number(a) - Number(b))
-      .map((key) => grouped[Number(key)])
-  }, [items])
+    // Reduce rows and items on low power mode
+    const rowCount = isLowPowerMode ? 3 : 5;
+    const itemsPerRow = isLowPowerMode ? 6 : 10;
+
+    const allItems = [...techItems, ...toolItems];
+
+    return Array.from({ length: rowCount }).map((_, rowIndex) => {
+      const isReverse = rowIndex % 2 === 1;
+      const items = Array.from({ length: itemsPerRow }).map((_, i) => {
+        const item = allItems[(i + rowIndex * 3) % allItems.length]; // Cycle through allItems
+        return {
+          ...item,
+          animationDuration: (item.animationDuration || 20) * (isLowPowerMode ? 1.5 : 1) // Adjust speed
+        };
+      });
+      return items;
+    });
+  }, [isLowPowerMode]);
 
   // Animate title words
   useEffect(() => {
@@ -100,21 +199,15 @@ export function LogoTimeline({
 
       {/* Timeline container - responsive margins */}
       <div
-        className={cn("relative overflow-hidden mx-4 sm:mx-8 md:mx-16 lg:mx-24", height)}
+        className={cn("relative overflow-hidden mx-4 sm:mx-8 md:mx-16 lg:mx-24", isLowPowerMode ? "h-64" : height)}
       >
-        {/* Blur/Fog Effects on Left and Right - responsive width */}
-        <div
-          className="pointer-events-none absolute inset-y-0 left-0 z-30 w-12 sm:w-16 md:w-24 lg:w-32"
-          style={{
-            background: 'linear-gradient(to right, hsl(var(--background)) 0%, hsl(var(--background) / 0.95) 40%, hsl(var(--background) / 0.6) 70%, transparent 100%)'
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-y-0 right-0 z-30 w-12 sm:w-16 md:w-24 lg:w-32"
-          style={{
-            background: 'linear-gradient(to left, hsl(var(--background)) 0%, hsl(var(--background) / 0.95) 40%, hsl(var(--background) / 0.6) 70%, transparent 100%)'
-          }}
-        />
+        {/* Blur effects - Disable on low power */}
+        {!isLowPowerMode && (
+          <>
+            <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 md:w-32 lg:w-40 bg-gradient-to-r from-background to-transparent z-20 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 md:w-32 lg:w-40 bg-gradient-to-l from-background to-transparent z-20 pointer-events-none" />
+          </>
+        )}
 
         <div className="flex flex-col justify-evenly h-full w-full py-2 sm:py-4 relative z-10">
           {rows.map((rowItems, rowIndex) => {
@@ -128,7 +221,7 @@ export function LogoTimeline({
                 />
 
                 {rowItems.map((item, itemIndex) => {
-                  const Icon = Icons[item.icon] || Icons.unknown
+                  const IconComponent = (Icons as any)[item.icon] || Icons.unknown
                   const totalItems = rowItems.length
                   const offsetPercent = (itemIndex / totalItems) * 100
 
@@ -148,7 +241,7 @@ export function LogoTimeline({
                         }
                       }}
                     >
-                      <Icon style={{ width: iconSize, height: iconSize }} className="text-foreground/70 flex-shrink-0 w-3 h-3 sm:w-4 sm:h-4" />
+                      <IconComponent style={{ width: iconSize, height: iconSize }} className="text-foreground/70 flex-shrink-0 w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="text-xs sm:text-sm font-medium text-muted-foreground whitespace-nowrap">{item.label}</span>
                     </motion.div>
                   )

@@ -1,8 +1,7 @@
-'use client';
-
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Image from 'next/image';
+import { usePerformance } from '@/hooks/usePerformance';
 
 interface TechItem {
     name: string;
@@ -16,6 +15,8 @@ interface KineticTechGridProps {
 
 export const KineticTechGrid = ({ items, className }: KineticTechGridProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const { isLowPowerMode } = usePerformance();
+
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start end", "end start"]
@@ -30,6 +31,7 @@ export const KineticTechGrid = ({ items, className }: KineticTechGridProps) => {
                         tech={tech}
                         idx={idx}
                         scrollYProgress={scrollYProgress}
+                        isLowPowerMode={isLowPowerMode}
                     />
                 ))}
             </div>
@@ -37,7 +39,7 @@ export const KineticTechGrid = ({ items, className }: KineticTechGridProps) => {
     );
 };
 
-const TechCard = ({ tech, idx, scrollYProgress }: { tech: TechItem, idx: number, scrollYProgress: any }) => {
+const TechCard = ({ tech, idx, scrollYProgress, isLowPowerMode }: { tech: TechItem, idx: number, scrollYProgress: any, isLowPowerMode?: boolean }) => {
     const cardRef = useRef<HTMLDivElement>(null);
 
     // Simplified parallax with clamped values for better performance
@@ -54,7 +56,7 @@ const TechCard = ({ tech, idx, scrollYProgress }: { tech: TechItem, idx: number,
     return (
         <motion.div
             ref={cardRef}
-            style={{
+            style={isLowPowerMode ? {} : {
                 y: springY,
                 rotateZ: springRotate,
                 willChange: 'transform' // GPU hint

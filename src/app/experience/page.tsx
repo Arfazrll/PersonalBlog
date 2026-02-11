@@ -51,20 +51,22 @@ const highlightContent = {
     }
 };
 
-function ExperienceHighlightSection({ type }: { type: TabType }) {
+import { usePerformance } from '@/hooks/usePerformance';
+
+function ExperienceHighlightSection({ type, isLowPowerMode }: { type: TabType; isLowPowerMode: boolean }) {
     const content = highlightContent[type];
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: isLowPowerMode ? 0 : 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             viewport={{ once: true }}
             className="mt-24"
         >
-            <HeroHighlight containerClassName="h-[30rem] rounded-3xl overflow-hidden">
+            <HeroHighlight containerClassName="h-[30rem] rounded-3xl overflow-hidden" isLowPowerMode={isLowPowerMode}>
                 <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: isLowPowerMode ? 0 : 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                     className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug mx-auto px-4"
@@ -75,7 +77,7 @@ function ExperienceHighlightSection({ type }: { type: TabType }) {
                     </Highlight>
                 </motion.h2>
                 <motion.p
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: isLowPowerMode ? 0 : 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
                     className="text-center text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto mt-6 px-4 text-lg"
@@ -87,12 +89,12 @@ function ExperienceHighlightSection({ type }: { type: TabType }) {
     );
 }
 
-function FloatingShape({ className, gradient, delay = 0 }: { className?: string; gradient: string; delay?: number }) {
+function FloatingShape({ className, gradient, delay = 0, isLowPowerMode }: { className?: string; gradient: string; delay?: number; isLowPowerMode: boolean }) {
     return (
         <motion.div
             className={`absolute rounded-full blur-3xl opacity-20 pointer-events-none ${className}`}
             style={{ background: gradient }}
-            animate={{ y: [0, -20, 0], scale: [1, 1.05, 1] }}
+            animate={isLowPowerMode ? {} : { y: [0, -20, 0], scale: [1, 1.05, 1] }}
             transition={{ duration: 8, repeat: Infinity, delay }}
         />
     );
@@ -104,7 +106,7 @@ interface TabItem {
     description: string;
 }
 
-function ExperienceTabSlider() {
+function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
     const contentRef = useRef<HTMLDivElement>(null);
     const [activeTab, setActiveTab] = useState<number>(2); // Default to experience for this task
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -219,13 +221,13 @@ function ExperienceTabSlider() {
                     {activeTab === 0 && (
                         <motion.div
                             key="education"
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: isLowPowerMode ? 0 : 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
+                            exit={{ opacity: 0, y: isLowPowerMode ? 0 : -20 }}
                             transition={{ duration: 0.4 }}
                         >
                             <ExperienceStickyScroll />
-                            <ExperienceHighlightSection type="education" />
+                            <ExperienceHighlightSection type="education" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}
 
@@ -233,13 +235,13 @@ function ExperienceTabSlider() {
                     {activeTab === 1 && (
                         <motion.div
                             key="journey"
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: isLowPowerMode ? 0 : 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
+                            exit={{ opacity: 0, y: isLowPowerMode ? 0 : -20 }}
                             transition={{ duration: 0.4 }}
                         >
-                            <ExperienceTimeline />
-                            <ExperienceHighlightSection type="journey" />
+                            <ExperienceTimeline isLowPowerMode={isLowPowerMode} />
+                            <ExperienceHighlightSection type="journey" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}
 
@@ -247,9 +249,9 @@ function ExperienceTabSlider() {
                     {activeTab === 2 && (
                         <motion.div
                             key="experience"
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: isLowPowerMode ? 0 : 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
+                            exit={{ opacity: 0, y: isLowPowerMode ? 0 : -20 }}
                             transition={{ duration: 0.4 }}
                             className="space-y-12"
                         >
@@ -379,9 +381,9 @@ function ExperienceTabSlider() {
                                             {filteredExperiences.map((exp, idx) => (
                                                 <motion.div
                                                     key={exp.id}
-                                                    initial={{ opacity: 0, y: 30 }}
+                                                    initial={{ opacity: 0, y: isLowPowerMode ? 0 : 30 }}
                                                     animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: idx * 0.1 }}
+                                                    transition={{ delay: isLowPowerMode ? 0 : idx * 0.1 }}
                                                     className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-[2rem] hover:shadow-2xl dark:hover:shadow-neutral-900/50 transition-all duration-300 hover:-translate-y-1"
                                                 >
                                                     {/* Floating Date Badge */}
@@ -434,7 +436,7 @@ function ExperienceTabSlider() {
                                     </motion.div>
                                 )}
                             </AnimatePresence>
-                            <ExperienceHighlightSection type="experience" />
+                            <ExperienceHighlightSection type="experience" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -449,6 +451,7 @@ import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
 export default function ExperiencePage() {
     const t = useTranslations('experience');
     const { resolvedTheme } = useTheme();
+    const { isLowPowerMode } = usePerformance();
 
     return (
         <motion.div
@@ -460,11 +463,20 @@ export default function ExperiencePage() {
             {/* Smooth Scroll Hero Section */}
             <SmoothScrollHero />
 
-            <FloatingShape className="w-[500px] h-[500px] -top-20 -right-40" gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)" />
-            <FloatingShape className="w-[400px] h-[400px] bottom-40 -left-20" gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)" delay={3} />
+            <FloatingShape
+                className="w-[500px] h-[500px] -top-20 -right-40"
+                gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)"
+                isLowPowerMode={isLowPowerMode}
+            />
+            <FloatingShape
+                className="w-[400px] h-[400px] bottom-40 -left-20"
+                gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)"
+                delay={3}
+                isLowPowerMode={isLowPowerMode}
+            />
 
             <motion.div
-                initial={{ opacity: 0, y: 60 }}
+                initial={{ opacity: 0, y: isLowPowerMode ? 0 : 60 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
                 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20"
@@ -476,13 +488,13 @@ export default function ExperiencePage() {
                 </div>
 
                 {/* 2. Tab Slider Section (Testimonial-style UI) */}
-                <ExperienceTabSlider />
+                <ExperienceTabSlider isLowPowerMode={isLowPowerMode} />
             </motion.div>
         </motion.div>
     );
 }
 
-function ExperienceTimeline() {
+function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
     const experiences = portfolioData.experiences;
 
     const groupedExperiences = useMemo(() => {

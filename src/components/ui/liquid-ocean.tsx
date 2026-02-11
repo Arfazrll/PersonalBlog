@@ -238,6 +238,7 @@ export interface LiquidOceanProps {
     waveSpeed?: number;
     showWireframe?: boolean;
     oceanOpacity?: number;
+    isLowPowerMode?: boolean;
     children?: React.ReactNode;
 }
 
@@ -257,11 +258,13 @@ export function LiquidOcean({
     waveSpeed = 0.05,
     showWireframe = true,
     oceanOpacity = 0.85,
+    isLowPowerMode: propIsLowPowerMode,
     children,
 }: LiquidOceanProps) {
     const [isVisible, setIsVisible] = React.useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const { isLowPowerMode } = usePerformance();
+    const { isLowPowerMode: performanceLowPower } = usePerformance();
+    const isLowPowerMode = propIsLowPowerMode ?? performanceLowPower;
 
     useEffect(() => {
         const observer = new IntersectionObserver(

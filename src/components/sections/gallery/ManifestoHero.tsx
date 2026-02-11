@@ -4,15 +4,18 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 
-export default function ManifestoHero() {
+export default function ManifestoHero({ isLowPowerMode }: { isLowPowerMode?: boolean }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end start"],
     });
 
-    const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-    const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+    const yTransform = useTransform(scrollYProgress, [0, 1], [0, 200]);
+    const opacityTransform = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+    const y = isLowPowerMode ? 0 : yTransform;
+    const opacity = isLowPowerMode ? 1 : opacityTransform;
 
     return (
         <section ref={containerRef} className="relative h-[150vh] bg-background dark:bg-black text-foreground" style={{ backgroundColor: 'var(--background-override, "")' }}>
@@ -25,8 +28,10 @@ export default function ManifestoHero() {
 
             <div className="sticky top-0 h-screen overflow-hidden flex flex-col items-center justify-center">
 
-                {/* Background Noise/Grain for Cinema Feel - Hidden in Dark Mode for Pitch Black */}
-                <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-0 pointer-events-none bg-[url('/noise.svg')]" />
+                {/* Background Noise/Grain for Cinema Feel - Hidden in Dark Mode for Pitch Black & Low Power Mode */}
+                {!isLowPowerMode && (
+                    <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-0 pointer-events-none bg-[url('/noise.svg')]" />
+                )}
 
                 <motion.div style={{ y, opacity }} className="relative z-10 px-4 md:px-12 max-w-7xl mx-auto text-center">
 
@@ -34,8 +39,8 @@ export default function ManifestoHero() {
                     <div className="flex flex-col gap-2 md:gap-6">
                         <div className="overflow-hidden">
                             <motion.h1
-                                initial={{ y: 100 }}
-                                animate={{ y: 0 }}
+                                initial={isLowPowerMode ? { opacity: 0 } : { y: 100 }}
+                                animate={isLowPowerMode ? { opacity: 1 } : { y: 0 }}
                                 transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-6xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8]"
                             >
@@ -68,9 +73,9 @@ export default function ManifestoHero() {
 
                         <div className="overflow-hidden">
                             <motion.h1
-                                initial={{ y: -100 }}
-                                animate={{ y: 0 }}
-                                transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                                initial={isLowPowerMode ? { opacity: 0 } : { y: -100 }}
+                                animate={isLowPowerMode ? { opacity: 1 } : { y: 0 }}
+                                transition={{ duration: 1, delay: isLowPowerMode ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-6xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8]"
                             >
                                 Human <span className="font-serif italic font-light text-primary">Emotion.</span>
