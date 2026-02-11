@@ -9,9 +9,16 @@ import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
-export const MarqueeClosing = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
+import { usePerformance } from '@/hooks/usePerformance';
+
+export const MarqueeClosing = ({ isLowPowerMode: parentLowPowerMode }: { isLowPowerMode?: boolean }) => {
     const { theme, systemTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
+    const { isMobile } = usePerformance();
+
+    // Use isMobile to strictly limit CSS fallback to mobile devices only.
+    // Desktop (even in low power mode) should try to render the effect as per user request.
+    const showOcean = !isMobile;
 
     useEffect(() => {
         setMounted(true);
@@ -24,13 +31,13 @@ export const MarqueeClosing = ({ isLowPowerMode }: { isLowPowerMode?: boolean })
     const oceanConfig = isDark ? {
         // Dark Mode: Deep Black Ocean with Cyan Accents
         bg: 0x000000,
-        grid: 0x050505, // Almost invisible grid for pitch black feel
+        grid: 0x222222, // Increased visibility from 0x050505
         accent: 0x06b6d4, // Cyan-500
         opacity: 0.4
     } : {
         // Light Mode: White Ocean for seamless blending
         bg: 0xffffff,
-        grid: 0xf3f4f6, // Gray-100
+        grid: 0xe5e5e5, // Increased visibility from 0xf3f4f6
         accent: 0x3b82f6, // Blue-500
         opacity: 0.6
     };
@@ -46,7 +53,7 @@ export const MarqueeClosing = ({ isLowPowerMode }: { isLowPowerMode?: boolean })
 
             {/* Background Ocean - Full Immersive */}
             <div className="absolute inset-0 z-0">
-                {isLowPowerMode ? (
+                {!showOcean ? (
                     <div className={cn("absolute inset-0 transition-opacity duration-1000", isDark ? "bg-black" : "bg-white")}>
                         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `radial-gradient(circle at 50% 120%, ${isDark ? '#06b6d4' : '#3b82f6'}, transparent)` }} />
                     </div>
@@ -63,9 +70,10 @@ export const MarqueeClosing = ({ isLowPowerMode }: { isLowPowerMode?: boolean })
                         showBoats={true}
                         boatCount={6}
                         boatSpread={20}
-                        showWireframe={false} // Wireframe is heavy, always off for this section
+                        showWireframe={true}
+                        showGrid={true}
                         oceanOpacity={oceanConfig.opacity}
-                        isLowPowerMode={isLowPowerMode}
+                        isLowPowerMode={false}
                     />
                 )}
 
@@ -81,9 +89,9 @@ export const MarqueeClosing = ({ isLowPowerMode }: { isLowPowerMode?: boolean })
             <div className="relative z-10 flex-1 flex flex-col items-center justify-center container px-6 py-20 text-center space-y-12">
 
                 <motion.div
-                    initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: 30 }}
+                    initial={!showOcean ? { opacity: 0 } : { opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: isLowPowerMode ? 0.5 : 1, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: !showOcean ? 0.5 : 1, ease: [0.22, 1, 0.36, 1] }}
                     viewport={{ once: true }}
                     className="flex flex-col items-center gap-8 max-w-4xl mx-auto"
                 >

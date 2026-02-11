@@ -37,6 +37,14 @@ export function BlogCard({ post, index, isLowPowerMode }: BlogCardProps) {
         mouseY.set(clientY - top);
     };
 
+    const backgroundStyle = useMotionTemplate`
+        radial-gradient(
+            600px circle at ${mouseX}px ${mouseY}px,
+            rgba(var(--primary-rgb), ${isDark ? 0.1 : 0.05}),
+            transparent 80%
+        )
+    `;
+
     return (
         <Link href={`/blog/${post.slug}`} className="block h-full cursor-pointer">
             <motion.div
@@ -56,15 +64,8 @@ export function BlogCard({ post, index, isLowPowerMode }: BlogCardProps) {
                 {!isLowPowerMode && (
                     <motion.div
                         className="pointer-events-none absolute -inset-px rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
-                        style={{
-                            background: useMotionTemplate`
-                                radial-gradient(
-                                    600px circle at ${mouseX}px ${mouseY}px,
-                                    rgba(var(--primary-rgb), ${isDark ? '0.1' : '0.05'}),
-                                    transparent 80%
-                                )
-                            `,
-                        }}
+                        style={{ background: backgroundStyle }}
+
                     />
                 )}
 

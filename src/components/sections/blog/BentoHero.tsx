@@ -36,6 +36,8 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
         mouseY.set(e.clientY - top);
     };
 
+    const spotlightBackground = useMotionTemplate`radial-gradient(1000px circle at ${mouseX}px ${mouseY}px, rgba(var(--primary-rgb), ${isDark ? '0.1' : '0.05'}), transparent 80%)`;
+
     // Carousel state
     const [currentSlide, setCurrentSlide] = useState(0);
     const featuredPosts = portfolioData.blogs.slice(0, 3);
@@ -253,9 +255,7 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
             {!isLowPowerMode && (
                 <motion.div
                     className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
-                    style={{
-                        background: useMotionTemplate`radial-gradient(1000px circle at ${mouseX}px ${mouseY}px, rgba(var(--primary-rgb), ${isDark ? '0.1' : '0.05'}), transparent 80%)`,
-                    }}
+                    style={{ background: spotlightBackground }}
                 />
             )}
         </motion.section>

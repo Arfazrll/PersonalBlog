@@ -29,8 +29,9 @@ export default function FallingText({
     fontSize = '2rem',
     fontWeight = '800',
     textColor = 'hsl(var(--foreground))',
-    highlightColor = 'hsl(var(--primary))'
-}: FallingTextProps) {
+    highlightColor = 'hsl(var(--primary))',
+    force = false
+}: FallingTextProps & { force?: boolean }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -43,7 +44,8 @@ export default function FallingText({
     const wordBodiesRef = useRef<Array<{ elem: HTMLElement; body: Matter.Body }>>([]);
     const animationFrameIdRef = useRef<number | null>(null);
 
-    const { isLowPowerMode } = usePerformance();
+    const { isLowPowerMode: isSystemLowPower } = usePerformance();
+    const isLowPowerMode = force ? false : isSystemLowPower;
 
     const createTextHTML = useCallback(() => {
         if (!textRef.current) return;

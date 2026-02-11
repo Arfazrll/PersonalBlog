@@ -178,12 +178,12 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                     trigger: spacerRef.current,
                     start: "top top",
                     end: "bottom bottom",
-                    scrub: isLowPowerMode ? 1 : 2.5,
+                    scrub: isLowPowerMode ? 0.3 : 0.8,
                 },
             });
 
             if (heroContentRef.current) {
-                mainTL.to(heroContentRef.current, { autoAlpha: 0, scale: 0.9, duration: 0.3 }, 0);
+                mainTL.to(heroContentRef.current, { autoAlpha: 0, scale: 0.9, duration: 0.2 }, 0);
             }
 
             imageElements.forEach((img, index) => {
@@ -223,6 +223,14 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                 }
             });
 
+
+            // Add a buffer/pause at the end of the timeline
+            // This ensures the animation finishes BEFORE the user scrolls past the spacer,
+            // allowing them to see the final grid layout for a moment.
+            // Timeline Total Duration becomes ~2.0 (1.0 for animation + 1.0 buffer)
+            // So the animation completes at 1/2.0 = 50% of the scroll distance.
+            mainTL.to({}, { duration: 1.0 });
+
         }, spacerRef);
 
         // FADE OUT HERO when scrolling past the component
@@ -239,7 +247,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
     return (
         <>
             {/* SPACER: Takes up space in the document flow to allow scrolling */}
-            <div ref={spacerRef} className="h-[250vh] w-full relative z-10 pointer-events-none" />
+            <div ref={spacerRef} className="h-[350vh] w-full relative z-10 pointer-events-none" />
 
             {/* FIXED HERO: Stays behind content. z-10 ensures it sits ABOVE particles (z-0), but transparent to see them. */}
             <div ref={fixedContainerRef} className="fixed inset-0 z-10 h-screen w-full overflow-hidden bg-transparent pointer-events-none">

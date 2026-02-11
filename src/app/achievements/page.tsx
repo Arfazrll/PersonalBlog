@@ -57,6 +57,14 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
         const config = categoryConfig[achievement.category.toLowerCase()] || categoryConfig.award;
         const IconComponent = config.icon;
 
+        const spotlightBackground = useMotionTemplate`
+            radial-gradient(
+                350px circle at ${mouseXSpring}px ${mouseYSpring}px,
+                var(--accent-spotlight, rgba(255, 255, 255, 0.08)),
+                transparent 80%
+            )
+        `;
+
         return (
             <div
                 className="relative group block p-2 h-full w-full"
@@ -91,15 +99,7 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
                     {!isLowPowerMode && (
                         <motion.div
                             className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-                            style={{
-                                background: useMotionTemplate`
-                                    radial-gradient(
-                                        350px circle at ${mouseXSpring}px ${mouseYSpring}px,
-                                        var(--accent-spotlight, rgba(255, 255, 255, 0.08)),
-                                        transparent 80%
-                                    )
-                                `,
-                            }}
+                            style={{ background: spotlightBackground }}
                         />
                     )}
 
@@ -473,16 +473,10 @@ export default function AchievementsPage() {
 
         <div className="min-h-screen bg-background text-foreground overflow-y-auto overflow-x-hidden">
             {/* Hero Scroll Section */}
-            {!isLowPowerMode ? (
-                <ErrorBoundary fallback={<div className="h-[60vh] flex items-center justify-center">Hero Unavailable</div>}>
-                    <CertificateHeroScroll isLowPowerMode={isLowPowerMode} />
-                </ErrorBoundary>
-            ) : (
-                <div className="w-full h-[60vh] flex flex-col items-center justify-center p-8 bg-background border-b border-border/10">
-                    <div className="opacity-20 italic font-serif text-2xl mb-4">The Achievement Record</div>
-                    <div className="h-px w-24 bg-primary/20" />
-                </div>
-            )}
+            {/* Hero Scroll Section */}
+            <ErrorBoundary fallback={<div className="h-[60vh] flex items-center justify-center">Hero Unavailable</div>}>
+                <CertificateHeroScroll isLowPowerMode={isLowPowerMode} />
+            </ErrorBoundary>
 
             {/* Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -687,25 +681,18 @@ export default function AchievementsPage() {
                             viewport={{ once: true }}
                             className="relative w-full mx-auto h-[400px]"
                         >
-                            {!isLowPowerMode ? (
-                                <ErrorBoundary fallback={<div className="text-center opacity-50">Visuals Unavailable</div>}>
-                                    <FallingText
-                                        text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
-                                        highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
-                                        trigger="scroll"
-                                        gravity={0.8}
-                                        mouseConstraintStiffness={0.2}
-                                        fontSize="1.5rem"
-                                        fontWeight="900"
-                                    />
-                                </ErrorBoundary>
-                            ) : (
-                                <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-4 px-8 opacity-20">
-                                    {"Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus".split(' ').map((word, i) => (
-                                        <span key={i} className="text-xl font-black uppercase tracking-tighter">{word}</span>
-                                    ))}
-                                </div>
-                            )}
+                            <ErrorBoundary fallback={<div className="text-center opacity-50">Visuals Unavailable</div>}>
+                                <FallingText
+                                    text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
+                                    highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
+                                    trigger="scroll"
+                                    gravity={0.8}
+                                    mouseConstraintStiffness={0.2}
+                                    fontSize="1.5rem"
+                                    fontWeight="900"
+                                    force={true}
+                                />
+                            </ErrorBoundary>
                         </motion.div>
                     </div>
                 </motion.section>
