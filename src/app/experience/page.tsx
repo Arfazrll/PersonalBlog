@@ -47,7 +47,7 @@ const highlightContent = {
     experience: {
         title: "Turning Ideas",
         highlight: "Into Reality",
-        description: "Real-world projects that solve real problems. Building solutions that make a difference, one commit at a time."
+        description: "Real-world projects that solve real problems. Building solutions that make a difference."
     }
 };
 
