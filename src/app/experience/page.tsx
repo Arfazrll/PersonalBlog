@@ -13,7 +13,12 @@ import {
     Briefcase,
     GraduationCap,
     Filter,
-    Rocket
+    Rocket,
+    Award,
+    Heart,
+    Users,
+    ExternalLink,
+    ArrowRight
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
@@ -101,12 +106,20 @@ interface TabItem {
 
 function ExperienceTabSlider() {
     const contentRef = useRef<HTMLDivElement>(null);
-    const [activeTab, setActiveTab] = useState<number>(1);
+    const [activeTab, setActiveTab] = useState<number>(2); // Default to experience for this task
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     const tabs: TabItem[] = [
         { id: 'education', label: 'Education', description: 'Building strong foundations through academic excellence at Telkom University and SMAN 88 Jakarta.' },
         { id: 'journey', label: 'Journey', description: 'A timeline of roles, responsibilities, and professional growth across various organizations.' },
         { id: 'experience', label: 'Experience', description: 'Detailed breakdown of work experiences with project highlights and achievements.' },
+    ];
+
+    const categories = [
+        { id: 'professional', label: 'Professional Experience', icon: Briefcase, color: 'bg-blue-600', prefix: 'prof-' },
+        { id: 'leadership', label: 'Leadership & Organizational', icon: Users, color: 'bg-purple-600', prefix: 'lead-' },
+        { id: 'volunteer', label: 'Volunteer Experience', icon: Heart, color: 'bg-orange-500', prefix: 'vol-' },
+        { id: 'certifications', label: 'Certifications & Development', icon: Award, color: 'bg-emerald-500', prefix: 'cert-' },
     ];
 
     const heightFix = () => {
@@ -116,7 +129,14 @@ function ExperienceTabSlider() {
 
     useEffect(() => {
         heightFix();
-    }, [activeTab]);
+    }, [activeTab, selectedCategory]);
+
+    const filteredExperiences = useMemo(() => {
+        if (!selectedCategory) return [];
+        const cat = categories.find(c => c.id === selectedCategory);
+        if (!cat) return [];
+        return portfolioData.experiences.filter(exp => exp.id.startsWith(cat.prefix));
+    }, [selectedCategory]);
 
     return (
         <div className="mb-24">
@@ -147,7 +167,7 @@ function ExperienceTabSlider() {
                 </div>
 
                 {/* Description Text */}
-                <div className="mb-6 transition-all delay-300 duration-150 ease-in-out sm:mb-9">
+                <div className="mb-6 transition-all delay-300 duration-150 ease-in-out sm:mb-9 min-h-[100px]">
                     <div className="relative flex flex-col" ref={contentRef}>
                         {tabs.map((tab, index) => (
                             <Transition
@@ -178,7 +198,10 @@ function ExperienceTabSlider() {
                                 ? "bg-cyan-500 text-white shadow-cyan-950/10"
                                 : "bg-white dark:bg-neutral-800 text-cyan-900 dark:text-cyan-100 hover:bg-cyan-100 dark:hover:bg-neutral-700"
                                 }`}
-                            onClick={() => setActiveTab(index)}
+                            onClick={() => {
+                                setActiveTab(index);
+                                if (index !== 2) setSelectedCategory(null);
+                            }}
                         >
                             {tab.id === 'education' && <GraduationCap className="w-5 h-5" />}
                             {tab.id === 'journey' && <Briefcase className="w-5 h-5" />}
@@ -190,7 +213,7 @@ function ExperienceTabSlider() {
             </div>
 
             {/* Tab Content */}
-            <div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <AnimatePresence mode="wait">
                     {/* Education Tab */}
                     {activeTab === 0 && (
@@ -228,22 +251,195 @@ function ExperienceTabSlider() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.4 }}
+                            className="space-y-12"
                         >
-                            <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-                                <div className="p-4 rounded-2xl bg-primary/10">
-                                    <Rocket className="w-12 h-12 text-primary" />
-                                </div>
-                                <h3 className="text-2xl font-bold text-foreground">Coming Soon</h3>
-                                <p className="text-muted-foreground max-w-md">
-                                    Detailed experience breakdown with project highlights and achievements will be available here soon.
-                                </p>
-                            </div>
+                            <AnimatePresence mode="wait">
+                                {!selectedCategory ? (
+                                    <motion.div
+                                        key="cta-selection"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:min-h-[600px] items-center"
+                                    >
+                                        {/* Left: Sticky Title & Context */}
+                                        <div className="lg:col-span-5 space-y-8">
+                                            <motion.div
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: 0.2 }}
+                                            >
+                                                <h2 className="text-5xl md:text-7xl font-black text-neutral-900 dark:text-white tracking-tighter mb-6 leading-[0.9]">
+                                                    SELECT <br />
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500">
+                                                        ARCHIVE
+                                                    </span>
+                                                </h2>
+                                                <p className="text-xl text-neutral-500 dark:text-neutral-400 max-w-md leading-relaxed">
+                                                    Navigate through the timeline of my career. Choose a lens to filter the experience database.
+                                                </p>
+                                            </motion.div>
+
+                                            {/* Decorative Elements */}
+                                            <div className="hidden lg:block w-24 h-1 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" />
+                                        </div>
+
+                                        {/* Right: Interactive List */}
+                                        <div className="lg:col-span-7 flex flex-col gap-4">
+                                            {categories.map((cat, idx) => (
+                                                <motion.button
+                                                    key={cat.id}
+                                                    initial={{ opacity: 0, x: 20 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: 0.1 * idx }}
+                                                    onClick={() => setSelectedCategory(cat.id)}
+                                                    className="group relative flex items-center gap-6 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-white dark:hover:bg-neutral-800 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl dark:hover:shadow-neutral-900/50 text-left overflow-hidden"
+                                                >
+
+                                                    {/* Hover Gradient Background */}
+                                                    <div className={cn(
+                                                        "absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500",
+                                                        cat.color
+                                                    )} />
+
+                                                    {/* Category Icon */}
+                                                    <div className={cn(
+                                                        "w-16 h-16 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-500",
+                                                        cat.color
+                                                    )}>
+                                                        <cat.icon className="w-8 h-8" />
+                                                    </div>
+
+                                                    {/* Text Content */}
+                                                    <div className="flex-1 relative z-10">
+                                                        <h4 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1 group-hover:text-purple-600 dark:group-hover:text-cyan-400 transition-colors">
+                                                            {cat.label}
+                                                        </h4>
+                                                        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 line-clamp-1 group-hover:text-neutral-900 dark:group-hover:text-neutral-200 transition-colors">
+                                                            Tap to explore {cat.label.toLowerCase()} records
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Arrow Action */}
+                                                    <div className="w-10 h-10 rounded-full bg-white dark:bg-black border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-neutral-400 group-hover:text-purple-500 dark:group-hover:text-cyan-500 group-hover:border-purple-200 dark:group-hover:border-cyan-800 transition-all duration-300">
+                                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                                                    </div>
+                                                </motion.button>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="ledger-view"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+                                    >
+                                        {/* Left: Sticky Sidebar Filters */}
+                                        <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit space-y-8">
+                                            <button
+                                                onClick={() => setSelectedCategory(null)}
+                                                className="group flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-neutral-500 hover:text-black dark:hover:text-white transition-colors px-4 py-2 -ml-4 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800/50 w-fit"
+                                            >
+                                                <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
+                                                <span>Back to Selection</span>
+                                            </button>
+
+                                            <div className="space-y-2">
+                                                <h3 className="text-4xl md:text-5xl font-black text-neutral-900 dark:text-white tracking-tighter leading-tight">
+                                                    {categories.find(c => c.id === selectedCategory)?.label}
+                                                </h3>
+                                                <div className="h-1.5 w-20 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" />
+                                            </div>
+
+                                            <div className="hidden lg:flex flex-col gap-2">
+                                                <p className="text-xs font-bold uppercase text-neutral-400 tracking-widest mb-2">
+                                                    Filter View
+                                                </p>
+                                                {categories.map(cat => (
+                                                    <button
+                                                        key={cat.id}
+                                                        onClick={() => setSelectedCategory(cat.id)}
+                                                        className={cn(
+                                                            "text-left px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 border border-transparent",
+                                                            selectedCategory === cat.id
+                                                                ? "bg-white dark:bg-neutral-800 text-black dark:text-white shadow-lg border-neutral-200 dark:border-neutral-700"
+                                                                : "text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-neutral-300"
+                                                        )}
+                                                    >
+                                                        {cat.label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Right: Scrollable Content Stream */}
+                                        <div className="lg:col-span-8 space-y-6">
+                                            {filteredExperiences.map((exp, idx) => (
+                                                <motion.div
+                                                    key={exp.id}
+                                                    initial={{ opacity: 0, y: 30 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: idx * 0.1 }}
+                                                    className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-[2rem] hover:shadow-2xl dark:hover:shadow-neutral-900/50 transition-all duration-300 hover:-translate-y-1"
+                                                >
+                                                    {/* Floating Date Badge */}
+                                                    <div className="flex flex-wrap gap-3 mb-6">
+                                                        <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs font-bold text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
+                                                            {formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : 'Present'}
+                                                        </span>
+                                                        <span className="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-xs font-bold text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50">
+                                                            {exp.company}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex gap-6 items-start">
+                                                        {/* Logo */}
+                                                        <div className="hidden sm:flex w-16 h-16 bg-neutral-50 dark:bg-black rounded-2xl items-center justify-center shrink-0 border border-neutral-100 dark:border-neutral-800 p-2">
+                                                            {exp.logo ? (
+                                                                <Image src={exp.logo} alt={exp.company} width={48} height={48} className="object-contain" />
+                                                            ) : (
+                                                                <Briefcase className="w-8 h-8 text-neutral-300" />
+                                                            )}
+                                                        </div>
+
+                                                        <div className="space-y-4">
+                                                            <h4 className="text-2xl font-bold text-neutral-900 dark:text-white leading-tight group-hover:text-purple-600 dark:group-hover:text-cyan-400 transition-colors">
+                                                                {exp.position}
+                                                            </h4>
+                                                            <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                                                {exp.description}
+                                                            </p>
+
+                                                            {/* Minimal Skills */}
+                                                            <div className="flex flex-wrap gap-2 pt-2">
+                                                                {exp.skills.slice(0, 5).map((skill, i) => (
+                                                                    <span key={i} className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+                                                                        #{skill}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            ))}
+
+                                            {filteredExperiences.length === 0 && (
+                                                <div className="flex flex-col items-center justify-center py-20 text-neutral-400">
+                                                    <p>No records found in this sector.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                             <ExperienceHighlightSection type="experience" />
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
-        </div >
+        </div>
     );
 }
 

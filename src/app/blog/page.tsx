@@ -34,12 +34,12 @@ export default function BlogPage() {
             <BentoHero />
 
             {/* SECTION 2: Blog Cards Content */}
-            <div className="relative z-10 pt-12 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-background via-background/80 to-background">
+            <div className="relative z-10 pt-12 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-background via-background/80 to-background dark:from-black dark:via-black dark:to-black">
                 {/* Background Effects */}
                 <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                    <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/5 blur-[200px] rounded-full opacity-40 -translate-y-1/2 translate-x-1/2" />
-                    <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[200px] rounded-full opacity-30 translate-y-1/2 -translate-x-1/2" />
-                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] mix-blend-overlay" />
+                    <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/5 blur-[200px] rounded-full opacity-40 dark:opacity-0 -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[200px] rounded-full opacity-30 dark:opacity-0 translate-y-1/2 -translate-x-1/2" />
+                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] dark:opacity-0 mix-blend-overlay" />
                 </div>
 
                 <div className="container mx-auto relative z-10">

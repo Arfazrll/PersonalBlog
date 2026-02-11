@@ -24,9 +24,9 @@ export const MarqueeClosing = () => {
     const oceanConfig = isDark ? {
         // Dark Mode: Deep Black Ocean with Cyan Accents
         bg: 0x000000,
-        grid: 0x1a1a1a,
+        grid: 0x050505, // Almost invisible grid for pitch black feel
         accent: 0x06b6d4, // Cyan-500
-        opacity: 0.8
+        opacity: 0.4
     } : {
         // Light Mode: White Ocean for seamless blending
         bg: 0xffffff,
@@ -47,6 +47,7 @@ export const MarqueeClosing = () => {
             {/* Background Ocean - Full Immersive */}
             <div className="absolute inset-0 z-0">
                 <LiquidOcean
+                    key={isDark ? 'dark' : 'light'}
                     backgroundColor={oceanConfig.bg}
                     gridColor={oceanConfig.grid}
                     accentColor={oceanConfig.accent}
@@ -63,7 +64,10 @@ export const MarqueeClosing = () => {
 
                 {/* Top Fade Only - Seamless Integration */}
                 {/* Top Fade - Gradient Bridge from Page Background to Ocean */}
-                <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-10" />
+                <div className={cn(
+                    "absolute top-0 left-0 w-full h-48 bg-gradient-to-b to-transparent pointer-events-none z-10",
+                    isDark ? "from-black via-black/80" : "from-background via-background/80"
+                )} />
             </div>
 
             {/* Main Content - Centered */}

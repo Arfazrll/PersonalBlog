@@ -54,14 +54,14 @@ export const BentoHero = () => {
         <motion.section
             ref={containerRef}
             onMouseMove={handleMouseMove}
-            className="relative min-h-screen w-full overflow-hidden bg-background flex flex-col"
+            className="relative min-h-screen w-full overflow-hidden bg-background dark:bg-black flex flex-col"
             style={{ opacity, y }}
         >
-            {/* Ambient Background */}
+            {/* Ambient Background - Hidden in Dark Mode for Pitch Black */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/10 blur-[200px] rounded-full opacity-40 translate-x-1/4 -translate-y-1/4" />
-                <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[180px] rounded-full opacity-30 -translate-x-1/4 translate-y-1/4" />
-                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] mix-blend-overlay" />
+                <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/10 blur-[200px] rounded-full opacity-40 dark:opacity-0 translate-x-1/4 -translate-y-1/4" />
+                <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[180px] rounded-full opacity-30 dark:opacity-0 -translate-x-1/4 translate-y-1/4" />
+                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] dark:opacity-0 mix-blend-overlay" />
             </div>
 
             {/* Content Container */}
