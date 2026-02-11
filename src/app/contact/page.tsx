@@ -15,6 +15,7 @@ const Lanyard = dynamic<{ isLowPowerMode?: boolean }>(() => import('@/components
 });
 
 import { Meteors } from '@/components/ui/meteors';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 // Custom Marquee Component
 function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = false }: { items: any[], direction?: 'left' | 'right', speed?: number, isLowPowerMode?: boolean }) {
@@ -348,7 +349,9 @@ export default function ContactPage() {
                         <div className="hidden lg:flex lg:col-span-4 sticky top-20 h-[600px] pointer-events-none">
                             <div className="w-full h-full pointer-events-auto">
                                 {!isLowPowerMode ? (
-                                    <Lanyard isLowPowerMode={isLowPowerMode} />
+                                    <ErrorBoundary fallback={<div className="w-full h-full flex items-center justify-center opacity-50">Interactive Card Unavailable</div>}>
+                                        <Lanyard isLowPowerMode={isLowPowerMode} />
+                                    </ErrorBoundary>
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center p-8">
                                         <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-primary/5">
@@ -389,7 +392,9 @@ export default function ContactPage() {
                             {/* Mobile Lanyard Fallback */}
                             <div className="lg:hidden h-[400px] w-full relative">
                                 {!isLowPowerMode ? (
-                                    <Lanyard isLowPowerMode={isLowPowerMode} />
+                                    <ErrorBoundary fallback={<div className="h-full flex items-center justify-center opacity-50">Interactive Card Unavailable</div>}>
+                                        <Lanyard isLowPowerMode={isLowPowerMode} />
+                                    </ErrorBoundary>
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center p-8">
                                         <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-primary/5">
