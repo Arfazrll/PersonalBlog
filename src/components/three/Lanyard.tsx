@@ -7,6 +7,7 @@ import { useTexture, Text, RoundedBox } from '@react-three/drei';
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import { portfolioData } from '@/data/portfolio';
+import { usePerformance } from '@/hooks/usePerformance';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
@@ -25,11 +26,11 @@ function ResponsiveCamera() {
     useEffect(() => {
         const isMobile = size.width < 768;
         if (isMobile) {
-            camera.position.set(0, 0, 14); // Original mobile dist
+            camera.position.set(0, 0, 14);
             if (camera instanceof THREE.PerspectiveCamera) camera.fov = 50;
         } else {
-            camera.position.set(0, 0, 20); // Original desktop dist
-            if (camera instanceof THREE.PerspectiveCamera) camera.fov = 20; // Original FOV
+            camera.position.set(0, 0, 20);
+            if (camera instanceof THREE.PerspectiveCamera) camera.fov = 20;
         }
         camera.updateProjectionMatrix();
     }, [size, camera]);
@@ -43,7 +44,6 @@ function HolographicAvatar({ url, position, size = 0.13 }: { url: string; positi
 
     return (
         <group position={position}>
-            {/* Simple Holographic Layering */}
             <mesh position={[0, 0, -0.01]}>
                 <planeGeometry args={[sideLength + 0.05, sideLength + 0.05]} />
                 <meshBasicMaterial color="#6366f1" transparent opacity={0.3} />
@@ -77,8 +77,8 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
         type: 'dynamic' as const,
         canSleep: true,
         colliders: false as const,
-        angularDamping: 4, // Original Damping
-        linearDamping: 4   // Original Damping
+        angularDamping: 4,
+        linearDamping: 4
     };
 
     const bandTexture = useTexture('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg');
@@ -152,7 +152,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
                 >
                     <CuboidCollider args={[0.8, 1.125, 0.01]} />
                     <group
-                        scale={2.25} // Original Scale
+                        scale={2.25}
                         position={[0, -1.2, -0.05]}
                         onPointerOver={() => hover(true)}
                         onPointerOut={() => hover(false)}
@@ -191,7 +191,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
                     useMap={1}
                     map={bandTexture}
                     repeat={new THREE.Vector2(-4, 1)}
-                    lineWidth={1.0} // Original Width
+                    lineWidth={1.0}
                 />
             </mesh>
         </>
@@ -199,11 +199,59 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
 }
 
 export function Lanyard() {
+    const { isLowPowerMode } = usePerformance();
+
+    if (isLowPowerMode) {
+        return (
+            <div className="w-full h-full flex items-center justify-center p-8">
+                <div className="relative group transition-all duration-500 hover:scale-105">
+                    {/* Glow effect */}
+                    <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-blue-500/10 to-purple-500/20 rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity" />
+
+                    {/* Card Container */}
+                    <div className="relative w-64 aspect-[1.5/2.3] bg-[#0a0a12]/90 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col items-center justify-center text-center p-6">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-blue-500 to-purple-500" />
+
+                        {/* Static Avatar */}
+                        <div className="relative w-32 h-32 mb-6 rounded-2xl overflow-hidden border-2 border-white/20 shadow-xl">
+                            <img
+                                src={portfolioData.personal.avatar}
+                                alt={portfolioData.personal.name}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <h3 className="text-xl font-bold text-white tracking-tight">
+                                {portfolioData.personal.name}
+                            </h3>
+                            <p className="text-sm text-zinc-400 font-medium">
+                                {portfolioData.personal.title}
+                            </p>
+                        </div>
+
+                        {/* Aesthetic Footer */}
+                        <div className="mt-8 pt-6 border-t border-white/5 w-full">
+                            <div className="flex justify-center gap-4">
+                                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                </div>
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 flex items-center">
+                                    Archive Link Active
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="w-full h-full relative z-20">
             <Canvas
-                dpr={[1, 1.5]} // Limiting max DPR
-                gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }} // Optimize GL context
+                dpr={[1, 1.5]}
+                gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
                 onCreated={({ gl }) => {
                     gl.setClearColor(new THREE.Color(0x000000), 0);
                 }}
@@ -211,7 +259,7 @@ export function Lanyard() {
                 <ResponsiveCamera />
                 <ambientLight intensity={2} />
                 <directionalLight position={[10, 10, 10]} intensity={1} />
-                <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 45}> {/* Reduced physics step */}
+                <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 45}>
                     <Band />
                 </Physics>
             </Canvas>

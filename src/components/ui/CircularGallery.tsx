@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
+import { usePerformance } from '@/hooks/usePerformance';
+import { cn } from '@/lib/utils';
 
 interface CircularGalleryProps {
     items?: { image: string; text: string }[];
@@ -64,15 +66,6 @@ function createTextTexture(
     return { texture, width: canvas.width, height: canvas.height };
 }
 
-interface TitleProps {
-    gl: GL;
-    plane: Mesh;
-    renderer: Renderer;
-    text: string;
-    textColor?: string;
-    font?: string;
-}
-
 class Title {
     gl: GL;
     plane: Mesh;
@@ -82,7 +75,7 @@ class Title {
     font: string;
     mesh!: Mesh;
 
-    constructor({ gl, plane, renderer, text, textColor = '#ffffff', font = '30px sans-serif' }: TitleProps) {
+    constructor({ gl, plane, renderer, text, textColor = '#ffffff', font = '30px sans-serif' }: any) {
         this.gl = gl;
         this.plane = plane;
         this.renderer = renderer;
@@ -130,33 +123,6 @@ class Title {
     }
 }
 
-interface ScreenSize {
-    width: number;
-    height: number;
-}
-
-interface Viewport {
-    width: number;
-    height: number;
-}
-
-interface MediaProps {
-    geometry: Plane;
-    gl: GL;
-    image: string;
-    index: number;
-    length: number;
-    renderer: Renderer;
-    scene: Transform;
-    screen: ScreenSize;
-    text: string;
-    viewport: Viewport;
-    bend: number;
-    textColor: string;
-    borderRadius?: number;
-    font?: string;
-}
-
 class Media {
     extra: number = 0;
     geometry: Plane;
@@ -166,9 +132,9 @@ class Media {
     length: number;
     renderer: Renderer;
     scene: Transform;
-    screen: ScreenSize;
+    screen: any;
     text: string;
-    viewport: Viewport;
+    viewport: any;
     bend: number;
     textColor: string;
     borderRadius: number;
@@ -200,7 +166,7 @@ class Media {
         textColor,
         borderRadius = 0,
         font
-    }: MediaProps) {
+    }: any) {
         this.geometry = geometry;
         this.gl = gl;
         this.image = image;
@@ -215,13 +181,6 @@ class Media {
         this.textColor = textColor;
         this.borderRadius = borderRadius;
         this.font = font;
-
-        // Safety check for unitialized screen/viewport
-        if (!this.screen || !this.viewport) {
-            console.warn('[CircularGallery] Media initialized without screen or viewport');
-            this.screen = this.screen || { width: 1000, height: 1000 };
-            this.viewport = this.viewport || { width: 10, height: 10 };
-        }
 
         this.createShader();
         this.createMesh();
@@ -362,13 +321,12 @@ class Media {
         }
     }
 
-    onResize({ screen, viewport }: { screen?: ScreenSize; viewport?: Viewport } = {}) {
+    onResize({ screen, viewport }: any = {}) {
         if (screen) this.screen = screen;
         if (viewport) {
             this.viewport = viewport;
         }
 
-        // Safety check for screen dimensions
         if (!this.screen || this.screen.width === 0 || this.screen.height === 0) return;
         if (!this.viewport) return;
 
@@ -381,16 +339,6 @@ class Media {
         this.widthTotal = this.width * this.length;
         this.x = this.width * this.index;
     }
-}
-
-interface AppConfig {
-    items?: { image: string; text: string }[];
-    bend?: number;
-    textColor?: string;
-    borderRadius?: number;
-    font?: string;
-    scrollSpeed?: number;
-    scrollEase?: number;
 }
 
 class GalleryApp {
@@ -434,7 +382,7 @@ class GalleryApp {
             font = 'bold 30px Figtree',
             scrollSpeed = 2,
             scrollEase = 0.05
-        }: AppConfig
+        }: any
     ) {
         this.container = container;
         this.scrollSpeed = scrollSpeed;
@@ -468,20 +416,13 @@ class GalleryApp {
     }
 
     createGeometry() {
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
         this.planeGeometry = new Plane(this.gl, {
-            heightSegments: isMobile ? 10 : 30,
-            widthSegments: isMobile ? 20 : 60
+            heightSegments: 10,
+            widthSegments: 20
         });
     }
 
-    createMedias(
-        items: { image: string; text: string }[] | undefined,
-        bend: number = 1,
-        textColor: string,
-        borderRadius: number,
-        font: string
-    ) {
+    createMedias(items: any[] | undefined, bend: number, textColor: string, borderRadius: number, font: string) {
         const defaultItems = [
             { image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop', text: 'AI & Machine Learning' },
             { image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=600&fit=crop', text: 'Full Stack Development' },
@@ -512,13 +453,13 @@ class GalleryApp {
         });
     }
 
-    onTouchDown(e: MouseEvent | TouchEvent) {
+    onTouchDown(e: any) {
         this.isDown = true;
         this.scroll.position = this.scroll.current;
         this.start = 'touches' in e ? e.touches[0].clientX : e.clientX;
     }
 
-    onTouchMove(e: MouseEvent | TouchEvent) {
+    onTouchMove(e: any) {
         if (!this.isDown) return;
         const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
         const distance = (this.start - x) * (this.scrollSpeed * 0.025);
@@ -530,9 +471,8 @@ class GalleryApp {
         this.onCheck();
     }
 
-    onWheel(e: Event) {
-        const wheelEvent = e as WheelEvent;
-        const delta = wheelEvent.deltaY ?? 0;
+    onWheel(e: any) {
+        const delta = e.deltaY ?? 0;
         this.scroll.target += delta > 0 ? this.scrollSpeed : -this.scrollSpeed;
         this.onCheckDebounce();
     }
@@ -547,29 +487,19 @@ class GalleryApp {
 
     onResize() {
         if (!this.container) return;
-
         const width = this.container.clientWidth;
         const height = this.container.clientHeight;
-
-        // Prevent zero-size initialization or resizing
         if (width === 0 || height === 0) return;
 
         this.screen = { width, height };
-
-        if (this.renderer) {
-            this.renderer.setSize(this.screen.width, this.screen.height);
-        }
-
+        if (this.renderer) this.renderer.setSize(this.screen.width, this.screen.height);
         if (this.camera) {
-            this.camera.perspective({
-                aspect: this.screen.width / this.screen.height
-            });
+            this.camera.perspective({ aspect: this.screen.width / this.screen.height });
             const fov = (this.camera.fov * Math.PI) / 180;
             const viewportHeight = 2 * Math.tan(fov / 2) * this.camera.position.z;
             const viewportWidth = viewportHeight * this.camera.aspect;
             this.viewport = { width: viewportWidth, height: viewportHeight };
         }
-
         if (this.medias) {
             this.medias.forEach(media => media.onResize({ screen: this.screen, viewport: this.viewport }));
         }
@@ -594,11 +524,9 @@ class GalleryApp {
         this.boundOnTouchUp = this.onTouchUp.bind(this);
 
         window.addEventListener('resize', this.boundOnResize);
-
         this.container.addEventListener('wheel', this.boundOnWheel);
         this.container.addEventListener('mousedown', this.boundOnTouchDown);
         this.container.addEventListener('touchstart', this.boundOnTouchDown);
-
         window.addEventListener('mousemove', this.boundOnTouchMove);
         window.addEventListener('mouseup', this.boundOnTouchUp);
         window.addEventListener('touchmove', this.boundOnTouchMove);
@@ -607,17 +535,11 @@ class GalleryApp {
 
     destroy() {
         window.cancelAnimationFrame(this.raf);
-
         window.removeEventListener('resize', this.boundOnResize);
         window.removeEventListener('mousemove', this.boundOnTouchMove);
         window.removeEventListener('mouseup', this.boundOnTouchUp);
         window.removeEventListener('touchmove', this.boundOnTouchMove);
         window.removeEventListener('touchend', this.boundOnTouchUp);
-
-        this.container.removeEventListener('wheel', this.boundOnWheel);
-        this.container.removeEventListener('mousedown', this.boundOnTouchDown);
-        this.container.removeEventListener('touchstart', this.boundOnTouchDown);
-
         if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
             this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas as HTMLCanvasElement);
         }
@@ -625,7 +547,7 @@ class GalleryApp {
 }
 
 export function CircularGallery({
-    items,
+    items = [],
     bend = 3,
     textColor = '#ffffff',
     borderRadius = 0.05,
@@ -636,48 +558,33 @@ export function CircularGallery({
 }: CircularGalleryProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const appRef = useRef<GalleryApp | null>(null);
+    const { isLowPowerMode } = usePerformance();
 
     const initGallery = useCallback(() => {
-        if (!containerRef.current) return;
-
-        if (appRef.current) {
-            appRef.current.destroy();
-        }
-
+        if (!containerRef.current || isLowPowerMode) return;
+        if (appRef.current) appRef.current.destroy();
         appRef.current = new GalleryApp(containerRef.current, {
-            items,
-            bend,
-            textColor,
-            borderRadius,
-            font,
-            scrollSpeed,
-            scrollEase
+            items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase
         });
-    }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+    }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, isLowPowerMode]);
 
     useEffect(() => {
+        if (isLowPowerMode) return;
         let timer: NodeJS.Timeout;
-
         const checkAndInit = () => {
             if (containerRef.current) {
                 const width = containerRef.current.clientWidth;
                 const height = containerRef.current.clientHeight;
-
                 if (width > 0 && height > 0) {
-                    console.log(`[CircularGallery] Initializing with dimensions: ${width}x${height}`);
                     initGallery();
                     return true;
                 }
             }
             return false;
         };
-
         if (!checkAndInit()) {
-            timer = setInterval(() => {
-                if (checkAndInit()) clearInterval(timer);
-            }, 100);
+            timer = setInterval(() => { if (checkAndInit()) clearInterval(timer); }, 100);
         }
-
         return () => {
             if (timer) clearInterval(timer);
             if (appRef.current) {
@@ -685,12 +592,35 @@ export function CircularGallery({
                 appRef.current = null;
             }
         };
-    }, [initGallery]);
+    }, [initGallery, isLowPowerMode]);
+
+    // Mobile Fallback: Horizontal Scroll Grid
+    if (isLowPowerMode) {
+        return (
+            <div className={cn("w-full py-4 overflow-x-auto overflow-y-hidden no-scrollbar", className)}>
+                <div className="flex gap-6 px-6 min-w-full">
+                    {items.map((item, i) => (
+                        <div key={i} className="flex-shrink-0 w-[280px]">
+                            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 shadow-xl">
+                                <img src={item.image} alt={item.text} className="w-full h-full object-cover" />
+                                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black via-black/40 to-transparent">
+                                    <p className="text-white font-bold text-lg leading-tight">{item.text}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="text-center mt-6 text-zinc-500 text-xs font-mono tracking-widest uppercase">
+                    Swipe Horizontal to Explore
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div
             ref={containerRef}
-            className={`w-full h-full overflow-hidden cursor-grab active:cursor-grabbing ${className}`}
+            className={cn("w-full h-full overflow-hidden cursor-grab active:cursor-grabbing", className)}
         />
     );
 }
