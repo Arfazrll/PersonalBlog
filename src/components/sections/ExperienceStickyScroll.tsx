@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
 import { GraduationCap, BookOpen, Star, Binary, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,19 @@ export default function ExperienceStickyScroll({ isLowPowerMode = false }: { isL
             title: "Telkom University",
             description: "Information Technology major with a GPV of 3.8/4.0. Focused on AI Engineering and Systems Research. Active in multiple high-impact research laboratories and national competitions.",
             content: (
-                <div className="h-full w-full flex items-center justify-center p-8 bg-gradient-to-br from-blue-600/20 via-purple-600/10 to-transparent relative group overflow-hidden">
+                <div className="h-full w-full flex items-center justify-center p-8 bg-black/5 dark:bg-white/5 relative group overflow-hidden border border-white/10">
+                    {/* Background Logo */}
+                    <div className="absolute inset-0">
+                        <Image
+                            src="/assets/TelkomUniversityLogo.png?v=3"
+                            alt="Telkom University"
+                            fill
+                            className="object-cover opacity-50 dark:opacity-40 blur-[2px] scale-110"
+                            unoptimized
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/70 via-black/50 to-black/80" />
+                    </div>
+
                     {/* Animated Background Element */}
                     <div className="absolute inset-0 opacity-10 pointer-events-none">
                         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
@@ -19,23 +32,23 @@ export default function ExperienceStickyScroll({ isLowPowerMode = false }: { isL
 
                     <div className="relative z-10 flex flex-col items-center">
                         <div className="relative mb-6">
-                            <GraduationCap className={cn("w-20 h-20 text-primary", !isLowPowerMode && "animate-pulse")} />
-                            <Binary className={cn("w-8 h-8 text-blue-500 absolute -top-2 -right-2 opacity-50", !isLowPowerMode && "animate-bounce")} />
+                            <GraduationCap className={cn("w-20 h-20 text-white drop-shadow-lg", !isLowPowerMode && "animate-pulse")} />
+                            <Binary className={cn("w-8 h-8 text-blue-400 absolute -top-2 -right-2 opacity-80", !isLowPowerMode && "animate-bounce")} />
                         </div>
 
                         <div className="flex flex-wrap gap-2 justify-center mb-4">
                             {["GPA 3.8", "AI Researcher", "IT Major"].map(s => (
-                                <span key={s} className="px-3 py-1 rounded-full text-[10px] bg-primary/10 text-primary border border-primary/20 font-mono font-bold backdrop-blur-md">
+                                <span key={s} className="px-3 py-1 rounded-full text-[10px] bg-white/10 text-white border border-white/20 font-mono font-bold backdrop-blur-md shadow-lg">
                                     {s}
                                 </span>
                             ))}
                         </div>
-                        <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Digital Innovation Hub</p>
+                        <p className="text-[10px] font-mono text-white/60 uppercase tracking-widest bg-black/20 px-2 py-1 rounded">Digital Innovation Hub</p>
                     </div>
 
                     {/* Holographic Scan Effect */}
                     {!isLowPowerMode && (
-                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-scan z-20" />
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-400/50 to-transparent animate-scan z-20" />
                     )}
                 </div>
             ),
@@ -45,25 +58,37 @@ export default function ExperienceStickyScroll({ isLowPowerMode = false }: { isL
             title: "SMAN 88 Jakarta",
             description: "Science Major (IPA). Developed strong analytical foundations in Mathematics and Physics, shaping a logical approach to problem-solving and technical engineering.",
             content: (
-                <div className="h-full w-full flex items-center justify-center p-8 bg-gradient-to-br from-orange-600/20 via-rose-600/10 to-transparent relative group overflow-hidden">
+                <div className="h-full w-full flex items-center justify-center p-8 bg-black/5 dark:bg-white/5 relative group overflow-hidden border border-white/10">
+                    {/* Background Logo */}
+                    <div className="absolute inset-0">
+                        <Image
+                            src="/assets/sman88logo.png"
+                            alt="SMAN 88 Jakarta"
+                            fill
+                            className="object-cover opacity-20 dark:opacity-10 blur-sm scale-110"
+                            unoptimized
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-br from-orange-900/50 via-rose-900/30 to-black/80 mix-blend-multiply" />
+                    </div>
+
                     <div className="absolute inset-0 opacity-10 pointer-events-none">
                         <div className="absolute inset-0 bg-[radial-gradient(#80808012_1px,transparent_1px)] [background-size:16px_16px]"></div>
                     </div>
 
                     <div className="relative z-10 flex flex-col items-center">
                         <div className="relative mb-6">
-                            <BookOpen className="w-20 h-20 text-orange-500 hover:rotate-6 transition-transform duration-500" />
-                            <Sparkles className={cn("w-6 h-6 text-yellow-500 absolute -bottom-2 -left-2", !isLowPowerMode && "animate-pulse")} />
+                            <BookOpen className="w-20 h-20 text-white drop-shadow-lg hover:rotate-6 transition-transform duration-500" />
+                            <Sparkles className={cn("w-6 h-6 text-yellow-400 absolute -bottom-2 -left-2", !isLowPowerMode && "animate-pulse")} />
                         </div>
 
                         <div className="flex flex-wrap gap-2 justify-center mb-4">
                             {["Science Major", "Jakarta", "Foundation"].map(s => (
-                                <span key={s} className="px-3 py-1 rounded-full text-[10px] bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 font-mono font-bold backdrop-blur-md">
+                                <span key={s} className="px-3 py-1 rounded-full text-[10px] bg-white/10 text-white border border-white/20 font-mono font-bold backdrop-blur-md shadow-lg">
                                     {s}
                                 </span>
                             ))}
                         </div>
-                        <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Logical Foundation</p>
+                        <p className="text-[10px] font-mono text-white/60 uppercase tracking-widest bg-black/20 px-2 py-1 rounded">Logical Foundation</p>
                     </div>
                 </div>
             ),

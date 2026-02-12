@@ -142,11 +142,11 @@ export const StickyScroll = ({
         <div className="sticky top-0 hidden lg:flex h-full items-center justify-center w-2/5">
           <div
             className={cn(
-              "h-[24rem] w-full overflow-hidden rounded-[2.5rem] bg-card/40 backdrop-blur-2xl border border-white/10 dark:border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-700 hover:scale-[1.02]",
+              "h-[24rem] w-full relative overflow-hidden rounded-[2.5rem] bg-card/40 backdrop-blur-2xl border border-white/10 dark:border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-700 hover:scale-[1.02]",
               contentClassName
             )}
           >
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               <motion.div
                 key={activeCard}
                 initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 20, filter: "blur(10px)" }}
@@ -156,7 +156,7 @@ export const StickyScroll = ({
                   duration: isLowPowerMode ? 0.2 : 0.6,
                   ease: [0.22, 1, 0.36, 1]
                 }}
-                className="w-full h-full"
+                className="absolute inset-0 w-full h-full"
               >
                 {content[activeCard].content ?? null}
               </motion.div>
