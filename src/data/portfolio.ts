@@ -930,6 +930,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             type: 'Course',
             tags: ['AI', 'Generative AI'],
             category: 'certification',
+            image: '/certificate/Generative AI.pdf',
         },
         {
             id: 'cert-2',
@@ -941,6 +942,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             type: 'Course',
             tags: ['AI', 'Productivity'],
             category: 'certification',
+            image: '/certificate/Practical AI for Productivity.pdf',
         },
         {
             id: 'cert-3',
@@ -950,6 +952,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'N9ZO9KGW6XG5',
             credentialUrl: 'https://www.dicoding.com/certificates/N9ZO9KGW6XG5',
             category: 'certification',
+            image: '/certificate/Financial Literacy.pdf',
         },
         {
             id: 'cert-4',
@@ -959,6 +962,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '1RXYEE173ZVM',
             credentialUrl: 'https://www.dicoding.com/certificates/1RXYEE173ZVM',
             category: 'certification',
+            image: '/certificate/Pemrograman Dengan Java.pdf',
         },
         {
             id: 'cert-5',
@@ -968,6 +972,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '1RXYEE1EQZVM',
             credentialUrl: 'https://www.dicoding.com/certificates/1RXYEE1EQZVM',
             category: 'certification',
+            image: '/certificate/Back-End dengan JavaScript.pdf',
         },
         {
             id: 'cert-6',
@@ -976,6 +981,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             date: '2025-02-01',
             credentialUrl: 'https://www.credly.com/badges/ccd9ad7a-f4b9-41e7-8589-f845d50c67f1/linked_in_profile',
             category: 'certification',
+            image: '/certificate/Started with Databases.png',
         },
         {
             id: 'cert-7',
@@ -985,6 +991,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'JEZL7ZL9SADP',
             credentialUrl: 'https://www.coursera.org/account/accomplishments/verify/JEZL7ZL9SADP',
             category: 'certification',
+            image: '/certificate/Supervised Machine Learning Regression and Classification.jpeg',
         },
         {
             id: 'cert-8',
@@ -993,6 +1000,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             date: '2025-01-01',
             credentialUrl: 'https://learn.microsoft.com/en-us/users/arfazrlll-6195/achievements/8752dbgw',
             category: 'certification',
+            image: '/certificate/elevAIte with Dicoding Program 2025.png',
         },
         {
             id: 'cert-9',
@@ -1002,6 +1010,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '13612507',
             credentialUrl: 'https://www.skills.google/public_profiles/241d7451-f9ad-4c87-81e0-affa9d6fed28/badges/13612507?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share',
             category: 'certification',
+            image: '/certificate/Data Analytics on Google Cloud.png',
         },
         {
             id: 'cert-10',
@@ -1010,6 +1019,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             date: '2024-11-01',
             credentialUrl: 'https://verify.compfest.id/verify/cf-2024-79c13629-a893-47a8-afba-8300ada74e0b',
             category: 'certification',
+            image: '/certificate/AI Innovation Challenge.pdf',
         },
         {
             id: 'cert-11',
@@ -1019,6 +1029,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'MRZMNKG3KPYQ',
             credentialUrl: 'https://www.dicoding.com/certificates/MRZMNKG3KPYQ',
             category: 'certification',
+            image: '/certificate/Dasar Pemrograman JavaScript.pdf',
         },
         {
             id: 'cert-12',
@@ -1027,6 +1038,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             date: '2024-01-01',
             credentialUrl: 'https://academy.dqlab.id/Certificate_check/result/DQLABSQLT1HCTASH#mycertificate',
             category: 'certification',
+            image: '/certificate/Fundamental SQL Using SELECT Statement.pdf',
         },
         {
             id: 'cert-13',
@@ -1036,6 +1048,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'fedcea5d-b7d5-425d-b6b5-fd9d24b7c918',
             credentialUrl: 'https://www.credly.com/badges/fedcea5d-b7d5-425d-b6b5-fd9d24b7c918/linked_in_profile',
             category: 'certification',
+            image: '/certificate/Introduction to Generative AI.png',
         },
         {
             id: 'cert-14',
@@ -1045,6 +1058,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'UC-7dff40d7-4bif-4213-8928-653d07e72315',
             credentialUrl: 'https://www.udemy.com/certificate/UC-7dff40d7-4b1f-42f3-8928-653d07e7a315/',
             category: 'certification',
+            image: '/certificate/Deep Learning Beginner.jpg',
         },
         {
             id: 'cert-15',
@@ -1054,6 +1068,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '4fc1c551-1f68-47cc-b371-d2785495ae61',
             credentialUrl: 'https://www.credly.com/badges/60d0828f-021d-4b73-8fef-705eddd8069a/linked_in_profile',
             category: 'certification',
+            image: '/certificate/Machine Learning Foundations.png',
         },
         {
             id: 'cert-16',
@@ -1063,6 +1078,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'EYX4J4D6OZDL',
             credentialUrl: 'https://www.dicoding.com/certificates/EYX4J4D6OZDL',
             category: 'certification',
+            image: '/certificate/Cloud Practitioner Essentials.pdf',
         },
         {
             id: 'cert-17',
@@ -1072,6 +1088,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '2VX34RJ24ZYQ',
             credentialUrl: 'https://www.dicoding.com/certificates/2VX34RJ24ZYQ',
             category: 'certification',
+            image: '/certificate/Pemrograman dengan Dart.pdf',
         },
         {
             id: 'cert-18',
@@ -1081,6 +1098,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'IOC-8DeTb',
             credentialUrl: 'https://nwtbe-6iaaa-aaaak-qiqca-cai.icp0.io/student-dashboard/my-certificates',
             category: 'certification',
+            image: '/certificate/Mastering Smart Contract.jpg',
         },
         {
             id: 'cert-19',
@@ -1090,6 +1108,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '1RXY20W6KXVM',
             credentialUrl: 'https://www.dicoding.com/certificates/1RXY20W6KXVM',
             category: 'certification',
+            image: '/certificate/Machine Learning Modeling (Beginner).pdf',
         },
         {
             id: 'cert-20',
@@ -1101,6 +1120,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             type: 'Course',
             tags: ['AWS', 'Cloud'],
             category: 'certification',
+            image: '/certificate/AWS Academy Graduate - AWS Academy Introduction to Cloud 1.pdf',
         },
         {
             id: 'cert-21',
@@ -1110,6 +1130,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'E7jpSPY5S6-x_qr8XR7EFQ',
             credentialUrl: 'https://skilvul.com/courses/react-dasar/student/cm0f41vtl01q501p29y0a45jf/',
             category: 'certification',
+            image: '/certificate/React Dasar (Gold).pdf',
         },
         {
             id: 'cert-22',
@@ -1119,6 +1140,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'g2lBGc8vSMqN0J2ez6BSnA',
             credentialUrl: 'https://skilvul.com/courses/algorithm-and-data-structures-with-python/student/cm0f41vtl01q501p29y0a45jf/',
             category: 'certification',
+            image: '/certificate/Algorithm & Data Structures with Python.pdf',
         },
         {
             id: 'cert-23',
@@ -1128,6 +1150,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'MysWQQTNQvuKl-AXaTUILw',
             credentialUrl: 'https://skilvul.com/courses/python-lanjutan/student/cm0f41vtl01q501p29y0a45jf/',
             category: 'certification',
+            image: '/certificate/Python Lanjutan.pdf',
         },
         {
             id: 'cert-24',
@@ -1137,6 +1160,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'UC-306a5eba-5acd-4d0d-9fe8-cdd4259d8027',
             credentialUrl: 'https://www.udemy.com/certificate/UC-306a5eba-5acd-4d0d-9fe8-cdd4259d8027/',
             category: 'certification',
+            image: '/certificate/Docker, Kubernetes dan DevOps.jpg',
         },
         {
             id: 'cert-25',
@@ -1146,6 +1170,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '110540570',
             credentialUrl: 'https://www.credential.net/ad3d06cc-16c9-4e1a-90db-c36fa3626bc8#acc.SKJ845tp',
             category: 'certification',
+            image: '/certificate/Store Listing Certificate.pdf',
         },
         {
             id: 'cert-26',
@@ -1155,6 +1180,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'UC-3c8cd3d2-a39f-4e63-8bca-25c1901a1b06',
             credentialUrl: 'https://www.udemy.com/certificate/UC-3c8cd3d2-a39f-4e63-8bca-25c1901a1b06/',
             category: 'certification',
+            image: '/certificate/Fullstack Programming Untuk Pemula.jpg',
         },
         {
             id: 'cert-27',
@@ -1164,6 +1190,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '4EXGQ83LQZRL',
             credentialUrl: 'https://www.dicoding.com/certificates/4EXGQ83LQZRL',
             category: 'certification',
+            image: '/certificate/Pemrograman dengan Python.pdf',
         },
         {
             id: 'cert-28',
@@ -1173,6 +1200,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'JLX17RY45X72',
             credentialUrl: 'https://www.dicoding.com/certificates/JLX17RY45X72',
             category: 'certification',
+            image: '/certificate/Dasar Structured Query Language (SQL).pdf',
         },
         {
             id: 'cert-29',
@@ -1182,6 +1210,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'L4PQ1Y25QXO1',
             credentialUrl: 'https://www.dicoding.com/certificates/L4PQ1Y25QXO1',
             category: 'certification',
+            image: '/certificate/Visualisasi Data.pdf',
         },
         {
             id: 'cert-30',
@@ -1191,6 +1220,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '6RPN19RV4X2M',
             credentialUrl: 'https://www.dicoding.com/certificates/6RPN19RV4X2M',
             category: 'certification',
+            image: '/certificate/Dasar Artificial Intelligence.pdf',
         },
     ],
     techStack: [

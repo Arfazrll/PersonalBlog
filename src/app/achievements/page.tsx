@@ -110,12 +110,24 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
                     )}>
                         {achievement.image ? (
                             <>
-                                <img
-                                    src={achievement.image}
-                                    alt={achievement.title}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-100"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                {achievement.image.endsWith('.pdf') ? (
+                                    <div className="w-full h-full relative group-hover:scale-105 transition-transform duration-700">
+                                        <iframe
+                                            src={`${achievement.image}#toolbar=0&navpanes=0&scrollbar=0`}
+                                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                                            title={achievement.title}
+                                        />
+                                        {/* Overlay to capture clicks and prevent iframe interaction in card */}
+                                        <div className="absolute inset-0 z-10 bg-transparent" />
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={achievement.image}
+                                        alt={achievement.title}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-100"
+                                    />
+                                )}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
                             </>
                         ) : (
                             <motion.div
@@ -281,24 +293,43 @@ function AchievementModal({ achievement, onClose, isLowPowerMode }: { achievemen
                 </motion.button>
 
                 {/* Left: Cinematic Image container with standardized alignment */}
-                <div className="lg:w-1/2 relative aspect-video lg:aspect-auto bg-black/20 flex items-center justify-center border-r border-white/5 group overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/30" />
+                <div className="lg:w-1/2 relative bg-black/20 border-r border-white/5 group overflow-hidden flex flex-col">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/30 pointer-events-none" />
 
-                    {/* Watermark Centered */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] dark:opacity-[0.02] select-none pointer-events-none overflow-hidden text-foreground">
-                        <span className="text-[12rem] font-black uppercase tracking-tighter rotate-[-10deg]">Archive</span>
-                    </div>
 
-                    <div className="relative z-10 flex flex-col items-center gap-6 p-12">
+                    <div className="relative z-10 w-full h-full p-0 flex flex-col">
                         {achievement.image ? (
-                            <motion.img
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.8 }}
-                                src={achievement.image}
-                                alt={achievement.title}
-                                className="w-full h-auto max-h-[50vh] object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.05)]"
-                            />
+                            achievement.image.endsWith('.pdf') ? (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.98 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.6 }}
+                                    className="w-full h-full bg-transparent flex items-center justify-center p-4 lg:p-8"
+                                >
+                                    <div className="w-full aspect-[1.5] relative rounded-lg overflow-hidden shadow-2xl bg-white border-0">
+                                        <iframe
+                                            src={`${achievement.image}#toolbar=0&view=FitH`}
+                                            className="w-full h-full border-0"
+                                            title={achievement.title}
+                                        />
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <div className="w-full h-full overflow-auto relative bg-transparent scrollbar-hide flex flex-col">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.8 }}
+                                        className="min-h-full w-full flex items-center justify-center p-4"
+                                    >
+                                        <img
+                                            src={achievement.image}
+                                            alt={achievement.title}
+                                            className="w-full h-auto object-contain shadow-2xl rounded-lg"
+                                        />
+                                    </motion.div>
+                                </div>
+                            )
                         ) : (
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
