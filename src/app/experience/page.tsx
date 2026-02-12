@@ -62,7 +62,7 @@ function ExperienceHighlightSection({ type, isLowPowerMode }: { type: TabType; i
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             viewport={{ once: true }}
-            className="mt-24"
+            className="mt-72"
         >
             <HeroHighlight containerClassName="h-[30rem] rounded-3xl overflow-hidden" isLowPowerMode={isLowPowerMode}>
                 <motion.h2
@@ -108,7 +108,7 @@ interface TabItem {
 
 function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
     const contentRef = useRef<HTMLDivElement>(null);
-    const [activeTab, setActiveTab] = useState<number>(2); // Default to experience for this task
+    const [activeTab, setActiveTab] = useState<number>(1);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     const tabs: TabItem[] = [
@@ -175,12 +175,12 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                             <Transition
                                 key={index}
                                 show={activeTab === index}
-                                enter="transition ease-in-out duration-500 delay-200 order-first"
-                                enterFrom="opacity-0 -translate-x-4"
-                                enterTo="opacity-100 translate-x-0"
-                                leave="transition ease-out duration-300 delay-300 absolute"
-                                leaveFrom="opacity-100 translate-x-0"
-                                leaveTo="opacity-0 translate-x-4"
+                                enter="transition ease-out duration-300 delay-150 relative"
+                                enterFrom="opacity-0 blur-sm translate-y-4"
+                                enterTo="opacity-100 blur-0 translate-y-0"
+                                leave="transition ease-in duration-150 absolute top-0 left-0 w-full"
+                                leaveFrom="opacity-100 blur-0 translate-y-0"
+                                leaveTo="opacity-0 blur-sm -translate-y-4"
                                 beforeEnter={() => heightFix()}
                             >
                                 <div className="px-4 text-xl font-bold text-foreground sm:px-0 sm:text-2xl lg:text-3xl">
@@ -227,6 +227,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                             transition={{ duration: 0.4 }}
                         >
                             <ExperienceStickyScroll />
+                            <div className="pb-32" />
                             <ExperienceHighlightSection type="education" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}
@@ -241,6 +242,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                             transition={{ duration: 0.4 }}
                         >
                             <ExperienceTimeline isLowPowerMode={isLowPowerMode} />
+                            <div className="pb-32" />
                             <ExperienceHighlightSection type="journey" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}
@@ -336,7 +338,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+                                        className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-32"
                                     >
                                         {/* Left: Sticky Sidebar Filters */}
                                         <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit space-y-8">
@@ -400,7 +402,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                                         {/* Logo */}
                                                         <div className="hidden sm:flex w-16 h-16 bg-neutral-50 dark:bg-black rounded-2xl items-center justify-center shrink-0 border border-neutral-100 dark:border-neutral-800 p-2">
                                                             {exp.logo ? (
-                                                                <Image src={exp.logo} alt={exp.company} width={48} height={48} className="object-contain" />
+                                                                <Image src={exp.logo} alt={exp.company} width={48} height={48} className="object-contain" unoptimized />
                                                             ) : (
                                                                 <Briefcase className="w-8 h-8 text-neutral-300" />
                                                             )}
@@ -410,7 +412,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                                             <h4 className="text-2xl font-bold text-neutral-900 dark:text-white leading-tight group-hover:text-purple-600 dark:group-hover:text-cyan-400 transition-colors">
                                                                 {exp.position}
                                                             </h4>
-                                                            <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                                            <p className="text-neutral-600 dark:text-neutral-300 mb-4 leading-relaxed">
                                                                 {exp.description}
                                                             </p>
 
@@ -436,6 +438,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                     </motion.div>
                                 )}
                             </AnimatePresence>
+                            <div className="pb-32" />
                             <ExperienceHighlightSection type="experience" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}

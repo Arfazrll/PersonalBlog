@@ -468,7 +468,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Remote',
             type: 'freelance',
-            logo: '/assets/dicodinglogo.png',
+            logo: '/assets/dicodinglogo.png?v=2',
         },
         {
             id: 'prof-2',
@@ -487,7 +487,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Remote',
             type: 'freelance',
-            logo: '/assets/dicodinglogo.png',
+            logo: '/assets/dicodinglogo.png?v=2',
         },
         {
             id: 'prof-3',
@@ -676,7 +676,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Bandung',
             type: 'volunteer',
-            logo: '/assets/TelkomUniversityLogo.png',
+            logo: '/assets/HMITlogo.png?v=1',
         },
         {
             id: 'lead-5',
@@ -735,7 +735,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Bandung',
             type: 'volunteer',
-            logo: '/assets/TelkomUniversityLogo.png',
+            logo: '/assets/HMITlogo.png?v=1',
         },
         {
             id: 'vol-3',
@@ -794,7 +794,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Indonesia',
             type: 'apprenticeship',
-            logo: '/assets/microsotlogo.jpg',
+            logo: '/assets/DBSLogo.png?v=1',
         },
         {
             id: 'cert-2',
