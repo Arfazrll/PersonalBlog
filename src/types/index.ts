@@ -36,6 +36,8 @@ export interface Experience {
     type: 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance' | 'volunteer' | 'apprenticeship' | 'self-employed';
     logo?: string;
     link?: string;
+    galleryImages?: string[];
+    externalLink?: string;
 }
 
 export interface Education {

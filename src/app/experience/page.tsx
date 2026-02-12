@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Transition } from "@headlessui/react";
 import {
     Calendar,
@@ -18,7 +19,8 @@ import {
     Heart,
     Users,
     ExternalLink,
-    ArrowRight
+    ArrowRight,
+    Link2
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
@@ -497,13 +499,193 @@ export default function ExperiencePage() {
     );
 }
 
+const slugify = (text: string) => {
+    return text
+        .split('(')[0] // Remove special suffixes like (Contract-Based)
+        .toLowerCase()
+        .replace(/[^\w]/g, '');
+};
+
+const LinkPreviewCard = ({ url, title, id, logo }: { url: string; title?: string; id: string; logo?: string }) => {
+    const domain = useMemo(() => {
+        try {
+            return new URL(url).hostname;
+        } catch {
+            return 'external-link.com';
+        }
+    }, [url]);
+
+    return (
+        <motion.a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            layoutId={`${id}-link-card`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="group relative flex flex-col justify-center p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl h-24 md:h-32 w-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary/30"
+        >
+            <div className="flex items-center gap-4 relative z-10 w-full">
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="flex items-center gap-2 mb-1 overflow-hidden">
+                        <div className="p-1 rounded bg-primary/10 text-primary shrink-0">
+                            <Link2 className="w-2.5 h-2.5" />
+                        </div>
+                        <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest truncate">{domain}</span>
+                    </div>
+                    <h4 className="text-xs font-bold text-neutral-900 dark:text-white line-clamp-1 leading-tight mb-0.5">
+                        {title || "Project Resource"}
+                    </h4>
+                    <p className="text-[9px] text-neutral-500 line-clamp-2 leading-relaxed opacity-80">
+                        View documentation and project details on {domain}.
+                    </p>
+                </div>
+                {logo && (
+                    <div className="shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 overflow-hidden p-2">
+                        <Image src={logo} alt="Logo" width={64} height={64} className="w-full h-full object-contain lowercase" unoptimized />
+                    </div>
+                )}
+            </div>
+
+            {/* Hover Overlay - LinkedIn Style */}
+            <div className="absolute inset-0 bg-black/5 dark:bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-20">
+                <div className="w-10 h-10 rounded-full bg-black/80 dark:bg-white/90 flex items-center justify-center backdrop-blur-sm transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                    <ExternalLink className="w-5 h-5 text-white dark:text-black" />
+                </div>
+            </div>
+
+            {/* Subtle background decoration */}
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
+        </motion.a>
+    );
+};
+
+function TimelineGallery({ images, id, title, externalLink, logo }: { images: string[]; id: string; title?: string; externalLink?: string; logo?: string }) {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+
+    const handleImageError = (index: number) => {
+        setFailedImages(prev => new Set(prev).add(index));
+    };
+
+    const effectiveImages = images.length > 0
+        ? images
+        : title
+            ? [1, 2, 3, 4].map(n => `/journey/${slugify(title)}${n}.jpg`)
+            : [];
+
+    const allImages = effectiveImages.map((src, i) => ({ src, index: i, type: 'image' as const }));
+    const validImages = allImages.filter(img => !failedImages.has(img.index));
+
+    // Add Link Card if externalLink exists
+    const galleryItems = [
+        ...validImages,
+        ...(externalLink ? [{ type: 'link' as const, src: externalLink, index: validImages.length }] : [])
+    ];
+
+    const visibleItems = isExpanded ? galleryItems.slice(0, 4) : galleryItems.slice(0, 2);
+
+    if (galleryItems.length === 0) return null;
+
+    return (
+        <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+                <AnimatePresence mode="popLayout">
+                    {visibleItems.map((item) => (
+                        item.type === 'image' ? (
+                            <motion.div
+                                key={`${id}-gallery-${item.index}`}
+                                layoutId={`${id}-gallery-${item.index}`}
+                                layout
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                transition={{ duration: 0.2 }}
+                                onClick={() => setSelectedImage(item.src)}
+                                className="relative h-24 md:h-32 w-full group rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 bg-neutral-100 dark:bg-neutral-800 cursor-zoom-in"
+                            >
+                                <Image
+                                    src={item.src}
+                                    alt={`experience gallery ${item.index}`}
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                    unoptimized
+                                    onError={() => handleImageError(item.index)}
+                                />
+                            </motion.div>
+                        ) : (
+                            <LinkPreviewCard
+                                key={`${id}-link-preview`}
+                                url={item.src}
+                                title={title}
+                                id={id}
+                                logo={logo}
+                            />
+                        )
+                    ))}
+                </AnimatePresence>
+            </div>
+            {galleryItems.length > 2 && (
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="flex items-center gap-1.5 text-xs font-bold text-neutral-500 hover:text-primary transition-colors uppercase tracking-widest pl-1"
+                >
+                    {isExpanded ? (
+                        <>Show Less <ChevronDown className="w-3 h-3 rotate-180" /></>
+                    ) : (
+                        <>+{galleryItems.length - 2} More Attachments <ChevronDown className="w-3 h-3" /></>
+                    )}
+                </button>
+            )}
+
+            {/* Lightbox Overlay */}
+            <AnimatePresence>
+                {selectedImage && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setSelectedImage(null)}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                        />
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative max-w-4xl w-[90vw] md:w-auto h-fit max-h-[80vh] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <img
+                                src={selectedImage}
+                                alt="Gallery expanded"
+                                className="w-full h-full object-contain"
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
 function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
     const experiences = portfolioData.experiences;
 
     const groupedExperiences = useMemo(() => {
         const groups: { [key: string]: Experience[] } = {};
 
-        experiences.forEach(exp => {
+        // Sort all experiences by startDate descending
+        const sortedAll = [...experiences].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+
+        sortedAll.forEach(exp => {
             const year = new Date(exp.startDate).getFullYear().toString();
             if (!groups[year]) {
                 groups[year] = [];
@@ -515,7 +697,7 @@ function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
             .sort((a, b) => parseInt(b) - parseInt(a))
             .map(year => ({
                 title: year,
-                experiences: groups[year].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+                experiences: groups[year]
             }));
     }, [experiences]);
 
@@ -523,63 +705,57 @@ function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
         title: group.title,
         content: (
             <div className="space-y-12">
-                {group.experiences.map((exp, idx) => (
+                {group.experiences.map((exp) => (
                     <div key={exp.id} className="relative pl-8 border-l-2 border-neutral-200 dark:border-neutral-800">
                         <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-neutral-200 dark:bg-neutral-800 border-2 border-white dark:border-black" />
 
-                        <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div>
-                                <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
+                                <h3 className="text-xl font-bold text-neutral-900 dark:text-white leading-tight">
                                     {exp.position}
                                 </h3>
                                 <p className="text-lg font-medium text-primary">
                                     {exp.company}
                                 </p>
                             </div>
-                            <span className="text-sm font-mono text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-900 px-2 py-1 rounded">
-                                {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Present'}
-                            </span>
+                            <div className="flex flex-col sm:items-end gap-2">
+                                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-900 px-2 py-1 rounded w-fit">
+                                    {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Present'}
+                                </span>
+                            </div>
                         </div>
 
-                        <p className="text-neutral-600 dark:text-neutral-300 mb-4 leading-relaxed">
+                        <p className="text-neutral-600 dark:text-neutral-300 mb-6 leading-relaxed text-sm md:text-base">
                             {exp.description}
                         </p>
 
                         {exp.responsibilities && (
-                            <ul className="mb-6 space-y-2">
+                            <ul className="mb-8 space-y-3">
                                 {exp.responsibilities.slice(0, 3).map((resp, i) => (
-                                    <li key={i} className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-                                        <ChevronRight className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                                    <li key={i} className="flex items-start gap-2.5 text-xs md:text-sm text-neutral-500 dark:text-neutral-400">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-primary/40 mt-1.5 shrink-0" />
                                         <span>{resp}</span>
                                     </li>
                                 ))}
                             </ul>
                         )}
 
-                        <div className="flex flex-wrap gap-2 mb-6">
+                        <div className="flex flex-wrap gap-2 mb-8">
                             {exp.skills.map((skill, i) => (
-                                <span key={i} className="text-xs px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+                                <span key={i} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400">
                                     {skill}
                                 </span>
                             ))}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <Image
-                                src={`https://assets.aceternity.com/templates/startup-${(idx % 4) + 1}.webp`}
-                                alt="work environment"
-                                width={500}
-                                height={500}
-                                className="rounded-lg object-cover h-24 md:h-32 w-full shadow-sm hover:shadow-md transition-shadow duration-200"
-                            />
-                            <Image
-                                src={`https://assets.aceternity.com/templates/startup-${((idx + 1) % 4) + 1}.webp`}
-                                alt="project showcase"
-                                width={500}
-                                height={500}
-                                className="rounded-lg object-cover h-24 md:h-32 w-full shadow-sm hover:shadow-md transition-shadow duration-200"
-                            />
-                        </div>
+                        {/* Expandable Gallery Component */}
+                        <TimelineGallery
+                            images={exp.galleryImages || []}
+                            id={exp.id}
+                            title={exp.position}
+                            externalLink={exp.externalLink}
+                            logo={exp.logo}
+                        />
                     </div>
                 ))}
             </div>

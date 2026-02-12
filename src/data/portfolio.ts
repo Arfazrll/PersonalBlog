@@ -507,6 +507,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Hybrid',
             type: 'internship',
             logo: '/assets/HumicLogo.png',
+            externalLink: 'https://github.com/Arfazrll/Security-Automation-GenAI',
         },
         {
             id: 'prof-4',
@@ -545,6 +546,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Remote',
             type: 'internship',
             logo: '/assets/aselablogo.png',
+            externalLink: 'https://ase.telkomuniversity.ac.id',
         },
         {
             id: 'prof-6',
@@ -564,6 +566,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Hybrid',
             type: 'contract',
             logo: '/assets/iflablogo.png',
+            externalLink: '',
         },
         {
             id: 'prof-7',
