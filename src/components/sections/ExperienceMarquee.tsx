@@ -87,7 +87,7 @@ function ParallaxText({ children, baseVelocity = 100, isLowPowerMode = false }: 
 }
 
 const GalleryItem = ({ exp, index }: { exp: Experience; index: number }) => {
-    const logoSrc = exp.logo || '/assets/placeholder.png';
+    const logoSrc = exp.logo ? `${exp.logo}?v=1` : '/assets/placeholder.png';
 
     return (
         <div className="relative shrink-0 w-[200px] h-[120px] md:w-[280px] md:h-[160px] flex items-center justify-center group cursor-pointer">
@@ -97,6 +97,7 @@ const GalleryItem = ({ exp, index }: { exp: Experience; index: number }) => {
                 fill
                 sizes="280px"
                 priority
+                unoptimized
                 className="object-contain p-2 grayscale hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300"
             />
         </div>
@@ -108,8 +109,8 @@ export default function ExperienceMarquee() {
     // Select specific experiences matching the 10 uploaded logos
     const experiences = portfolioData.experiences;
 
-    const topIds = ['prof-1', 'prof-2', 'prof-3', 'prof-4', 'prof-5'];
-    const bottomIds = ['prof-6', 'lead-2', 'lead-5', 'vol-1', 'cert-1'];
+    const topIds = ['prof-1', 'prof-3', 'prof-4', 'prof-5', 'prof-6', 'lead-5'];
+    const bottomIds = ['lead-2', 'lead-4', 'cert-1', 'cert-3', 'cert-5', 'vol-1'];
 
     const row1 = experiences.filter((exp: Experience) => topIds.includes(exp.id));
     const row2 = experiences.filter((exp: Experience) => bottomIds.includes(exp.id));

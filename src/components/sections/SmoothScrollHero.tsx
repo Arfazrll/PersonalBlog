@@ -89,7 +89,7 @@ const CenterImage = ({ scrollY }: { scrollY: MotionValue<number> }) => {
                     borderRadius,
                     opacity,
                     backgroundImage:
-                        "url(https://images.unsplash.com/photo-1460186136353-977e9d6085a1?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+                        "url('/experience/Foto Utama.jpeg')",
                     backgroundPosition: "center",
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
@@ -104,7 +104,7 @@ const CenterImage = ({ scrollY }: { scrollY: MotionValue<number> }) => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-                className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4 mix-blend-exclusion"
+                className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4"
             >
                 <motion.h1
                     style={{
@@ -112,7 +112,7 @@ const CenterImage = ({ scrollY }: { scrollY: MotionValue<number> }) => {
                         scale: textScale,
                         y: textY,
                     }}
-                    className="text-5xl md:text-9xl font-black text-white tracking-tighter text-center mb-6 mix-blend-exclusion"
+                    className="text-5xl md:text-9xl font-black text-black dark:text-white tracking-tighter text-center mb-6"
                 >
                     EXPERIENCE
                 </motion.h1>
@@ -121,9 +121,11 @@ const CenterImage = ({ scrollY }: { scrollY: MotionValue<number> }) => {
                         opacity: subtitleOpacity,
                         y: subtitleY,
                     }}
-                    className="w-full max-w-[90vw] md:max-w-6xl text-center text-lg md:text-2xl text-zinc-600 dark:text-zinc-200 font-medium tracking-wide leading-relaxed"
+                    className="w-full max-w-[90vw] md:max-w-6xl text-center text-lg md:text-2xl text-cyan-500 dark:text-white font-bold tracking-wide leading-relaxed"
                 >
-                    Merging technical precision with creative vision. A curated timeline of my professional journey, from foundational code to advanced AI solutions.
+                    Merging technical precision with creative vision.
+                    <br />
+                    A curated timeline of my professional journey, from foundational code to AI solutions.
                 </motion.p>
             </motion.div>
         </div>
@@ -143,7 +145,7 @@ const ParallaxImages = ({ scrollY }: { scrollY: MotionValue<number> }) => {
             <div className="col-span-3 col-start-2">
                 <ParallaxImg
                     scrollY={scrollY}
-                    src="https://images.unsplash.com/photo-1484600899469-230e8d1d59c0?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    src="/experience/FotoSC1.jpeg"
                     alt="Space launch"
                     start={800}
                     end={-1500}
@@ -155,7 +157,7 @@ const ParallaxImages = ({ scrollY }: { scrollY: MotionValue<number> }) => {
             <div className="col-span-3 col-start-10 mb-32">
                 <ParallaxImg
                     scrollY={scrollY}
-                    src="https://images.unsplash.com/photo-1446776709462-d6b525c57bd3?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    src="/experience/FotoSC2.jpeg"
                     alt="Space launch"
                     start={1000}
                     end={-1500}
@@ -167,7 +169,7 @@ const ParallaxImages = ({ scrollY }: { scrollY: MotionValue<number> }) => {
             <div className="col-span-4 col-start-5 mb-10">
                 <ParallaxImg
                     scrollY={scrollY}
-                    src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    src="/experience/FotoSC3.jpeg"
                     alt="Satellite view"
                     start={900}
                     end={-1800}
@@ -179,7 +181,7 @@ const ParallaxImages = ({ scrollY }: { scrollY: MotionValue<number> }) => {
             <div className="col-span-3 col-start-1 mb-64">
                 <ParallaxImg
                     scrollY={scrollY}
-                    src="https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    src="/experience/FotoSC4.jpeg"
                     alt="Space texture"
                     start={1200}
                     end={-2000}
@@ -191,7 +193,7 @@ const ParallaxImages = ({ scrollY }: { scrollY: MotionValue<number> }) => {
             <div className="col-span-4 col-start-8 mb-40">
                 <ParallaxImg
                     scrollY={scrollY}
-                    src="https://images.unsplash.com/photo-1494022299300-899b96e49893?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    src="/experience/FotoSC5.jpeg"
                     alt="Orbiting satellite"
                     start={1100}
                     end={-2000}
