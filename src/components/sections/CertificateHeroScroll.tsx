@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, type FC } from "react";
+import { useEffect, useRef, useCallback, type FC, useState, useMemo } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTheme } from "next-themes";
@@ -8,11 +8,13 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { usePerformance } from "@/hooks/usePerformance";
 import { ChevronDown } from "lucide-react";
+import { portfolioData } from "@/data/portfolio";
 
 interface ImageItem {
     id: string;
     src: string;
     alt: string;
+    isPdf: boolean;
 }
 
 interface Position {
@@ -34,39 +36,6 @@ interface CertificateHeroScrollProps {
     isLowPowerMode?: boolean;
 }
 
-const CERTIFICATES: ImageItem[] = [
-    {
-        id: "cert1",
-        src: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=800&q=85",
-        alt: "Professional Certification",
-    },
-    {
-        id: "cert2",
-        src: "https://images.unsplash.com/photo-1589330694653-4a8b243e3d27?w=800&q=85",
-        alt: "Award Recognition",
-    },
-    {
-        id: "cert3",
-        src: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=800&q=85",
-        alt: "Course Completion",
-    },
-    {
-        id: "cert4",
-        src: "https://images.unsplash.com/photo-1635350736475-c8cef4b21906?w=800&q=85",
-        alt: "Technical Achievement",
-    },
-    {
-        id: "cert5",
-        src: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=85",
-        alt: "Project Milestone",
-    },
-    {
-        id: "cert6",
-        src: "https://images.unsplash.com/photo-1523289333742-be1143f6b766?w=800&q=85",
-        alt: "Academic Excellence",
-    },
-];
-
 const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick, isLowPowerMode: isLowPowerModeProp }) => {
     const spacerRef = useRef<HTMLDivElement>(null);
     const fixedContainerRef = useRef<HTMLDivElement>(null);
@@ -74,6 +43,63 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
     const { isLowPowerMode: performanceLowPower, isMobile } = usePerformance();
     const isLowPowerMode = isLowPowerModeProp ?? performanceLowPower;
+
+    // Select and randomize certificates on mount to avoid hydration mismatch
+    const [randomCertificates, setRandomCertificates] = useState<ImageItem[]>([]);
+
+    useEffect(() => {
+        // Pre-defined "Internet/Abstract" images (Dark/Tech themed) to avoid white backgrounds
+        const externalImages: ImageItem[] = [
+            {
+                id: 'ext-1',
+                src: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb', // Dark abstract 3D
+                alt: 'Abstract Tech 1',
+                isPdf: false
+            },
+            {
+                id: 'ext-2',
+                src: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485', // AI/Neural
+                alt: 'AI Innovation',
+                isPdf: false
+            },
+            {
+                id: 'ext-3',
+                src: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b', // Cyber/Code
+                alt: 'Cybersecurity',
+                isPdf: false
+            }
+        ];
+
+        // Specific Internal Certificates (Badges/Darker images only, no white papers/PDFs)
+        // IDs: cert-6 (AWS DB), cert-9 (Google Data), cert-15 (AWS ML)
+        const targetIds = ['cert-6', 'cert-9', 'cert-15'];
+        const internalImages = portfolioData.achievements
+            .filter(a => targetIds.includes(a.id) && a.image)
+            .map(a => ({
+                id: a.id,
+                src: a.image!,
+                alt: a.title,
+                isPdf: false
+            }));
+
+        // Combine: Interleave or just concat
+        // Order: Ext, Int, Ext, Int, Ext, Int
+        const mixed: ImageItem[] = [];
+        for (let i = 0; i < 3; i++) {
+            if (externalImages[i]) mixed.push(externalImages[i]);
+            if (internalImages[i]) mixed.push(internalImages[i]);
+        }
+
+        // Fill if missing internal images (fallback to external recycle)
+        while (mixed.length < 6) {
+            mixed.push(externalImages[mixed.length % 3]);
+        }
+
+        // Set exactly 6 items
+        setRandomCertificates(mixed.slice(0, 6));
+
+    }, []);
+
 
     const getPositions = useCallback((): Positions => {
         const vw = typeof window !== "undefined" ? window.innerWidth : 1920;
@@ -143,7 +169,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
     }, []);
 
     useEffect(() => {
-        if (typeof window === "undefined") return;
+        if (typeof window === "undefined" || randomCertificates.length === 0) return;
 
         gsap.registerPlugin(ScrollTrigger);
 
@@ -242,10 +268,11 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             start: "bottom top", // when bottom of spacer hits top of viewport
             onEnter: () => gsap.to(fixedContainerRef.current, { autoAlpha: 0, duration: 0.5 }),
             onLeaveBack: () => gsap.to(fixedContainerRef.current, { autoAlpha: 1, duration: 0.5 }),
+            toggleActions: "play none none reverse"
         });
 
         return () => ctx.revert();
-    }, [getPositions]);
+    }, [getPositions, randomCertificates, isLowPowerMode]);
 
     return (
         <>
@@ -284,9 +311,9 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                 </div>
 
                 {/* Images */}
-                {CERTIFICATES.map((image, index) => (
+                {randomCertificates.map((cert, index) => (
                     <div
-                        key={image.id}
+                        key={`${cert.id}-${index}`}
                         ref={(el) => {
                             imageRefs.current[index] = el;
                         }}
@@ -296,15 +323,30 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                             zIndex: 1 // Base z-index
                         }}
                     >
-                        <Image
-                            src={image.src}
-                            alt={image.alt}
-                            fill
-                            priority={true} // Priority loading
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            className="object-cover opacity-90 hover:opacity-100 transition-opacity"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60 pointer-events-none" />
+                        {cert.isPdf ? (
+                            <div className="relative w-full h-full bg-white">
+                                <iframe
+                                    src={`${cert.src}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                                    className="w-full h-full object-cover opacity-90 pointer-events-none"
+                                    title={cert.alt}
+                                    loading="lazy"
+                                />
+                                {/* Overlay to ensure no interaction */}
+                                <div className="absolute inset-0 bg-transparent z-10" />
+                            </div>
+                        ) : (
+                            <>
+                                <Image
+                                    src={cert.src}
+                                    alt={cert.alt}
+                                    fill
+                                    priority={index < 2} // Priority loading for first few
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover opacity-90 hover:opacity-100 transition-opacity"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60 pointer-events-none" />
+                            </>
+                        )}
                     </div>
                 ))}
             </div>
