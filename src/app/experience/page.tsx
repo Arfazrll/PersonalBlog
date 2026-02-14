@@ -55,6 +55,8 @@ const highlightContent = {
 
 import { usePerformance } from '@/hooks/usePerformance';
 
+import { getJourneyImages } from '@/app/actions/getJourneyImages';
+
 function ExperienceHighlightSection({ type, isLowPowerMode }: { type: TabType; isLowPowerMode: boolean }) {
     const content = highlightContent[type];
 
@@ -570,13 +572,37 @@ function TimelineGallery({ images, id, title, externalLink, logo }: { images: st
         setFailedImages(prev => new Set(prev).add(index));
     };
 
-    const effectiveImages = images.length > 0
-        ? images
-        : title
-            ? [1, 2, 3, 4].map(n => `/journey/${slugify(title)}${n}.jpg`)
-            : [];
+    const [verifiedImages, setVerifiedImages] = useState<string[]>([]);
 
-    const allImages = effectiveImages.map((src, i) => ({ src, index: i, type: 'image' as const }));
+    useEffect(() => {
+        const checkImages = async () => {
+            if (images.length > 0) {
+                setVerifiedImages(images);
+                return;
+            }
+
+            if (!title) {
+                setVerifiedImages([]);
+                return;
+            }
+
+
+
+            const baseSlug = slugify(title);
+
+            try {
+                const results = await getJourneyImages(baseSlug);
+                setVerifiedImages(results);
+            } catch (error) {
+                console.error("Failed to verify images", error);
+                setVerifiedImages([]);
+            }
+        };
+
+        checkImages();
+    }, [images, title]);
+
+    const allImages = verifiedImages.map((src, i) => ({ src, index: i, type: 'image' as const }));
     const validImages = allImages.filter(img => !failedImages.has(img.index));
 
     // Add Link Card if externalLink exists
