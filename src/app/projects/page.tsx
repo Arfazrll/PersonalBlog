@@ -32,8 +32,6 @@ function ProjectListItem({
 }) {
     const itemRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-
-    // Optimize mouse movement with motion values instead of state
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
     const cursorX = useMotionValue(0);
@@ -192,7 +190,7 @@ function ProjectListItem({
                             }}
                         >
                             <div className={cn(
-                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl", // increased rounded
+                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl", 
                                 isOngoing ? "border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/80" : "border-blue-500/20 bg-blue-500/5 dark:bg-blue-950/80"
                             )}>
                                 {project.image ? (
@@ -220,12 +218,9 @@ function ProjectListItem({
     );
 }
 
-// Featured Project Card - Hero style with particles, spotlight, 3D tilt
 function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean }) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-
-    // 3D Tilt effect
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
     const pixelX = useMotionValue(0);
@@ -482,13 +477,9 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
     );
 }
 
-// Standard Project Card - with spotlight and 3D tilt
 function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean }) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-
-
-    // 3D Tilt
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
     const pixelX = useMotionValue(0);
@@ -689,7 +680,6 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
     );
 }
 
-// Compact Card for additional projects
 function CompactCard({ project, onClick, index }: { project: Project; onClick: () => void; index: number }) {
     const [isHovered, setIsHovered] = useState(false);
     const isOngoing = project.status === 'ongoing';
@@ -754,11 +744,6 @@ function CompactCard({ project, onClick, index }: { project: Project; onClick: (
     );
 }
 
-
-
-
-
-// Helper to map string to icon key
 const getIconKey = (name: string): keyof typeof Icons => {
     const lower = name.toLowerCase().replace('.', '').replace(/\s+/g, '');
     if (lower.includes('react')) return 'react';
@@ -776,7 +761,6 @@ export default function ProjectsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState<FilterType>('all');
     const [visibleCount, setVisibleCount] = useState(() => {
-        // Restore visibleCount if returning from a project detail page
         if (typeof window !== 'undefined') {
             const saved = sessionStorage.getItem('projects-visible-count');
             if (saved) return Math.max(10, parseInt(saved, 10));

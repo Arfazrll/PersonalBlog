@@ -17,7 +17,6 @@ const Lanyard = dynamic<{ isLowPowerMode?: boolean }>(() => import('@/components
 import { Meteors } from '@/components/ui/meteors';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-// Custom Marquee Component
 function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = false }: { items: any[], direction?: 'left' | 'right', speed?: number, isLowPowerMode?: boolean }) {
     return (
         <div className="flex overflow-hidden relative w-full group py-4 select-none">
@@ -96,7 +95,7 @@ const InputGroup = ({ label, name, type = "text", value, onChange, required = fa
                     value={value}
                     onChange={onChange}
                     required={required}
-                    rows={1} // Start small, user can expand if needed but we want sleekness
+                    rows={1} 
                     className="peer block w-full appearance-none border-0 border-b-2 border-foreground/20 bg-transparent py-2.5 px-0 text-xl font-medium text-foreground focus:border-foreground focus:outline-none focus:ring-0 transition-colors duration-300 resize-y min-h-[50px] max-h-[200px]"
                     placeholder=" "
                 />
@@ -280,7 +279,6 @@ export default function ContactPage() {
     const t = useTranslations('contact');
     const { isLowPowerMode } = usePerformance();
 
-    // Example Socials
     const getSocialItem = (platform: string) => {
         const link = portfolioData.personal.socialLinks.find(l => l.platform.toLowerCase() === platform);
         return {
