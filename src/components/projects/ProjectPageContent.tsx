@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useSpring, useMotionValue, useTransform, useScroll } from 'framer-motion';
-import { useLenis } from 'lenis/react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { X, Calendar, Code, Box, Award, Share2, ExternalLink, Github, Terminal, ChevronRight, ChevronLeft, CheckCircle2, Copy, Check, Maximize2, ArrowUpRight, Zap, Sparkles } from 'lucide-react';
+import { X, Calendar, Code, Box, Award, Share2, ExternalLink, Github, Terminal, ChevronRight, ChevronLeft, CheckCircle2, Copy, Check, Maximize2, ArrowUpRight, Zap, Sparkles, ArrowLeft, Clock, Users, Layers, LayoutGrid, ArrowRight } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { Project } from '@/types';
 import { TechStack } from './TechStack';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { portfolioData } from '@/data/portfolio';
 
 // --- Animated Terminal Component ---
 const TerminalBlock = ({ title, code }: { title: string; code: string }) => {
@@ -68,58 +68,61 @@ const renderRichText = (text: string) => {
     });
 };
 
-// --- vertical Gallery Component ---
+// --- Vertical Gallery Component ---
 const ProjectGallery = ({
     images,
-    repoUrl,
     onImageClick,
+    viewMoreText,
+    viewLessText
 }: {
     images: string[],
-    repoUrl?: string,
     onImageClick: (img: string) => void,
-    scrollContainerRef?: React.RefObject<HTMLDivElement | null> // Optional/Unused now
+    viewMoreText: string,
+    viewLessText: string
 }) => {
+    const [showAll, setShowAll] = useState(false);
+    const visibleImages = showAll ? images : images.slice(0, 2);
+
     return (
-        <div className="flex flex-col gap-12 pb-12">
-            {images.map((img, idx) => (
-                <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-10%" }}
-                    transition={{ duration: 0.6, delay: idx * 0.1 }}
-                    className="group relative w-full cursor-zoom-in"
-                    onClick={() => onImageClick(img)}
-                >
-                    {/* Real Image Tag - Floating with deep shadow */}
-                    <img
-                        src={img}
-                        alt={`Gallery Image ${idx + 1}`}
-                        className="w-full h-auto object-contain block rounded-lg shadow-2xl shadow-black/20 dark:shadow-black/60 transition-transform duration-500 group-hover:scale-[1.01]"
-                    />
-
-                    {/* Tech UI (Minimal Floating Label) */}
-                    <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <div className="bg-white/80 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-black/5 dark:border-white/10 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 shadow-lg flex items-center gap-2">
-                            <span>IMG_0{idx + 1}</span>
-                            <Maximize2 className="w-3 h-3" />
-                        </div>
-                    </div>
-                </motion.div>
-            ))}
-
-            {/* GitHub Link */}
-            {repoUrl && (
-                <div className="flex justify-center pt-8">
-                    <a
-                        href={repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center gap-3 px-6 py-3 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 hover:border-emerald-500/50 transition-all text-zinc-600 dark:text-zinc-400 hover:text-emerald-500"
+        <div className="flex flex-col gap-8 pb-12">
+            <div className="flex flex-col gap-12">
+                {visibleImages.map((img, idx) => (
+                    <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-10%" }}
+                        transition={{ duration: 0.6, delay: idx * 0.1 }}
+                        className="group relative w-full cursor-zoom-in"
+                        onClick={() => onImageClick(img)}
                     >
-                        <Github className="w-5 h-5" />
-                        <span className="text-sm font-medium">View Source</span>
-                    </a>
+                        {/* Real Image Tag - Floating with deep shadow */}
+                        <img
+                            src={img}
+                            alt={`Gallery Image ${idx + 1}`}
+                            className="w-full h-auto object-contain block rounded-lg shadow-2xl shadow-black/20 dark:shadow-black/60 transition-transform duration-500 group-hover:scale-[1.01]"
+                        />
+
+                        {/* Tech UI (Minimal Floating Label) */}
+                        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-black/5 dark:border-white/10 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 shadow-lg flex items-center gap-2">
+                                <span>IMG_0{idx + 1}</span>
+                                <Maximize2 className="w-3 h-3" />
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            {images.length > 2 && (
+                <div className="flex justify-center pt-4">
+                    <button
+                        onClick={() => setShowAll(!showAll)}
+                        className="px-6 py-3 rounded-full border border-border/40 hover:bg-secondary/10 transition-colors text-sm font-bold tracking-wide uppercase flex items-center gap-2 group"
+                    >
+                        <span>{showAll ? viewLessText : viewMoreText}</span>
+                        <ChevronRight className={cn("w-4 h-4 transition-transform duration-300", showAll ? "rotate-[-90deg]" : "rotate-90")} />
+                    </button>
                 </div>
             )}
         </div>
@@ -129,9 +132,8 @@ const ProjectGallery = ({
 // --- Typewriter Effect Component ---
 const Typewriter = ({ examples }: { examples: string[] }) => {
     const [currentText, setCurrentText] = useState("");
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isDeleting, setIsDeleting] = useState(false);
     const [loopNum, setLoopNum] = useState(0);
+    const [isDeleting, setIsDeleting] = useState(false);
     const typingSpeed = 100;
     const deletingSpeed = 50;
     const pauseTime = 2000;
@@ -168,447 +170,388 @@ const Typewriter = ({ examples }: { examples: string[] }) => {
 
 export function ProjectPageContent({ project, isLowPowerMode }: { project: Project; isLowPowerMode?: boolean }) {
     const t = useTranslations('projects');
+    const tCommon = useTranslations('common');
     const router = useRouter();
     const isOngoing = project.status === 'ongoing';
-    const [activeSection, setActiveSection] = useState<'overview' | 'tech' | 'features' | 'gallery' | 'install'>('overview');
-    const [selectedFeature, setSelectedFeature] = useState<number | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-    // Parallax & Scroll Animations for Hero
-    const heroRef = useRef<HTMLDivElement>(null);
-
-    const lenis = useLenis();
-
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: isLowPowerMode ? 0.05 : 0.1,
-                delayChildren: isLowPowerMode ? 0.1 : 0.2
-            }
-        },
-        exit: { opacity: 0 }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: isLowPowerMode ? 10 : 20 },
-        visible: { opacity: 1, y: 0, transition: { type: isLowPowerMode ? "tween" : "spring", stiffness: 300, damping: 24, duration: 0.3 } }
-    };
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const handleExit = () => {
         router.push('/projects', { scroll: false });
     };
 
+    // Get random other projects for "More Projects" section
+    const otherProjects = useMemo(() => {
+        const others = portfolioData.projects.filter(p => p.id !== project.id);
+        const shuffled = [...others].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 5);
+    }, [project.id]);
+
     return (
-        <div className="relative min-h-screen bg-background text-foreground">
-            {/* Main Content Container - Full Height Page Layout */}
-            <div
-                className="flex flex-col lg:flex-row min-h-screen w-full"
-            >
+        <div className="min-h-screen bg-background text-foreground pb-24 pt-24 sm:pt-32">
 
-                {/* Close/Back Button - Floating */}
-                <button
-                    onClick={handleExit}
-                    className="fixed top-4 right-4 z-50 p-2 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/20 hover:text-foreground transition-all duration-300 group"
-                    aria-label="Exit project details"
+            {/* 1. HEADER SECTION (Centered, Blog Style) */}
+            <div className="container max-w-7xl mx-auto px-6 mb-12 relative">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    <X className="w-5 h-5 text-foreground/70 group-hover:text-foreground" />
-                </button>
-
-                {/* LEFT COLUMN - Hero Image & Title (Fixed on Desktop, Scrollable on Mobile) */}
-                <div ref={heroRef} className="relative lg:fixed lg:inset-y-0 lg:left-0 lg:w-5/12 h-[50vh] lg:h-full flex flex-col justify-end p-6 sm:p-10 overflow-hidden group cursor-pointer" onClick={() => setSelectedImage(project.image)}>
-                    {/* Dynamic Background Image with Parallax Scale */}
-                    <div className="absolute inset-0 z-0">
-                        {project.image ? (
-                            <motion.img
-                                src={project.image}
-                                alt={project.title}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                initial={{ scale: 1.1 }}
-                                animate={{ scale: 1 }}
-                                loading="eager"
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-background animate-gradient" />
-                        )}
-                        {/* Gradient Overlays */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-90" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent" />
-
-                        {/* Expand hint */}
-                        <div className="absolute top-4 left-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-medium text-white flex items-center gap-2">
-                            <Maximize2 className="w-3.5 h-3.5" />
-                            Expand Cover
+                    {/* Back Link */}
+                    <div className="flex items-center gap-4 mb-6">
+                        <div
+                            onClick={handleExit}
+                            className="flex items-center gap-2 text-sm text-muted-foreground font-medium hover:text-primary transition-colors group cursor-pointer"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                            <span>{t('sections.backToProjects')}</span>
                         </div>
                     </div>
 
-                    {/* Content on top of image */}
-                    <div className="relative z-10 w-full mb-4">
-                        {/* Status Line */}
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: 60 }}
-                            transition={{ delay: 0.2, duration: 0.8 }}
-                            className={cn("h-1 mb-6 rounded-full", isOngoing ? "bg-emerald-500" : "bg-blue-500")}
-                        />
+                    {/* Title & Description - REMOVED max-w-4xl constraint for Title */}
+                    <div className="w-full">
+                        {/* Status Badge */}
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6 border bg-secondary/5 border-border/40 text-muted-foreground">
+                            <span className={cn("w-2 h-2 rounded-full", isOngoing ? "bg-emerald-500 animate-pulse" : "bg-blue-500")} />
+                            {isOngoing ? t('status.ongoing') : t('status.completed')}
+                        </div>
 
-                        {/* Animated Title */}
-                        <motion.h1
-                            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-[0.9] tracking-tighter mb-4"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                        >
+                        {/* Full Width Layout for Title */}
+                        <h1 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight text-foreground mb-6 leading-[1.0] break-words uppercase">
                             {project.title}
-                        </motion.h1>
+                        </h1>
 
-                        {/* Status Badge & Date */}
-                        <motion.div
-                            className="flex flex-wrap items-center gap-4 text-sm font-mono text-white/60 mb-6"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.4 }}
-                        >
-                            <span className={cn(
-                                "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border",
-                                isOngoing
-                                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                                    : "border-blue-500/30 bg-blue-500/10 text-blue-400"
-                            )}>
-                                {isOngoing ? 'Development' : 'Released'}
-                            </span>
-                            <span className="flex items-center gap-2">
-                                <Calendar className="w-3.5 h-3.5" />
-                                {formatDate(project.startDate)}
-                            </span>
-                        </motion.div>
+                        <p className="text-xl md:text-2xl text-muted-foreground/80 leading-relaxed max-w-3xl font-light mb-8">
+                            {project.description}
+                        </p>
 
-                        {/* Action Buttons */}
-                        <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
-                            {project.demoUrl && (
-                                <motion.a
-                                    href={project.demoUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={cn(
-                                        "flex-1 flex items-center justify-center gap-2 py-2.5 px-6 rounded-xl font-bold text-sm shadow-xl transition-all",
-                                        isOngoing
-                                            ? "bg-emerald-500 text-white shadow-emerald-500/20 hover:bg-emerald-400"
-                                            : "bg-blue-600 text-white shadow-blue-500/20 hover:bg-blue-500"
-                                    )}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    <span>Live Demo</span>
-                                    <ExternalLink className="w-4 h-4" />
-                                </motion.a>
-                            )}
-                            <motion.a
-                                href={project.repoUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-medium text-sm bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                <Github className="w-4 h-4" />
-                            </motion.a>
+                        {/* Typewriter Effect (Subtext) */}
+                        <div className="font-mono text-sm text-emerald-500/80 mb-8 h-6 flex items-center">
+                            <Typewriter examples={[
+                                "Initiating project overview...",
+                                "Loading technical specifications...",
+                                "Decrypting success metrics..."
+                            ]} />
                         </div>
+                    </div>
+                </motion.div>
+            </div>
+
+            {/* 2. HERO IMAGE SECTION (Wide Banner) */}
+            <div className="container max-w-7xl mx-auto px-6 mb-16">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.7, delay: 0.2 }}
+                    className="relative w-full aspect-video md:aspect-[2/1] rounded-3xl overflow-hidden border border-border/40 shadow-2xl bg-secondary/5 group"
+                    onClick={() => project.image && setSelectedImage(project.image)}
+                >
+                    {project.image ? (
+                        <motion.img
+                            src={project.image}
+                            alt={project.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in"
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-background animate-gradient" />
+                    )}
+
+                    {/* Overlay Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                </motion.div>
+            </div>
+
+            {/* 3. METADATA BAR (Horizontal Strip) */}
+            <div className="container max-w-7xl mx-auto px-6 mb-20">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-4 border-y border-border/40 py-8">
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
+                            <Code className="w-3 h-3" /> {t('metadata.role')}
+                        </span>
+                        <span className="font-bold text-foreground">{t('metadata.roleValue')}</span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
+                            <Clock className="w-3 h-3" /> {t('metadata.timeline')}
+                        </span>
+                        <span className="font-bold text-foreground">{formatDate(project.startDate)}</span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
+                            <Users className="w-3 h-3" /> {t('metadata.team')}
+                        </span>
+                        <span className="font-bold text-foreground">{t('metadata.teamValue')}</span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
+                            <Layers className="w-3 h-3" /> {t('metadata.techStack')}
+                        </span>
+                        <span className="font-bold text-foreground truncate">{t('metadata.techStackValue', { count: project.techStack.length })}</span>
                     </div>
                 </div>
+            </div>
 
-                {/* RIGHT COLUMN - Scrollable Content */}
-                <div className="lg:ml-[41.666667%] lg:w-7/12 w-full flex flex-col min-h-screen relative">
-                    {/* Cloud/Blur Separator - Soft seamless fade */}
-                    <div className="hidden lg:block fixed left-[41.666667%] top-0 bottom-0 w-20 bg-gradient-to-r from-white via-white/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent pointer-events-none z-30" />
+            {/* 4. MAIN CONTENT GRID */}
+            <div className="container max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
-                    {/* Tabs - Sticky */}
-                    <div className="sticky top-0 z-20 px-6 pt-6 pb-2 bg-gradient-to-b from-white/95 to-transparent dark:from-zinc-950/95 dark:to-transparent backdrop-blur-sm lg:pl-12 transition-[padding]">
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-                            {(['overview', 'tech', 'features', 'gallery', 'install'] as const).map((section) => {
-                                // Conditionally render tabs based on available data
-                                if (section === 'gallery' && (!project.galleryImages || project.galleryImages.length === 0)) return null;
+                    {/* LEFT COLUMN: Main Content (8 cols) */}
+                    <div className="lg:col-span-8 space-y-20">
 
-                                return (
-                                    <button
-                                        key={section}
-                                        onClick={() => setActiveSection(section)}
-                                        className={cn(
-                                            "relative px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-300 shrink-0",
-                                            activeSection === section
-                                                ? "text-background bg-foreground"
-                                                : "text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5"
-                                        )}
-                                    >
-                                        <span className="relative z-10">{section}</span>
-                                        {activeSection === section && (
-                                            <motion.div
-                                                layoutId="activeTabPill"
-                                                className="absolute inset-0 bg-transparent rounded-full z-0"
-                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                            />
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
+                        {/* MISSION OVERVIEW */}
+                        <section id="mission">
+                            <div className="flex items-center gap-3 mb-6">
+                                <span className="bg-emerald-500/10 text-emerald-500 p-2 rounded-lg">
+                                    <Box className="w-5 h-5" />
+                                </span>
+                                <h2 className="text-2xl font-bold text-foreground">{t('sections.missionBrief')}</h2>
+                            </div>
+                            <div className="prose prose-lg prose-invert prose-primary max-w-none prose-headings:font-black prose-headings:tracking-tight prose-p:leading-loose prose-p:text-muted-foreground">
+                                <p>{project.longDescription || project.description}</p>
+                            </div>
+                        </section>
 
-                    {/* Content Area */}
-                    <div className="flex-1 pb-24 lg:pl-12 transition-[padding]">
-                        <AnimatePresence mode="wait">
-                            {/* OVERVIEW SECTION */}
-                            {activeSection === 'overview' && (
-                                <motion.div
-                                    key="overview"
-                                    variants={containerVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    exit="exit"
-                                    className="space-y-16 p-6"
-                                >
-                                    {/* Project Story & Metadata */}
-                                    <div className="space-y-10">
-                                        <motion.div variants={itemVariants} className="space-y-6">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-foreground border border-black/5 dark:border-white/5">
-                                                    <Box className="w-5 h-5" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-xl font-bold text-foreground">Mission Brief</h3>
-                                                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Project Overview</p>
-                                                </div>
+                        {/* FEATURES (BENTO GRID - Adapted for 8 cols) */}
+                        {project.features && (
+                            <section id="features">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <span className="bg-blue-500/10 text-blue-500 p-2 rounded-lg">
+                                        <Zap className="w-5 h-5" />
+                                    </span>
+                                    <h2 className="text-2xl font-bold text-foreground">{t('sections.keyFeatures')}</h2>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {project.features.map((group, idx) => (
+                                        <motion.div
+                                            key={idx}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true }}
+                                            className="p-6 rounded-2xl bg-secondary/5 border border-white/5 hover:border-white/10 transition-colors"
+                                        >
+                                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-4 text-emerald-500">
+                                                {idx === 0 ? <Box className="w-5 h-5" /> : idx === 1 ? <Terminal className="w-5 h-5" /> : idx === 2 ? <Zap className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
                                             </div>
-                                            <p className="text-base md:text-lg leading-relaxed text-muted-foreground font-light tracking-wide border-l-2 border-black/10 dark:border-white/10 pl-6">
-                                                {project.longDescription || project.description}
-                                            </p>
-                                        </motion.div>
-
-                                        {/* Metadata Strip */}
-                                        <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-x-16 gap-y-8 py-10 border-y border-black/5 dark:border-white/5">
-                                            {[
-                                                { label: 'Role', value: 'Full Stack Dev', icon: Code },
-                                                { label: 'Timeline', value: '3 Months', icon: Calendar },
-                                                { label: 'Team', value: 'Individual', icon: Award },
-                                                { label: 'Status', value: isOngoing ? 'Active' : 'Completed', icon: CheckCircle2 }
-                                            ].map((item, i) => (
-                                                <div key={i} className="flex flex-col items-center text-center gap-4">
-                                                    <div className="flex items-center gap-2 text-muted-foreground/80 text-[10px] uppercase tracking-wider font-bold">
-                                                        <item.icon className="w-3.5 h-3.5" />
-                                                        {item.label}
-                                                    </div>
-                                                    <div className="text-lg font-medium text-foreground">{item.value}</div>
-                                                </div>
-                                            ))}
-                                        </motion.div>
-                                    </div>
-
-                                    {/* Challenges & Solutions (Timeline Flow) */}
-                                    {project.challengesAndSolutions && (
-                                        <motion.div variants={itemVariants} className="space-y-8">
-                                            <h3 className="text-xl font-bold flex items-center gap-3 text-foreground/90">
-                                                <Terminal className="w-5 h-5 text-amber-500" />
-                                                Engineering Chronicles
-                                            </h3>
-
-                                            <div className="relative border-l border-black/10 dark:border-white/10 ml-3 space-y-12 pl-8 pb-4">
-                                                {project.challengesAndSolutions.map((item, idx) => (
-                                                    <div key={idx} className="relative group">
-                                                        {/* Node */}
-                                                        <div className="absolute -left-[37px] top-1 w-4 h-4 rounded-full bg-background border-2 border-black/10 dark:border-white/10 group-hover:border-amber-500 group-hover:scale-125 transition-all duration-300 z-10" />
-
-                                                        <div className="space-y-4">
-                                                            <h4 className="text-lg font-bold text-foreground group-hover:text-amber-500 transition-colors">
-                                                                {item.problem}
-                                                            </h4>
-                                                            <div className="text-sm text-muted-foreground leading-relaxed pl-4 border-l border-black/5 dark:border-white/5 group-hover:border-emerald-500/50 transition-colors">
-                                                                <span className="text-emerald-600 dark:text-emerald-500 font-bold text-xs uppercase tracking-wider block mb-1">Solved With</span>
-                                                                {item.solution}
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                            <h3 className="text-lg font-bold text-foreground mb-3">{group.title}</h3>
+                                            <ul className="space-y-2">
+                                                {group.items.map((item, i) => (
+                                                    <li key={i} className="text-sm text-muted-foreground flex gap-2 items-start">
+                                                        <span className="mt-1.5 w-1 h-1 rounded-full bg-emerald-500 shrink-0" />
+                                                        <span>{renderRichText(item)}</span>
+                                                    </li>
                                                 ))}
-                                            </div>
+                                            </ul>
                                         </motion.div>
-                                    )}
+                                    ))}
+                                </div>
+                            </section>
+                        )}
 
-                                    {/* Support Section (Clean Call to Action) */}
-                                    <motion.div variants={itemVariants} className="pt-12 border-t border-black/5 dark:border-white/5">
-                                        <div className="flex flex-col items-center text-center space-y-8">
-                                            <div className="max-w-xl space-y-4">
-                                                <h3 className="text-2xl md:text-3xl font-bold text-foreground">Interested in the code?</h3>
-                                                <div className="h-6 flex items-center justify-center">
-                                                    <Typewriter examples={[
-                                                        "Check out the repo on GitHub...",
-                                                        "Open an issue for features...",
-                                                        "Contact me for collaboration..."
-                                                    ]} />
+                        {/* ENGINEERING CHRONICLES (TIMELINE) */}
+                        {project.challengesAndSolutions && (
+                            <section id="chronicles">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <span className="bg-amber-500/10 text-amber-500 p-2 rounded-lg">
+                                        <Terminal className="w-5 h-5" />
+                                    </span>
+                                    <h2 className="text-2xl font-bold text-foreground">{t('sections.engineeringChronicles')}</h2>
+                                </div>
+                                <div className="relative border-l border-white/10 ml-3 space-y-12 pl-8 pb-4">
+                                    {project.challengesAndSolutions.map((item, idx) => (
+                                        <div key={idx} className="relative group">
+                                            <div className="absolute -left-[37px] top-1 w-4 h-4 rounded-full bg-background border-2 border-white/10 group-hover:border-amber-500 transition-colors z-10" />
+                                            <h4 className="text-lg font-bold text-foreground mb-2 group-hover:text-amber-500 transition-colors">
+                                                {item.problem}
+                                            </h4>
+                                            <div className="text-sm text-muted-foreground pl-4 border-l border-white/5">
+                                                <span className="text-emerald-500 font-bold text-xs uppercase tracking-wider block mb-1">{t('sections.solution')}</span>
+                                                {item.solution}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* GALLERY (Vertical Stack, Limit 2) */}
+                        {project.galleryImages && project.galleryImages.length > 0 && (
+                            <section id="gallery">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <span className="bg-purple-500/10 text-purple-500 p-2 rounded-lg">
+                                        <LayoutGrid className="w-5 h-5" />
+                                    </span>
+                                    <h2 className="text-2xl font-bold text-foreground">{t('sections.visualGallery')}</h2>
+                                </div>
+                                <ProjectGallery
+                                    images={project.galleryImages}
+                                    onImageClick={(img) => setSelectedImage(img)}
+                                    viewMoreText={t('sections.viewMore')}
+                                    viewLessText={t('sections.viewLess')}
+                                />
+                            </section>
+                        )}
+
+                        {/* INSTALLATION */}
+                        {project.installation && (
+                            <section id="installation">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <span className="bg-emerald-500/10 text-emerald-500 p-2 rounded-lg">
+                                        <Terminal className="w-5 h-5" />
+                                    </span>
+                                    <h2 className="text-2xl font-bold text-foreground">{t('sections.installation')}</h2>
+                                </div>
+                                <div className="space-y-6">
+                                    {project.installation.map((step, idx) => (
+                                        <div key={idx}>
+                                            {step.type === 'code' ? (
+                                                <TerminalBlock
+                                                    title={step.title}
+                                                    code={step.cmd || step.code || ''}
+                                                />
+                                            ) : (
+                                                <div className="bg-secondary/5 p-6 rounded-2xl border border-white/5">
+                                                    <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                        {step.title}
+                                                    </h3>
+                                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                                        {step.code || step.cmd}
+                                                    </p>
                                                 </div>
-                                            </div>
-
-                                            <div className="flex gap-4">
-                                                <a
-                                                    href={project.repoUrl ? `${project.repoUrl}` : '#'}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="px-8 py-3 rounded-full bg-foreground text-background font-bold hover:opacity-90 transition-all flex items-center gap-2"
-                                                >
-                                                    <Github className="w-4 h-4" />
-                                                    GitHub Repo
-                                                </a>
-                                                <a
-                                                    href="/contact"
-                                                    className="px-8 py-3 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 text-foreground font-medium transition-all flex items-center gap-2"
-                                                >
-                                                    <Share2 className="w-4 h-4" />
-                                                    Contact
-                                                </a>
-                                            </div>
+                                            )}
                                         </div>
-                                    </motion.div>
-                                </motion.div>
-                            )}
+                                    ))}
+                                </div>
+                            </section>
+                        )}
 
-                            {/* TECH SECTION - NEW HOLOGRAPHIC BENTO GRID */}
-                            {activeSection === 'tech' && (
-                                <motion.div
-                                    key="tech"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className=""
-                                >
-                                    <TechStack techStack={project.techStack} tools={project.tools} />
-                                </motion.div>
-                            )}
+                    </div>
 
-                            {/* FEATURES SECTION - Transparent & Connected */}
-                            {activeSection === 'features' && (
-                                <motion.div
-                                    key="features"
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    className="h-full flex flex-col p-6"
-                                >
-                                    {project.features ? (
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
-                                            {project.features.map((group, idx) => (
-                                                <motion.div
-                                                    key={idx}
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: idx * 0.1 }}
-                                                    className="group relative flex flex-col p-6 rounded-3xl bg-white/60 dark:bg-zinc-900/40 backdrop-blur-md border border-black/5 dark:border-white/5 hover:bg-white/80 dark:hover:bg-zinc-900/60 hover:border-emerald-500/30 shadow-lg hover:shadow-emerald-500/10 transition-all duration-500 overflow-hidden"
-                                                >
-                                                    {/* Hover Gradient Effect */}
-                                                    <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    {/* RIGHT COLUMN: Sticky Sidebar (4 cols) */}
+                    <div className="lg:col-span-4 relative">
+                        <div className="sticky top-32 space-y-8">
 
-                                                    {/* Icon Header */}
-                                                    <div className="mb-6 relative z-10">
-                                                        <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:border-emerald-500/30 group-hover:bg-emerald-500/10 transition-all duration-500">
-                                                            {idx === 0 ? <Box className="w-6 h-6 text-emerald-600 dark:text-emerald-400" /> :
-                                                                idx === 1 ? <Terminal className="w-6 h-6 text-blue-600 dark:text-blue-400" /> :
-                                                                    <Zap className="w-6 h-6 text-amber-600 dark:text-amber-400" />}
-                                                        </div>
-                                                        <h3 className="text-xl font-bold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                                                            {group.title}
-                                                        </h3>
-                                                    </div>
-
-                                                    {/* Feature List */}
-                                                    <div className="space-y-4 relative z-10 font-light">
-                                                        {group.items.map((item, i) => (
-                                                            <div key={i} className="flex gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed">
-                                                                <div className="mt-1.5 w-1 h-1 rounded-full bg-emerald-500/50 group-hover:bg-emerald-400 shrink-0" />
-                                                                <span>{renderRichText(item)}</span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    {/* Bottom Decoration */}
-                                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                                </motion.div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {project.highlights?.map((highlight, i) => (
-                                                <motion.div
-                                                    key={i}
-                                                    initial={{ opacity: 0, scale: 0.9 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    transition={{ delay: i * 0.1 }}
-                                                    className="flex items-center gap-4 p-6 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 hover:border-emerald-500/30 transition-all hover:bg-black/10 dark:hover:bg-white/10"
-                                                >
-                                                    <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-500 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                                                        <CheckCircle2 className="w-6 h-6" />
-                                                    </div>
-                                                    <span className="text-lg text-foreground/90 font-medium">{renderRichText(highlight)}</span>
-                                                </motion.div>
-                                            ))}
-                                        </div>
+                            {/* Actions Card */}
+                            <div className="p-6 rounded-2xl bg-secondary/5 border border-white/10 backdrop-blur-sm">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">{t('sections.projectAccess')}</h3>
+                                <div className="flex flex-col gap-3">
+                                    {project.demoUrl && (
+                                        <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm bg-foreground text-background hover:opacity-90 transition-all">
+                                            <span>{t('sections.liveDemo')}</span>
+                                            <ExternalLink className="w-4 h-4" />
+                                        </a>
                                     )}
-                                </motion.div>
-                            )}
-
-
-                            {/* GALLERY SECTION */}
-                            {activeSection === 'gallery' && project.galleryImages && (
-                                <motion.div
-                                    key="gallery"
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    className="space-y-4 p-6"
-                                >
-                                    <ProjectGallery
-                                        images={project.galleryImages || []}
-                                        repoUrl={project.repoUrl}
-                                        onImageClick={(img) => setSelectedImage(img)}
-                                    />
-                                </motion.div>
-                            )}
-
-                            {/* INSTALL SECTION */}
-                            {activeSection === 'install' && (
-                                <motion.div
-                                    key="install"
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    className="space-y-4 p-6"
-                                >
-                                    {project.installation ? (
-                                        project.installation.map((step, i) => (
-                                            <div key={i} className="bg-black/5 dark:bg-white/5 rounded-xl overflow-hidden border border-black/10 dark:border-white/5">
-                                                <div className="bg-black/[0.07] dark:bg-white/5 px-4 py-2 flex items-center gap-2 border-b border-black/5 dark:border-white/5">
-                                                    <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">{i + 1}</div>
-                                                    <h3 className="text-xs font-semibold text-foreground/80">{step.title}</h3>
-                                                </div>
-                                                {step.type === 'code' ? (
-                                                    <div className="p-0">
-                                                        <TerminalBlock title={step.title} code={step.code || ''} />
-                                                    </div>
-                                                ) : (
-                                                    <div className="p-3 text-xs font-mono text-muted-foreground whitespace-pre-wrap">
-                                                        {step.code}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <TerminalBlock
-                                            title="Quick Start"
-                                            code={`git clone ${project.repoUrl}\ncd project\nnpm install\nnpm run dev`}
-                                        />
+                                    {project.repoUrl && (
+                                        <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-sm bg-secondary/10 hover:bg-secondary/20 text-foreground transition-all">
+                                            <Github className="w-4 h-4" />
+                                            <span>{t('sections.sourceCode')}</span>
+                                        </a>
                                     )}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                </div>
+                            </div>
+
+                            {/* Tech Stack Tags */}
+                            <div>
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-white/5">{t('sections.technologies')}</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {project.techStack.map(tech => (
+                                        <div key={tech} className="px-3 py-1.5 bg-secondary/5 border border-white/5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:border-white/10 transition-colors cursor-default">
+                                            {tech}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Table of Contents (Functional) */}
+                            <div>
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-white/5">{t('sections.contents')}</h3>
+                                <ul className="space-y-3 text-sm text-muted-foreground">
+                                    <li onClick={() => document.getElementById('mission')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-foreground cursor-pointer transition-colors hover:translate-x-1 duration-200 block">• {t('sections.missionBrief')}</li>
+                                    {project.features && <li onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-foreground cursor-pointer transition-colors hover:translate-x-1 duration-200 block">• {t('sections.keyFeatures')}</li>}
+                                    {project.challengesAndSolutions && <li onClick={() => document.getElementById('chronicles')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-foreground cursor-pointer transition-colors hover:translate-x-1 duration-200 block">• {t('sections.engineeringChronicles')}</li>}
+                                    {project.galleryImages && <li onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-foreground cursor-pointer transition-colors hover:translate-x-1 duration-200 block">• {t('sections.visualGallery')}</li>}
+                                    {project.installation && <li onClick={() => document.getElementById('installation')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-foreground cursor-pointer transition-colors hover:translate-x-1 duration-200 block">• {t('sections.installation')}</li>}
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            {/* 5. FOOTER NAVIGATION (Back & More Projects) */}
+            <div className="container max-w-7xl mx-auto px-6 mt-32 border-t border-border/40 pt-16">
+
+                {/* Back Link Bottom */}
+                <div className="mb-16">
+                    <div
+                        onClick={handleExit}
+                        className="inline-flex items-center gap-2 text-muted-foreground font-medium hover:text-primary transition-colors group cursor-pointer"
+                    >
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        <span>{t('sections.backToProjects')}</span>
                     </div>
                 </div>
+
+                {/* MORE PROJECTS CAROUSEL */}
+                <div className="relative group">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold">{t('sections.moreProjects')}</h2>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => {
+                                    if (scrollContainerRef.current) {
+                                        scrollContainerRef.current.scrollBy({ left: -scrollContainerRef.current.clientWidth / 3, behavior: 'smooth' });
+                                    }
+                                }}
+                                className="p-2 rounded-full border border-white/10 bg-secondary/5 hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (scrollContainerRef.current) {
+                                        scrollContainerRef.current.scrollBy({ left: scrollContainerRef.current.clientWidth / 3, behavior: 'smooth' });
+                                    }
+                                }}
+                                className="p-2 rounded-full border border-white/10 bg-secondary/5 hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        ref={scrollContainerRef}
+                        className="flex gap-6 overflow-x-auto pb-4 snap-x [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] -mx-6 px-6"
+                    >
+                        {otherProjects.map((p, i) => (
+                            <Link
+                                href={`/projects/${p.slug}`}
+                                key={p.id}
+                                className="flex-none w-[85vw] md:w-[calc(33.333%-1rem)] snap-center group"
+                            >
+                                <div className="aspect-video rounded-xl overflow-hidden mb-4 bg-secondary/5 border border-white/5 relative">
+                                    {p.image ? (
+                                        <img src={p.image} alt={p.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-indigo-900 to-background" />
+                                    )}
+                                    {/* Hover Overlay */}
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <span className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-white border border-white/20">
+                                            {t('sections.viewMore')}
+                                        </span>
+                                    </div>
+                                </div>
+                                <h3 className="font-bold text-lg leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-1">{p.title}</h3>
+                                <p className="text-sm text-muted-foreground line-clamp-1">{p.techStack[0]} • {p.category || "Development"}</p>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+
             </div>
 
             {/* Image Lightbox - Independent Portal */}

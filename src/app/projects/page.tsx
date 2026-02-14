@@ -50,7 +50,7 @@ function ProjectListItem({
     };
 
     const techText = project.techStack.join(' • ');
-    const bgGradient = useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, ${isOngoing ? 'rgba(16, 185, 129, 0.06)' : 'rgba(59, 130, 246, 0.06)'}, transparent 40%)`;
+    const bgGradient = useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(255, 255, 255, 0.03), transparent 40%)`;
 
     return (
         <motion.div
@@ -68,9 +68,8 @@ function ProjectListItem({
         >
             <motion.div
                 className={cn(
-                    "relative cursor-pointer overflow-hidden rounded-xl", /* Added rounded-xl for smoother feel */
-                    "border-b border-black/5 dark:border-white/5 transition-all duration-300",
-                    isHovered ? "bg-black/5 dark:bg-white/5 border-transparent" : "hover:bg-black/[0.02] dark:hover:bg-white/[0.02]"
+                    "relative cursor-pointer overflow-hidden rounded-xl border-b border-white/5 transition-all duration-300",
+                    isHovered ? "bg-white/[0.02]" : "hover:bg-white/[0.01]"
                 )}
                 whileHover={{ scale: 1.002 }} /* Micro interaction */
             >
@@ -190,8 +189,8 @@ function ProjectListItem({
                             }}
                         >
                             <div className={cn(
-                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl", 
-                                isOngoing ? "border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/80" : "border-blue-500/20 bg-blue-500/5 dark:bg-blue-950/80"
+                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl",
+                                "border-white/10 bg-zinc-950"
                             )}>
                                 {project.image ? (
                                     <img

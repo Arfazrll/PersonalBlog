@@ -61,15 +61,40 @@
         "tools": "Tools yang Digunakan",
         "highlights": "Highlights",
         "challenges": "Tantangan",
-        "status": {
-            "completed": "Selesai",
-            "ongoing": "Sedang Berjalan",
-            "planned": "Direncanakan"
-        },
         "filters": {
             "all": "Semua",
             "ongoing": "Sedang Berjalan",
             "completed": "Selesai"
+        },
+        "sections": {
+            "missionBrief": "Misi Singkat",
+            "keyFeatures": "Fitur Utama",
+            "engineeringChronicles": "Kronik Rekayasa",
+            "visualGallery": "Galeri Visual",
+            "installation": "Instruksi Instalasi",
+            "projectAccess": "Akses Proyek",
+            "technologies": "Teknologi",
+            "contents": "Daftar Isi",
+            "moreProjects": "Proyek Lainnya",
+            "backToProjects": "Kembali ke Proyek",
+            "viewMore": "Lihat Lebih Banyak",
+            "viewLess": "Tampilkan Lebih Sedikit",
+            "solution": "Solusi",
+            "liveDemo": "Demo Langsung",
+            "sourceCode": "Kode Sumber"
+        },
+        "status": {
+            "ongoing": "Pengembangan Aktif",
+            "completed": "Proyek Selesai"
+        },
+        "metadata": {
+            "role": "Peran",
+            "timeline": "Waktu",
+            "team": "Tim",
+            "techStack": "Teknologi",
+            "roleValue": "Pengembang Full Stack",
+            "teamValue": "Individu",
+            "techStackValue": "{count} Teknologi"
         }
     },
     "experience": {
