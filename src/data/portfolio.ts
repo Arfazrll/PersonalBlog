@@ -469,6 +469,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Remote',
             type: 'freelance',
             logo: '/assets/dicodinglogo.png?v=2',
+            externalLink: 'https://github.com/Arfazrll/Dicoding-Reviews-Submission',
         },
         {
             id: 'prof-2',
@@ -488,6 +489,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Remote',
             type: 'freelance',
             logo: '/assets/dicodinglogo.png?v=2',
+            externalLink: 'https://docs.google.com/presentation/d/13gNI6ttgW3eMXgZS8G3LzEbzOVwQ3Ot4HVWER0hpUgI/edit?usp=sharing',
         },
         {
             id: 'prof-3',
@@ -527,6 +529,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'On-site',
             type: 'internship',
             logo: '/assets/logocps.png',
+            externalLink: 'https://medium.com/@cpslaboratory2324/dmouv-sistem-smart-motion-detection-berbasis-internet-of-things-8f26ef2427f1',
         },
         {
             id: 'prof-5',
@@ -546,7 +549,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Remote',
             type: 'internship',
             logo: '/assets/aselablogo.png',
-            externalLink: 'https://ase.telkomuniversity.ac.id',
+            externalLink: 'https://github.com/Arfazrll/Voices-Unheard-ASE',
         },
         {
             id: 'prof-6',
@@ -604,6 +607,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'On-site',
             type: 'internship',
             logo: '/assets/dinas-pangan-dan-pertanian-kota-bandung.png',
+            externalLink: 'https://riibse.center.telkomuniversity.ac.id/e-selamat/',
         },
 
         // 2. LEADERSHIP & ORGANIZATIONAL EXPERIENCE
@@ -624,6 +628,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Hybrid',
             type: 'contract',
             logo: '/assets/logocps.png',
+            externalLink: 'https://cpslaboratory.com/',
         },
         {
             id: 'lead-2',
@@ -661,6 +666,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Indonesia',
             type: 'contract',
             logo: '/assets/logodigistar.png',
+            externalLink: 'https://www.digistartelkom.id/',
         },
         {
             id: 'lead-4',
@@ -699,6 +705,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'West Java',
             type: 'contract',
             logo: '/assets/youth-ranger-indonesia.png',
+            externalLink: 'https://youthrangerindonesia.com/',
         },
 
         // 3. VOLUNTEER EXPERIENCE
@@ -720,6 +727,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Bandung',
             type: 'volunteer',
             logo: '/assets/logobei.png',
+            externalLink: 'https://www.gibeitelkomuniversity.site/',
         },
         {
             id: 'vol-2',
@@ -798,6 +806,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Indonesia',
             type: 'apprenticeship',
             logo: '/assets/DBSLogo.png?v=1',
+            externalLink: 'https://mail.google.com/mail/u/0/#search/DBS/FMfcgzQbfxpgnbGGdbWztHKKvfbDfgjx',
         },
         {
             id: 'cert-2',
@@ -817,6 +826,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Indonesia',
             type: 'apprenticeship',
             logo: '/assets/indosat-ooredoo-hutchison-digital-camp.png',
+            externalLink: 'https://idcamp.ioh.co.id/',
         },
         {
             id: 'cert-3',
@@ -836,6 +846,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Bandung',
             type: 'apprenticeship',
             logo: '/assets/aieseclogo.png',
+            externalLink: 'https://www.instagram.com/aiesecbandung/',
         },
         {
             id: 'cert-4',
@@ -873,6 +884,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             location: 'Bandung',
             type: 'contract',
             logo: '/assets/logogdsc.jpg',
+            externalLink: 'https://g.dev/Arfazrll',
         },
     ],
     education: [
