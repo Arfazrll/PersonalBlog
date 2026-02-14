@@ -456,8 +456,6 @@ function AchievementModal({ achievement, onClose, isLowPowerMode }: { achievemen
     );
 }
 
-// Particles removed
-
 export default function AchievementsPage() {
     const t = useTranslations('achievements');
     const { isLowPowerMode } = usePerformance();

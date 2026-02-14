@@ -503,7 +503,7 @@ export default function ExperiencePage() {
 
 const slugify = (text: string) => {
     return text
-        .split('(')[0] // Remove special suffixes like (Contract-Based)
+        .split('(')[0] 
         .toLowerCase()
         .replace(/[^\w]/g, '');
 };
@@ -605,7 +605,6 @@ function TimelineGallery({ images, id, title, externalLink, logo }: { images: st
     const allImages = verifiedImages.map((src, i) => ({ src, index: i, type: 'image' as const }));
     const validImages = allImages.filter(img => !failedImages.has(img.index));
 
-    // Add Link Card if externalLink exists
     const galleryItems = [
         ...validImages,
         ...(externalLink ? [{ type: 'link' as const, src: externalLink, index: validImages.length }] : [])
@@ -708,7 +707,6 @@ function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
     const groupedExperiences = useMemo(() => {
         const groups: { [key: string]: Experience[] } = {};
 
-        // Sort all experiences by startDate descending
         const sortedAll = [...experiences].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
 
         sortedAll.forEach(exp => {

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect } from 'react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
+import { useLenis } from 'lenis/react';
 import { useTranslations } from 'next-intl';
 import { Search, X, Layers, ArrowRight, ArrowUpRight, Sparkles, Code2, Zap, Brain, Cpu, Wifi, Blocks, Globe, Database, LayoutGrid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,7 +14,6 @@ import { LogoTimeline, LogoItem } from '@/components/ui/logo-timeline';
 import { Icons } from '@/components/icons';
 import { Meteors } from '@/components/ui/meteors';
 import { ProjectContact } from '@/components/sections/ProjectContact';
-import { ProjectDetail } from '@/components/projects/ProjectDetail';
 import { ProjectStats } from '@/components/sections/ProjectStats';
 import { usePerformance } from '@/hooks/usePerformance';
 
@@ -32,7 +32,10 @@ function ProjectListItem({
 }) {
     const itemRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+    const cursorX = useMotionValue(0);
+    const cursorY = useMotionValue(0);
 
     const isOngoing = project.status === 'ongoing';
     const displayIndex = String(index + 1).padStart(2, '0');
@@ -40,13 +43,14 @@ function ProjectListItem({
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!itemRef.current) return;
         const rect = itemRef.current.getBoundingClientRect();
-        setMousePos({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        });
+        mouseX.set(e.clientX - rect.left);
+        mouseY.set(e.clientY - rect.top);
+        cursorX.set(e.clientX + 20);
+        cursorY.set(e.clientY - 60);
     };
 
     const techText = project.techStack.join(' • ');
+    const bgGradient = useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(255, 255, 255, 0.03), transparent 40%)`;
 
     return (
         <motion.div
@@ -56,6 +60,7 @@ function ProjectListItem({
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.08 }}
             className="group relative"
+            data-project-slug={project.slug}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onMouseMove={handleMouseMove}
@@ -63,9 +68,8 @@ function ProjectListItem({
         >
             <motion.div
                 className={cn(
-                    "relative cursor-pointer overflow-hidden rounded-xl", /* Added rounded-xl for smoother feel */
-                    "border-b border-black/5 dark:border-white/5 transition-all duration-300",
-                    isHovered ? "bg-black/5 dark:bg-white/5 border-transparent" : "hover:bg-black/[0.02] dark:hover:bg-white/[0.02]"
+                    "relative cursor-pointer overflow-hidden rounded-xl border-b border-white/5 transition-all duration-300",
+                    isHovered ? "bg-white/[0.02]" : "hover:bg-white/[0.01]"
                 )}
                 whileHover={{ scale: 1.002 }} /* Micro interaction */
             >
@@ -75,7 +79,7 @@ function ProjectListItem({
                         className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
                         style={{
                             opacity: isHovered ? 1 : 0,
-                            background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.06)' : 'rgba(59, 130, 246, 0.06)'}, transparent 40%)`
+                            background: bgGradient
                         }}
                     />
                 )}
@@ -180,13 +184,13 @@ function ProjectListItem({
                             transition={{ duration: 0.3 }}
                             className="fixed pointer-events-none z-50 hidden lg:block"
                             style={{
-                                left: mousePos.x + (itemRef.current?.getBoundingClientRect().left || 0) + 20,
-                                top: mousePos.y + (itemRef.current?.getBoundingClientRect().top || 0) - 60,
+                                left: cursorX,
+                                top: cursorY,
                             }}
                         >
                             <div className={cn(
-                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl", // increased rounded
-                                isOngoing ? "border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/80" : "border-blue-500/20 bg-blue-500/5 dark:bg-blue-950/80"
+                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl",
+                                "border-white/10 bg-zinc-950"
                             )}>
                                 {project.image ? (
                                     <img
@@ -213,15 +217,14 @@ function ProjectListItem({
     );
 }
 
-// Featured Project Card - Hero style with particles, spotlight, 3D tilt
 function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean }) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-    // 3D Tilt effect
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+    const pixelX = useMotionValue(0);
+    const pixelY = useMotionValue(0);
+
     const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [8, -8]), { stiffness: 300, damping: 30 });
     const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [-8, 8]), { stiffness: 300, damping: 30 });
 
@@ -232,7 +235,8 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         mouseX.set(x);
         mouseY.set(y);
-        setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        pixelX.set(e.clientX - rect.left);
+        pixelY.set(e.clientY - rect.top);
     };
 
     const handleMouseLeave = () => {
@@ -242,6 +246,7 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
     };
 
     const isOngoing = project.status === 'ongoing';
+    const bgGradient = useMotionTemplate`radial-gradient(800px circle at ${pixelX}px ${pixelY}px, ${isOngoing ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}, transparent 40%)`;
 
     return (
         <motion.article
@@ -286,7 +291,7 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
                             className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-500"
                             style={{
                                 opacity: isHovered ? 1 : 0,
-                                background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}, transparent 40%)`
+                                background: bgGradient
                             }}
                         />
                     )}
@@ -471,16 +476,14 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
     );
 }
 
-// Standard Project Card - with spotlight and 3D tilt
 function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean }) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-
-    // 3D Tilt
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+    const pixelX = useMotionValue(0);
+    const pixelY = useMotionValue(0);
+
     const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [6, -6]), { stiffness: 400, damping: 25 });
     const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [-6, 6]), { stiffness: 400, damping: 25 });
 
@@ -491,7 +494,8 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         mouseX.set(x);
         mouseY.set(y);
-        setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        pixelX.set(e.clientX - rect.left);
+        pixelY.set(e.clientY - rect.top);
     };
 
     const handleMouseLeave = () => {
@@ -501,6 +505,7 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
     };
 
     const isOngoing = project.status === 'ongoing';
+    const bgGradient = useMotionTemplate`radial-gradient(500px circle at ${pixelX}px ${pixelY}px, ${isOngoing ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.12)'}, transparent 40%)`;
 
     return (
         <motion.article
@@ -509,6 +514,7 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
             viewport={{ once: true, margin: "-30px" }}
             transition={{ duration: isLowPowerMode ? 0.4 : 0.6, delay: index * 0.1 }}
             className="group cursor-pointer perspective-1000"
+            data-project-slug={project.slug}
             onClick={onClick}
         >
             <motion.div
@@ -552,11 +558,11 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
 
                     {/* Spotlight */}
                     {!isLowPowerMode && (
-                        <div
+                        <motion.div
                             className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300"
                             style={{
                                 opacity: isHovered ? 1 : 0,
-                                background: `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px, ${isOngoing ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.12)'}, transparent 40%)`
+                                background: bgGradient
                             }}
                         />
                     )}
@@ -673,7 +679,6 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
     );
 }
 
-// Compact Card for additional projects
 function CompactCard({ project, onClick, index }: { project: Project; onClick: () => void; index: number }) {
     const [isHovered, setIsHovered] = useState(false);
     const isOngoing = project.status === 'ongoing';
@@ -738,11 +743,6 @@ function CompactCard({ project, onClick, index }: { project: Project; onClick: (
     );
 }
 
-
-
-
-
-// Helper to map string to icon key
 const getIconKey = (name: string): keyof typeof Icons => {
     const lower = name.toLowerCase().replace('.', '').replace(/\s+/g, '');
     if (lower.includes('react')) return 'react';
@@ -759,40 +759,17 @@ export default function ProjectsPage() {
     const t = useTranslations('projects');
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState<FilterType>('all');
-    const [visibleCount, setVisibleCount] = useState(10);
-    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [visibleCount, setVisibleCount] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = sessionStorage.getItem('projects-visible-count');
+            if (saved) return Math.max(10, parseInt(saved, 10));
+        }
+        return 10;
+    });
     const { isLowPowerMode } = usePerformance();
 
     const router = useRouter();
-    const searchParams = useSearchParams();
     const pathname = usePathname();
-
-    // Sync URL -> State
-    useEffect(() => {
-        const projectId = searchParams.get('detail');
-        if (projectId) {
-            const project = portfolioData.projects.find(p => p.id === projectId);
-            if (project) {
-                setSelectedProject(project);
-            }
-        } else {
-            setSelectedProject(null);
-        }
-    }, [searchParams]);
-
-    const handleOpenProject = (project: Project) => {
-        setSelectedProject(project);
-        const params = new URLSearchParams(searchParams.toString());
-        params.set('detail', project.id);
-        router.push(`${pathname}?${params.toString()}`, { scroll: false });
-    };
-
-    const handleCloseModal = () => {
-        setSelectedProject(null);
-        const params = new URLSearchParams(searchParams.toString());
-        params.delete('detail');
-        router.push(`${pathname}?${params.toString()}`, { scroll: false });
-    };
 
     const products = useMemo(() => {
         const techImages = [
@@ -869,11 +846,57 @@ export default function ProjectsPage() {
         return projects;
     }, [searchQuery, filter, selectedCategory]);
 
-    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+    const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
+        if (typeof window !== 'undefined') {
+            const saved = sessionStorage.getItem('projects-view-mode');
+            if (saved === 'list' || saved === 'grid') return saved;
+        }
+        return 'list';
+    });
 
-    // Reset pagination when filters change
+    const lenis = useLenis();
+
+    const hasRestoredScroll = useRef(false);
+
+    // Scroll restoration: runs BEFORE browser paint so user never sees wrong position
+    useLayoutEffect(() => {
+        if (hasRestoredScroll.current) return;
+
+        const savedSlug = sessionStorage.getItem('projects-last-clicked');
+        if (!savedSlug || !lenis) return;
+
+        // Mark as handled so strict mode re-run won't interfere
+        hasRestoredScroll.current = true;
+        sessionStorage.removeItem('projects-last-clicked');
+        sessionStorage.removeItem('projects-visible-count');
+        sessionStorage.removeItem('projects-view-mode');
+
+        // Stop Lenis, scroll natively, then restart
+        lenis.stop();
+
+        const el = document.querySelector(`[data-project-slug="${savedSlug}"]`);
+        if (el) {
+            const rect = el.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            // Fixed offset from top of viewport (120px accounts for navbar)
+            // Avoids centering issue where project #1 was pushed above the archive section
+            const targetY = scrollTop + rect.top - 120;
+            window.scrollTo(0, Math.max(0, targetY));
+        }
+
+        // Restart Lenis on next frame
+        requestAnimationFrame(() => lenis.start());
+    }, [lenis]);
+
+    // Reset pagination only when filters actually change (not on mount)
+    const prevFilters = useRef({ searchQuery, filter, selectedCategory });
     useEffect(() => {
-        setVisibleCount(10);
+        const prev = prevFilters.current;
+        prevFilters.current = { searchQuery, filter, selectedCategory };
+
+        if (prev.searchQuery !== searchQuery || prev.filter !== filter || prev.selectedCategory !== selectedCategory) {
+            setVisibleCount(10);
+        }
     }, [searchQuery, filter, selectedCategory]);
 
     const filters: { key: FilterType; label: string }[] = [{ key: 'all', label: t('filters.all') }, { key: 'ongoing', label: t('filters.ongoing') }, { key: 'completed', label: t('filters.completed') }];
@@ -885,7 +908,7 @@ export default function ProjectsPage() {
             {/* Project Stats - Impressive Metrics */}
             <ProjectStats isLowPowerMode={isLowPowerMode} />
 
-            <div className="container-creative relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
+            <div id="project-archive" className="container-creative relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
                 {/* Search & Filter Control Bar */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -1028,7 +1051,12 @@ export default function ProjectsPage() {
                                     <ProjectListItem
                                         key={project.id}
                                         project={project}
-                                        onClick={() => handleOpenProject(project)}
+                                        onClick={() => {
+                                            sessionStorage.setItem('projects-last-clicked', project.slug);
+                                            sessionStorage.setItem('projects-visible-count', String(visibleCount));
+                                            sessionStorage.setItem('projects-view-mode', viewMode);
+                                            router.push(`/projects/${project.slug}`);
+                                        }}
                                         index={index}
                                         isLowPowerMode={isLowPowerMode}
                                     />
@@ -1042,7 +1070,12 @@ export default function ProjectsPage() {
                                     <ProjectCard
                                         key={project.id}
                                         project={project}
-                                        onClick={() => handleOpenProject(project)}
+                                        onClick={() => {
+                                            sessionStorage.setItem('projects-last-clicked', project.slug);
+                                            sessionStorage.setItem('projects-visible-count', String(visibleCount));
+                                            sessionStorage.setItem('projects-view-mode', viewMode);
+                                            router.push(`/projects/${project.slug}`);
+                                        }}
                                         index={index}
                                         isLowPowerMode={isLowPowerMode}
                                     />
@@ -1087,7 +1120,8 @@ export default function ProjectsPage() {
                 <ProjectContact isLowPowerMode={isLowPowerMode} />
             </div >
 
-            <AnimatePresence>{selectedProject && <ProjectDetail project={selectedProject} onClose={handleCloseModal} isLowPowerMode={isLowPowerMode} />}</AnimatePresence>
         </div >
+
+
     );
 }

@@ -14,7 +14,7 @@ export const ProjectContact = ({ isLowPowerMode }: { isLowPowerMode?: boolean })
 
             {/* Ambient Background Glow - Smoother */}
             {!isLowPowerMode && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[180px] pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-transparent rounded-full blur-[180px] pointer-events-none" />
             )}
 
             <div className="relative z-10">
@@ -39,23 +39,23 @@ export const ProjectContact = ({ isLowPowerMode }: { isLowPowerMode?: boolean })
                     isLowPowerMode={isLowPowerMode}
                     items={[
                         // GitHub - White/Black
-                        <LogoItem key={1} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-800 dark:border-zinc-200">
+                        <LogoItem key={1} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900">
                             <SiGithub />
                         </LogoItem>,
                         // LinkedIn - Blue
-                        <LogoItem key={2} className="bg-blue-600 text-white border-blue-500">
+                        <LogoItem key={2} className="bg-blue-600 text-white">
                             <SiLinkedin />
                         </LogoItem>,
                         // Twitter/X - Black/White
-                        <LogoItem key={3} className="bg-black text-white border-zinc-800">
+                        <LogoItem key={3} className="bg-black text-white">
                             <SiX />
                         </LogoItem>,
                         // Instagram - Gradient-ish (Pink/Orange)
-                        <LogoItem key={4} className="bg-gradient-to-br from-purple-500 to-orange-500 text-white border-purple-500">
+                        <LogoItem key={4} className="bg-gradient-to-br from-purple-500 to-orange-500 text-white">
                             <SiInstagram />
                         </LogoItem>,
                         // Spotify - Green
-                        <LogoItem key={5} className="bg-[#1DB954] text-white border-green-500">
+                        <LogoItem key={5} className="bg-[#1DB954] text-white">
                             <SiSpotify />
                         </LogoItem>
                     ]}
@@ -258,7 +258,7 @@ const LogoItem = ({
     return (
         <div
             className={twMerge(
-                "grid h-44 w-60 md:h-60 md:w-[26rem] place-content-center rounded-2xl text-7xl md:text-8xl shadow-inner border",
+                "grid h-44 w-60 md:h-60 md:w-[26rem] place-content-center rounded-2xl text-7xl md:text-8xl",
                 className
             )}
         >

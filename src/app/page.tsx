@@ -9,7 +9,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-// Particles removed for performance
 import { useIsMobile } from "@/hooks/useIsMobile";
 import type { ISourceOptions } from '@tsparticles/engine';
 import AOS from 'aos';
@@ -19,7 +18,6 @@ import { LoadingScreen } from '@/components/layout';
 import { TextPressure } from '@/components/ui/TextPressure';
 import { portfolioData } from '@/data/portfolio';
 
-// Register GSAP plugins
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
@@ -38,7 +36,6 @@ const ExpertiseSection = dynamic(() => import("@/components/sections/ExpertiseSe
     loading: () => <div className="h-[500px] w-full animate-pulse bg-zinc-100/5 dark:bg-zinc-800/5" />
 });
 
-// ==================== PARTICLES CONFIG ====================
 const particlesOptions: ISourceOptions = {
     background: { color: { value: 'transparent' } },
     fpsLimit: 60,
@@ -59,13 +56,13 @@ const particlesOptions: ISourceOptions = {
             straight: false,
             outModes: { default: 'out' },
         },
-        number: { density: { enable: true }, value: 25 }, // Optimized count
+        number: { density: { enable: true }, value: 25 }, 
         opacity: { value: { min: 0.1, max: 0.4 } },
         size: { value: { min: 1, max: 3 } },
     },
     detectRetina: true,
 };
-// ==================== ANIMATED BACKGROUND ====================
+
 function AnimatedBackground() {
     const isMobile = useIsMobile();
 
@@ -86,7 +83,6 @@ function AnimatedBackground() {
     );
 }
 
-// ==================== SCROLL INDICATOR ====================
 function ScrollIndicator() {
     const t = useTranslations('hero');
     return (
@@ -125,7 +121,6 @@ function ScrollIndicator() {
     );
 }
 
-// ==================== HERO INTRO SECTION ====================
 function HeroIntro() {
     const containerRef = useRef<HTMLElement>(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -133,7 +128,6 @@ function HeroIntro() {
     const t = useTranslations('hero');
     const isMobile = useIsMobile();
 
-    // React Spring for smooth mouse following
     const [springProps, api] = useReactSpring(() => ({
         xy: [0, 0],
         config: config.gentle,
@@ -157,7 +151,6 @@ function HeroIntro() {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, [handleMouseMove, isMobile]);
 
-    // Detect theme changes
     useEffect(() => {
         const checkTheme = () => {
             setIsDarkMode(document.documentElement.classList.contains('dark'));
@@ -196,7 +189,6 @@ function HeroIntro() {
                     '-=0.5'
                 );
 
-            // Scroll-triggered parallax
             gsap.to('.hero-content', {
                 y: 150,
                 opacity: 0,
@@ -307,9 +299,6 @@ function HeroIntro() {
     );
 }
 
-// Helper Component for Spotlight Effect
-
-// Helper Component for Spotlight Effect
 function SpotlightCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -373,18 +362,16 @@ const CTASection = dynamic(() => import("@/components/sections/CTASection"), {
     loading: () => <div className="h-[400px] w-full animate-pulse bg-zinc-100/5 dark:bg-zinc-800/5" />
 });
 
-// ==================== MAIN PAGE ====================
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Initialize AOS with more options
         AOS.init({
             duration: 1000,
             easing: 'ease-out-cubic',
-            once: false, // Allow animations to replay
+            once: false, 
             offset: 100,
-            mirror: true, // Animate out when scrolling past
+            mirror: true,
         });
 
         const hasLoaded = sessionStorage.getItem('portfolioLoaded');
@@ -392,7 +379,6 @@ export default function HomePage() {
             setIsLoading(false);
         }
 
-        // Refresh AOS on route change
         return () => {
             AOS.refresh();
         };

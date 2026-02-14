@@ -31,32 +31,20 @@ export const HeroParallax = ({
     offset: ["start start", "end start"],
   });
 
-  const springConfig = { stiffness: 300, damping: 30, bounce: 100 };
+  // Spring smooths ONLY the rotation to prevent aliasing jitter ("shaking")
+  const rotateSpringConfig = { stiffness: 200, damping: 20 };
 
-  const translateX = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, isLowPowerMode ? 200 : 800]),
-    springConfig
-  );
-  const translateXReverse = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, isLowPowerMode ? -200 : -800]),
-    springConfig
-  );
-  const rotateX = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [isLowPowerMode ? 0 : 10, 0]),
-    springConfig
-  );
-  const opacity = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [isLowPowerMode ? 0.8 : 0.2, 1]),
-    springConfig
-  );
-  const rotateZ = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [isLowPowerMode ? 0 : 10, 0]),
-    springConfig
-  );
-  const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [isLowPowerMode ? -100 : -500, isLowPowerMode ? 100 : 500]),
-    springConfig
-  );
+  const translateX = useTransform(scrollYProgress, [0, 1], [0, isLowPowerMode ? 200 : 800]);
+  const translateXReverse = useTransform(scrollYProgress, [0, 1], [0, isLowPowerMode ? -200 : -800]);
+
+  const rotateXRaw = useTransform(scrollYProgress, [0, 0.2], [isLowPowerMode ? 0 : 5, 0]);
+  const rotateX = useSpring(rotateXRaw, rotateSpringConfig);
+
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [isLowPowerMode ? 0.8 : 0.2, 1]);
+
+  const rotateZRaw = useTransform(scrollYProgress, [0, 0.2], [isLowPowerMode ? 0 : 5, 0]);
+  const rotateZ = useSpring(rotateZRaw, rotateSpringConfig);
+  const translateY = useTransform(scrollYProgress, [0, 0.2], [isLowPowerMode ? -100 : -500, isLowPowerMode ? 100 : 500]);
   return (
     <div
       ref={ref}
@@ -64,16 +52,15 @@ export const HeroParallax = ({
         "pt-10 pb-20 sm:pb-40 overflow-hidden antialiased relative flex flex-col self-auto",
         isLowPowerMode
           ? "h-[100vh] sm:h-[120vh]"
-          : "h-[180vh] sm:h-[200vh] lg:h-[250vh] [perspective:1000px] [transform-style:preserve-3d]"
+          : "h-[180vh] sm:h-[200vh] lg:h-[250vh] [perspective:2000px] [transform-style:preserve-3d]"
       )}
     >
       <Header />
       <motion.div
         style={{
-          rotateX,
-          rotateZ,
           translateY,
           opacity,
+          backfaceVisibility: 'hidden',
         }}
         className=""
       >
@@ -175,6 +162,8 @@ export const ProductCard = ({
           width={600}
           className="object-cover object-left-top absolute h-full w-full inset-0"
           alt={product.title}
+          priority={true}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </a>
       <div className="absolute inset-0 h-full w-full opacity-0 group-hover/product:opacity-80 bg-black pointer-events-none"></div>
