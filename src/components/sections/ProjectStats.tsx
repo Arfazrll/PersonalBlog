@@ -20,7 +20,7 @@ const calculateMetrics = () => {
         techCount: totalTechStack + totalTools,
         yearsExp,
         // Creative metrics
-        impactScore: '10k+', // GitHub stars, downloads, or impact metric
+        impactScore: '12+', // GitHub stars, downloads, or impact metric
         satisfaction: '98%'   // Client/user satisfaction rate
     };
 };
@@ -44,7 +44,7 @@ const StatCard = ({ value, label, icon, delay, gradient, isLowPowerMode }: StatC
             className="group relative"
         >
             <motion.div
-                className="relative h-full p-6 sm:p-8"
+                className="relative h-full p-6 sm:p-8 flex flex-col items-center justify-center text-center"
                 whileHover={isLowPowerMode ? {} : { scale: 1.05, y: -8 }}
                 transition={{ duration: 0.3 }}
             >
@@ -112,7 +112,7 @@ export function ProjectStats({ isLowPowerMode }: { isLowPowerMode?: boolean }) {
         },
         {
             value: metrics.impactScore,
-            label: 'Global Reach',
+            label: 'Active Deployments',
             icon: <Award className="w-6 h-6 text-amber-500" />,
             gradient: 'rgba(245, 158, 11, 0.3), rgba(251, 146, 60, 0.3), rgba(245, 158, 11, 0.3)'
         }

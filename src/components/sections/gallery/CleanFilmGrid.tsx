@@ -3,23 +3,50 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { portfolioData } from "@/data/portfolio";
+// import { portfolioData } from "@/data/portfolio";
 import { X, Play, Maximize2, ChevronLeft, ChevronRight, Minimize2, ListFilter, ArrowDownUp, ImageIcon, Video, ArrowRight, LayoutGrid, StretchHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getAllGalleryImages, GalleryImage } from "@/app/actions/getGalleryImages";
 
 type FilterType = 'all' | 'image' | 'video';
-type SortType = 'newest' | 'oldest';
+// type SortType = 'newest' | 'oldest';
+
+
+
 
 export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boolean }) {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [filter, setFilter] = useState<FilterType>('all');
-    const [sort, setSort] = useState<SortType>('newest');
-    const [viewMode, setViewMode] = useState<'rows' | 'grid'>('rows');
+    // const [sort, setSort] = useState<SortType>('newest'); // Removed sort state
+    const [viewMode, setViewMode] = useState<'rows' | 'grid'>('grid'); // Default grid
     const [isLightboxMaximized, setIsLightboxMaximized] = useState(false);
-    const [visibleCount, setVisibleCount] = useState(12); // Start with 12 items
+    const [visibleCount, setVisibleCount] = useState(12);
+    const [galleryItems, setGalleryItems] = useState<any[]>([]);
 
-    // Initial Data
-    const allItems = portfolioData.gallery;
+    useEffect(() => {
+        const fetchImages = async () => {
+            try {
+                const images = await getAllGalleryImages();
+                const formattedItems = images.map((img, index) => ({
+                    id: `gallery-${index}`,
+                    title: img.filename.split('.')[0].replace(/-/g, ' '),
+                    type: 'image',
+                    category: 'Gallery',
+                    date: '2024',
+                    thumbnail: img.src,
+                    url: img.src,
+                    description: 'Gallery Image'
+                }));
+                setGalleryItems(formattedItems);
+            } catch (error) {
+                console.error("Failed to load gallery images", error);
+            }
+        };
+        fetchImages();
+    }, []);
+
+    // Use dynamic items instead of portfolioData
+    const allItems = galleryItems;
 
     // Grouping Logic
     const groupedItems = useMemo(() => {
@@ -30,12 +57,12 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
             items = items.filter(item => item.type === filter);
         }
 
-        // 2. Sort (within categories later, but good to sort base list)
-        items.sort((a, b) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            return sort === 'newest' ? dateB - dateA : dateA - dateB;
-        });
+        // 2. Sort (Removed as per request)
+        // items.sort((a, b) => {
+        //     const dateA = new Date(a.date).getTime();
+        //     const dateB = new Date(b.date).getTime();
+        //     return sort === 'newest' ? dateB - dateA : dateA - dateB;
+        // });
 
         // 3. Group
         const groups: Record<string, typeof items> = {};
@@ -48,7 +75,8 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
         });
 
         return groups;
-    }, [filter, sort, allItems]);
+    }, [filter, allItems]);
+
 
     // Categories List for Index
     const categories = Object.keys(groupedItems).sort();
@@ -180,17 +208,10 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                         </button>
                     </div>
 
-                    {/* Divider */}
-                    <div className="w-px h-8 bg-neutral-500 dark:bg-white/20 hidden md:block" />
+                    {/* Divider - Removed Sort */}
+                    {/* <div className="w-px h-8 bg-neutral-500 dark:bg-white/20 hidden md:block" /> */}
 
-                    {/* Sort */}
-                    <button
-                        onClick={() => setSort(prev => prev === 'newest' ? 'oldest' : 'newest')}
-                        className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group"
-                    >
-                        <ArrowDownUp className="w-3 h-3 group-hover:text-primary transition-colors" />
-                        <span>{sort}</span>
-                    </button>
+                    {/* Sort - Removed */}
                 </div>
             </div>
 
@@ -327,7 +348,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                                 </h4>
                                                 <div className="flex items-center justify-between mt-2 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 delay-75">
                                                     <span className="text-xs text-white/80 font-mono">
-                                                        {item.date}
+                                                        {/* {item.date} */}
                                                     </span>
                                                     <span className="text-[10px] text-white/60 uppercase tracking-widest border border-white/20 px-2 py-0.5 rounded-full">
                                                         View
@@ -352,7 +373,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true, margin: "-10%" }}
                                         transition={{ duration: 0.4, delay: isLowPowerMode ? 0 : index * 0.05 }}
-                                        className="relative group break-inside-avoid cursor-pointer p-3 rounded-xl border border-neutral-400 dark:border-transparent bg-muted/20 dark:bg-transparent transition-all hover:shadow-md"
+                                        className="relative group break-inside-avoid cursor-pointer p-3 rounded-xl border border-transparent bg-muted/20 dark:bg-transparent transition-all hover:shadow-md"
                                         onClick={() => openLightbox(item.id)}
                                     >
                                         <div className="relative overflow-hidden bg-muted aspect-auto rounded-lg">
@@ -362,7 +383,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                                 width={800}
                                                 height={600}
                                                 className={cn(
-                                                    "w-full object-cover transition-transform duration-700",
+                                                    "object-cover transition-transform duration-700",
                                                     !isLowPowerMode && "group-hover:scale-105"
                                                 )}
                                             />
@@ -394,9 +415,6 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                                     {item.category}
                                                 </p>
                                             </div>
-                                            <span className="text-xs font-mono text-muted-foreground opacity-50">
-                                                {item.date}
-                                            </span>
                                         </div>
                                     </motion.div>
                                 ))}
@@ -495,7 +513,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className={cn(
-                                "relative w-full h-full overflow-hidden shadow-2xl bg-black flex items-center justify-center",
+                                "relative w-full h-full overflow-hidden flex items-center justify-center",
                                 isLightboxMaximized ? "rounded-none" : "rounded-sm"
                             )}>
                                 {flattenedFilteredItems[currentIndex].type === 'video' ? (
