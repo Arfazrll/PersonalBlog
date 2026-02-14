@@ -2,6 +2,7 @@ import React from 'react';
 
 export interface Project {
     id: string;
+    slug: string;
     title: string;
     description: string;
     longDescription?: string;

@@ -11,6 +11,7 @@ import type { Project } from '@/types';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
+import { getAllGalleryImages } from '@/app/actions/getGalleryImages';
 
 export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
     const t = useTranslations('blog');
@@ -42,6 +43,21 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const featuredPosts = portfolioData.blogs.slice(0, 3);
     const totalPosts = portfolioData.blogs.length;
+
+    // Random Gallery Images
+    const [randomGalleryImages, setRandomGalleryImages] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            const images = await getAllGalleryImages();
+            if (images && images.length > 0) {
+                // Shuffle and pick 5
+                const shuffled = [...images].sort(() => 0.5 - Math.random());
+                setRandomGalleryImages(shuffled.slice(0, 5).map(img => img.src));
+            }
+        };
+        fetchImages();
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -103,10 +119,12 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
                         className="lg:col-span-4 shrink-0 mt-8 lg:mt-0"
                     >
                         <GalleryButton
-                            galleryImages={portfolioData.gallery
-                                .map(item => item.type === 'video' ? item.thumbnail : item.url)
-                                .filter((url): url is string => !!url)
-                                .slice(0, 5)}
+                            galleryImages={randomGalleryImages.length > 0
+                                ? randomGalleryImages
+                                : portfolioData.gallery
+                                    .map(item => item.type === 'video' ? item.thumbnail : item.url)
+                                    .filter((url): url is string => !!url)
+                                    .slice(0, 5)}
                         />
                     </motion.div>
                 </div>

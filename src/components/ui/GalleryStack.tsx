@@ -128,7 +128,7 @@ export const GalleryStack = ({ images }: GalleryStackProps) => {
                 {/* Editorial Text Overlays */}
                 <div className="absolute inset-x-8 top-8 z-20 flex justify-between items-start pointer-events-none">
                     <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-black uppercase tracking-[0.4em] text-primary">Spatial View</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.4em] text-primary">Documentation</span>
                         <h4 className="text-xl font-black text-foreground leading-none">THE GALLERY</h4>
                     </div>
                     <div className="w-10 h-10 rounded-full border border-foreground/10 flex items-center justify-center backdrop-blur-sm bg-foreground/5">

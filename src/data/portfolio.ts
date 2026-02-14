@@ -59,6 +59,7 @@ export const portfolioData: PortfolioData = {
     projects: [
         {
             id: 'project-1',
+            slug: 'creative-portfolio-website',
             title: 'Creative Portfolio Website',
             description: 'Modern, animated portfolio with 3D elements and smooth animations.',
             longDescription: 'A production-grade creative portfolio engineered to demonstrate high-level proficiency in Artificial Intelligence, Blockchain, and Modern Web Architectures. This platform transcends traditional static websites by offering a high-performance interactive experience powered by advanced WebGL shaders, physics-based simulations, and real-time data integration. It serves as a living laboratory for experimenting with cutting-edge frontend technologies while maintaing strict accessibility and SEO standards.',
@@ -146,6 +147,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-2',
+            slug: 'snbtin-platform',
             title: 'SNBTIn - Platform Persiapan SNBT 2025',
             description: 'Platform e-learning #1 di Indonesia untuk persiapan SNBT bagi siswa SMA.',
             longDescription: 'SNBTIn adalah platform persiapan SNBT (Seleksi Nasional Berbasis Tes) terpercaya yang dirancang khusus untuk siswa SMA di Indonesia. Menyediakan materi lengkap, video interaktif, ribuan latihan soal, dan tryout berkala. Dengan lebih dari 10,000 siswa aktif dan tingkat kelulusan 85%, platform ini menjadi solusi utama untuk menembus PTN impian.',
@@ -204,6 +206,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-3',
+            slug: 'terraflow-platform',
             title: 'Terraflow Platform',
             description: 'Enterprise-grade IoT solution for precision agriculture.',
             longDescription: 'IoT solution for precision agriculture featuring Direct-to-Cloud ESP32–Firebase architecture, Go (Gin) backend, and Next.js interactive dashboard for real-time monitoring and control.',
@@ -219,6 +222,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-4',
+            slug: 'docsinsight-engine',
             title: 'DocsInsight Engine',
             description: 'Enterprise RAG System for intelligent document analysis.',
             longDescription: 'High-performance, private Retrieval-Augmented Generation (RAG) platform. Allows users to upload complex documents and interact with them through a neural search interface powered by local LLMs.',
@@ -234,6 +238,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-5',
+            slug: 'donasiaku',
             title: 'Donasiaku',
             description: 'Web-based donation management platform.',
             longDescription: 'Platform where donors can list items to give away and beneficiaries can request them. Features secure chat and delivery arrangement.',
@@ -249,6 +254,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-6',
+            slug: 'security-automation-genai',
             title: 'Security Automation with GenAI',
             description: 'AI-driven cybersecurity threat detection system.',
             longDescription: 'Deep Learning and Generative AI for automated cybersecurity threat detection, covering SQL Injection, DDoS, Network Intrusion, and Malware analysis using Transformers.',
@@ -264,6 +270,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-7',
+            slug: 'web3-guestbook-dapp',
             title: 'Web3 Guestbook DApp',
             description: 'Decentralized guestbook on Ethereum.',
             longDescription: 'A decentralized guestbook DApp built with Next.js, Hardhat, and Solidity, enabling users to write immutable messages directly to the Ethereum blockchain.',
@@ -279,6 +286,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-8',
+            slug: 'digilibzx',
             title: 'Digilibzx',
             description: 'Modern Full-Stack Digital Library System.',
             longDescription: 'Digital Library System featuring AI-powered book summarization (Gemini), smart borrowing cart, and comprehensive admin dashboard.',
@@ -294,6 +302,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-9',
+            slug: 'polabdc-dental-management',
             title: 'POLABDC Dental Management',
             description: 'AI-powered Dental Clinic Management SaaS.',
             longDescription: 'RoxyDental (POLABDC) is a comprehensive SaaS solution to digitize dental clinic operations, integrating AI for disease prediction and data analysis.',
@@ -309,6 +318,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-10',
+            slug: 'deep-learning-image-classifier',
             title: 'Deep Learning Image Classifier',
             description: 'Interactive CNN and MobileNetV2 visualizations.',
             longDescription: 'Educational Deep Learning platform focusing on image classification with real-time feature map visualization and model comparison (CNN vs MobileNetV2).',
@@ -324,6 +334,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-11',
+            slug: 'ai-book-discovery-platform',
             title: 'AI Book Discovery Platform',
             description: 'Local RAG-based book recommendation system.',
             longDescription: 'An AI book recommendation system built with Streamlit and Ollama. Uses \'nomic-embed-text\' for semantic search and \'llama3.2\' for deep analysis. 100% local and private.',
@@ -339,6 +350,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-12',
+            slug: 'mytelkomsel-sentiment-analysis',
             title: 'MyTelkomsel Sentiment Analysis',
             description: 'App review sentiment analysis using Deep Learning.',
             longDescription: 'Sentiment analysis of MyTelkomsel app reviews using SVM, RandomForest, and BiLSTM models. Achieved 86.82% accuracy with BiLSTM.',
@@ -354,6 +366,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-13',
+            slug: 'neurovision-real-time-detection',
             title: 'NeuroVision Real-Time Detection',
             description: 'YOLOv3-based real-time object detection.',
             longDescription: 'Real-time object detection system using YOLOv3 and OpenCV. Detects 80 object classes from COCO dataset with high performance and low latency.',
@@ -369,6 +382,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-14',
+            slug: 'voices-unheard',
             title: 'Voices Unheard',
             description: 'Anonymous platform for conflict survivors.',
             longDescription: 'Secure, anonymous platform for conflict survivors to share stories. Features trauma-informed design, AI moderation, and enterprise-grade security.',
@@ -384,6 +398,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-15',
+            slug: 'smart-motion-detection-system',
             title: 'Smart Motion Detection System',
             description: 'IoT motion detection with YOLO-Pose and MQTT.',
             longDescription: 'Smart motion detection on Raspberry Pi using YOLO11-Pose and OpenCV, integrated with EMQX MQTT for remote IoT device control and monitoring.',
@@ -398,6 +413,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-16',
+            slug: 'solar-energy-pinn-prediction',
             title: 'Solar Energy PINN Prediction',
             description: 'Renewable energy prediction combining Deep Learning and Physics.',
             longDescription: 'Renewable energy prediction model using Physics-Informed Neural Network (PINN) to address solar energy fluctuations, integrating physical laws with deep learning.',
@@ -411,6 +427,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-17',
+            slug: 'credit-risk-analysis-lstm',
             title: 'Credit Risk Analysis LSTM',
             description: 'Loan default prediction using LSTM.',
             longDescription: 'Credit Risk Analysis to predict loan defaults using LSTM (Long Short-Term Memory) networks. optimises loan approvals based on business metrics and risk assessment.',
@@ -424,6 +441,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-18',
+            slug: 'hand-gesture-recognition',
             title: 'Hand Gesture Recognition',
             description: 'Real-time hand tracking and gesture control.',
             longDescription: 'Real-time hand gesture recognition system using MediaPipe and OpenCV. Supports finger counting and dynamic gesture-based control.',
@@ -437,6 +455,7 @@ WAKATIME_API_KEY=your_wakatime_key`
         },
         {
             id: 'project-19',
+            slug: 'data-analyst-dashboard',
             title: 'Data Analyst Dashboard',
             description: 'Interactive data visualization tool.',
             longDescription: 'Interactive dashboard for data analysts to explore and visualize datasets using Dash and Plotly. Features real-time filtering and dynamic charts.',
