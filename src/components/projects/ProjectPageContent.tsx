@@ -429,7 +429,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
 
                     {/* RIGHT COLUMN: Sticky Sidebar (4 cols) */}
                     <div className="lg:col-span-4 relative">
-                        <div className="sticky top-32 space-y-8">
+                        <div className="sticky top-20 space-y-8">
 
                             {/* Actions Card */}
                             <div className="p-6 rounded-2xl bg-secondary/5 border border-white/10 backdrop-blur-sm">
