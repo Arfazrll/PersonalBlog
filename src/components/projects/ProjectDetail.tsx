@@ -328,20 +328,26 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                         <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
                             {project.demoUrl && (
                                 <motion.a
-                                    href={project.demoUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    href={project.demoUrl === '#' ? undefined : project.demoUrl}
+                                    target={project.demoUrl === '#' ? undefined : "_blank"}
+                                    rel={project.demoUrl === '#' ? undefined : "noopener noreferrer"}
                                     className={cn(
                                         "flex-1 flex items-center justify-center gap-2 py-2.5 px-6 rounded-xl font-bold text-sm shadow-xl transition-all",
-                                        isOngoing
-                                            ? "bg-emerald-500 text-white shadow-emerald-500/20 hover:bg-emerald-400"
-                                            : "bg-blue-600 text-white shadow-blue-500/20 hover:bg-blue-500"
+                                        project.demoUrl === '#'
+                                            ? "bg-zinc-800 text-zinc-500 cursor-not-allowed opacity-50 shadow-none border border-white/5"
+                                            : isOngoing
+                                                ? "bg-emerald-500 text-white shadow-emerald-500/20 hover:bg-emerald-400"
+                                                : "bg-blue-600 text-white shadow-blue-500/20 hover:bg-blue-500"
                                     )}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
+                                    whileHover={project.demoUrl === '#' ? {} : { scale: 1.02 }}
+                                    whileTap={project.demoUrl === '#' ? {} : { scale: 0.98 }}
                                 >
                                     <span>Live Demo</span>
-                                    <ExternalLink className="w-4 h-4" />
+                                    {project.demoUrl === '#' ? (
+                                        <div className="w-4 h-4 rounded-full border-2 border-zinc-600 border-t-transparent animate-spin hidden" />
+                                    ) : (
+                                        <ExternalLink className="w-4 h-4" />
+                                    )}
                                 </motion.a>
                             )}
                             <motion.a
@@ -428,9 +434,9 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                         {/* Metadata Strip */}
                                         <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-x-16 gap-y-8 py-10 border-y border-black/5 dark:border-white/5">
                                             {[
-                                                { label: 'Role', value: 'Full Stack Dev', icon: Code },
-                                                { label: 'Timeline', value: '3 Months', icon: Calendar },
-                                                { label: 'Team', value: 'Individual', icon: Award },
+                                                { label: 'Role', value: project.role || 'Full Stack Dev', icon: Code },
+                                                { label: 'Timeline', value: project.customTimeline || '3 Months', icon: Calendar },
+                                                { label: 'Team', value: project.team || 'Individual', icon: Award },
                                                 { label: 'Status', value: isOngoing ? 'Active' : 'Completed', icon: CheckCircle2 }
                                             ].map((item, i) => (
                                                 <div key={i} className="flex flex-col items-center text-center gap-4">
