@@ -437,10 +437,22 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                 <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">{t('sections.projectAccess')}</h3>
                                 <div className="flex flex-col gap-3">
                                     {project.demoUrl && (
-                                        <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm bg-foreground text-background hover:opacity-90 transition-all">
+                                        <motion.a
+                                            href={project.demoUrl === '#' ? undefined : project.demoUrl}
+                                            target={project.demoUrl === '#' ? undefined : "_blank"}
+                                            rel={project.demoUrl === '#' ? undefined : "noopener noreferrer"}
+                                            className={cn(
+                                                "flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition-all",
+                                                project.demoUrl === '#'
+                                                    ? "bg-zinc-800 text-zinc-500 cursor-not-allowed opacity-50 border border-white/5"
+                                                    : "bg-foreground text-background hover:opacity-90 shadow-lg shadow-black/20"
+                                            )}
+                                            whileHover={project.demoUrl === '#' ? {} : { scale: 1.02 }}
+                                            whileTap={project.demoUrl === '#' ? {} : { scale: 0.98 }}
+                                        >
                                             <span>{t('sections.liveDemo')}</span>
                                             <ExternalLink className="w-4 h-4" />
-                                        </a>
+                                        </motion.a>
                                     )}
                                     {project.repoUrl && (
                                         <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-sm bg-secondary/10 hover:bg-secondary/20 text-foreground transition-all">
