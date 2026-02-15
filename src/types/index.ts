@@ -6,7 +6,7 @@ export interface Project {
     title: string;
     description: string;
     longDescription?: string;
-    image: string;
+    image?: string;
     techStack: string[];
     tools: string[];
     status: 'ongoing' | 'completed' | 'planned';
@@ -21,6 +21,9 @@ export interface Project {
     installation?: { title: string; cmd?: string; code?: string; type: 'code' | 'text' }[];
     challengesAndSolutions?: { problem: string; solution: string }[];
     galleryImages?: string[];
+    team?: string;
+    customTimeline?: string;
+    role?: string;
 }
 
 export interface Experience {
