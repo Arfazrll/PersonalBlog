@@ -63,11 +63,11 @@ export const portfolioData: PortfolioData = {
             title: 'Creative Portfolio Website',
             description: 'Modern, animated portfolio with 3D elements and smooth animations.',
             longDescription: 'A production-grade creative portfolio engineered to demonstrate high-level proficiency in Artificial Intelligence, Blockchain, and Modern Web Architectures. This platform transcends traditional static websites by offering a high-performance interactive experience powered by advanced WebGL shaders, physics-based simulations, and real-time data integration. It serves as a living laboratory for experimenting with cutting-edge frontend technologies while maintaing strict accessibility and SEO standards.',
-            image: '/assets/ProjectPage1.jpeg',
+
             techStack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Three.js', 'Framer Motion', 'GSAP'],
             tools: ['VS Code', 'Figma', 'GitHub'],
             status: 'completed',
-            demoUrl: 'https://personal-iqyuflz4z-arfazrlls-projects.vercel.app',
+            demoUrl: 'https://syahrilarfianalmazril.vercel.app',
             repoUrl: 'https://github.com/Arfazrll/PersonalBlog',
             startDate: '2025-01-20',
             highlights: ['3D animations', 'Scroll effects', 'Bilingual EN/ID'], // Keep for backward compatibility if needed, or rely on features
@@ -147,38 +147,36 @@ WAKATIME_API_KEY=your_wakatime_key`
                     solution: "Developed fallback materials and uniform-based capability detection to ensure the custom GLSL shaders render correctly across inconsistent WebGL implementations on Safari and older Android browsers."
                 }
             ],
-            galleryImages: [
-                '/assets/ProjectPage1.jpeg',
-                '/assets/ProjectPage2.jpeg',
-                'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop'
-            ]
+
         },
         {
             id: 'project-2',
             slug: 'snbtin-platform',
             title: 'SNBTIn - Platform Persiapan SNBT 2025',
             description: 'Platform e-learning #1 di Indonesia untuk persiapan SNBT bagi siswa SMA.',
-            longDescription: 'SNBTIn adalah platform persiapan SNBT (Seleksi Nasional Berbasis Tes) terpercaya yang dirancang khusus untuk siswa SMA di Indonesia. Menyediakan materi lengkap, video interaktif, ribuan latihan soal, dan tryout berkala. Dengan lebih dari 10,000 siswa aktif dan tingkat kelulusan 85%, platform ini menjadi solusi utama untuk menembus PTN impian.',
-            image: '/assets/ProjectPage2.jpeg',
-            techStack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Framer Motion', 'Three.js'],
-            tools: ['VS Code', 'GitHub', 'Figma'],
+            longDescription: 'SNBTIn adalah platform persiapan SNBT (Seleksi Nasional Berbasis Tes) terpercaya yang dirancang khusus untuk siswa SMA di Indonesia. Menyediakan ekosistem pembelajaran komprehensif dengan materi berkualitas, latihan soal, forum diskusi, dan fitur-fitur interaktif yang membantu siswa mempersiapkan diri secara optimal. Dengan lebih dari 10,000 siswa aktif dan tingkat kelulusan 85%, platform ini menjadi solusi utama untuk menembus PTN impian.',
+
+            techStack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS'],
+            tools: ['VS Code', 'GitHub', 'Figma', 'Vercel'],
             status: 'completed',
             repoUrl: 'https://github.com/Arfazrll/SNBTIn',
             demoUrl: 'https://snbtin.vercel.app/',
             startDate: '2025-01-01',
+            customTimeline: 'Mar 2025 – Apr 2025',
+            team: '4 Developers',
             highlights: ['10,000+ Active Students', '85% Pass Rate', '98% Exam Similarity'],
             category: 'EdTech Platform',
             features: [
                 {
-                    title: '📚 Comprehensive Learning',
+                    title: '📚 Comprehensive Learning Ecosystem',
                     items: [
-                        '**Materi Lengkap**: Full curriculum coverage for all SNBT subjects with PDFs and interactive docs.',
+                        '**Materi Lengkap**: Full curriculum coverage for all SNBT subjects with videos, PDFs, and interactive docs.',
                         '**Video Interaktif**: High-quality video explanations from expert instructors.',
-                        '**Latihan Soal**: Over 10,000 practice questions with detailed solutions.'
+                        '**Latihan Soal**: Over 10,000 practice questions with detailed solutions and error analysis.'
                     ]
                 },
                 {
-                    title: '🎯 Exam Mastery',
+                    title: '🎯 Exam Mastery & Analytics',
                     items: [
                         '**Tryout Berkala**: Regular simulation exams with latest question patterns.',
                         '**Analisis Kemampuan**: Detailed performance dashboard to track progress and weak points.',
@@ -186,11 +184,19 @@ WAKATIME_API_KEY=your_wakatime_key`
                     ]
                 },
                 {
-                    title: '💻 Modern Experience',
+                    title: '💻 Modern Tech Experience',
+                    items: [
+                        '**Dark/Light Mode**: Comfortable learning environment day or night.',
+                        '**Responsive Design**: Optimized for desktop, tablet, and mobile learning.',
+                        '**Interactive Visuals**: 3D models and animated backgrounds for engaging UX.'
+                    ]
+                },
+                {
+                    title: '🤝 Community & Support',
                     items: [
                         '**Forum Diskusi**: Collaborative learning space for students and teachers.',
-                        '**Dark/Light Mode**: Comfortable learning environment day or night.',
-                        '**Responsive Design**: Optimized for desktop, tablet, and mobile learning.'
+                        '**Konsultasi**: Direct access to instructors for difficult topics.',
+                        '**Leaderboard**: Gamified progress tracking to motivate students.'
                     ]
                 }
             ],
@@ -206,27 +212,110 @@ WAKATIME_API_KEY=your_wakatime_key`
                     type: 'code'
                 },
                 {
+                    title: 'Environmental Setup',
+                    code: 'NEXT_PUBLIC_API_URL=your_api_url\nNEXTAUTH_URL=http://localhost:3000\nDATABASE_URL=your_db_connection',
+                    type: 'code'
+                },
+                {
                     title: 'Run Development Server',
                     code: 'npm run dev',
                     type: 'code'
                 }
-            ]
+            ],
+            challengesAndSolutions: [
+                {
+                    problem: "Handling High-Concurrency Tryouts",
+                    solution: "Implemented serverless architecture with scalable database connections to handle thousands of concurrent users during national simulation events without latency."
+                },
+                {
+                    problem: "Real-time Analytics Processing",
+                    solution: "Utilized efficient data aggregation pipelines to provide instant feedback and detailed performance analytics immediately after exam submission."
+                },
+                {
+                    problem: "Interactive Content Delivery",
+                    solution: "Integrated a custom video player and PDF viewer with lazy loading and adaptive streaming to ensure smooth content delivery even on low-bandwidth connections."
+                }
+            ],
+
         },
         {
             id: 'project-3',
             slug: 'terraflow-platform',
             title: 'Terraflow Platform',
             description: 'Enterprise-grade IoT solution for precision agriculture.',
-            longDescription: 'IoT solution for precision agriculture featuring Direct-to-Cloud ESP32–Firebase architecture, Go (Gin) backend, and Next.js interactive dashboard for real-time monitoring and control.',
-            image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2670&auto=format&fit=crop',
-            techStack: ['Go', 'Gin', 'Next.js', 'Firebase', 'ESP32', 'Docker'],
-            tools: ['VS Code', 'Docker', 'Firebase Console'],
+            longDescription: 'TerraFlow Platform is an intelligent IoT solution designed for precision agriculture and environmental monitoring. It features a robust Direct-to-Cloud architecture where ESP32 sensor nodes communicate directly with Firebase Realtime Database, ensuring instant data synchronization. The system combines a high-performance Go (Gin) backend for configuration management with a modern Next.js 14 frontend for real-time visualization and remote control of actuators like pumps and servos.',
+
+            techStack: ['Next.js', 'Go', 'Gin', 'Firebase', 'Docker', 'ESP32', 'C++', 'React', 'Tailwind CSS'],
+            tools: ['VS Code', 'Docker', 'Firebase Console', 'PlatformIO'],
             status: 'completed',
             repoUrl: 'https://github.com/Arfazrll/TerraflowPlatform',
-            startDate: '2024-12-01',
-
-            highlights: ['Direct-to-Cloud architecture', 'Real-time Dashboard', 'IoT Control'],
+            demoUrl: 'https://terraflowio.vercel.app/',
+            startDate: '2025-10-01',
+            customTimeline: 'Oct 2025 - Dec 2025',
+            team: '2 Developer',
+            role: 'Software Engineering',
+            highlights: ['Direct-to-Cloud Architecture', 'Real-time Monitoring', 'Go High-Performance API'],
             category: 'IoT & Embedded',
+            features: [
+                {
+                    title: '🤖 Smart Firmware (ESP32)',
+                    items: [
+                        '**Direct HTTP Communication**: Efficient data transmission using `HTTPClient.h` directly to Firebase REST API.',
+                        '**Smart Control Logic**: Automated actuation of pumps and servos based on real-time sensor readings.',
+                        '**Robust Connectivity**: Built-in auto-reconnect and retry mechanisms to handle unstable field networks.'
+                    ]
+                },
+                {
+                    title: '🖥️ Modern Dashboard',
+                    items: [
+                        '**Real-time Visualization**: Dynamic charts using `recharts` that update instantly with Firebase data.',
+                        '**Interactive Control**: Remote manual overrides for field actuators directly from the UI.',
+                        '**Responsive Design**: Built with Next.js 14 and Tailwind CSS for optimal experience on all devices.'
+                    ]
+                },
+                {
+                    title: '⚡ High-Performance Backend',
+                    items: [
+                        '**Go (Gin) Server**: Ultra-fast API for centralized configuration management.',
+                        '**Secure Distribution**: Safe delivery of Firebase credentials to authenticated clients.',
+                        '**Health Monitoring**: Dedicated endpoints for container and service status checks.'
+                    ]
+                },
+                {
+                    title: '☁️ Direct-to-Cloud Architecture',
+                    items: [
+                        '**Zero-Gateway Latency**: Edge devices write directly to the cloud, bypassing intermediate gateways for millisecond-level updates.',
+                        '**Scalable Infrastructure**: Containerized deployment with Docker ensures consistent environments across development and production.',
+                        '**Firebase Sync**: Leverages Firebase Realtime Database for instant state synchronization between hardware and all connected clients.'
+                    ]
+                }
+            ],
+            installation: [
+                {
+                    title: 'Environment Setup',
+                    code: 'PORT=8080\nALLOWED_ORIGINS=http://localhost:3000\nFIREBASE_API_KEY=your_key\n# Add other Firebase credentials',
+                    type: 'code'
+                },
+                {
+                    title: 'Deploy with Docker',
+                    code: 'cd deployments\ndocker-compose up -d --build',
+                    type: 'code'
+                }
+            ],
+            challengesAndSolutions: [
+                {
+                    problem: "Unstable Field Connectivity",
+                    solution: "Implemented a robust state machine in C++ firmware with exponential backoff retries and auto-reconnection logic to ensure zero data loss during network interruptions."
+                },
+                {
+                    problem: "Real-time Latency",
+                    solution: "Adoption of a Direct-to-Cloud architecture where edge devices bypass intermediate gateways and write directly to Firebase, reducing latency to milliseconds."
+                },
+                {
+                    problem: "Secure Config Management",
+                    solution: "Developed a centralized Go (Gin) backend service to manage and distribute sensitive configuration and credentials securely, decoupling them from the frontend code."
+                }
+            ],
         },
         {
             id: 'project-4',
@@ -234,7 +323,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'DocsInsight Engine',
             description: 'Enterprise RAG System for intelligent document analysis.',
             longDescription: 'High-performance, private Retrieval-Augmented Generation (RAG) platform. Allows users to upload complex documents and interact with them through a neural search interface powered by local LLMs.',
-            image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2565&auto=format&fit=crop',
+
             techStack: ['Python', 'LangChain', 'Ollama', 'ChromaDB', 'Docker'],
             tools: ['VS Code', 'Docker', 'Ollama'],
             status: 'completed',
@@ -250,7 +339,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Donasiaku',
             description: 'Web-based donation management platform.',
             longDescription: 'Platform where donors can list items to give away and beneficiaries can request them. Features secure chat and delivery arrangement.',
-            image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2670&auto=format&fit=crop',
+
             techStack: ['Laravel', 'React', 'Tailwind CSS', 'MySQL'],
             tools: ['VS Code', 'PHPStorm', 'MySQL Workbench'],
             status: 'completed',
@@ -266,7 +355,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Security Automation with GenAI',
             description: 'AI-driven cybersecurity threat detection system.',
             longDescription: 'Deep Learning and Generative AI for automated cybersecurity threat detection, covering SQL Injection, DDoS, Network Intrusion, and Malware analysis using Transformers.',
-            image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop',
+
             techStack: ['Python', 'TensorFlow', 'Transformers', 'Scikit-learn', 'Pandas'],
             tools: ['Jupyter', 'Google Colab', 'Wireshark'],
             status: 'completed',
@@ -282,7 +371,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Web3 Guestbook DApp',
             description: 'Decentralized guestbook on Ethereum.',
             longDescription: 'A decentralized guestbook DApp built with Next.js, Hardhat, and Solidity, enabling users to write immutable messages directly to the Ethereum blockchain.',
-            image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2832&auto=format&fit=crop',
+
             techStack: ['Solidity', 'Hardhat', 'Next.js', 'Ethereum', 'Web3.js'],
             tools: ['VS Code', 'MetaMask', 'Remix IDE'],
             status: 'completed',
@@ -298,7 +387,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Digilibzx',
             description: 'Modern Full-Stack Digital Library System.',
             longDescription: 'Digital Library System featuring AI-powered book summarization (Gemini), smart borrowing cart, and comprehensive admin dashboard.',
-            image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2670&auto=format&fit=crop',
+
             techStack: ['Java', 'Spring Boot', 'Next.js', 'TypeScript', 'Docker', 'Google Gemini'],
             tools: ['IntelliJ IDEA', 'VS Code', 'Docker'],
             status: 'completed',
@@ -314,7 +403,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'POLABDC Dental Management',
             description: 'AI-powered Dental Clinic Management SaaS.',
             longDescription: 'RoxyDental (POLABDC) is a comprehensive SaaS solution to digitize dental clinic operations, integrating AI for disease prediction and data analysis.',
-            image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop',
+
             techStack: ['Next.js', 'Express.js', 'Prisma', 'Supabase', 'Python', 'Google Gemini'],
             tools: ['VS Code', 'Supabase', 'Figma'],
             status: 'completed',
@@ -330,7 +419,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Deep Learning Image Classifier',
             description: 'Interactive CNN and MobileNetV2 visualizations.',
             longDescription: 'Educational Deep Learning platform focusing on image classification with real-time feature map visualization and model comparison (CNN vs MobileNetV2).',
-            image: '/images/projects/dl-classifier.png',
+
             techStack: ['Python', 'TensorFlow', 'Keras', 'Matplotlib'],
             tools: ['Jupyter', 'Google Colab'],
             status: 'completed',
@@ -346,7 +435,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'AI Book Discovery Platform',
             description: 'Local RAG-based book recommendation system.',
             longDescription: 'An AI book recommendation system built with Streamlit and Ollama. Uses \'nomic-embed-text\' for semantic search and \'llama3.2\' for deep analysis. 100% local and private.',
-            image: '/images/projects/ollama-books.png',
+
             techStack: ['Python', 'Streamlit', 'Ollama', 'LangChain', 'Nomic Embed'],
             tools: ['VS Code', 'Ollama', 'Streamlit'],
             status: 'completed',
@@ -362,7 +451,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'MyTelkomsel Sentiment Analysis',
             description: 'App review sentiment analysis using Deep Learning.',
             longDescription: 'Sentiment analysis of MyTelkomsel app reviews using SVM, RandomForest, and BiLSTM models. Achieved 86.82% accuracy with BiLSTM.',
-            image: '/images/projects/sentiment-analysis.png',
+
             techStack: ['Python', 'TensorFlow', 'BiLSTM', 'Scikit-learn', 'Pandas'],
             tools: ['Jupyter', 'Google Colab'],
             status: 'completed',
@@ -378,7 +467,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'NeuroVision Real-Time Detection',
             description: 'YOLOv3-based real-time object detection.',
             longDescription: 'Real-time object detection system using YOLOv3 and OpenCV. Detects 80 object classes from COCO dataset with high performance and low latency.',
-            image: '/images/projects/neurovision.png',
+
             techStack: ['Python', 'OpenCV', 'YOLOv3', 'Deep Learning'],
             tools: ['VS Code', 'Anaconda'],
             status: 'completed',
@@ -394,7 +483,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Voices Unheard',
             description: 'Anonymous platform for conflict survivors.',
             longDescription: 'Secure, anonymous platform for conflict survivors to share stories. Features trauma-informed design, AI moderation, and enterprise-grade security.',
-            image: '/images/projects/voices-unheard.png',
+
             techStack: ['React', 'Node.js', 'Encryption', 'AI Content Moderation'],
             tools: ['VS Code', 'Figma'],
             status: 'completed',
@@ -410,7 +499,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Smart Motion Detection System',
             description: 'IoT motion detection with YOLO-Pose and MQTT.',
             longDescription: 'Smart motion detection on Raspberry Pi using YOLO11-Pose and OpenCV, integrated with EMQX MQTT for remote IoT device control and monitoring.',
-            image: '/images/projects/aiot-motion.png',
+
             techStack: ['Python', 'YOLOv11', 'OpenCV', 'MQTT', 'Raspberry Pi'],
             tools: ['VS Code', 'Raspberry Pi', 'EMQX'],
             status: 'completed',
@@ -425,7 +514,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Solar Energy PINN Prediction',
             description: 'Renewable energy prediction combining Deep Learning and Physics.',
             longDescription: 'Renewable energy prediction model using Physics-Informed Neural Network (PINN) to address solar energy fluctuations, integrating physical laws with deep learning.',
-            image: '/images/projects/pinn-solar.png',
+
             techStack: ['Python', 'TensorFlow', 'PINN', 'Physics-based Modeling'],
             tools: ['Jupyter', 'Google Colab'],
             status: 'completed',
@@ -439,7 +528,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Credit Risk Analysis LSTM',
             description: 'Loan default prediction using LSTM.',
             longDescription: 'Credit Risk Analysis to predict loan defaults using LSTM (Long Short-Term Memory) networks. optimises loan approvals based on business metrics and risk assessment.',
-            image: '/images/projects/credit-risk.png',
+
             techStack: ['Python', 'LSTM', 'TensorFlow', 'Scikit-learn', 'Pandas'],
             tools: ['Jupyter', 'Google Colab'],
             status: 'completed',
@@ -453,7 +542,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Hand Gesture Recognition',
             description: 'Real-time hand tracking and gesture control.',
             longDescription: 'Real-time hand gesture recognition system using MediaPipe and OpenCV. Supports finger counting and dynamic gesture-based control.',
-            image: '/images/projects/hand-gesture.png',
+
             techStack: ['Python', 'MediaPipe', 'OpenCV'],
             tools: ['VS Code', 'Anaconda'],
             status: 'completed',
@@ -467,7 +556,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Data Analyst Dashboard',
             description: 'Interactive data visualization tool.',
             longDescription: 'Interactive dashboard for data analysts to explore and visualize datasets using Dash and Plotly. Features real-time filtering and dynamic charts.',
-            image: '/images/projects/data-dashboard.png',
+
             techStack: ['Python', 'Dash', 'Plotly', 'Pandas'],
             tools: ['VS Code', 'Jupyter'],
             status: 'completed',

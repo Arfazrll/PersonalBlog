@@ -7,6 +7,7 @@ import { X, Calendar, Code, Box, Award, Share2, ExternalLink, Github, Terminal, 
 import { cn, formatDate } from '@/lib/utils';
 import { Project } from '@/types';
 import { TechStack } from './TechStack';
+import { ProjectPlaceholder } from './ProjectPlaceholder';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { portfolioData } from '@/data/portfolio';
@@ -253,7 +254,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in"
                         />
                     ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-background animate-gradient" />
+                        <ProjectPlaceholder className="rounded-none border-0 bg-transparent pb-0 [&>div.z-10]:scale-125" title="No Image Available" />
                     )}
 
                     {/* Overlay Gradient */}
@@ -268,19 +269,19 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                         <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
                             <Code className="w-3 h-3" /> {t('metadata.role')}
                         </span>
-                        <span className="font-bold text-foreground">{t('metadata.roleValue')}</span>
+                        <span className="font-bold text-foreground">{project.role || t('metadata.roleValue')}</span>
                     </div>
                     <div className="flex flex-col gap-2">
                         <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
                             <Clock className="w-3 h-3" /> {t('metadata.timeline')}
                         </span>
-                        <span className="font-bold text-foreground">{formatDate(project.startDate)}</span>
+                        <span className="font-bold text-foreground">{project.customTimeline || formatDate(project.startDate)}</span>
                     </div>
                     <div className="flex flex-col gap-2">
                         <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
                             <Users className="w-3 h-3" /> {t('metadata.team')}
                         </span>
-                        <span className="font-bold text-foreground">{t('metadata.teamValue')}</span>
+                        <span className="font-bold text-foreground">{project.team || t('metadata.teamValue')}</span>
                     </div>
                     <div className="flex flex-col gap-2">
                         <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
@@ -530,23 +531,37 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                             <Link
                                 href={`/projects/${p.slug}`}
                                 key={p.id}
-                                className="flex-none w-[85vw] md:w-[calc(33.333%-1rem)] snap-center group"
+                                className="flex-none w-[85vw] md:w-[calc(33.333%-1rem)] snap-center group relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-zinc-900"
                             >
-                                <div className="aspect-video rounded-xl overflow-hidden mb-4 bg-secondary/5 border border-white/5 relative">
-                                    {p.image ? (
-                                        <img src={p.image} alt={p.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-indigo-900 to-background" />
-                                    )}
-                                    {/* Hover Overlay */}
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <span className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-white border border-white/20">
-                                            {t('sections.viewMore')}
+                                {/* Background Layer */}
+                                {p.image ? (
+                                    <img src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                ) : (
+                                    <ProjectPlaceholder className="absolute inset-0" title="No Preview" />
+                                )}
+
+                                {/* Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 transition-opacity group-hover:opacity-90" />
+
+                                {/* Content Overlay */}
+                                <div className="absolute bottom-0 left-0 w-full p-5 flex flex-col justify-end">
+                                    <div className="mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                        <span className={cn(
+                                            "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium backdrop-blur-md",
+                                            p.status === 'ongoing'
+                                                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                                                : "border-blue-500/30 bg-blue-500/10 text-blue-400"
+                                        )}>
+                                            {p.status === 'ongoing' ? 'In Progress' : 'Completed'}
                                         </span>
                                     </div>
+                                    <h3 className="font-bold text-lg leading-tight text-white mb-1 group-hover:text-primary transition-colors line-clamp-1">
+                                        {p.title}
+                                    </h3>
+                                    <p className="text-sm text-zinc-400 line-clamp-1">
+                                        {p.techStack[0]} • {p.category || "Development"}
+                                    </p>
                                 </div>
-                                <h3 className="font-bold text-lg leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-1">{p.title}</h3>
-                                <p className="text-sm text-muted-foreground line-clamp-1">{p.techStack[0]} • {p.category || "Development"}</p>
                             </Link>
                         ))}
                     </div>

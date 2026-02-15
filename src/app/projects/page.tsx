@@ -16,6 +16,9 @@ import { Meteors } from '@/components/ui/meteors';
 import { ProjectContact } from '@/components/sections/ProjectContact';
 import { ProjectStats } from '@/components/sections/ProjectStats';
 import { usePerformance } from '@/hooks/usePerformance';
+import { ProjectPlaceholder } from '@/components/projects/ProjectPlaceholder';
+
+import { getProjectImages } from '@/app/actions/getProjectImages';
 
 type FilterType = 'all' | 'ongoing' | 'completed';
 
@@ -186,28 +189,27 @@ function ProjectListItem({
                             style={{
                                 left: cursorX,
                                 top: cursorY,
+                                translateY: 20, // Offset to lower the preview relative to cursor
+                                x: 20,
+                                translateX: '-50%'
                             }}
                         >
                             <div className={cn(
-                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl",
+                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl transition-all duration-300",
                                 "border-white/10 bg-zinc-950"
                             )}>
                                 {project.image ? (
                                     <img
                                         src={project.image}
                                         alt={project.title}
-                                        className="absolute inset-0 w-full h-full object-cover opacity-90 block"
+                                        className="absolute inset-0 w-full h-full object-cover opacity-90 block transition-transform duration-500 hover:scale-105"
                                     />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-zinc-900/50">
-                                        <span className={cn("text-6xl font-black", isOngoing ? "text-emerald-400/20" : "text-blue-400/20")}>
-                                            {project.title.charAt(0)}
-                                        </span>
-                                    </div>
+                                    <ProjectPlaceholder className="pb-0" title="No Preview Image" />
                                 )}
 
-                                {/* Overlay Gradient for better text readability if we add text later, or just style */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                {/* Overlay Gradient */}
+                                {project.image && <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />}
                             </div>
                         </motion.div>
                     )}
@@ -466,7 +468,7 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
                             <span>Explore Project</span>
                             <ArrowRight className={cn(
                                 "w-5 h-5 transition-transform duration-300",
-                                isHovered && "translate-x-2"
+                                "group-hover:translate-x-1"
                             )} />
                         </motion.div>
                     </div>
@@ -540,9 +542,10 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
                 )}
 
                 {/* Card Body */}
-                <div className="relative h-full bg-zinc-950/95 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden">
+                <div className="relative h-full bg-zinc-950/95 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden flex flex-col justify-end">
 
-                    {/* Project Image Background */}
+                    {/* Project Image Background - OR No Image Styled Bg */}
+                    {/* Project Image Background - OR No Image Styled Bg */}
                     {project.image ? (
                         <div className="absolute inset-0 z-0">
                             <img
@@ -553,7 +556,10 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
                             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />
                         </div>
                     ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/50 to-zinc-950/50" />
+                        <div className="absolute inset-0 z-0">
+                            <ProjectPlaceholder className="absolute inset-0" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
+                        </div>
                     )}
 
                     {/* Spotlight */}
@@ -567,104 +573,49 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
                         />
                     )}
 
-                    {/* Background Gradient */}
-                    <div className={cn(
-                        "absolute inset-0 opacity-20 transition-opacity duration-500 group-hover:opacity-30",
-                        isOngoing
-                            ? "bg-gradient-to-br from-emerald-600/40 via-teal-600/20 to-transparent"
-                            : "bg-gradient-to-br from-blue-600/40 via-indigo-600/20 to-transparent"
-                    )} />
-
-                    {/* Floating Orb */}
-                    <motion.div
-                        className={cn(
-                            "absolute w-24 h-24 rounded-full blur-[50px] z-0",
-                            isOngoing ? "bg-emerald-500/25" : "bg-blue-500/25"
-                        )}
-                        style={{ top: '20%', right: '10%' }}
-                        animate={{
-                            scale: isHovered ? [1, 1.3, 1] : 1,
-                            opacity: isHovered ? [0.3, 0.5, 0.3] : 0.2
-                        }}
-                        transition={{ duration: 3, repeat: Infinity }}
-                    />
-
-                    {/* Initial Letter */}
-                    <motion.div
-                        className="absolute top-6 right-6 z-0"
-                        animate={{
-                            rotate: isHovered ? 12 : 0,
-                            scale: isHovered ? 1.15 : 1,
-                        }}
-                        transition={{ duration: 0.4 }}
-                    >
-                        <span className="text-7xl sm:text-8xl font-black text-white/[0.02]">
-                            {project.title.charAt(0)}
-                        </span>
-                    </motion.div>
-
-                    {/* Hover Arrow */}
-                    <motion.div
-                        className="absolute top-4 left-4 z-30"
-                        initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                        animate={{
-                            opacity: isHovered ? 1 : 0,
-                            scale: isHovered ? 1 : 0.5,
-                            rotate: isHovered ? 0 : -45,
-                        }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <div className={cn(
-                            "w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md",
-                            isOngoing ? "bg-emerald-500/20 border border-emerald-500/30" : "bg-blue-500/20 border border-blue-500/30"
-                        )}>
-                            <ArrowUpRight className={cn("w-5 h-5", isOngoing ? "text-emerald-400" : "text-blue-400")} />
-                        </div>
-                    </motion.div>
-
                     {/* Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 z-30">
+                    <div className="relative z-30 p-6 sm:p-8">
                         {/* Status Badge */}
                         <div className={cn(
-                            "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold mb-3 backdrop-blur-sm",
+                            "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 backdrop-blur-sm",
                             isOngoing
-                                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
-                                : "bg-blue-500/15 text-blue-400 border border-blue-500/20"
+                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                : "bg-blue-500/10 text-blue-400 border border-blue-500/20"
                         )}>
                             <span className={cn(
                                 "w-1.5 h-1.5 rounded-full",
                                 isOngoing ? "bg-emerald-400 animate-pulse" : "bg-blue-400"
                             )} />
-                            {project.status}
+                            {project.status === 'ongoing' ? 'in development' : 'completed'}
                         </div>
 
                         {/* Title */}
                         <motion.h3
-                            className="text-xl sm:text-2xl font-bold text-white mb-2 line-clamp-1"
+                            className="text-2xl sm:text-3xl font-bold text-white mb-3 line-clamp-1"
                             animate={{ x: isHovered ? 4 : 0 }}
                         >
                             {project.title}
                         </motion.h3>
 
                         {/* Description */}
-                        <p className="text-zinc-500 text-sm mb-4 line-clamp-2">
+                        <p className="text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-2">
                             {project.description}
                         </p>
 
                         {/* Tech Stack */}
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-2">
                             {project.techStack.slice(0, 3).map((tech) => (
                                 <span
                                     key={tech}
-                                    className="px-2 py-1 rounded-lg text-xs font-medium bg-white/5 text-zinc-400 border border-white/5"
+                                    className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-zinc-300 border border-white/5"
                                 >
                                     {tech}
                                 </span>
                             ))}
                             {project.techStack.length > 3 && (
                                 <span className={cn(
-                                    "px-2 py-1 rounded-lg text-xs font-medium",
-                                    isOngoing ? "bg-emerald-500/10 text-emerald-400" : "bg-blue-500/10 text-blue-400"
+                                    "px-2.5 py-1.5 rounded-lg text-xs font-medium border",
+                                    isOngoing ? "bg-emerald-500/5 text-emerald-400 border-emerald-500/20" : "bg-blue-500/5 text-blue-400 border-blue-500/20"
                                 )}>
                                     +{project.techStack.length - 3}
                                 </span>
@@ -672,8 +623,6 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
                         </div>
                     </div>
                 </div>
-
-
             </motion.div>
         </motion.article>
     );
@@ -823,28 +772,51 @@ export default function ProjectsPage() {
         { id: 'More', label: 'More', icon: Layers },
     ];
 
+    const [projects, setProjects] = useState(portfolioData.projects);
+
+    useEffect(() => {
+        const loadImages = async () => {
+            const updatedProjects = await Promise.all(
+                portfolioData.projects.map(async (project) => {
+                    // Try to find dynamic images
+                    try {
+                        const images = await getProjectImages(project.slug, project.title);
+                        if (images.length > 0) {
+                            return { ...project, image: images[0] }; // Use first image as cover
+                        }
+                    } catch (e) {
+                        console.error("Failed to load images for", project.title, e);
+                    }
+                    return project;
+                })
+            );
+            setProjects(updatedProjects);
+        };
+        loadImages();
+    }, []);
+
     const filteredProjects = useMemo(() => {
-        let projects = [...portfolioData.projects];
+        let currentProjects = [...projects];
 
         // Category Filter
         if (selectedCategory !== 'All') {
             if (selectedCategory === 'More') {
-                projects = projects.filter(p => p.category && ['IoT & Embedded', 'Blockchain', 'Creative Tech'].includes(p.category));
+                currentProjects = currentProjects.filter(p => p.category && ['IoT & Embedded', 'Blockchain', 'Creative Tech'].includes(p.category));
             } else {
-                projects = projects.filter(p => p.category === selectedCategory);
+                currentProjects = currentProjects.filter(p => p.category === selectedCategory);
             }
         }
 
         // Search Filter
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
-            projects = projects.filter((p) => p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query) || p.techStack.some((t) => t.toLowerCase().includes(query)));
+            currentProjects = currentProjects.filter((p) => p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query) || p.techStack.some((t) => t.toLowerCase().includes(query)));
         }
 
         // Status Filter
-        if (filter !== 'all') projects = projects.filter((p) => p.status === filter);
-        return projects;
-    }, [searchQuery, filter, selectedCategory]);
+        if (filter !== 'all') currentProjects = currentProjects.filter((p) => p.status === filter);
+        return currentProjects;
+    }, [searchQuery, filter, selectedCategory, projects]);
 
     const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
         if (typeof window !== 'undefined') {
