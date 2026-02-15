@@ -257,7 +257,7 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                 </motion.button>
 
                 {/* LEFT COLUMN - Hero Image & Title */}
-                <div ref={heroRef} className="relative lg:w-5/12 h-[35vh] lg:h-full flex flex-col justify-end p-6 sm:p-10 overflow-hidden group cursor-pointer" onClick={() => setSelectedImage(project.image)}>
+                <div ref={heroRef} className="relative lg:w-5/12 h-[35vh] lg:h-full flex flex-col justify-end p-6 sm:p-10 overflow-hidden group cursor-pointer" onClick={() => project.image && setSelectedImage(project.image)}>
                     {/* Dynamic Background Image with Parallax Scale */}
                     <div className="absolute inset-0 z-0">
                         {project.image ? (
