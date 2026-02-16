@@ -1,96 +1,147 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Clock, Zap, Trophy, TrendingUp, Calendar, Layout, ChevronRight } from 'lucide-react';
+import { Clock, Calendar, TrendingUp, Trophy, Activity, Target } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
-export function WakaTimeLanguageBoard({ data }: { data: any }) {
-    const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899', '#ef4444'];
-    const languages = data?.languages?.slice(0, 6) || [];
+export function WakaTimeDashboard({ data }: { data: any }) {
+    const t = useTranslations('technical.wakatime');
+    const [githubLanguages, setGithubLanguages] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchLanguages = async () => {
+            try {
+                const res = await fetch('/api/github-languages');
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.data) {
+                        setGithubLanguages(json.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to fetch GitHub languages:', error);
+            }
+        };
+        fetchLanguages();
+    }, []);
+
+    // Colors for fallback
+    const FALLBACK_COLORS = ['#FACC15', '#EAB308', '#CA8A04', '#A16207', '#854D0E', '#713F12'];
+
+    // Mock Data and fallback logic
+    const stats = {
+        startDate: "January 17, 2026",
+        endDate: "January 23, 2026",
+        dailyAvg: data?.human_readable_daily_average || "1 hr 34 mins",
+        weeklyTotal: data?.human_readable_total || "7 hrs 51 mins",
+        bestDay: data?.best_day?.text || "6 hrs 21 mins",
+        totalTime: data?.all_time_since_joined?.text || "1,031 hrs 47 mins",
+        languages: githubLanguages.length > 0 ? githubLanguages : (data?.languages?.slice(0, 6) || [
+            { name: "TypeScript", percent: 83, color: '#3178c6' },
+            { name: "JSON", percent: 5, color: '#FACC15' },
+            { name: "Kotlin", percent: 4, color: '#A97BFF' },
+            { name: "XML", percent: 3, color: '#EAB308' },
+            { name: "Python", percent: 3, color: '#3572A5' },
+            { name: "HTML", percent: 2, color: '#E34C26' }
+        ])
+    };
 
     return (
-        <div className="relative h-full flex flex-col bg-card/85 border border-border rounded-[2.5rem] p-8 backdrop-blur-md group overflow-hidden shadow-xl transition-all duration-500 hover:border-blue-500/30">
-            {/* Background scanner effect */}
-            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+        <div className="w-full font-sans transition-colors duration-300">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-8">
+                <Clock className="w-8 h-8 text-gray-900 dark:text-white" />
+                <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
+                    {t('title')}
+                </h2>
+            </div>
+            <p className="text-gray-500 dark:text-[#8b949e] mb-8 -mt-6">
+                {t('description')}
+                <span className="float-right text-xs mt-1 text-gray-400 dark:text-[#8b949e]">Last updated: Recently</span>
+            </p>
 
-            <div className="flex items-center justify-between mb-8 relative z-10">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                        <Layout className="w-4 h-4 text-blue-400" />
-                    </div>
-                    <span className="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-bold">Tech Stack IQ</span>
-                </div>
-                <div className="px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 text-[8px] font-mono text-blue-400">
-                    LIVE_METRICS
-                </div>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+                <WakaStat
+                    label={t('startDate')}
+                    value={stats.startDate}
+                    icon={<Calendar className="w-4 h-4 text-blue-500" />}
+                />
+                <WakaStat
+                    label={t('endDate')}
+                    value={stats.endDate}
+                    icon={<Target className="w-4 h-4 text-purple-500" />}
+                />
+                <WakaStat
+                    label={t('dailyAverage')}
+                    value={stats.dailyAvg}
+                    icon={<Activity className="w-4 h-4 text-green-500" />}
+                    highlight
+                />
+                <WakaStat
+                    label={t('totalWeek')}
+                    value={stats.weeklyTotal}
+                    icon={<TrendingUp className="w-4 h-4 text-yellow-500" />}
+                    highlight
+                />
+                <WakaStat
+                    label={t('bestDay')}
+                    value={stats.bestDay} // Removed date to keep it cleaner
+                    icon={<Trophy className="w-4 h-4 text-orange-500" />}
+                />
+                <WakaStat
+                    label={t('totalSince')}
+                    value={stats.totalTime}
+                    icon={<Clock className="w-4 h-4 text-red-500" />}
+                />
             </div>
 
-            <div className="flex-1 space-y-6 relative z-10 overflow-y-auto custom-scrollbar pr-2">
-                {languages.map((lang: any, idx: number) => (
-                    <div key={lang.name} className="group/row">
-                        <div className="flex items-center justify-between mb-2 text-xs">
-                            <div className="flex items-center gap-3">
-                                <div className="w-2 h-2 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.3)]" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
-                                <span className="font-bold text-foreground/80 group-hover/row:text-blue-400 transition-colors uppercase tracking-[0.1em] text-[10px]">{lang.name}</span>
+            {/* Language Bars Section - Seamless Background */}
+            <div className="w-full px-0">
+                <h3 className="text-gray-900 dark:text-white mb-6 text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                    {t('topLanguages')}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                    {stats.languages.map((lang: any, idx: number) => (
+                        <div key={lang.name} className="group">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-gray-700 dark:text-gray-300 font-medium text-sm">{lang.name}</span>
+                                <span className="text-gray-500 dark:text-gray-400 font-mono text-xs">{Math.round(lang.percent)}%</span>
                             </div>
-                            <span className="font-mono text-[10px] text-muted-foreground">{lang.percent}%</span>
+                            <div className="h-2 bg-gray-200 dark:bg-[#30363d] rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    whileInView={{ width: `${lang.percent}%` }}
+                                    transition={{ duration: 1.2, ease: "easeOut" }}
+                                    className="h-full rounded-full relative"
+                                    style={{ backgroundColor: lang.color || FALLBACK_COLORS[idx % FALLBACK_COLORS.length] }}
+                                >
+                                    <div className="absolute inset-0 bg-white/20" />
+                                </motion.div>
+                            </div>
                         </div>
-                        <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-black/5">
-                            <motion.div
-                                className="absolute top-0 left-0 h-full rounded-full"
-                                style={{
-                                    backgroundColor: COLORS[idx % COLORS.length],
-                                    boxShadow: `0 0 15px ${COLORS[idx % COLORS.length]}50`
-                                }}
-                                initial={{ width: 0 }}
-                                whileInView={{ width: `${lang.percent}%` }}
-                                transition={{ duration: 1.5, ease: [0.23, 1, 0.32, 1] }}
-                            />
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-center gap-3 text-[8px] text-muted-foreground/30 font-mono uppercase tracking-[0.5em]">
-                <ChevronRight className="w-3 h-3 text-blue-500/50" />
-                <span>INTELLIGENCE ENGINE V2</span>
+                    ))}
+                </div>
             </div>
         </div>
     );
 }
 
-export function WakaTimeMetricPod({ label, value, subValue, icon, highlight, color, delay }: any) {
+function WakaStat({ label, value, icon, highlight = false }: { label: string, value: string, icon?: React.ReactNode, highlight?: boolean }) {
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay }}
-            className={`relative p-6 rounded-[2rem] border border-border bg-card/85 transition-all duration-500 group overflow-hidden h-full flex flex-col justify-between shadow-lg hover:shadow-2xl hover:shadow-blue-500/10 ${highlight
-                ? "bg-blue-600/5 dark:bg-blue-900/10 border-blue-500/20 dark:border-blue-500/30"
-                : "hover:border-blue-500/40"
-                }`}
-        >
-            <div className="flex items-center gap-3 relative z-10">
-                <div className={`p-2 rounded-lg bg-white/5 border border-white/5 group-hover:border-white/20 transition-colors ${color}`}>
+        <div className="relative group p-4 md:p-5 border border-gray-200 dark:border-[#30363d] rounded-xl hover:border-yellow-500/30 dark:hover:border-yellow-500/30 transition-all duration-300 bg-transparent hover:bg-gray-50/50 dark:hover:bg-[#161b22]/50">
+            <div className="flex items-center gap-2 mb-3">
+                <div className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 group-hover:text-yellow-500 transition-colors duration-300">
                     {icon}
                 </div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-bold">{label}</span>
+                <span className="text-gray-500 dark:text-[#8b949e] text-xs font-medium uppercase tracking-wider">{label}</span>
             </div>
-
-            <div className="mt-4 relative z-10">
-                <div className={`text-3xl font-black tracking-tight ${highlight ? "text-blue-500 dark:text-blue-400" : "text-foreground"}`}>
-                    {value}
-                </div>
-                {subValue && (
-                    <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono mt-1 pt-1 border-t border-black/5 dark:border-white/5 group-hover:text-zinc-500 transition-colors uppercase leading-tight">
-                        {subValue}
-                    </div>
-                )}
-            </div>
-
-            {/* Glowing corner indicator */}
-            <div className={`absolute top-0 right-0 w-8 h-8 opacity-[0.03] group-hover:opacity-[0.1] transition-opacity ${highlight ? "bg-blue-500" : "bg-white"}`} style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }} />
-        </motion.div>
+            <span className={`text-lg md:text-xl font-bold tracking-tight ${highlight ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-900 dark:text-white'}`}>
+                {value}
+            </span>
+        </div>
     );
 }
 

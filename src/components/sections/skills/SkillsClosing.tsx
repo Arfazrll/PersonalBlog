@@ -142,7 +142,7 @@ export const SkillsClosing = () => {
                                     href="/projects"
                                     className="cursor-pointer inline-flex items-center gap-2 text-white hover:text-white/80 transition-colors font-mono text-sm uppercase tracking-widest border-b-2 border-white/70 pb-0.5 hover:border-white font-semibold"
                                 >
-                                    [ View_Projects ] <MoveRight className="w-4 h-4" />
+                                    View Projects ...
                                 </Link>
                             </motion.div>
                         </Terminal>

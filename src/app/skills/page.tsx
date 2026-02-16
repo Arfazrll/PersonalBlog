@@ -175,7 +175,7 @@ export default function SkillsPage() {
                             transition={{ duration: 0.5, delay: 0.2 }}
                             className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
                         >
-                            Tech_Arsenal // 04
+                            Tech_Arsenal // 03
                         </motion.span>
                         <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-foreground">
                             <span className="text-neutral-700 dark:text-muted-foreground font-light not-italic">Tech</span> Stack

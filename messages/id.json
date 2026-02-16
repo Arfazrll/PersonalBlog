@@ -267,6 +267,30 @@
         "download": "Unduh",
         "share": "Bagikan"
     },
+    "technical": {
+        "github": {
+            "title": "Kontribusi GitHub",
+            "description": "Aktivitas GitHub saya selama setahun terakhir.",
+            "total": "Total",
+            "thisWeek": "Minggu Ini",
+            "best": "Terbaik",
+            "average": "Rata-rata",
+            "less": "Sedikit",
+            "more": "Banyak"
+        },
+        "wakatime": {
+            "title": "Statistik WakaTime",
+            "description": "Aktivitas coding selama 7 hari terakhir.",
+            "lastUpdate": "Pembaruan Terakhir",
+            "startDate": "Tanggal Mulai",
+            "endDate": "Tanggal Selesai",
+            "dailyAverage": "Rata-rata Harian",
+            "totalWeek": "Total Minggu Ini",
+            "bestDay": "Hari Terbaik",
+            "totalSince": "Total Sejak Bergabung",
+            "topLanguages": "Bahasa Teratas"
+        }
+    },
     "blog": {
         "title": "Pemikiran & Eksplorasi",
         "subtitle": "Menjembatani kesenjangan antara kompleksitas teknis dan implementasi praktis. Kumpulan wawasan tentang AI, Web3, dan Software Engineering.",

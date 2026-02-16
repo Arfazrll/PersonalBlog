@@ -13,7 +13,7 @@ export default function AboutSection() {
     const t = useTranslations('about');
 
     return (
-        <section ref={sectionRef} className="relative py-32 overflow-hidden">
+        <section id="about" ref={sectionRef} className="relative py-32 overflow-hidden">
             {/* Tech Background Grid with Organic Fade */}
             <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.03] pointer-events-none"
                 style={{

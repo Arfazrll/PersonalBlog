@@ -282,6 +282,30 @@
         "download": "Download",
         "share": "Share"
     },
+    "technical": {
+        "github": {
+            "title": "GitHub Contributions",
+            "description": "My GitHub activity over the last year.",
+            "total": "Total",
+            "thisWeek": "This Week",
+            "best": "Best",
+            "average": "Average",
+            "less": "Less",
+            "more": "More"
+        },
+        "wakatime": {
+            "title": "WakaTime Stats",
+            "description": "Coding activity over the last 7 days.",
+            "lastUpdate": "Last Updated",
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "dailyAverage": "Daily Average",
+            "totalWeek": "Total This Week",
+            "bestDay": "Best Day",
+            "totalSince": "Total Since Joined",
+            "topLanguages": "Top Languages"
+        }
+    },
     "blog": {
         "title": "Thoughts & Explorations",
         "subtitle": "Bridging the gap between technical complexity and practical implementation. A collection of insights on AI, Web3, and Software Engineering.",
