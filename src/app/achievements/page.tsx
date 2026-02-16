@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useMotionTemplate, motionValue } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useMotionTemplate, motionValue, LayoutGroup } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Search, SortAsc, SortDesc, ExternalLink, X, Calendar, Building2, Trophy, Medal, Award, Target, ChevronRight, MousePointer2, Eye, Share2 } from 'lucide-react';
+import { Search, SortAsc, SortDesc, ExternalLink, X, Calendar, Building2, Trophy, Medal, Award, Target, ChevronRight, MousePointer2, Eye, Share2, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import { Achievement } from '@/types';
@@ -25,7 +25,7 @@ const staggerItem = {
     show: { opacity: 1, y: 0 }
 };
 
-const AchievementCard = React.forwardRef<HTMLDivElement, {
+const AchievementCard = React.memo(React.forwardRef<HTMLDivElement, {
     achievement: Achievement;
     onClick: () => void;
     index: number;
@@ -37,6 +37,7 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
         const mouseY = useMotionValue(0);
 
         const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+            if (isLowPowerMode) return;
             const { left, top } = e.currentTarget.getBoundingClientRect();
             mouseX.set(e.clientX - left);
             mouseY.set(e.clientY - top);
@@ -93,7 +94,11 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: index * 0.05, duration: 0.5, type: "spring", stiffness: 100 }}
                     whileHover={{ y: -4 }}
-                    className="relative bg-card/90 dark:bg-card/40 backdrop-blur-xl rounded-2xl overflow-hidden border border-border/40 group-hover:border-foreground/20 transition-all duration-500 shadow-lg group-hover:shadow-2xl z-20 cursor-pointer"
+                    className={cn(
+                        "relative bg-card/90 dark:bg-card/40 rounded-2xl overflow-hidden border-2 border-zinc-400 dark:border-border/40 group-hover:border-foreground/20 transition-all duration-500 shadow-xl dark:shadow-none group-hover:shadow-2xl z-20 cursor-pointer",
+                        !isLowPowerMode && "backdrop-blur-md"
+                    )}
+                    style={{ willChange: "transform, opacity" }}
                 >
                     {/* Animated Spotlight Effect */}
                     {!isLowPowerMode && (
@@ -140,15 +145,18 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
 
                         {/* Category Icon Badge */}
                         <motion.div
-                            className="absolute top-4 right-4 p-2.5 rounded-xl bg-foreground/10 backdrop-blur-md border border-foreground/10 shadow-xl z-20"
+                            className="absolute top-4 right-4 p-2.5 rounded-xl bg-white/80 dark:bg-foreground/10 backdrop-blur-md border border-foreground/10 shadow-lg z-20"
                             whileHover={{ rotate: 15, scale: 1.1 }}
                         >
-                            <IconComponent className="w-4 h-4 text-foreground/80 dark:text-white" />
+                            <IconComponent className="w-4 h-4 text-foreground dark:text-white" />
                         </motion.div>
 
                         {/* Type/Category Tags in Header */}
                         <div className="absolute top-4 left-4 flex gap-2 z-20">
-                            <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-foreground/10 backdrop-blur-md border border-foreground/10 text-foreground/90 dark:text-white/90">
+                            <span className={cn(
+                                "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border border-foreground/10 text-foreground dark:text-white/90 shadow-sm",
+                                !isLowPowerMode ? "bg-white/80 dark:bg-foreground/10 backdrop-blur-md" : "bg-white/90 dark:bg-black/40"
+                            )}>
                                 {achievement.type || achievement.category}
                             </span>
                         </div>
@@ -181,15 +189,6 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
                             <span className="text-[11px] text-muted-foreground font-medium">{achievement.issuer}</span>
                         </div>
 
-                        {/* Tags section below issuer */}
-                        {achievement.tags && (
-                            <div className="flex flex-wrap gap-1.5 mb-2">
-                                {achievement.tags.slice(0, 3).map(tag => (
-                                    <span key={tag} className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight">#{tag}</span>
-                                ))}
-                            </div>
-                        )}
-
                         <div className="flex items-center justify-between pt-4 border-t border-border/20">
                             <div className="flex items-center gap-2">
                                 <Eye className="w-4 h-4 text-muted-foreground/40" />
@@ -207,40 +206,43 @@ const AchievementCard = React.forwardRef<HTMLDivElement, {
             </div>
         );
     }
-);
+));
 
-AchievementCard.displayName = 'AchievementCard';
-
-function NavItem({ label, active, onClick, count }: { label: string; active: boolean; onClick: () => void; count: number }) {
+const NavItem = React.memo(({ label, active, onClick, count, isCollapsed }: { label: string; active: boolean; onClick: () => void; count: number; isCollapsed: boolean }) => {
     return (
         <motion.button
             onClick={onClick}
-            whileHover={{ x: 6 }}
+            whileHover={{ x: isCollapsed ? 0 : 6 }}
             whileTap={{ scale: 0.98 }}
             className={cn(
                 "group relative w-full text-left py-5 lg:py-6 px-6 lg:px-8 transition-all duration-300",
-                active ? "bg-foreground/[0.03]" : "hover:bg-foreground/[0.015]"
+                active ? "bg-foreground/[0.03]" : "hover:bg-foreground/[0.015]",
+                isCollapsed && "px-0 flex justify-center"
             )}
         >
-            <div className="flex items-center justify-between relative z-10">
+            <div className={cn("flex items-center justify-between relative z-10 w-full", isCollapsed && "justify-center")}>
                 <div className="flex items-center gap-3">
                     <div className={cn(
                         "w-1.5 h-1.5 rounded-full transition-all duration-300",
                         active ? "bg-foreground scale-150" : "bg-muted-foreground/20"
                     )} />
-                    <span className={cn(
-                        "text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight transition-all duration-300",
-                        active ? "text-foreground" : "text-muted-foreground/25 group-hover:text-muted-foreground/50"
-                    )}>
-                        {label}
-                    </span>
+                    {!isCollapsed && (
+                        <span className={cn(
+                            "text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight transition-all duration-300 whitespace-nowrap",
+                            active ? "text-foreground" : "text-muted-foreground/60 group-hover:text-muted-foreground/80 dark:text-muted-foreground/40 dark:group-hover:text-muted-foreground/60"
+                        )}>
+                            {label}
+                        </span>
+                    )}
                 </div>
-                <span className={cn(
-                    "text-xs font-bold tabular-nums transition-all duration-300",
-                    active ? "text-foreground/80" : "text-muted-foreground/15"
-                )}>
-                    {count.toString().padStart(2, '0')}
-                </span>
+                {!isCollapsed && (
+                    <span className={cn(
+                        "text-xs font-bold tabular-nums transition-all duration-300",
+                        active ? "text-foreground/80" : "text-muted-foreground/15"
+                    )}>
+                        {count.toString().padStart(2, '0')}
+                    </span>
+                )}
             </div>
 
             <AnimatePresence>
@@ -250,14 +252,14 @@ function NavItem({ label, active, onClick, count }: { label: string; active: boo
                         initial={{ opacity: 0, scaleY: 0 }}
                         animate={{ opacity: 1, scaleY: 1 }}
                         exit={{ opacity: 0, scaleY: 0 }}
-                        className="absolute left-0 top-0 bottom-0 w-1 bg-foreground origin-center"
+                        className="absolute left-0 top-0 bottom-0 w-1.5 bg-foreground origin-center"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                 )}
             </AnimatePresence>
         </motion.button>
     );
-}
+});
 
 function AchievementModal({ achievement, onClose, isLowPowerMode }: { achievement: Achievement; onClose: () => void; isLowPowerMode?: boolean }) {
     return (
@@ -463,6 +465,7 @@ export default function AchievementsPage() {
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [activeCategory, setActiveCategory] = useState('all');
     const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     const stats = useMemo(() => {
         const total = portfolioData.achievements.length;
@@ -534,65 +537,92 @@ export default function AchievementsPage() {
                 <div className="flex flex-col lg:flex-row relative items-start">
 
                     {/* LEFT PANEL: Navigation - Sticky */}
-                    <div className="lg:w-2/5 xl:w-1/3 w-full h-auto lg:sticky lg:top-0 py-12 lg:py-36 flex flex-col z-40 bg-background/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none">
+                    <motion.div
+                        initial={false}
+                        animate={{
+                            width: isSidebarCollapsed ? "80px" : "33.333333%",
+                        }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className={cn(
+                            "w-full h-auto lg:sticky lg:top-0 py-12 lg:py-36 flex flex-col z-40 bg-background/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none border-r border-border/10",
+                            isSidebarCollapsed && "items-center"
+                        )}
+                    >
 
-                        {/* Header */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="px-6 lg:px-10 mb-10"
-                        >
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="w-2 h-2 rounded-full bg-foreground" />
-                                <h1 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
-                                    The Archive
-                                </h1>
-                            </div>
-                            <div className="h-px w-12 bg-gradient-to-r from-foreground/50 to-transparent" />
-                        </motion.div>
+                        {/* Header & Toggle */}
+                        <div className={cn("px-6 lg:px-10 mb-10 w-full flex items-center justify-between", isSidebarCollapsed && "px-0 justify-center")}>
+                            {!isSidebarCollapsed && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                >
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="w-2 h-2 rounded-full bg-foreground" />
+                                        <h1 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+                                            The Archive
+                                        </h1>
+                                    </div>
+                                    <div className="h-1.5 w-20 bg-foreground opacity-100" />
+                                </motion.div>
+                            )}
+
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                                className={cn(
+                                    "p-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/20 text-foreground transition-all border border-foreground/10",
+                                    isSidebarCollapsed && "mt-[-60px]"
+                                )}
+                            >
+                                {isSidebarCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
+                            </motion.button>
+                        </div>
 
                         {/* Navigation */}
                         <motion.nav
-                            className="flex-1"
+                            className="flex-1 w-full"
                             variants={staggerContainer}
                             initial="hidden"
                             animate="show"
                         >
                             <motion.div variants={staggerItem}>
-                                <NavItem label="All Entries" active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} count={getCategoryCount('all')} />
+                                <NavItem label="All Entries" active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} count={getCategoryCount('all')} isCollapsed={isSidebarCollapsed} />
                             </motion.div>
                             <motion.div variants={staggerItem}>
-                                <NavItem label="Certifications" active={activeCategory === 'certification'} onClick={() => setActiveCategory('certification')} count={getCategoryCount('certification')} />
+                                <NavItem label="Certifications" active={activeCategory === 'certification'} onClick={() => setActiveCategory('certification')} count={getCategoryCount('certification')} isCollapsed={isSidebarCollapsed} />
                             </motion.div>
                             <motion.div variants={staggerItem}>
-                                <NavItem label="Awards" active={activeCategory === 'award'} onClick={() => setActiveCategory('award')} count={getCategoryCount('award')} />
+                                <NavItem label="Awards" active={activeCategory === 'award'} onClick={() => setActiveCategory('award')} count={getCategoryCount('award')} isCollapsed={isSidebarCollapsed} />
                             </motion.div>
                             <motion.div variants={staggerItem}>
-                                <NavItem label="Competitions" active={activeCategory === 'competition'} onClick={() => setActiveCategory('competition')} count={getCategoryCount('competition')} />
+                                <NavItem label="Competitions" active={activeCategory === 'competition'} onClick={() => setActiveCategory('competition')} count={getCategoryCount('competition')} isCollapsed={isSidebarCollapsed} />
                             </motion.div>
                         </motion.nav>
 
                         {/* Large counter */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6 }}
-                            className="p-6 lg:p-10 hidden lg:block"
-                        >
+                        {!isSidebarCollapsed && (
                             <motion.div
-                                className="text-[9rem] font-black leading-none text-foreground/20 select-none"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.6 }}
+                                className="p-6 lg:p-10 hidden lg:block"
                             >
-                                {stats.total.toString().padStart(2, '0')}
+                                <motion.div
+                                    className="text-[9rem] font-black leading-none text-foreground/[0.18] dark:text-foreground/20 select-none"
+                                >
+                                    {stats.total.toString().padStart(2, '0')}
+                                </motion.div>
+                                <div className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest flex items-center gap-2 -mt-4">
+                                    <Award className="w-3 h-3" />
+                                    Achievements
+                                </div>
                             </motion.div>
-                            <div className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest flex items-center gap-2 -mt-4">
-                                <Award className="w-3 h-3" />
-                                Achievements
-                            </div>
-                        </motion.div>
-                    </div>
+                        )}
+                    </motion.div>
 
                     {/* RIGHT PANEL: Cards - Natural Flow */}
-                    <div className="lg:w-3/5 xl:w-2/3 w-full flex flex-col pt-8 lg:pt-36 px-6 lg:px-10 pb-20">
+                    <div className="flex-1 w-full flex flex-col pt-8 lg:pt-36 px-6 lg:px-10 pb-20 overflow-hidden">
 
                         {/* Controls */}
                         <motion.div
@@ -627,7 +657,7 @@ export default function AchievementsPage() {
                                         placeholder="Search..."
                                         value={searchQuery}
                                         onChange={e => setSearchQuery(e.target.value)}
-                                        className="w-full bg-secondary/20 border border-border/40 focus:border-foreground/30 rounded-xl pl-10 pr-8 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground/40"
+                                        className="w-full bg-white dark:bg-secondary/20 border-2 border-zinc-300 dark:border-border/40 focus:border-foreground/30 rounded-xl pl-10 pr-8 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground/40 shadow-sm focus:shadow-md"
                                     />
                                     {searchQuery && (
                                         <motion.button
@@ -644,26 +674,36 @@ export default function AchievementsPage() {
                                     onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="p-2.5 rounded-xl bg-secondary/20 hover:bg-secondary/40 border border-border/40 text-muted-foreground hover:text-foreground transition-all"
+                                    className="p-2.5 rounded-xl bg-white dark:bg-secondary/20 hover:bg-secondary/10 dark:hover:bg-secondary/40 border-2 border-zinc-300 dark:border-border/40 text-muted-foreground hover:text-foreground transition-all shadow-sm group-hover:shadow-md"
                                 >
                                     {sortOrder === 'newest' ? <SortDesc className="w-4 h-4" /> : <SortAsc className="w-4 h-4" />}
                                 </motion.button>
                             </div>
                         </motion.div>
 
-                        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <AnimatePresence mode="popLayout">
-                                {filteredAchievements.map((achievement, index) => (
-                                    <AchievementCard
-                                        key={achievement.id}
-                                        achievement={achievement}
-                                        onClick={() => setSelectedAchievement(achievement)}
-                                        index={index}
-                                        isLowPowerMode={isLowPowerMode}
-                                    />
-                                ))}
-                            </AnimatePresence>
-                        </motion.div>
+                        <LayoutGroup id="achievements-gallery">
+                            <motion.div
+                                layout
+                                className={cn(
+                                    "grid gap-5 transition-all duration-500",
+                                    isSidebarCollapsed
+                                        ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-4"
+                                        : "grid-cols-1 md:grid-cols-2"
+                                )}
+                            >
+                                <AnimatePresence mode="popLayout">
+                                    {filteredAchievements.map((achievement, index) => (
+                                        <AchievementCard
+                                            key={achievement.id}
+                                            achievement={achievement}
+                                            onClick={() => setSelectedAchievement(achievement)}
+                                            index={index}
+                                            isLowPowerMode={isLowPowerMode}
+                                        />
+                                    ))}
+                                </AnimatePresence>
+                            </motion.div>
+                        </LayoutGroup>
 
                         {filteredAchievements.length === 0 && (
                             <motion.div

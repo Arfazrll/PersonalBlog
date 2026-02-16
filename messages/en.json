@@ -28,7 +28,8 @@
         "subtitle": "Full Stack Developer • AI Engineer • Data Scientist",
         "cta": {
             "primary": "Explore Projects",
-            "secondary": "Get in Touch"
+            "secondary": "Get in Touch",
+            "exploreMore": "Explore More"
         },
         "badge": "Available for opportunities",
         "scroll": "Scroll Down",

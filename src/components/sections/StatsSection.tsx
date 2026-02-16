@@ -14,7 +14,7 @@ export default function StatsSection() {
         "Arfazrll";
 
     return (
-        <section className="relative py-24 lg:py-32 overflow-hidden bg-background">
+        <section className="relative py-24 lg:py-32 overflow-hidden bg-background dark:bg-black">
             {/* Background Canvas Layer */}
             <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
                 <div

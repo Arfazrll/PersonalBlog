@@ -1,75 +1,147 @@
 "use client";
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from "@/lib/utils";
 import { portfolioData } from "@/data/portfolio";
 import { ArrowUpRight } from "lucide-react";
 
+// Gallery assets for background randomization
+const GALLERY_IMAGES = [
+    '/gallery/Foto Utama.jpeg',
+    '/gallery/FotoSC1.jpeg',
+    '/gallery/FotoSC2.jpeg',
+    '/gallery/FotoSC3.jpeg',
+    '/gallery/FotoSC4.jpeg',
+    '/gallery/FotoSC5.jpeg',
+    '/gallery/academicaffairsdivision1.jpg',
+    '/gallery/computernetworkpracticumassistant2.jpg',
+    '/gallery/dataentryassistant1.jpg',
+    '/gallery/delegateaiesecfutureleaders20241.jpg',
+    '/gallery/environmentalhygieneteam1.jpg',
+    '/gallery/environmentalhygieneteam2.jpg',
+    '/gallery/logisticsoperatorcampusexpo20242.jpg',
+    '/gallery/researchassistant1.jpg',
+    '/gallery/researchassistant2.jpg',
+];
+
 export const NavigationShortcuts = () => {
     const [hoveredImage, setHoveredImage] = useState<string | null>(null);
-    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [itemImageMap, setItemImageMap] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement>(null);
+    const isInView = useInView(containerRef, { amount: 0.05 });
+
+    // INNOVATIVE: Scroll-linked opacity to physically block leaks
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end start"]
+    });
+
+    // WIDENED RANGE: Background is visible for much longer (10% to 90% of viewport presence)
+    const backgroundOpacity = useTransform(
+        scrollYProgress,
+        [0, 0.1, 0.9, 1],
+        [0, 0.15, 0.15, 0]
+    );
+
+    const backgroundScale = useTransform(
+        scrollYProgress,
+        [0, 0.5, 1],
+        [1.05, 1, 1.05]
+    );
+
+    // Randomize images on mount
+    useEffect(() => {
+        const shuffled = [...GALLERY_IMAGES].sort(() => Math.random() - 0.5);
+        const map: Record<string, string> = {};
+
+        // Items list for mapping
+        const allItemIds = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+        allItemIds.forEach((id, index) => {
+            map[id] = shuffled[index % shuffled.length];
+        });
+
+        setItemImageMap(map);
+    }, []);
 
     const categories = [
         {
             title: "Volume I: Identity",
             items: [
-                { id: '01', title: 'About Me', href: '/#about', image: portfolioData.personal.avatar },
-                { id: '02', title: 'Resume', href: portfolioData.personal.resumeUrl, image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&h=600&fit=crop", external: true },
-                { id: '03', title: 'Contact', href: '/contact', image: "https://images.unsplash.com/photo-1596524430615-b46475ddff6e?w=800&h=600&fit=crop" },
+                { id: '01', title: 'About Me', href: '/#about' },
+                { id: '02', title: 'Resume', href: portfolioData.personal.resumeUrl, external: true },
+                { id: '03', title: 'Contact', href: '/contact' },
             ]
         },
         {
             title: "Volume II: Professional Sequence",
             items: [
-                { id: '04', title: 'Experience', href: '/experience', image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop" },
-                { id: '05', title: 'Education', href: '/experience', image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop" },
-                { id: '06', title: 'Projects', href: '/projects', image: "https://images.unsplash.com/photo-1661956602116-aa6865609028?w=800&h=600&fit=crop" },
-                { id: '07', title: 'Certifications', href: '/achievements', image: "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?w=800&h=600&fit=crop" },
+                { id: '04', title: 'Experience', href: '/experience' },
+                { id: '05', title: 'Education', href: '/experience' },
+                { id: '06', title: 'Projects', href: '/projects' },
+                { id: '07', title: 'Certifications', href: '/achievements' },
             ]
         },
         {
             title: "Volume III: Competency Matrix",
             items: [
-                { id: '08', title: 'Hard Skills', href: '/skills#hard-skills', image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop" },
-                { id: '09', title: 'Soft Skills', href: '/skills#soft-skills', image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop" },
-                { id: '10', title: 'Tools & Tech', href: '/skills#tools', image: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&h=600&fit=crop" },
+                { id: '08', title: 'Hard Skills', href: '/skills#hard-skills' },
+                { id: '09', title: 'Soft Skills', href: '/skills#soft-skills' },
+                { id: '10', title: 'Tools & Tech', href: '/skills#tools' },
             ]
         },
         {
             title: "Volume IV: Creative Output",
             items: [
-                { id: '11', title: 'Blog', href: '/blog', image: "https://images.unsplash.com/photo-1499750310159-54f8f0ea9db5?w=800&h=600&fit=crop" },
-                { id: '12', title: 'Gallery', href: '/gallery', image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&h=600&fit=crop" },
+                { id: '11', title: 'Blog', href: '/blog' },
+                { id: '12', title: 'Gallery', href: '/gallery' },
             ]
         }
     ];
 
-    return (
-        <div ref={containerRef} className="w-full max-w-7xl mx-auto px-4 relative min-h-screen flex flex-col justify-center py-20">
+    // INNOVATIVE: Global Bounds Tracker (STABILIZED)
+    const handleMouseLeave = () => setHoveredImage(null);
 
-            {/* Background Image Preview - Fixed Position */}
-            <div className="fixed inset-0 z-0 pointer-events-none hidden lg:block">
-                <AnimatePresence mode="wait">
+    return (
+        <div
+            ref={containerRef}
+            className="w-full max-w-7xl mx-auto px-4 relative min-h-screen flex flex-col justify-center py-20"
+            onMouseLeave={handleMouseLeave}
+        >
+            {/*
+                Innovative Cross-Fade Background
+                - No mode="wait" means images blend into each other.
+                - scroll-linked opacity handles the Hero/Footer leak automatically.
+            */}
+            <div className="fixed inset-0 z-[-1] pointer-events-none hidden lg:block overflow-hidden">
+                <AnimatePresence>
                     {hoveredImage && (
                         <motion.div
                             key={hoveredImage}
-                            initial={{ opacity: 0, scale: 1.1 }}
-                            animate={{ opacity: 0.15, scale: 1 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
+                            style={{
+                                scale: backgroundScale,
+                                // Combine with fixed opacity logic
+                                // Note: We use style for scroll progress but Framer's animate for hover
+                            }}
                             className="absolute inset-0 w-full h-full"
                         >
-                            <Image
-                                src={hoveredImage}
-                                alt="Section Preview"
-                                fill
-                                className="object-cover grayscale"
-                                priority
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
+                            <motion.div
+                                style={{ opacity: backgroundOpacity }}
+                                className="absolute inset-0 w-full h-full"
+                            >
+                                <Image
+                                    src={hoveredImage}
+                                    alt="Section Preview"
+                                    fill
+                                    className="object-cover grayscale"
+                                    priority
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
+                            </motion.div>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -123,13 +195,11 @@ export const NavigationShortcuts = () => {
                                     target={item.external ? "_blank" : undefined}
                                     className="group block relative"
                                     onMouseEnter={() => {
-                                        setHoveredImage(item.image);
-                                        setActiveIndex(parseInt(item.id));
+                                        setHoveredImage(itemImageMap[item.id]);
                                     }}
-                                    onMouseLeave={() => {
-                                        setHoveredImage(null);
-                                        setActiveIndex(null);
-                                    }}
+                                // RELAXED: Removed onMouseLeave here. 
+                                // The Global Bounds Tracker now handles all cleanup, 
+                                // ensuring no "flickering" when moving slowly between items.
                                 >
                                     <div className="flex items-baseline py-4 border-b border-neutral-200 dark:border-neutral-800 group-hover:border-primary transition-colors duration-300">
                                         <span className="font-mono text-xs md:text-sm text-neutral-400 group-hover:text-primary transition-colors w-12 shrink-0">

@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils';
 
 // Grouping logic helper
 const GROUP_MAPPING: Record<string, string[]> = {
-    'Artificial Intelligence': ['ai', 'machine learning', 'deep learning', 'nlp', 'computer vision'],
-    'Software Architecture': ['software', 'backend', 'system', 'cloud'],
+    'Intelligent Systems & Applied AI': ['ai', 'machine learning', 'deep learning', 'nlp', 'computer vision'],
+    'Software Architecture & Systems Engineering': ['software', 'backend', 'system', 'cloud', 'architecture'],
 };
 
 export const HardSkills = () => {
@@ -32,19 +32,19 @@ export const HardSkills = () => {
     // Categorize hard skills
     const categorizedSkills = useMemo(() => {
         const groups: Record<string, typeof portfolioData.hardSkills> = {
-            'Artificial Intelligence': [],
-            'Software Engineering': [],
-            'Other': []
+            'Intelligent Systems & Applied AI': [],
+            'Software Architecture & Systems Engineering': [],
+            'Infrastructure & Platform Engineering': []
         };
 
         portfolioData.hardSkills.forEach(skill => {
             const cat = skill.category.toLowerCase();
-            if (GROUP_MAPPING['Artificial Intelligence'].some(k => cat.includes(k))) {
-                groups['Artificial Intelligence'].push(skill);
-            } else if (GROUP_MAPPING['Software Architecture'].some(k => cat.includes(k))) {
-                groups['Software Engineering'].push(skill);
+            if (GROUP_MAPPING['Intelligent Systems & Applied AI'].some(k => cat.includes(k))) {
+                groups['Intelligent Systems & Applied AI'].push(skill);
+            } else if (GROUP_MAPPING['Software Architecture & Systems Engineering'].some(k => cat.includes(k))) {
+                groups['Software Architecture & Systems Engineering'].push(skill);
             } else {
-                groups['Other'].push(skill);
+                groups['Infrastructure & Platform Engineering'].push(skill);
             }
         });
 
@@ -72,8 +72,8 @@ export const HardSkills = () => {
                         Technical_Core // 02
                     </motion.span>
                     <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-[0.9]">
-                        Hard <br />
-                        <span className="text-neutral-900 dark:text-white">Capabilities</span>
+                        <span className="text-gray-900 dark:text-white block transition-colors duration-300">Technical</span>
+                        <span className="text-yellow-600 dark:text-yellow-500 block transition-colors duration-300 font-light not-italic">Precision</span>
                     </h2>
                 </motion.div>
 

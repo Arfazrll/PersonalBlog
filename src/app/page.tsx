@@ -13,7 +13,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import type { ISourceOptions } from '@tsparticles/engine';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { Sparkles, ChevronDown, Mail, ArrowRight } from 'lucide-react';
+import { Sparkles, ChevronDown, Mail, ArrowRight, ArrowDown } from 'lucide-react';
 import { LoadingScreen } from '@/components/layout';
 import { TextPressure } from '@/components/ui/TextPressure';
 import { portfolioData } from '@/data/portfolio';
@@ -279,21 +279,28 @@ function HeroIntro() {
                     dangerouslySetInnerHTML={{ __html: t.raw('description') }}
                 />
 
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                    <motion.div className="hero-cta w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link href="/projects" className="btn-creative group inline-flex items-center justify-center gap-3 text-base w-full sm:w-auto min-w-[180px]">
-                            <span>{t('cta.primary')}</span>
-                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                    </motion.div>
-                    <motion.div className="hero-cta w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link href="/contact" className="btn-outline-creative inline-flex items-center justify-center gap-2 text-base w-full sm:w-auto min-w-[180px]">
-                            <Mail className="w-4 h-4" />
-                            <span>{t('cta.secondary')}</span>
-                        </Link>
-                    </motion.div>
-                </div>
+                {/* Minimalist Explore More Link */}
+                <motion.div
+                    className="hero-cta flex justify-center"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 2.0 }}
+                >
+                    <Link
+                        href="#about"
+                        className="group flex items-center gap-4 text-sm font-black uppercase tracking-[0.4em] text-foreground/40 hover:text-foreground transition-all duration-700"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                    >
+                        <span className="relative">
+                            {t('cta.exploreMore')}
+                            <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-primary group-hover:w-full transition-all duration-700" />
+                        </span>
+                        <ArrowDown className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:translate-y-3 transition-all duration-700" />
+                    </Link>
+                </motion.div>
             </animated.div>
         </section>
     );
