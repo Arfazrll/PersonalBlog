@@ -76,18 +76,36 @@ const FlippingCard = ({ front, back, index }: { front: any, back: any, index: nu
                 className="relative w-full h-full preserve-3d"
                 initial={false}
                 animate={{ rotateX: isFlipped ? 180 : 0 }}
-                transition={{ duration: 0.8, ease: "easeInOut", type: "spring", stiffness: 260, damping: 20 }}
-                style={{ transformStyle: 'preserve-3d' }}
+                transition={{
+                    duration: 0.7,
+                    ease: [0.65, 0, 0.35, 1]
+                }}
+                style={{
+                    transformStyle: 'preserve-3d',
+                    willChange: 'transform',
+                    transform: 'translateZ(0)'
+                }}
             >
                 {/* FRONT FACE */}
-                <div className="absolute inset-0 backface-hidden" style={{ backfaceVisibility: 'hidden' }}>
+                <div
+                    className="absolute inset-0 backface-hidden"
+                    style={{
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'translateZ(0)'
+                    }}
+                >
                     <SkillCard skill={front} index={index} />
                 </div>
 
                 {/* BACK FACE */}
                 <div
                     className="absolute inset-0 backface-hidden"
-                    style={{ backfaceVisibility: 'hidden', transform: 'rotateX(180deg)' }}
+                    style={{
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateX(180deg) translateZ(0)'
+                    }}
                 >
                     <SkillCard skill={back} index={index + 4} isBack={true} />
                 </div>

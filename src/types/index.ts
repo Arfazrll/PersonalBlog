@@ -75,6 +75,7 @@ export interface Skill {
     name: string;
     level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
     category: 'frontend' | 'backend' | 'database' | 'devops' | 'mobile' | 'ai' | 'data' | 'blockchain' | 'software' | 'cloud' | 'other';
+    description?: string;
 }
 
 export interface TechStack {

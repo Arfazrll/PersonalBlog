@@ -96,7 +96,7 @@ export const ToolsSection = () => {
 
             <div className="absolute bottom-12 text-center w-full pointer-events-none opacity-30 text-white/50">
                 <p className="text-[10px] font-mono uppercase tracking-[0.4em]">
-                    [ Daily Arsenal ]
+                    --- Daily Arsenal ---
                 </p>
             </div>
         </section>
