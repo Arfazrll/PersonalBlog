@@ -24,7 +24,7 @@ export const KineticTechGrid = ({ items, className }: KineticTechGridProps) => {
 
     return (
         <div ref={containerRef} className={className}>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 relative">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 relative">
                 {items.map((tech, idx) => (
                     <TechCard
                         key={`${tech.name}-${idx}`}
@@ -43,8 +43,8 @@ const TechCard = ({ tech, idx, scrollYProgress, isLowPowerMode }: { tech: TechIt
     const cardRef = useRef<HTMLDivElement>(null);
 
     // Simplified parallax with clamped values for better performance
-    const yRange = idx % 2 === 0 ? [30, -30] : [-30, 30];
-    const rotateRange = idx % 2 === 0 ? [5, -5] : [-5, 5];
+    const yRange = idx % 2 === 0 ? [20, -20] : [-20, 20];
+    const rotateRange = idx % 3 === 0 ? [4, -4] : [-4, 4];
 
     const yOffset = useTransform(scrollYProgress, [0, 1], yRange);
     const rotateOffset = useTransform(scrollYProgress, [0, 1], rotateRange);

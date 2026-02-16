@@ -64,15 +64,15 @@ export const ToolsSection = () => {
             >
                 <motion.span
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 0.5 }}
+                    whileInView={{ opacity: 0.4 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-[10px] font-mono uppercase tracking-[0.6em] text-white/50 block mb-4 animate-pulse-slow"
+                    className="text-[10px] font-mono uppercase tracking-[0.8em] text-foreground block mb-4"
                 >
                     Domain // 04
                 </motion.span>
-                <h2 className="text-4xl md:text-7xl font-sans font-thin text-white/90 tracking-[0.2em] uppercase transition-all duration-700">
-                    Technical <span className="font-serif italic text-white/40">TOOLS</span>
+                <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter text-foreground whitespace-nowrap leading-[0.95]">
+                    Technical <span className="font-thin not-italic text-foreground/30 tracking-tighter">Tools</span>
                 </h2>
             </motion.div>
 

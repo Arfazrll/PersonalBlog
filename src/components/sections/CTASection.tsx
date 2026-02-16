@@ -47,7 +47,7 @@ export default function CTASection() {
     }, []);
 
     return (
-        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden">
+        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden dark:bg-black">
             {/* Infinite Ribbons - Moved from Stats Section */}
             <div className="relative flex h-[400px] w-full items-center justify-center overflow-hidden pointer-events-none mb-20">
                 <InfiniteRibbon rotation={6} className="z-10 py-5 border-y border-blue-100 dark:border-zinc-800 shadow-xl" background="bg-white dark:bg-zinc-800" textColor="text-blue-600 dark:text-zinc-400 font-mono tracking-tighter">
@@ -60,7 +60,7 @@ export default function CTASection() {
 
             {/* Animated background */}
             <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5"
+                className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 dark:from-black dark:via-black/40 dark:to-black"
                 animate={{ opacity: [0.3, 0.6, 0.3] }}
                 transition={{ duration: 8, repeat: Infinity }}
             />
@@ -92,13 +92,13 @@ export default function CTASection() {
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Link href="/contact" className="btn-creative text-lg px-10 py-5 inline-flex items-center gap-3">
                             <Mail className="w-5 h-5" />
-                            {t('start')}
+                            <span>{t('start')}</span>
                         </Link>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Link href="/projects" className="btn-outline-creative text-lg px-10 py-5 inline-flex items-center gap-3">
                             <Layers className="w-5 h-5" />
-                            {t('work')}
+                            <span>{t('work')}</span>
                         </Link>
                     </motion.div>
                 </div>

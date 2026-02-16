@@ -159,8 +159,8 @@ export const SoftSkills = () => {
                             Competency_Matrix // 01
                         </motion.span>
                         <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-[0.9]">
-                            Strategic<br />
-                            <span className="text-neutral-700 dark:text-muted-foreground font-light not-italic">Directives</span>
+                            <span className="text-gray-900 dark:text-white block transition-colors duration-300">Strategic</span>
+                            <span className="text-yellow-600 dark:text-yellow-500 transition-colors duration-300 font-light not-italic">Directives</span>
                         </h2>
                     </div>
                     <motion.p

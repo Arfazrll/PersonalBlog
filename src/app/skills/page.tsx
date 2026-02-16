@@ -177,8 +177,8 @@ export default function SkillsPage() {
                         >
                             Tech_Arsenal // 03
                         </motion.span>
-                        <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-foreground">
-                            <span className="text-neutral-700 dark:text-muted-foreground font-light not-italic">Tech</span> Stack
+                        <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-foreground whitespace-nowrap">
+                            <span className="font-thin not-italic text-foreground/30">Tech</span> Stack
                         </h2>
                     </motion.div>
 

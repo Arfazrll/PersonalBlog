@@ -36,6 +36,19 @@ interface CertificateHeroScrollProps {
     isLowPowerMode?: boolean;
 }
 
+const CERTIFICATE_POOL = [
+    "Data Analytics on Google Cloud.png",
+    "Deep Learning Beginner.jpg",
+    "Docker, Kubernetes dan DevOps.jpg",
+    "Fullstack Programming Untuk Pemula.jpg",
+    "Introduction to Generative AI.png",
+    "Machine Learning Foundations.png",
+    "Mastering Smart Contract.jpg",
+    "Started with Databases.png",
+    "Supervised Machine Learning Regression and Classification.jpeg",
+    "elevAIte with Dicoding Program 2025.png"
+];
+
 const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick, isLowPowerMode: isLowPowerModeProp }) => {
     const spacerRef = useRef<HTMLDivElement>(null);
     const fixedContainerRef = useRef<HTMLDivElement>(null);
@@ -47,58 +60,19 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
     // Select and randomize certificates on mount to avoid hydration mismatch
     const [randomCertificates, setRandomCertificates] = useState<ImageItem[]>([]);
 
+    const createCertItem = useCallback((filename: string): ImageItem => ({
+        id: filename.replace(/\s+/g, '-').toLowerCase(),
+        src: `/certificate/${filename}`,
+        alt: filename.replace(/\.(pdf|jpg|jpeg|png)$/i, ''),
+        isPdf: /\.pdf$/i.test(filename)
+    }), []);
+
     useEffect(() => {
-        // Pre-defined "Internet/Abstract" images (Dark/Tech themed) to avoid white backgrounds
-        const externalImages: ImageItem[] = [
-            {
-                id: 'ext-1',
-                src: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb', // Dark abstract 3D
-                alt: 'Abstract Tech 1',
-                isPdf: false
-            },
-            {
-                id: 'ext-2',
-                src: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485', // AI/Neural
-                alt: 'AI Innovation',
-                isPdf: false
-            },
-            {
-                id: 'ext-3',
-                src: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b', // Cyber/Code
-                alt: 'Cybersecurity',
-                isPdf: false
-            }
-        ];
-
-        // Specific Internal Certificates (Badges/Darker images only, no white papers/PDFs)
-        // IDs: cert-6 (AWS DB), cert-9 (Google Data), cert-15 (AWS ML)
-        const targetIds = ['cert-6', 'cert-9', 'cert-15'];
-        const internalImages = portfolioData.achievements
-            .filter(a => targetIds.includes(a.id) && a.image)
-            .map(a => ({
-                id: a.id,
-                src: a.image!,
-                alt: a.title,
-                isPdf: false
-            }));
-
-        // Combine: Interleave or just concat
-        // Order: Ext, Int, Ext, Int, Ext, Int
-        const mixed: ImageItem[] = [];
-        for (let i = 0; i < 3; i++) {
-            if (externalImages[i]) mixed.push(externalImages[i]);
-            if (internalImages[i]) mixed.push(internalImages[i]);
-        }
-
-        // Fill if missing internal images (fallback to external recycle)
-        while (mixed.length < 6) {
-            mixed.push(externalImages[mixed.length % 3]);
-        }
-
-        // Set exactly 6 items
-        setRandomCertificates(mixed.slice(0, 6));
-
-    }, []);
+        // Randomly pick 6 unique items from the pool
+        const shuffled = [...CERTIFICATE_POOL].sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 6).map(createCertItem);
+        setRandomCertificates(selected);
+    }, [createCertItem]);
 
 
     const getPositions = useCallback((): Positions => {
@@ -207,7 +181,7 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
                     trigger: spacerRef.current,
                     start: "top top",
                     end: "bottom bottom",
-                    scrub: isLowPowerMode ? 0.3 : 0.8,
+                    scrub: isLowPowerMode ? 0.2 : 0.5, // Faster responding scrub
                 },
             });
 
@@ -283,8 +257,8 @@ const CertificateHeroScroll: FC<CertificateHeroScrollProps> = ({ onDownloadClick
             <div ref={fixedContainerRef} className="fixed inset-0 z-10 h-screen w-full overflow-hidden bg-transparent pointer-events-none">
                 {/* Background Effects */}
                 <div className="absolute inset-0 opacity-20 pointer-events-none">
-                    <div className="absolute top-[20%] right-[10%] w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full" />
-                    <div className="absolute bottom-[10%] left-[5%] w-[500px] h-[500px] bg-secondary/10 blur-[120px] rounded-full" />
+                    <div className="absolute top-[20%] right-[10%] w-[600px] h-[600px] bg-primary/10 blur-[80px] rounded-full" />
+                    <div className="absolute bottom-[10%] left-[5%] w-[500px] h-[500px] bg-secondary/10 blur-[80px] rounded-full" />
                 </div>
 
                 {/* Content */}

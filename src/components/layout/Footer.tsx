@@ -138,7 +138,7 @@ export function Footer() {
     return (
         <>
             {/* Compact Footer - Always visible */}
-            <footer className={`${isBlog ? 'absolute bottom-0 w-full border-t-0 pointer-events-none !bg-transparent z-20' : 'relative z-20 mt-auto'}`}>
+            <footer className={`${isBlog ? 'absolute bottom-0 w-full border-t-0 pointer-events-none !bg-transparent z-20' : 'relative z-20 mt-auto dark:bg-black'}`}>
                 <div className={`container-creative py-6 md:py-8 pointer-events-auto ${isBlog ? '!bg-transparent' : ''}`}>
                     <div className={`
                         px-6 md:px-8 py-4 md:py-6 transition-all duration-300
