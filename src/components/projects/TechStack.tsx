@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import { portfolioData } from '@/data/portfolio';
 import { cn } from '@/lib/utils';
 import { Cpu, Wrench, Zap, RefreshCw, ArrowDown, ChevronDown } from 'lucide-react';
@@ -24,6 +25,7 @@ interface PhysicsBody {
     icon?: string;
     isHero?: boolean;
     mass: number;
+    labelColor?: string;
 }
 
 // --- Tech Descriptions Database ---
@@ -60,6 +62,7 @@ export function TechStack({ techStack, tools, isLowPowerMode }: TechStackProps &
     const [bodies, setBodies] = useState<PhysicsBody[]>([]);
     const [mousePos, setMousePos] = useState({ x: -9999, y: -9999 });
     const [gravityOn, setGravityOn] = useState(false);
+    const { resolvedTheme } = useTheme();
     const requestRef = useRef<number>(0);
 
     // --- Physics Initialization & Loop ---
@@ -87,7 +90,8 @@ export function TechStack({ techStack, tools, isLowPowerMode }: TechStackProps &
                 vx: (Math.random() - 0.5) * 4,
                 vy: (Math.random() - 0.5) * 4,
                 radius: isHero ? 50 : (isTool ? 28 : 38),
-                color: isHero ? '#10b981' : (isTool ? '#3b82f6' : '#ffffff'),
+                color: isHero ? '#10b981' : (isTool ? '#3b82f6' : (resolvedTheme === 'light' ? '#64748b' : '#9ca3af')),
+                labelColor: resolvedTheme === 'dark' ? '#ffffff' : '#0f172a',
                 icon,
                 isHero,
                 mass: isHero ? 1.5 : 1

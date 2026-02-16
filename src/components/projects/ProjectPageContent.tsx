@@ -23,15 +23,15 @@ const TerminalBlock = ({ title, code }: { title: string; code: string }) => {
     };
 
     return (
-        <div className="rounded-xl overflow-hidden border border-white/10 bg-[#0d0d0d] shadow-2xl">
+        <div className="rounded-xl overflow-hidden border border-black/15 dark:border-white/10 bg-slate-50 dark:bg-zinc-950 shadow-2xl">
             {/* Terminal Header */}
-            <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/5">
+            <div className="flex items-center justify-between px-4 py-2 bg-slate-200/50 dark:bg-white/5 border-b border-black/10 dark:border-white/5">
                 <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-red-500/80" />
                     <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                     <div className="w-3 h-3 rounded-full bg-green-500/80" />
                 </div>
-                <span className="text-xs font-mono text-white/30">{title}</span>
+                <span className="text-xs font-mono text-slate-500 dark:text-white/30">{title}</span>
                 <div className="w-10" /> {/* Spacer for balance */}
             </div>
 
@@ -40,7 +40,7 @@ const TerminalBlock = ({ title, code }: { title: string; code: string }) => {
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                         onClick={handleCopy}
-                        className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all"
+                        className="p-1.5 rounded-md bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-slate-500 dark:text-white/50 hover:text-black dark:hover:text-white transition-all focus:outline-none"
                     >
                         {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
@@ -48,8 +48,8 @@ const TerminalBlock = ({ title, code }: { title: string; code: string }) => {
                 <div className="font-mono text-sm leading-relaxed overflow-x-auto">
                     {code.split('\n').map((line, i) => (
                         <div key={i} className="flex min-w-max">
-                            <span className="text-white/20 mr-4 select-none">$</span>
-                            <span className="text-emerald-400">{line}</span>
+                            <span className="text-slate-400 dark:text-white/20 mr-4 select-none">$</span>
+                            <span className="text-emerald-700 dark:text-emerald-400">{line}</span>
                         </div>
                     ))}
                 </div>
@@ -106,7 +106,7 @@ const ProjectGallery = ({
 
                         {/* Tech UI (Minimal Floating Label) */}
                         <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-black/5 dark:border-white/10 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 shadow-lg flex items-center gap-2">
+                            <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-black/10 dark:border-white/10 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400 shadow-lg flex items-center gap-2">
                                 <span>IMG_0{idx + 1}</span>
                                 <Maximize2 className="w-3 h-3" />
                             </div>
@@ -212,7 +212,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                     {/* Title & Description - REMOVED max-w-4xl constraint for Title */}
                     <div className="w-full">
                         {/* Status Badge */}
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6 border bg-secondary/5 border-border/40 text-muted-foreground">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6 border bg-secondary/10 dark:bg-secondary/5 border-black/20 dark:border-border/40 text-muted-foreground">
                             <span className={cn("w-2 h-2 rounded-full", isOngoing ? "bg-emerald-500 animate-pulse" : "bg-blue-500")} />
                             {isOngoing ? t('status.ongoing') : t('status.completed')}
                         </div>
@@ -244,7 +244,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.7, delay: 0.2 }}
-                    className="relative w-full aspect-video md:aspect-[2/1] rounded-3xl overflow-hidden border border-border/40 shadow-2xl bg-secondary/5 group"
+                    className="relative w-full aspect-video md:aspect-[2/1] rounded-3xl overflow-hidden border border-black/15 dark:border-border/40 shadow-2xl bg-secondary/5 group"
                     onClick={() => project.image && setSelectedImage(project.image)}
                 >
                     {project.image ? (
@@ -264,7 +264,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
 
             {/* 3. METADATA BAR (Horizontal Strip) */}
             <div className="container max-w-7xl mx-auto px-6 mb-20">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-4 border-y border-border/40 py-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-4 border-y border-black/20 dark:border-border/40 py-8">
                     <div className="flex flex-col gap-2">
                         <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
                             <Code className="w-3 h-3" /> {t('metadata.role')}
@@ -307,7 +307,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                 </span>
                                 <h2 className="text-2xl font-bold text-foreground">{t('sections.missionBrief')}</h2>
                             </div>
-                            <div className="prose prose-lg prose-invert prose-primary max-w-none prose-headings:font-black prose-headings:tracking-tight prose-p:leading-loose prose-p:text-muted-foreground">
+                            <div className="prose prose-lg dark:prose-invert prose-emerald max-w-none prose-headings:font-black prose-headings:tracking-tight prose-p:leading-loose text-zinc-600 dark:text-muted-foreground">
                                 <p>{project.longDescription || project.description}</p>
                             </div>
                         </section>
@@ -328,9 +328,9 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                             initial={{ opacity: 0, y: 20 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
-                                            className="p-6 rounded-2xl bg-secondary/5 border border-white/5 hover:border-white/10 transition-colors"
+                                            className="p-6 rounded-2xl bg-secondary/10 dark:bg-secondary/5 border border-black/25 dark:border-white/5 hover:border-black/35 dark:hover:border-white/10 transition-colors shadow-sm dark:shadow-none"
                                         >
-                                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-4 text-emerald-500">
+                                            <div className="w-10 h-10 rounded-xl bg-black/10 dark:bg-white/5 flex items-center justify-center mb-4 text-emerald-700 dark:text-emerald-500">
                                                 {idx === 0 ? <Box className="w-5 h-5" /> : idx === 1 ? <Terminal className="w-5 h-5" /> : idx === 2 ? <Zap className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
                                             </div>
                                             <h3 className="text-lg font-bold text-foreground mb-3">{group.title}</h3>
@@ -357,15 +357,15 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                     </span>
                                     <h2 className="text-2xl font-bold text-foreground">{t('sections.engineeringChronicles')}</h2>
                                 </div>
-                                <div className="relative border-l border-white/10 ml-3 space-y-12 pl-8 pb-4">
+                                <div className="relative border-l border-black/40 dark:border-white/10 ml-3 space-y-12 pl-8 pb-4">
                                     {project.challengesAndSolutions.map((item, idx) => (
                                         <div key={idx} className="relative group">
-                                            <div className="absolute -left-[37px] top-1 w-4 h-4 rounded-full bg-background border-2 border-white/10 group-hover:border-amber-500 transition-colors z-10" />
+                                            <div className="absolute -left-[37px] top-1 w-4 h-4 rounded-full bg-background border-2 border-black/40 dark:border-white/10 group-hover:border-amber-500 transition-colors z-10" />
                                             <h4 className="text-lg font-bold text-foreground mb-2 group-hover:text-amber-500 transition-colors">
                                                 {item.problem}
                                             </h4>
-                                            <div className="text-sm text-muted-foreground pl-4 border-l border-white/5">
-                                                <span className="text-emerald-500 font-bold text-xs uppercase tracking-wider block mb-1">{t('sections.solution')}</span>
+                                            <div className="text-sm text-zinc-600 dark:text-muted-foreground pl-4 border-l border-black/30 dark:border-white/5">
+                                                <span className="text-emerald-700 dark:text-emerald-500 font-bold text-xs uppercase tracking-wider block mb-1">{t('sections.solution')}</span>
                                                 {item.solution}
                                             </div>
                                         </div>
@@ -410,9 +410,9 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                                     code={step.cmd || step.code || ''}
                                                 />
                                             ) : (
-                                                <div className="bg-secondary/5 p-6 rounded-2xl border border-white/5">
+                                                <div className="bg-secondary/20 dark:bg-secondary/5 p-6 rounded-2xl border border-black/10 dark:border-white/5">
                                                     <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-700 dark:bg-emerald-500" />
                                                         {step.title}
                                                     </h3>
                                                     <p className="text-sm text-muted-foreground leading-relaxed">
@@ -433,7 +433,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                         <div className="sticky top-20 space-y-8">
 
                             {/* Actions Card */}
-                            <div className="p-6 rounded-2xl bg-secondary/5 border border-white/10 backdrop-blur-sm">
+                            <div className="p-6 rounded-2xl bg-white dark:bg-secondary/5 border border-black/20 dark:border-white/10 backdrop-blur-sm shadow-sm dark:shadow-none">
                                 <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">{t('sections.projectAccess')}</h3>
                                 <div className="flex flex-col gap-3">
                                     {project.demoUrl && (
@@ -455,7 +455,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                         </motion.a>
                                     )}
                                     {project.repoUrl && (
-                                        <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-sm bg-secondary/10 hover:bg-secondary/20 text-foreground transition-all">
+                                        <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-sm bg-black/10 dark:bg-secondary/10 hover:bg-black/20 dark:hover:bg-secondary/20 text-foreground transition-all border border-black/5 dark:border-transparent hover:border-black/10 dark:hover:border-white/5">
                                             <Github className="w-4 h-4" />
                                             <span>{t('sections.sourceCode')}</span>
                                         </a>
@@ -465,10 +465,10 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
 
                             {/* Tech Stack Tags */}
                             <div>
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-white/5">{t('sections.technologies')}</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-black/25 dark:border-white/5">{t('sections.technologies')}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {project.techStack.map(tech => (
-                                        <div key={tech} className="px-3 py-1.5 bg-secondary/5 border border-white/5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:border-white/10 transition-colors cursor-default">
+                                        <div key={tech} className="px-3 py-1.5 bg-secondary/20 dark:bg-secondary/5 border border-black/20 dark:border-white/5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:border-black/30 dark:hover:border-white/10 transition-colors cursor-default">
                                             {tech}
                                         </div>
                                     ))}
@@ -477,7 +477,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
 
                             {/* Table of Contents (Functional) */}
                             <div>
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-white/5">{t('sections.contents')}</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-black/25 dark:border-white/5">{t('sections.contents')}</h3>
                                 <ul className="space-y-3 text-sm text-muted-foreground">
                                     <li onClick={() => document.getElementById('mission')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-foreground cursor-pointer transition-colors hover:translate-x-1 duration-200 block">• {t('sections.missionBrief')}</li>
                                     {project.features && <li onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-foreground cursor-pointer transition-colors hover:translate-x-1 duration-200 block">• {t('sections.keyFeatures')}</li>}
@@ -518,7 +518,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                         scrollContainerRef.current.scrollBy({ left: -scrollContainerRef.current.clientWidth / 3, behavior: 'smooth' });
                                     }
                                 }}
-                                className="p-2 rounded-full border border-white/10 bg-secondary/5 hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
+                                className="p-2 rounded-full border border-black/10 dark:border-white/10 bg-black/10 dark:bg-secondary/5 hover:bg-black/20 dark:hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
                             >
                                 <ChevronLeft className="w-5 h-5" />
                             </button>
@@ -528,7 +528,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                         scrollContainerRef.current.scrollBy({ left: scrollContainerRef.current.clientWidth / 3, behavior: 'smooth' });
                                     }
                                 }}
-                                className="p-2 rounded-full border border-white/10 bg-secondary/5 hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
+                                className="p-2 rounded-full border border-black/10 dark:border-white/10 bg-black/10 dark:bg-secondary/5 hover:bg-black/20 dark:hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
                             >
                                 <ChevronRight className="w-5 h-5" />
                             </button>
@@ -543,7 +543,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                             <Link
                                 href={`/projects/${p.slug}`}
                                 key={p.id}
-                                className="flex-none w-[85vw] md:w-[calc(33.333%-1rem)] snap-center group relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-zinc-900"
+                                className="flex-none w-[85vw] md:w-[calc(33.333%-1rem)] snap-center group relative aspect-video rounded-xl overflow-hidden border border-black/30 dark:border-white/10 bg-zinc-200 dark:bg-zinc-900 shadow-md dark:shadow-none"
                             >
                                 {/* Background Layer */}
                                 {p.image ? (

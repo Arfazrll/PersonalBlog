@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useSpring, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import { useLenis } from 'lenis/react';
 import { useTranslations } from 'next-intl';
-import { X, Calendar, Code, Box, Award, Share2, ExternalLink, Github, Terminal, ChevronRight, ChevronLeft, CheckCircle2, Copy, Check, Maximize2, ArrowUpRight, Zap, Sparkles } from 'lucide-react';
+import { X, Calendar, Code, Box, Award, Share2, ExternalLink, Github, Terminal, ChevronRight, ChevronLeft, CheckCircle2, Copy, Check, Maximize2, ArrowUpRight, Zap, Sparkles, Cpu, Info } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { Project } from '@/types';
 import { portfolioData } from '@/data/portfolio';
@@ -21,15 +21,15 @@ const TerminalBlock = ({ title, code }: { title: string; code: string }) => {
     };
 
     return (
-        <div className="rounded-xl overflow-hidden border border-white/10 bg-[#0d0d0d] shadow-2xl">
+        <div className="rounded-xl overflow-hidden border border-black/15 dark:border-white/10 bg-slate-50 dark:bg-zinc-950 shadow-2xl">
             {/* Terminal Header */}
-            <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/5">
+            <div className="flex items-center justify-between px-4 py-2 bg-slate-200/50 dark:bg-white/5 border-b border-black/10 dark:border-white/5">
                 <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-red-500/80" />
                     <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                     <div className="w-3 h-3 rounded-full bg-green-500/80" />
                 </div>
-                <span className="text-xs font-mono text-white/30">{title}</span>
+                <span className="text-xs font-mono text-slate-500 dark:text-white/30">{title}</span>
                 <div className="w-10" /> {/* Spacer for balance */}
             </div>
 
@@ -38,7 +38,7 @@ const TerminalBlock = ({ title, code }: { title: string; code: string }) => {
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                         onClick={handleCopy}
-                        className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all"
+                        className="p-1.5 rounded-md bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-slate-500 dark:text-white/50 hover:text-black dark:hover:text-white transition-all focus:outline-none"
                     >
                         {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
@@ -46,8 +46,8 @@ const TerminalBlock = ({ title, code }: { title: string; code: string }) => {
                 <div className="font-mono text-sm leading-relaxed overflow-x-auto">
                     {code.split('\n').map((line, i) => (
                         <div key={i} className="flex min-w-max">
-                            <span className="text-white/20 mr-4 select-none">$</span>
-                            <span className="text-emerald-400">{line}</span>
+                            <span className="text-slate-400 dark:text-white/20 mr-4 select-none">$</span>
+                            <span className="text-emerald-700 dark:text-emerald-400">{line}</span>
                         </div>
                     ))}
                 </div>
@@ -234,7 +234,7 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                     stiffness: 200,
                     exit: { duration: 0.2, ease: "easeInOut" }
                 }}
-                className="absolute inset-0 md:inset-4 md:rounded-3xl bg-white/90 dark:bg-zinc-950/90 backdrop-blur-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10 shadow-2xl flex flex-col lg:flex-row will-change-transform"
+                className="absolute inset-0 md:inset-4 md:rounded-3xl bg-white dark:bg-zinc-950/90 backdrop-blur-2xl overflow-hidden ring-1 ring-black/10 dark:ring-white/10 shadow-2xl flex flex-col lg:flex-row will-change-transform"
                 onClick={(e) => e.stopPropagation()}
                 data-lenis-prevent
             >
@@ -354,7 +354,7 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                 href={project.repoUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-medium text-sm bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white transition-all"
+                                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-medium text-sm bg-white/10 border border-white/20 hover:bg-white/20 hover:border-white/30 text-white transition-all"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -370,7 +370,7 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                     <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white via-white/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent pointer-events-none z-30" />
 
                     {/* Tabs - Floating & Adaptive */}
-                    <div className="sticky top-0 z-20 px-6 pt-6 pb-2 bg-gradient-to-b from-white/95 to-transparent dark:from-zinc-950/95 dark:to-transparent backdrop-blur-sm lg:pl-12 transition-[padding]">
+                    <div className="sticky top-0 z-20 px-6 pt-6 pb-2 bg-gradient-to-b from-white to-transparent dark:from-zinc-950/95 dark:to-transparent backdrop-blur-sm lg:pl-12 transition-[padding]">
                         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
                             {(['overview', 'tech', 'features', 'gallery', 'install'] as const).map((section) => {
                                 // Conditionally render tabs based on available data
@@ -381,18 +381,17 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                         key={section}
                                         onClick={() => setActiveSection(section)}
                                         className={cn(
-                                            "relative px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-300 shrink-0",
+                                            "relative px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 shrink-0 border shadow-sm",
                                             activeSection === section
-                                                ? "text-background bg-foreground"
-                                                : "text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5"
+                                                ? "bg-black dark:bg-white text-white dark:text-black border-black dark:border-white scale-105"
+                                                : "bg-white dark:bg-white/5 border-black/30 dark:border-white/10 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10"
                                         )}
                                     >
-                                        <span className="relative z-10">{section}</span>
+                                        <span className="relative z-10 uppercase tracking-wide text-[10px]">{section}</span>
                                         {activeSection === section && (
                                             <motion.div
                                                 layoutId="activeTabPill"
                                                 className="absolute inset-0 bg-transparent rounded-full z-0"
-                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                             />
                                         )}
                                     </button>
@@ -418,7 +417,7 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                     <div className="space-y-10">
                                         <motion.div variants={itemVariants} className="space-y-6">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-foreground border border-black/5 dark:border-white/5">
+                                                <div className="w-10 h-10 rounded-full bg-black/10 dark:bg-white/5 flex items-center justify-center text-foreground border border-black/10 dark:border-white/5">
                                                     <Box className="w-5 h-5" />
                                                 </div>
                                                 <div>
@@ -426,25 +425,25 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Project Overview</p>
                                                 </div>
                                             </div>
-                                            <p className="text-base md:text-lg leading-relaxed text-muted-foreground font-light tracking-wide border-l-2 border-black/10 dark:border-white/10 pl-6">
+                                            <p className="text-base md:text-lg leading-relaxed text-zinc-600 dark:text-muted-foreground font-light tracking-wide border-l-2 border-black/15 dark:border-white/10 pl-6">
                                                 {project.longDescription || project.description}
                                             </p>
                                         </motion.div>
 
                                         {/* Metadata Strip */}
-                                        <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-x-16 gap-y-8 py-10 border-y border-black/5 dark:border-white/5">
+                                        <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-x-12 gap-y-8 py-10 border-y border-black/25 dark:border-white/5">
                                             {[
                                                 { label: 'Role', value: project.role || 'Full Stack Dev', icon: Code },
                                                 { label: 'Timeline', value: project.customTimeline || '3 Months', icon: Calendar },
-                                                { label: 'Team', value: project.team || 'Individual', icon: Award },
-                                                { label: 'Status', value: isOngoing ? 'Active' : 'Completed', icon: CheckCircle2 }
-                                            ].map((item, i) => (
-                                                <div key={i} className="flex flex-col items-center text-center gap-4">
-                                                    <div className="flex items-center gap-2 text-muted-foreground/80 text-[10px] uppercase tracking-wider font-bold">
-                                                        <item.icon className="w-3.5 h-3.5" />
-                                                        {item.label}
+                                                { label: 'Tech', value: project.techStack?.[0] || 'Next.js', icon: Cpu },
+                                                { label: 'Status', value: project.status === 'ongoing' ? 'Ongoing' : 'Finished', icon: Info },
+                                            ].map((item, idx) => (
+                                                <div key={idx} className="flex flex-col items-center gap-3">
+                                                    <div className="flex items-center gap-2 text-slate-500 dark:text-muted-foreground">
+                                                        <item.icon className="w-4 h-4" />
+                                                        <span className="text-[10px] uppercase tracking-widest font-black leading-none">{item.label}</span>
                                                     </div>
-                                                    <div className="text-lg font-medium text-foreground">{item.value}</div>
+                                                    <span className="text-sm font-bold text-foreground">{item.value}</span>
                                                 </div>
                                             ))}
                                         </motion.div>
@@ -458,20 +457,16 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                                 Engineering Chronicles
                                             </h3>
 
-                                            <div className="relative border-l border-black/10 dark:border-white/10 ml-3 space-y-12 pl-8 pb-4">
+                                            <div className="relative border-l border-black/40 dark:border-white/10 ml-3 space-y-12 pl-8 pb-4">
                                                 {project.challengesAndSolutions.map((item, idx) => (
                                                     <div key={idx} className="relative group">
-                                                        {/* Node */}
-                                                        <div className="absolute -left-[37px] top-1 w-4 h-4 rounded-full bg-background border-2 border-black/10 dark:border-white/10 group-hover:border-amber-500 group-hover:scale-125 transition-all duration-300 z-10" />
-
-                                                        <div className="space-y-4">
-                                                            <h4 className="text-lg font-bold text-foreground group-hover:text-amber-500 transition-colors">
-                                                                {item.problem}
-                                                            </h4>
-                                                            <div className="text-sm text-muted-foreground leading-relaxed pl-4 border-l border-black/5 dark:border-white/5 group-hover:border-emerald-500/50 transition-colors">
-                                                                <span className="text-emerald-600 dark:text-emerald-500 font-bold text-xs uppercase tracking-wider block mb-1">Solved With</span>
-                                                                {item.solution}
-                                                            </div>
+                                                        <div className="absolute -left-[37px] top-1 w-4 h-4 rounded-full bg-background border-2 border-black/40 dark:border-white/10 group-hover:border-amber-500 transition-colors z-10" />
+                                                        <h4 className="text-lg font-bold text-foreground mb-2 group-hover:text-amber-500 transition-colors">
+                                                            {item.problem}
+                                                        </h4>
+                                                        <div className="text-sm text-zinc-600 dark:text-muted-foreground pl-4 border-l border-black/30 dark:border-white/5">
+                                                            <span className="text-emerald-700 dark:text-emerald-500 font-bold text-xs uppercase tracking-wider block mb-1">{t('sections.solution')}</span>
+                                                            {item.solution}
                                                         </div>
                                                     </div>
                                                 ))}
@@ -480,10 +475,10 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                     )}
 
                                     {/* Support Section (Clean Call to Action) */}
-                                    <motion.div variants={itemVariants} className="pt-12 border-t border-black/5 dark:border-white/5">
+                                    <motion.div variants={itemVariants} className="pt-12 border-t border-black/10 dark:border-white/5">
                                         <div className="flex flex-col items-center text-center space-y-8">
                                             <div className="max-w-xl space-y-4">
-                                                <h3 className="text-2xl md:text-3xl font-bold text-foreground">Interested in the code?</h3>
+                                                <h3 className="text-2xl md:text-3xl font-bold text-foreground font-black tracking-tight tracking-[-0.04em]">Interested in the code?</h3>
                                                 <div className="h-6 flex items-center justify-center">
                                                     <Typewriter examples={[
                                                         "Check out the repo on GitHub...",
@@ -498,14 +493,14 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                                     href={project.repoUrl ? `${project.repoUrl}` : '#'}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="px-8 py-3 rounded-full bg-foreground text-background font-bold hover:opacity-90 transition-all flex items-center gap-2"
+                                                    className="px-8 py-3 rounded-full bg-black dark:bg-white text-white dark:text-black font-bold hover:opacity-90 transition-all flex items-center gap-2 shadow-lg"
                                                 >
                                                     <Github className="w-4 h-4" />
                                                     GitHub Repo
                                                 </a>
                                                 <a
                                                     href="/contact"
-                                                    className="px-8 py-3 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 text-foreground font-medium transition-all flex items-center gap-2"
+                                                    className="px-8 py-3 rounded-full bg-black/5 dark:bg-white/5 border border-black/20 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 text-foreground font-bold transition-all flex items-center gap-2"
                                                 >
                                                     <Share2 className="w-4 h-4" />
                                                     Contact
@@ -539,59 +534,56 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                     className="h-full flex flex-col p-6"
                                 >
                                     {project.features ? (
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
                                             {project.features.map((group, idx) => (
                                                 <motion.div
                                                     key={idx}
                                                     initial={{ opacity: 0, y: 20 }}
                                                     animate={{ opacity: 1, y: 0 }}
                                                     transition={{ delay: idx * 0.1 }}
-                                                    className="group relative flex flex-col p-6 rounded-3xl bg-white/60 dark:bg-zinc-900/40 backdrop-blur-md border border-black/5 dark:border-white/5 hover:bg-white/80 dark:hover:bg-zinc-900/60 hover:border-emerald-500/30 shadow-lg hover:shadow-emerald-500/10 transition-all duration-500 overflow-hidden"
+                                                    className="group relative flex flex-col p-6 rounded-3xl bg-zinc-100/80 dark:bg-zinc-900/40 backdrop-blur-md border border-black/25 dark:border-white/5 hover:bg-white dark:hover:bg-zinc-900/60 hover:border-emerald-500/30 shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden"
                                                 >
                                                     {/* Hover Gradient Effect */}
                                                     <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                                                     {/* Icon Header */}
                                                     <div className="mb-6 relative z-10">
-                                                        <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:border-emerald-500/30 group-hover:bg-emerald-500/10 transition-all duration-500">
-                                                            {idx === 0 ? <Box className="w-6 h-6 text-emerald-600 dark:text-emerald-400" /> :
-                                                                idx === 1 ? <Terminal className="w-6 h-6 text-blue-600 dark:text-blue-400" /> :
-                                                                    <Zap className="w-6 h-6 text-amber-600 dark:text-amber-400" />}
+                                                        <div className="w-12 h-12 rounded-2xl bg-black/10 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-emerald-500/10 transition-all duration-500">
+                                                            {idx === 0 ? <Box className="w-6 h-6 text-emerald-700 dark:text-emerald-400" /> :
+                                                                idx === 1 ? <Terminal className="w-6 h-6 text-blue-700 dark:text-blue-400" /> :
+                                                                    <Zap className="w-6 h-6 text-amber-700 dark:text-amber-400" />}
                                                         </div>
-                                                        <h3 className="text-xl font-bold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                                        <h3 className="text-xl font-black tracking-tight text-foreground group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
                                                             {group.title}
                                                         </h3>
                                                     </div>
 
                                                     {/* Feature List */}
-                                                    <div className="space-y-4 relative z-10 font-light">
+                                                    <div className="space-y-4 relative z-10 font-normal">
                                                         {group.items.map((item, i) => (
-                                                            <div key={i} className="flex gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed">
+                                                            <div key={i} className="flex gap-3 text-sm text-zinc-600 dark:text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed">
                                                                 <div className="mt-1.5 w-1 h-1 rounded-full bg-emerald-500/50 group-hover:bg-emerald-400 shrink-0" />
                                                                 <span>{renderRichText(item)}</span>
                                                             </div>
                                                         ))}
                                                     </div>
-
-                                                    {/* Bottom Decoration */}
-                                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                                 </motion.div>
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             {project.highlights?.map((highlight, i) => (
                                                 <motion.div
                                                     key={i}
                                                     initial={{ opacity: 0, scale: 0.9 }}
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     transition={{ delay: i * 0.1 }}
-                                                    className="flex items-center gap-4 p-6 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 hover:border-emerald-500/30 transition-all hover:bg-black/10 dark:hover:bg-white/10"
+                                                    className="flex items-center gap-4 p-6 rounded-2xl bg-zinc-100/80 dark:bg-white/5 border border-black/25 dark:border-white/5 hover:border-emerald-500/30 transition-all hover:bg-white dark:hover:bg-white/10 shadow-sm"
                                                 >
-                                                    <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-500 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                                                    <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-700 dark:text-emerald-500 border border-emerald-500/20">
                                                         <CheckCircle2 className="w-6 h-6" />
                                                     </div>
-                                                    <span className="text-lg text-foreground/90 font-medium">{renderRichText(highlight)}</span>
+                                                    <span className="text-lg text-foreground font-bold">{renderRichText(highlight)}</span>
                                                 </motion.div>
                                             ))}
                                         </div>
@@ -628,17 +620,17 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                                 >
                                     {project.installation ? (
                                         project.installation.map((step, i) => (
-                                            <div key={i} className="bg-black/5 dark:bg-white/5 rounded-xl overflow-hidden border border-black/10 dark:border-white/5">
-                                                <div className="bg-black/[0.07] dark:bg-white/5 px-4 py-2 flex items-center gap-2 border-b border-black/5 dark:border-white/5">
-                                                    <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">{i + 1}</div>
-                                                    <h3 className="text-xs font-semibold text-foreground/80">{step.title}</h3>
+                                            <div key={i} className="bg-zinc-100/80 dark:bg-white/5 rounded-xl overflow-hidden border border-black/30 dark:border-white/5 shadow-sm">
+                                                <div className="bg-black/[0.05] dark:bg-white/5 px-4 py-2 flex items-center gap-2 border-b border-black/30 dark:border-white/5">
+                                                    <div className="w-4 h-4 rounded-full bg-emerald-600/20 dark:bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-emerald-700 dark:text-emerald-400">{i + 1}</div>
+                                                    <h3 className="text-xs font-bold text-foreground/80">{step.title}</h3>
                                                 </div>
                                                 {step.type === 'code' ? (
                                                     <div className="p-0">
                                                         <TerminalBlock title={step.title} code={step.code || ''} />
                                                     </div>
                                                 ) : (
-                                                    <div className="p-3 text-xs font-mono text-muted-foreground whitespace-pre-wrap">
+                                                    <div className="p-4 text-sm font-mono text-zinc-600 dark:text-muted-foreground whitespace-pre-wrap leading-relaxed">
                                                         {step.code}
                                                     </div>
                                                 )}
@@ -679,6 +671,6 @@ export function ProjectDetail({ project, onClose, isLowPowerMode }: { project: P
                     </motion.div>
                 )}
             </AnimatePresence>
-        </motion.div>
+        </motion.div >
     );
 }

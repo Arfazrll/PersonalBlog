@@ -279,7 +279,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                             >
                                                 <h2 className="text-5xl md:text-7xl font-black text-neutral-900 dark:text-white tracking-tighter mb-6 leading-[0.9]">
                                                     SELECT <br />
-                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500">
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 via-neutral-600 to-neutral-400 dark:from-white dark:via-neutral-200 dark:to-neutral-500">
                                                         ARCHIVE
                                                     </span>
                                                 </h2>
@@ -289,7 +289,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                             </motion.div>
 
                                             {/* Decorative Elements */}
-                                            <div className="hidden lg:block w-24 h-1 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" />
+                                            <div className="hidden lg:block w-24 h-1 bg-gradient-to-r from-neutral-900 to-neutral-400 dark:from-white dark:to-neutral-600 rounded-full" />
                                         </div>
 
                                         {/* Right: Interactive List */}
@@ -320,7 +320,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
 
                                                     {/* Text Content */}
                                                     <div className="flex-1 relative z-10">
-                                                        <h4 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1 group-hover:text-purple-600 dark:group-hover:text-cyan-400 transition-colors">
+                                                        <h4 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1 group-hover:text-neutral-700 dark:group-hover:text-neutral-200 transition-colors">
                                                             {cat.label}
                                                         </h4>
                                                         <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 line-clamp-1 group-hover:text-neutral-900 dark:group-hover:text-neutral-200 transition-colors">
@@ -329,7 +329,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                                     </div>
 
                                                     {/* Arrow Action */}
-                                                    <div className="w-10 h-10 rounded-full bg-white dark:bg-black border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-neutral-400 group-hover:text-purple-500 dark:group-hover:text-cyan-500 group-hover:border-purple-200 dark:group-hover:border-cyan-800 transition-all duration-300">
+                                                    <div className="w-10 h-10 rounded-full bg-white dark:bg-black border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white group-hover:border-neutral-400 dark:group-hover:border-neutral-600 transition-all duration-300">
                                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
                                                     </div>
                                                 </motion.button>
@@ -358,7 +358,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                                 <h3 className="text-4xl md:text-5xl font-black text-neutral-900 dark:text-white tracking-tighter leading-tight">
                                                     {categories.find(c => c.id === selectedCategory)?.label}
                                                 </h3>
-                                                <div className="h-1.5 w-20 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" />
+                                                <div className="h-1.5 w-20 bg-gradient-to-r from-neutral-900 to-neutral-500 dark:from-white dark:to-neutral-600 rounded-full" />
                                             </div>
 
                                             <div className="hidden lg:flex flex-col gap-2">
@@ -413,7 +413,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                                         </div>
 
                                                         <div className="space-y-4">
-                                                            <h4 className="text-2xl font-bold text-neutral-900 dark:text-white leading-tight group-hover:text-purple-600 dark:group-hover:text-cyan-400 transition-colors">
+                                                            <h4 className="text-2xl font-bold text-neutral-900 dark:text-white leading-tight group-hover:text-neutral-700 dark:group-hover:text-neutral-200 transition-colors">
                                                                 {exp.position}
                                                             </h4>
                                                             <p className="text-neutral-600 dark:text-neutral-300 mb-4 leading-relaxed">
@@ -503,7 +503,7 @@ export default function ExperiencePage() {
 
 const slugify = (text: string) => {
     return text
-        .split('(')[0] 
+        .split('(')[0]
         .toLowerCase()
         .replace(/[^\w]/g, '');
 };
