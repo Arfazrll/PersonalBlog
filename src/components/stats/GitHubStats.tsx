@@ -2,16 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { GitCommit, Star, Trophy, Zap, TrendingUp, Calendar as CalendarIcon, Github } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { formatDistanceToNow } from 'date-fns';
+import { GitCommit, Star, Trophy, Zap, TrendingUp, Calendar as CalendarIcon, Github, GitPullRequest, ChevronDown } from 'lucide-react';
 import { portfolioData } from '@/data/portfolio';
 
 export interface GitHubSummary {
-    total: number;
+    totalStars: number;
+    totalCommits: number;
+    totalPRs: number;
+    totalContributions: number;
     thisWeek: number;
-    best: number;
+    bestDay: number;
     average: number;
+    followers: number;
+    recentActivity?: any[];
 }
 
 export function useGitHubData(username: string) {
@@ -21,42 +28,22 @@ export function useGitHubData(username: string) {
     useEffect(() => {
         const fetchGitHubData = async () => {
             try {
-                const res = await fetch(`https://github-contributions-api.deno.dev/${username}.json`);
+                // Fetch from our new internal API
+                const res = await fetch('/api/github-stats');
                 if (res.ok) {
-                    const data = await res.json();
-                    if (!data || !data.total) {
-                        console.warn('GitHub API returned invalid structure, using fallback data.');
-                        setSummary({
-                            total: 599,
-                            thisWeek: 6,
-                            best: 50,
-                            average: 2.1
-                        });
-                        return;
-                    }
+                    const json = await res.json();
+                    const data = json.data;
 
-                    const total = data.total.lastYear ?? 0;
-                    const contributions = Array.isArray(data.contributions) ? data.contributions : [];
+                    // Calculate average (approximate)
+                    const average = parseFloat((data.totalContributions / 365).toFixed(1));
 
-                    const today = new Date();
-                    const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-                    const weekData = contributions.filter((c: any) => new Date(c.date) >= oneWeekAgo);
-                    const thisWeek = weekData.reduce((acc: number, curr: any) => acc + curr.count, 0);
-
-                    const best = contributions.length > 0 ? Math.max(...contributions.map((c: any) => c.count)) : 0;
-                    const average = parseFloat((total / 365).toFixed(1));
-
-                    setSummary({ total, thisWeek, best, average });
+                    setSummary({
+                        ...data,
+                        average
+                    });
                 }
             } catch (error) {
-                console.error('Failed to fetch GitHub contributions:', error);
-                // Demo fallback
-                setSummary({
-                    total: 599,
-                    thisWeek: 6,
-                    best: 50,
-                    average: 2.1
-                });
+                console.error('Failed to fetch GitHub stats:', error);
             } finally {
                 setLoading(false);
             }
@@ -69,59 +56,175 @@ export function useGitHubData(username: string) {
 
 export function GitHubHeatmap({ username }: { username: string }) {
     const { theme } = useTheme();
-    const cyberpunkTheme = {
-        light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-        dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
+    const t = useTranslations('technical.github');
+    const [mounted, setMounted] = useState(false);
+    const [showActivity, setShowActivity] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Gold/Yellow Theme for "Kontribusi GitHub"
+    const goldTheme = {
+        light: ['#ebedf0', '#fefce8', '#fef08a', '#facc15', '#ca8a04'],
+        dark: ['#161b22', '#422006', '#854d0e', '#eab308', '#facc15'],
     };
 
+    const { summary } = useGitHubData(username);
+
+    if (!mounted) return null;
+
     return (
-        <div className="relative w-full h-full flex flex-col justify-center bg-card/80 border border-border rounded-[2.5rem] p-8 backdrop-blur-md overflow-hidden group shadow-xl transition-all duration-500 hover:border-emerald-500/30">
-            <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none">
-                <Github className="w-64 h-64 rotate-12" />
+        <div className="w-full font-sans transition-colors duration-300">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-8">
+                <Github className="w-8 h-8 text-gray-900 dark:text-white" />
+                <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
+                    {t('title')}
+                </h2>
+            </div>
+            <p className="text-gray-500 dark:text-[#8b949e] mb-8 -mt-6">
+                {t('description')}
+            </p>
+
+            {/* NEW STATS (Real-time from API) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                {/* Total Contributions */}
+                <StatCard
+                    label="Total"
+                    value={summary?.totalContributions || 0}
+                    icon={<Zap className="w-4 h-4 text-orange-500" />}
+                />
+
+                {/* Total Commits */}
+                <StatCard
+                    label="Total Commits"
+                    value={summary?.totalCommits || 0}
+                    icon={<GitCommit className="w-4 h-4 text-blue-500" />}
+                />
+
+                {/* PRs / Merges */}
+                <StatCard
+                    label="PRs & Merges"
+                    value={summary?.totalPRs || 0}
+                    icon={<TrendingUp className="w-4 h-4 text-green-500" />}
+                />
+
+                {/* Total Stars */}
+                <StatCard
+                    label="Total Stars"
+                    value={summary?.totalStars || 0}
+                    icon={<Star className="w-4 h-4 text-yellow-500" />}
+                />
             </div>
 
-            <div className="flex items-center justify-between mb-8 relative z-10">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
-                        <GitCommit className="w-4 h-4 text-emerald-400" />
-                    </div>
-                    <span className="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-bold">Annual Pulse</span>
+            {/* Heatmap Container - Seamless Background */}
+            <div className="w-full overflow-hidden mb-10">
+                <div className="flex items-center justify-between mb-6 px-4 md:px-5">
+                    <h3 className="text-gray-900 dark:text-white text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                        Activity Calendar
+                    </h3>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-black/20 rounded-full border border-white/5">
-                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                    <span className="text-[10px] font-mono text-zinc-500">@{username}</span>
-                </div>
-            </div>
 
-            <div className="relative z-10 w-full overflow-hidden flex justify-center items-center py-6 bg-muted/30 rounded-3xl border border-border shadow-inner">
-                <div className="overflow-x-auto pb-2 custom-scrollbar flex justify-center w-full min-h-[160px]">
-                    {username ? (
+                <div className="w-full overflow-x-auto pb-2 custom-scrollbar">
+                    <div className="min-w-full">
                         <GitHubCalendar
                             username={username}
                             colorScheme={theme === 'dark' ? 'dark' : 'light'}
-                            theme={cyberpunkTheme}
+                            theme={goldTheme}
                             blockMargin={4}
-                            blockSize={12}
-                            fontSize={12}
+                            blockSize={18}
+                            fontSize={14}
                             showTotalCount={false}
                             showColorLegend={false}
+                            labels={{
+                                months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                                weekdays: ['Dom', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                                totalCount: '{{count}} contributions in {{year}}',
+                                legend: {
+                                    less: t('less'),
+                                    more: t('more'),
+                                },
+                            }}
                         />
-                    ) : (
-                        <div className="flex items-center justify-center text-muted-foreground font-mono text-xs italic">
-                            Awaiting User Identity...
-                        </div>
-                    )}
+                    </div>
+                </div>
+
+                {/* Custom Legend */}
+                <div className="flex items-center gap-2 mt-4 px-4 md:px-5 text-xs text-gray-500 dark:text-[#8b949e]">
+                    <span>{t('less')}</span>
+                    <div className="flex gap-1">
+                        {(theme === 'dark' ? goldTheme.dark : goldTheme.light).map((color, i) => (
+                            <div key={i} className="w-3 h-3 rounded-sm" style={{ backgroundColor: color }} />
+                        ))}
+                    </div>
+                    <span>{t('more')}</span>
                 </div>
             </div>
 
-            <div className="mt-6 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase tracking-[0.3em] font-bold">
-                <span>Data Source: GitHub Arfazrll</span>
-                <div className="flex gap-1">
-                    {cyberpunkTheme.dark.map((c, i) => (
-                        <div key={i} className="w-2 h-2 rounded-full shadow-[0_0_5px_rgba(0,0,0,0.2)]" style={{ backgroundColor: c }} />
-                    ))}
+            {/* Recent Activity Feed - Collapsible */}
+            {summary?.recentActivity && summary.recentActivity.length > 0 && (
+                <div className="w-full px-4 md:px-5 mb-8">
+                    <button
+                        onClick={() => setShowActivity(!showActivity)}
+                        className="w-full flex items-center justify-between group py-2"
+                    >
+                        <h3 className="text-gray-900 dark:text-white text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                            Recent Activity
+                        </h3>
+                        <div className={`p-1 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors`}>
+                            <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-300 ${showActivity ? 'rotate-180' : ''}`} />
+                        </div>
+                    </button>
+
+                    <motion.div
+                        initial={false}
+                        animate={{ height: showActivity ? 'auto' : 0, opacity: showActivity ? 1 : 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                    >
+                        <div className="flex flex-col pt-2">
+                            {summary.recentActivity.map((activity, idx) => (
+                                <div key={idx} className="group flex items-center py-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors px-2 rounded-lg">
+                                    <span className="text-xs font-mono text-gray-400 dark:text-gray-600 w-8">
+                                        {String(idx + 1).padStart(2, '0')}
+                                    </span>
+                                    <div className="flex-1 flex flex-row items-center justify-between gap-4">
+                                        <span className="text-sm md:text-base font-medium text-gray-900 dark:text-gray-200 group-hover:text-blue-500 transition-colors truncate">
+                                            {activity.type === 'push' ? (
+                                                <>Pushed to <span className="text-gray-500 dark:text-gray-500 group-hover:text-blue-400 transition-colors">{activity.repo}</span></>
+                                            ) : (
+                                                <>{activity.status === 'merged' ? 'Merged PR in' : 'Opened PR in'} <span className="text-gray-500 dark:text-gray-500 group-hover:text-blue-400 transition-colors">{activity.repo}</span></>
+                                            )}
+                                        </span>
+                                        <span className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-600 whitespace-nowrap">
+                                            {formatDistanceToNow(new Date(activity.date), { addSuffix: true })}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
                 </div>
+            )}
+        </div>
+    );
+}
+
+function StatCard({ label, value, icon }: { label: string, value: string | number, icon?: React.ReactNode }) {
+    return (
+        <div className="relative group p-4 md:p-5 border border-gray-200 dark:border-[#30363d] rounded-xl hover:border-yellow-500/30 dark:hover:border-yellow-500/30 transition-all duration-300 bg-transparent hover:bg-gray-50/50 dark:hover:bg-[#161b22]/50">
+            <div className="flex items-center gap-2 mb-3">
+                <div className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 group-hover:text-yellow-500 transition-colors duration-300">
+                    {icon}
+                </div>
+                <span className="text-gray-500 dark:text-[#8b949e] text-xs font-medium uppercase tracking-wider">{label}</span>
             </div>
+            <span className="text-lg md:text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                {value}
+            </span>
         </div>
     );
 }

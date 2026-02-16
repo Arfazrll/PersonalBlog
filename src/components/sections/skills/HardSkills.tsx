@@ -52,7 +52,7 @@ export const HardSkills = () => {
     }, []);
 
     return (
-        <section className="py-32 px-6 relative overflow-hidden bg-slate-50 dark:bg-background">
+        <section id="hard-skills" className="py-32 px-6 relative overflow-hidden bg-slate-50 dark:bg-background">
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header */}
                 <motion.div

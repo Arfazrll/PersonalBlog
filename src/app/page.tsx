@@ -56,7 +56,7 @@ const particlesOptions: ISourceOptions = {
             straight: false,
             outModes: { default: 'out' },
         },
-        number: { density: { enable: true }, value: 25 }, 
+        number: { density: { enable: true }, value: 25 },
         opacity: { value: { min: 0.1, max: 0.4 } },
         size: { value: { min: 1, max: 3 } },
     },
@@ -369,7 +369,7 @@ export default function HomePage() {
         AOS.init({
             duration: 1000,
             easing: 'ease-out-cubic',
-            once: false, 
+            once: false,
             offset: 100,
             mirror: true,
         });
@@ -394,8 +394,8 @@ export default function HomePage() {
             {isLoading && <LoadingScreen onComplete={handleLoadingComplete} duration={2500} />}
             <main className="relative overflow-x-hidden">
                 <HeroIntro />
-                <AboutSection />
                 <ExpertiseSection />
+                <AboutSection />
                 <StatsSection />
                 <CTASection />
             </main>

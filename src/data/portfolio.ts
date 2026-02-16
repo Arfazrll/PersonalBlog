@@ -10,7 +10,7 @@ export const portfolioData: PortfolioData = {
         location: 'DKI Jakarta, Indonesia',
         email: 'azril4974@gmail.com',
         phone: '+6281511463282',
-        resumeUrl: '/resume.pdf',
+        resumeUrl: '/resume',
         website: 'https://personal-iqyuflz4z-arfazrlls-projects.vercel.app',
         languages: [
             { name: 'Indonesian', level: 'Native' },

@@ -43,6 +43,7 @@ export const ToolsSection = () => {
 
     return (
         <section
+            id="tools"
             className="py-32 relative bg-background min-h-screen flex flex-col items-center justify-center overflow-hidden"
         >
             {/* BACKGROUND AMBIENCE */}
@@ -68,7 +69,7 @@ export const ToolsSection = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="text-[10px] font-mono uppercase tracking-[0.6em] text-white/50 block mb-4 animate-pulse-slow"
                 >
-                    Domain // 03
+                    Domain // 04
                 </motion.span>
                 <h2 className="text-4xl md:text-7xl font-sans font-thin text-white/90 tracking-[0.2em] uppercase transition-all duration-700">
                     Technical <span className="font-serif italic text-white/40">TOOLS</span>

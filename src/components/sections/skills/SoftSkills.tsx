@@ -137,7 +137,7 @@ export const SoftSkills = () => {
     }, []);
 
     return (
-        <section className="py-32 px-6 relative overflow-hidden bg-slate-50 dark:bg-background">
+        <section id="soft-skills" className="py-32 px-6 relative overflow-hidden bg-slate-50 dark:bg-background">
 
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header - Minimalist Typography */}
