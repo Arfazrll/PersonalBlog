@@ -25,7 +25,13 @@ export default function AboutSection() {
             />
 
             <div className="container-creative relative z-10 px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+                <motion.div
+                    className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center"
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, amount: 0.1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                >
 
                     {/* Left Col: The Data Stream (Content) */}
                     <div className="lg:col-span-7 space-y-8 order-2 lg:order-1" ref={containerRef}>
@@ -165,7 +171,7 @@ export default function AboutSection() {
 
                     </div>
 
-                </div>
+                </motion.div>
             </div>
         </section>
     );
