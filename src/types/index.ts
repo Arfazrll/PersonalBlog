@@ -42,6 +42,8 @@ export interface Experience {
     link?: string;
     galleryImages?: string[];
     externalLink?: string;
+    keyLearnings?: string[];
+    impact?: string[];
 }
 
 export interface Education {

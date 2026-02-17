@@ -63,6 +63,47 @@ const particlesOptions: ISourceOptions = {
     detectRetina: true,
 };
 
+const welcomeWords = [
+    { lang: 'English', text: 'Hello, I am' },
+    { lang: 'Indonesian', text: 'Halo, saya' },
+    { lang: 'Spanish', text: 'Hola, soy' },
+    { lang: 'French', text: 'Bonjour, je suis' },
+    { lang: 'German', text: 'Hallo, ich bin' },
+    { lang: 'Japanese', text: 'こんにちは、私は' },
+    { lang: 'Korean', text: '안녕하세요, 저는' },
+    { lang: 'Chinese', text: '你好，我是' },
+    { lang: 'Arabic', text: 'مرحبًا ، أنا' },
+    { lang: 'Russian', text: 'Привет, я' },
+    { lang: 'Italian', text: 'Ciao, sono' },
+    { lang: 'Portuguese', text: 'Olá, eu sou' },
+];
+
+function MultilingualWelcome({ isDarkMode }: { isDarkMode: boolean }) {
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % welcomeWords.length);
+        }, 1200);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <AnimatePresence mode="wait">
+            <motion.p
+                key={index}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -20, opacity: 0 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="text-base md:text-lg font-mono uppercase tracking-[0.2em] text-primary/80 font-bold"
+            >
+                {welcomeWords[index].text}
+            </motion.p>
+        </AnimatePresence>
+    );
+}
+
 function AnimatedBackground() {
     const isMobile = useIsMobile();
 
@@ -236,6 +277,11 @@ function HeroIntro() {
                     <span className="tracking-wide text-foreground/80">{t('badge')}</span>
                     <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                 </motion.div>
+
+                {/* Multilingual Welcome */}
+                <div className="hero-welcome mb-[-25px] h-6 flex items-center justify-center overflow-hidden">
+                    <MultilingualWelcome isDarkMode={isDarkMode} />
+                </div>
 
                 {/* Name - Responsive Switch: Canvas on Desktop, Static Text on Mobile */}
                 <div className="hero-name mb-6 w-full max-w-6xl mx-auto flex items-center justify-center">

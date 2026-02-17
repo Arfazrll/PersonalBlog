@@ -48,8 +48,8 @@ export default function StatsSection() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9]"
                             >
-                                <span className="text-gray-900 dark:text-white block">TECHNICAL</span>
-                                <span className="text-yellow-600 dark:text-yellow-500 block">PORTFOLIO</span>
+                                <span className="text-gray-900 dark:text-white block">ENGINEERING</span>
+                                <span className="text-yellow-600 dark:text-yellow-500 block">METRICS</span>
                             </motion.h2>
                             <motion.div
                                 initial={{ opacity: 0 }}
@@ -57,7 +57,7 @@ export default function StatsSection() {
                                 transition={{ delay: 0.2 }}
                                 className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-white/30"
                             >
-                                ANALYTICS / INFRASTRUCTURE / PERFORMANCE METRICS
+                                ANALYTICS / INFRASTRUCTURE / PERFORMANCE DATA
                             </motion.div>
                         </div>
 
