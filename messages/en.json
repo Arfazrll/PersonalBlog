@@ -101,14 +101,25 @@
     "experience": {
         "title": "Experience",
         "subtitle": "My professional journey and growth",
+        "showDetail": "Show Detail",
+        "hideDetail": "Hide Detail",
+        "tasks": "TASKS",
+        "learned": "WHAT I LEARNED",
+        "impact": "IMPACT",
         "present": "Present",
         "responsibilities": "Responsibilities",
         "skills": "Skills Used",
+        "month": "month",
+        "months": "months",
+        "year": "year",
+        "years": "years",
         "type": {
             "full-time": "Full-time",
             "part-time": "Part-time",
             "internship": "Internship",
-            "freelance": "Freelance"
+            "freelance": "Freelance",
+            "contract": "Contract",
+            "apprenticeship": "Apprenticeship"
         },
         "filters": {
             "all": "All",
@@ -255,7 +266,7 @@
     },
     "stats": {
         "systemStatus": "System Status: Analytics Active",
-        "portfolio": "Technical Portfolio",
+        "portfolio": "Engineering Metrics",
         "totalPulse": "Total Pulse",
         "peakActivity": "Peak Activity",
         "dailyAverage": "Daily Average",

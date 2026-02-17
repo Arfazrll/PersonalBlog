@@ -101,14 +101,25 @@
     "experience": {
         "title": "Pengalaman",
         "subtitle": "Perjalanan profesional dan perkembangan saya",
+        "showDetail": "Tampilkan Detail",
+        "hideDetail": "Sembunyikan Detail",
+        "tasks": "TUGAS",
+        "learned": "APA YANG SAYA PELAJARI",
+        "impact": "DAMPAK",
         "present": "Sekarang",
         "responsibilities": "Tanggung Jawab",
         "skills": "Keahlian yang Digunakan",
+        "month": "bulan",
+        "months": "bulan",
+        "year": "tahun",
+        "years": "tahun",
         "type": {
             "full-time": "Penuh Waktu",
             "part-time": "Paruh Waktu",
             "internship": "Magang",
-            "freelance": "Freelance"
+            "freelance": "Freelance",
+            "contract": "Kontrak",
+            "apprenticeship": "Apprenticeship"
         },
         "filters": {
             "all": "Semua",
@@ -209,7 +220,7 @@
     },
     "stats": {
         "systemStatus": "Status Sistem: Analitik Aktif",
-        "portfolio": "Portofolio Teknis",
+        "portfolio": "Engineering Metrics",
         "totalPulse": "Total Denyut",
         "peakActivity": "Aktivitas Puncak",
         "dailyAverage": "Rata-rata Harian",

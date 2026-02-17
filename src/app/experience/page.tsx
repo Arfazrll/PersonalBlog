@@ -385,53 +385,9 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                         {/* Right: Scrollable Content Stream */}
                                         <div className="lg:col-span-8 space-y-6">
                                             {filteredExperiences.map((exp, idx) => (
-                                                <motion.div
-                                                    key={exp.id}
-                                                    initial={{ opacity: 0, y: isLowPowerMode ? 0 : 30 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: isLowPowerMode ? 0 : idx * 0.1 }}
-                                                    className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-[2rem] hover:shadow-2xl dark:hover:shadow-neutral-900/50 transition-all duration-300 hover:-translate-y-1"
-                                                >
-                                                    {/* Floating Date Badge */}
-                                                    <div className="flex flex-wrap gap-3 mb-6">
-                                                        <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs font-bold text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-                                                            {formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : 'Present'}
-                                                        </span>
-                                                        <span className="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-xs font-bold text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50">
-                                                            {exp.company}
-                                                        </span>
-                                                    </div>
-
-                                                    <div className="flex gap-6 items-start">
-                                                        {/* Logo */}
-                                                        <div className="hidden sm:flex w-16 h-16 bg-neutral-50 dark:bg-black rounded-2xl items-center justify-center shrink-0 border border-neutral-100 dark:border-neutral-800 p-2">
-                                                            {exp.logo ? (
-                                                                <Image src={exp.logo} alt={exp.company} width={48} height={48} className="object-contain" unoptimized />
-                                                            ) : (
-                                                                <Briefcase className="w-8 h-8 text-neutral-300" />
-                                                            )}
-                                                        </div>
-
-                                                        <div className="space-y-4">
-                                                            <h4 className="text-2xl font-bold text-neutral-900 dark:text-white leading-tight group-hover:text-neutral-700 dark:group-hover:text-neutral-200 transition-colors">
-                                                                {exp.position}
-                                                            </h4>
-                                                            <p className="text-neutral-600 dark:text-neutral-300 mb-4 leading-relaxed">
-                                                                {exp.description}
-                                                            </p>
-
-                                                            {/* Minimal Skills */}
-                                                            <div className="flex flex-wrap gap-2 pt-2">
-                                                                {exp.skills.slice(0, 5).map((skill, i) => (
-                                                                    <span key={i} className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
-                                                                        #{skill}
-                                                                    </span>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </motion.div>
+                                                <CollapsibleExperienceCard key={exp.id} exp={exp} idx={idx} isLowPowerMode={isLowPowerMode} />
                                             ))}
+
 
                                             {filteredExperiences.length === 0 && (
                                                 <div className="flex flex-col items-center justify-center py-20 text-neutral-400">
@@ -497,6 +453,190 @@ export default function ExperiencePage() {
                 {/* 2. Tab Slider Section (Testimonial-style UI) */}
                 <ExperienceTabSlider isLowPowerMode={isLowPowerMode} />
             </motion.div>
+        </motion.div>
+    );
+}
+
+function CollapsibleExperienceCard({ exp, idx, isLowPowerMode }: { exp: Experience; idx: number; isLowPowerMode: boolean }) {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const t = useTranslations('experience');
+
+    // Helper to calculate duration in months/years
+    const getDuration = (start: string, end?: string | null) => {
+        const startDate = new Date(start);
+        const endDate = end ? new Date(end) : new Date();
+        const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+        const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30.44));
+
+        if (diffMonths < 12) return `${diffMonths} ${t('months')}`;
+        const years = Math.floor(diffMonths / 12);
+        const months = diffMonths % 12;
+        if (months === 0) return `${years} ${t(years === 1 ? 'year' : 'years')}`;
+        return `${years} ${t('year')} ${months} ${t('months')}`;
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: isLowPowerMode ? 0 : 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: isLowPowerMode ? 0 : idx * 0.1 }}
+            className={`group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2rem] transition-all duration-500 overflow-hidden ${isExpanded ? 'shadow-2xl dark:shadow-neutral-900/50 ring-1 ring-neutral-200 dark:ring-neutral-700' : 'hover:shadow-2xl dark:hover:shadow-neutral-900/50 hover:-translate-y-1'}`}
+        >
+            <div className="p-6 md:p-8 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+                <div className="flex gap-4 md:gap-6 items-start">
+                    {/* Logo (Left Side) - Always visible */}
+                    <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-black rounded-2xl flex items-center justify-center shrink-0 border border-neutral-100 dark:border-neutral-800 p-2 shadow-sm">
+                        {exp.logo ? (
+                            <Image src={exp.logo} alt={exp.company} width={48} height={48} className="object-contain" unoptimized />
+                        ) : (
+                            <Briefcase className="w-8 h-8 text-neutral-300" />
+                        )}
+                    </div>
+
+                    {/* Content (Right Side) */}
+                    <div className="flex-1 space-y-3">
+                        {/* Header: Position & Company */}
+                        <div>
+                            <h4 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white leading-tight mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                {exp.position}
+                            </h4>
+                            <div className="text-base font-medium text-neutral-600 dark:text-neutral-400 flex flex-wrap items-center gap-2">
+                                <span>{exp.company}</span>
+                                {exp.location && (
+                                    <>
+                                        <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+                                        <span>{exp.location}</span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Metadata Row (Reference Style) */}
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-neutral-500 dark:text-neutral-500 font-medium">
+                            <span className="text-neutral-700 dark:text-neutral-300">
+                                {formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : t('present')}
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+                            <span className="text-neutral-400 dark:text-neutral-600">
+                                {getDuration(exp.startDate, exp.endDate)}
+                            </span>
+                            {exp.type && (
+                                <>
+                                    <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+                                    <span className="capitalize">{t(`type.${exp.type}`)}</span>
+                                </>
+                            )}
+                            {exp.location && (
+                                <>
+                                    <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+                                    <span>{exp.location}</span>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Show Detail Action (Collapsed Only) */}
+                        {!isExpanded && (
+                            <div className="pt-2 flex items-center gap-1 text-sm font-medium text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
+                                <ChevronRight className="w-4 h-4" />
+                                <span>{t('showDetail')}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Expanded Content */}
+            <AnimatePresence>
+                {isExpanded && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                        <div className="px-6 md:px-8 pb-8 pt-0 space-y-8 border-t border-neutral-100 dark:border-neutral-800/50 mt-4">
+                            {/* 1. TASKS / RESPONSIBILITIES */}
+                            {exp.responsibilities && exp.responsibilities.length > 0 && (
+                                <div className="pt-6">
+                                    <h5 className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                        {t('tasks')}
+                                    </h5>
+                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {exp.responsibilities.map((task, i) => (
+                                            <li key={i} className="flex items-start gap-3 text-sm text-neutral-600 dark:text-neutral-300">
+                                                <ChevronRight className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                                                <span>{task}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {/* 2. WHAT I LEARNED */}
+                            {exp.keyLearnings && exp.keyLearnings.length > 0 && (
+                                <div>
+                                    <h5 className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                                        {t('learned')}
+                                    </h5>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {exp.keyLearnings.map((learn, i) => (
+                                            <div key={i} className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800">
+                                                <p className="text-sm text-neutral-600 dark:text-neutral-300">{learn}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 3. IMPACT */}
+                            {exp.impact && exp.impact.length > 0 && (
+                                <div>
+                                    <h5 className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                        {t('impact')}
+                                    </h5>
+                                    <ul className="space-y-3">
+                                        {exp.impact.map((imp, i) => (
+                                            <li key={i} className="flex items-center gap-3 text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                                                <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+                                                    <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                                                </div>
+                                                <span>{imp}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {/* Skills (Full List in Expanded View) */}
+                            <div className="pt-4 border-t border-neutral-100 dark:border-neutral-800/50">
+                                <div className="flex flex-wrap gap-2">
+                                    {exp.skills.map((skill, i) => (
+                                        <span key={i} className="px-3 py-1 rounded-lg text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Action Button */}
+                            <div className="flex justify-center pt-2">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsExpanded(false);
+                                    }}
+                                    className="px-6 py-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs font-bold text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors"
+                                >
+                                    {t('hideDetail')}
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 }
