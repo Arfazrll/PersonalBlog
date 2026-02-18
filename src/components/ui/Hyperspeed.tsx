@@ -3,24 +3,24 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 // EffectComposer removed for performance
 import * as THREE from 'three';
 
-const FogController = ({ color }: { color: string }) => {
+const FogController = ({ color, paused }: { color: string, paused?: boolean }) => {
     const { scene } = useThree();
     useEffect(() => {
-        scene.fog = new THREE.Fog(color, 50, 190); // Much less fog for clarity
+        if (paused) return; // Don't re-initialize if paused
+        scene.fog = new THREE.Fog(color, 50, 190);
         scene.background = new THREE.Color(color);
-    }, [scene, color]);
+    }, [scene, color, paused]);
     return null;
 };
 
-const MovingRoad = ({ color }: { color: string }) => {
+const MovingRoad = ({ color, paused }: { color: string, paused?: boolean }) => {
     const mesh = useRef<THREE.Group>(null);
 
     useFrame((state, delta) => {
-        if (mesh.current) {
-            mesh.current.position.z += delta * 20;
-            if (mesh.current.position.z > 20) {
-                mesh.current.position.z = 0;
-            }
+        if (paused || !mesh.current) return;
+        mesh.current.position.z += delta * 20;
+        if (mesh.current.position.z > 20) {
+            mesh.current.position.z = 0;
         }
     });
 
@@ -31,7 +31,7 @@ const MovingRoad = ({ color }: { color: string }) => {
     );
 };
 
-const MovingStars = ({ color }: { color: string }) => {
+const MovingStars = ({ color, paused }: { color: string, paused?: boolean }) => {
     const count = 100; // Aggressively optimized count
     const mesh = useRef<THREE.InstancedMesh>(null);
     const dummy = useMemo(() => new THREE.Object3D(), []);
@@ -58,7 +58,7 @@ const MovingStars = ({ color }: { color: string }) => {
     }, [count]);
 
     useFrame((state, delta) => {
-        if (!mesh.current) return;
+        if (paused || !mesh.current) return;
         particles.forEach((particle, i) => {
             let { t, speed, xFactor, yFactor, zFactor } = particle;
             t += speed * 50;
@@ -134,9 +134,10 @@ export const hyperspeedPresets = {
 interface HyperspeedProps {
     effectOptions?: any;
     className?: string;
+    paused?: boolean;
 }
 
-const Hyperspeed: React.FC<HyperspeedProps> = ({ effectOptions, className }) => {
+const Hyperspeed: React.FC<HyperspeedProps> = ({ effectOptions, className, paused }) => {
     // Helper to ensure valid 6-digit hex color
     const toHex = (num: number | undefined, defaultColor: string) => {
         if (num === undefined) return defaultColor;
@@ -144,29 +145,27 @@ const Hyperspeed: React.FC<HyperspeedProps> = ({ effectOptions, className }) => 
     };
 
     // Extract theme colors or defaults
-    const roadColor = toHex(effectOptions?.colors?.shoulderLines, '#444444');
-    const starColor = toHex(effectOptions?.colors?.sticks, '#ffffff');
-    const bgColor = toHex(effectOptions?.colors?.background, '#000000');
-    const enableBloom = effectOptions?.enableBloom ?? true;
-
-    useEffect(() => {
-        console.log("Hyperspeed Active Colors:", { roadColor, starColor, bgColor, enableBloom });
-    }, [roadColor, starColor, bgColor, enableBloom]);
+    const roadColor = useMemo(() => toHex(effectOptions?.colors?.shoulderLines, '#444444'), [effectOptions]);
+    const starColor = useMemo(() => toHex(effectOptions?.colors?.sticks, '#ffffff'), [effectOptions]);
+    const bgColor = useMemo(() => toHex(effectOptions?.colors?.background, '#000000'), [effectOptions]);
 
     return (
         <div className={`hyperspeed-container w-full h-full relative overflow-hidden ${className}`}>
             <Canvas
                 style={{ background: bgColor }}
                 camera={{ position: [0, 2, 5], fov: 75 }}
-                gl={{ antialias: false, powerPreference: "high-performance" }}
-                dpr={[1, 1.5]}
+                gl={{
+                    antialias: false,
+                    powerPreference: "high-performance",
+                    preserveDrawingBuffer: false,
+                    alpha: false
+                }}
+                dpr={1} // Lock to 1 for maximum performance
                 performance={{ min: 0.5 }}
             >
-                <FogController color={bgColor} />
-                <MovingRoad color={roadColor} />
-                <MovingStars color={starColor} />
-
-                {/* Bloom Removed for performance */}
+                <FogController color={bgColor} paused={paused} />
+                <MovingRoad color={roadColor} paused={paused} />
+                <MovingStars color={starColor} paused={paused} />
             </Canvas>
         </div>
     );
