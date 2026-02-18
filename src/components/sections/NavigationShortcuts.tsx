@@ -137,10 +137,22 @@ export const NavigationShortcuts = () => {
                                     src={hoveredImage}
                                     alt="Section Preview"
                                     fill
-                                    className="object-cover grayscale"
+                                    className="object-cover grayscale contrast-125 brightness-75 scale-110"
                                     priority
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+
+                                {/* Scan Line Overlay */}
+                                <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
+                                    <div className="w-full h-1 bg-primary/40 absolute top-[-5%] animate-[scan_4s_linear_infinite]" />
+                                    <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
+                                </div>
+
+                                {/* Preview Metadata */}
+                                <div className="absolute bottom-12 right-12 text-right hidden md:block">
+                                    <div className="text-[10px] font-mono tracking-[0.2em] text-primary/60 uppercase mb-1">Preview Mode</div>
+                                    <div className="text-[10px] font-mono tracking-[0.1em] text-primary/40">ID_REF: {hoveredImage.split('/').pop()}</div>
+                                </div>
                             </motion.div>
                         </motion.div>
                     )}
@@ -183,7 +195,13 @@ export const NavigationShortcuts = () => {
                         viewport={{ once: true }}
                     >
                         <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-4">
-                            <span className="w-8 h-[1px] bg-neutral-700"></span>
+                            <motion.span
+                                initial={{ scaleX: 0 }}
+                                whileInView={{ scaleX: 1 }}
+                                transition={{ duration: 1, delay: catIdx * 0.2 }}
+                                viewport={{ once: true }}
+                                className="w-8 h-[1px] bg-primary origin-left"
+                            />
                             {category.title}
                         </h3>
 
@@ -197,21 +215,29 @@ export const NavigationShortcuts = () => {
                                     onMouseEnter={() => {
                                         setHoveredImage(itemImageMap[item.id]);
                                     }}
-                                // RELAXED: Removed onMouseLeave here. 
-                                // The Global Bounds Tracker now handles all cleanup, 
-                                // ensuring no "flickering" when moving slowly between items.
                                 >
-                                    <div className="flex items-baseline py-4 border-b border-neutral-200 dark:border-neutral-800 group-hover:border-primary transition-colors duration-300">
-                                        <span className="font-mono text-xs md:text-sm text-neutral-400 group-hover:text-primary transition-colors w-12 shrink-0">
-                                            {item.id}
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -10 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.5, delay: (catIdx * 0.2) + (idx * 0.1) }}
+                                        viewport={{ once: true }}
+                                        className="flex items-baseline py-4 border-b border-neutral-200 dark:border-neutral-800 group-hover:border-primary/50 transition-colors duration-500"
+                                    >
+                                        <span className="font-mono text-xs md:text-sm text-neutral-400 group-hover:text-primary transition-all duration-500 w-12 shrink-0">
+                                            {item.id}_
                                         </span>
                                         <div className="flex-1 flex items-center justify-between">
-                                            <span className="text-xl md:text-3xl font-medium text-neutral-800 dark:text-neutral-200 group-hover:text-black dark:group-hover:text-white transition-all duration-300 group-hover:tracking-wide">
+                                            <span className="text-xl md:text-3xl font-medium text-neutral-800 dark:text-neutral-200 group-hover:text-black dark:group-hover:text-white transition-all duration-500 group-hover:tracking-[0.1em] group-hover:italic">
                                                 {item.title}
                                             </span>
-                                            <ArrowUpRight className="w-5 h-5 text-neutral-400 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-primary" />
+                                            <div className="flex items-center gap-4">
+                                                <span className="hidden md:block text-[10px] font-mono text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity duration-700 uppercase tracking-widest whitespace-nowrap">
+                                                    More Details
+                                                </span>
+                                                <ArrowUpRight className="w-5 h-5 text-neutral-400 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 text-primary" />
+                                            </div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 </Link>
                             ))}
                         </div>

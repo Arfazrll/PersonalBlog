@@ -17,6 +17,10 @@ import { Sparkles, ChevronDown, Mail, ArrowRight, ArrowDown } from 'lucide-react
 import { LoadingScreen } from '@/components/layout';
 import { TextPressure } from '@/components/ui/TextPressure';
 import { portfolioData } from '@/data/portfolio';
+import { cn } from "@/lib/utils";
+
+const Hyperspeed = dynamic(() => import('@/components/ui/Hyperspeed'), { ssr: false });
+const { hyperspeedPresets } = require('@/components/ui/Hyperspeed');
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
@@ -84,7 +88,7 @@ function MultilingualWelcome({ isDarkMode }: { isDarkMode: boolean }) {
     useEffect(() => {
         const timer = setInterval(() => {
             setIndex((prev) => (prev + 1) % welcomeWords.length);
-        }, 1200);
+        }, 2000);
         return () => clearInterval(timer);
     }, []);
 
@@ -231,14 +235,16 @@ function HeroIntro() {
                 );
 
             gsap.to('.hero-content', {
-                y: 150,
+                scale: 0.9,
+                filter: 'blur(20px)',
                 opacity: 0,
+                y: -100,
                 ease: 'none',
                 scrollTrigger: {
                     trigger: containerRef.current,
                     start: 'top top',
                     end: 'bottom top',
-                    scrub: 1,
+                    scrub: 0.5,
                 },
             });
         }, containerRef);
@@ -249,21 +255,62 @@ function HeroIntro() {
     const firstName = portfolioData.personal.name.split(' ')[0];
     const lastName = portfolioData.personal.name.split(' ').slice(1).join(' ');
 
+    const currentHyperspeedOptions = useMemo(() => {
+        if (isDarkMode) return hyperspeedPresets.one;
+        return {
+            ...hyperspeedPresets.one,
+            colors: {
+                ...hyperspeedPresets.one.colors,
+                background: 0xf8fafc, // slate-50
+                shoulderLines: 0x0f172a, // slate-900 (the grid lines)
+                sticks: 0x3b82f6, // blue-500
+            }
+        };
+    }, [isDarkMode]);
+
+    const [isInView, setIsInView] = useState(true);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => setIsInView(entry.isIntersecting),
+            {
+                threshold: 0,
+                rootMargin: '200px' // Start rendering 200px before entering viewport
+            }
+        );
+        observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <section
             ref={containerRef}
-            className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24"
+            className="relative min-h-screen flex items-center justify-center overflow-hidden pt-12"
+            style={{ willChange: 'transform' }}
         >
-            <AnimatedBackground />
+            {/* Hyperspeed Background - Persistent mount with paused state for smoothness */}
+            <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${isInView ? 'opacity-100' : 'opacity-0'}`}>
+                <Hyperspeed
+                    effectOptions={currentHyperspeedOptions}
+                    className={isDarkMode ? "opacity-40" : "opacity-20"}
+                    paused={!isInView}
+                />
+                <div className={`absolute inset-0 bg-gradient-to-b ${isDarkMode
+                    ? "from-background/0 via-background/40 to-background"
+                    : "from-white/0 via-white/50 to-white"
+                    }`} />
+            </div>
 
-            {/* 3D Scene */}
-            <Scene3D className="opacity-20" />
+            {/* 3D Scene - Persistent mount for stable layout */}
+            <Scene3D className={`opacity-10 transition-opacity duration-1000 ${isInView ? 'opacity-10' : 'opacity-0'}`} />
 
             {/* Main Content */}
             <animated.div
                 className="hero-content relative z-10 container-creative text-center px-4 max-w-5xl mx-auto"
                 style={{
-                    transform: isMobile ? 'none' : springProps.xy.to((x, y) => `translate3d(${x}px, ${y}px, 0)`),
+                    transform: isMobile ? 'none' : springProps.xy.to((x, y, ...args: any[]) => `translate3d(${x}px, ${y}px, 0)`),
+                    willChange: 'transform, opacity'
                 }}
             >
                 {/* Badge */}
@@ -284,9 +331,9 @@ function HeroIntro() {
                 </div>
 
                 {/* Name - Responsive Switch: Canvas on Desktop, Static Text on Mobile */}
-                <div className="hero-name mb-6 w-full max-w-6xl mx-auto flex items-center justify-center">
+                <div className="hero-name mb-4 w-full max-w-6xl mx-auto flex items-center justify-center">
                     {/* Mobile: Static Text (Guarantees wrapping) */}
-                    <h1 className="block md:hidden text-5xl font-black text-center leading-tight tracking-tighter">
+                    <h1 className="block md:hidden text-6xl font-black text-center leading-tight tracking-tighter">
                         <span className="text-foreground">Syahril</span> <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x">
                             Arfian Almazril
@@ -294,7 +341,7 @@ function HeroIntro() {
                     </h1>
 
                     {/* Desktop: TextPressure Canvas (No wrapping needed) */}
-                    <div className="hidden md:flex w-full h-[150px] lg:h-[180px] xl:h-[220px] items-center justify-center">
+                    <div className="hidden md:flex w-full h-[140px] lg:h-[180px] xl:h-[220px] items-center justify-center">
                         <TextPressure
                             text="Syahril Arfian Almazril"
                             flex={false}
@@ -304,14 +351,14 @@ function HeroIntro() {
                             weight={true}
                             italic={true}
                             textColor={isDarkMode ? "#ffffff" : "#0f172a"}
-                            minFontSize={72}
+                            minFontSize={110}
                             className="w-full h-full flex items-center justify-center"
                         />
                     </div>
                 </div>
 
                 {/* Title */}
-                <motion.div className="hero-subtitle mb-8 flex flex-col items-center gap-2">
+                <motion.div className="hero-subtitle mt-4 mb-8 flex flex-col items-center gap-2">
                     <div className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
                     <p className="text-xl md:text-2xl lg:text-3xl text-foreground/80 font-medium tracking-wide">
                         {portfolioData.personal.title} <span className="text-primary mx-2">•</span> {t('role')}

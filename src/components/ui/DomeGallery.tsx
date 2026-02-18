@@ -108,7 +108,10 @@ export const DomeGallery: React.FC<DomeGalleryProps> = ({
                 return ys.map(y => ({ x, y, sizeX: 2, sizeY: 2 }));
             });
 
-            const normalizedImages = pool.map(image =>
+            // Safeguard against empty pool
+            const effectivePool = (pool && pool.length > 0) ? pool : DEFAULT_IMAGES;
+
+            const normalizedImages = effectivePool.map(image =>
                 typeof image === 'string' ? { src: image, alt: '' } : { src: image.src || '', alt: image.alt || '' }
             );
 
@@ -117,11 +120,11 @@ export const DomeGallery: React.FC<DomeGalleryProps> = ({
                 normalizedImages[i % normalizedImages.length]
             );
 
-            // Shuffle to avoid adjacent duplicates
+            // Shuffle to avoid adjacent duplicates - with safety checks
             for (let i = 1; i < usedImages.length; i++) {
-                if (usedImages[i].src === usedImages[i - 1].src) {
+                if (usedImages[i] && usedImages[i - 1] && usedImages[i].src === usedImages[i - 1].src) {
                     for (let j = i + 1; j < usedImages.length; j++) {
-                        if (usedImages[j].src !== usedImages[i].src) {
+                        if (usedImages[j] && usedImages[j].src !== usedImages[i].src) {
                             const tmp = usedImages[i];
                             usedImages[i] = usedImages[j];
                             usedImages[j] = tmp;
@@ -131,7 +134,11 @@ export const DomeGallery: React.FC<DomeGalleryProps> = ({
                 }
             }
 
-            return coords.map((c, i) => ({ ...c, src: usedImages[i].src, alt: usedImages[i].alt }));
+            return coords.map((c, i) => ({
+                ...c,
+                src: (usedImages[i] && usedImages[i].src) || '',
+                alt: (usedImages[i] && usedImages[i].alt) || ''
+            }));
         };
 
         return buildItems(imagesSource, segments);
