@@ -2,7 +2,8 @@ import { ThreeElements } from '@react-three/fiber';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import React from 'react';
 
-declare global {
+// Use multiple declaration styles to ensure the React 19 compiler finds the types
+declare module 'react' {
     namespace JSX {
         interface IntrinsicElements extends ThreeElements {
             // MeshLine
@@ -29,3 +30,15 @@ declare global {
         }
     }
 }
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements extends ThreeElements {
+            meshLineGeometry: any;
+            meshLineMaterial: any;
+            'spline-viewer': any;
+        }
+    }
+}
+
+export { };

@@ -1,3 +1,4 @@
+/// <reference types="@react-three/fiber" />
 'use client';
 
 import * as THREE from 'three';
