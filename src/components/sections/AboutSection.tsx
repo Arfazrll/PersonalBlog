@@ -14,6 +14,7 @@ import { BeamDivider } from "@/components/ui/BeamDivider";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Github, Linkedin, Instagram, MessageSquare, ArrowRight, ArrowUpRight } from "lucide-react";
 import { useInView } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { useCountUp } from "@/hooks/useCountUp";
 import { SocialCorner } from "@/components/layout/SocialCorner";
 import { cn } from "@/lib/utils";
@@ -43,15 +44,17 @@ const SlideReveal = ({ children, delay = 0, y = 30 }: { children: React.ReactNod
 const AboutLeadIn = () => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const isMobile = useIsMobile();
+
     return (
         <div ref={ref} style={{ willChange: "transform, opacity" }} className="relative w-full max-w-[1500px] mx-auto px-6 md:px-10 lg:px-12 py-8 md:py-12 overflow-visible">
             {/* Header Section: Compact Horizontal Blueprint */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative">
-                <div className="space-y-2">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative">
+                <div className="space-y-4">
                     <motion.span
                         initial={{ opacity: 0, x: -10 }}
                         animate={isInView ? { opacity: 1, x: 0 } : {}}
-                        className="text-[12px] font-mono uppercase tracking-[0.5em] text-primary"
+                        className="text-[10px] md:text-[12px] font-mono uppercase tracking-[0.5em] text-primary"
                     >
                         WHAT I DO
                     </motion.span>
@@ -59,21 +62,21 @@ const AboutLeadIn = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-none"
+                        className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85]"
                     >
                         Applied <br />
                         <span className="font-serif-elegant italic font-light lowercase text-primary">intelligence.</span>
                     </motion.h2>
                 </div>
 
-                <div className="hidden md:block flex-grow h-px bg-primary/10 mx-8 mb-4 lg:mb-6" />
+                <div className="hidden lg:block flex-grow h-px bg-primary/10 mx-8 mb-4 lg:mb-6" />
 
-                <div className="text-right space-y-2">
+                <div className="text-left md:text-right space-y-4 mt-8 md:mt-0">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-none"
+                        className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.85]"
                     >
                         Production <br />
                         <span className="font-serif-elegant italic font-light lowercase text-primary">engineering.</span>
@@ -165,6 +168,7 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
     // STABILIZED: Keeps opacity at 1.0 until the slide is nearly finished to prevent "ghosting"
     const contentOpacity = useTransform(scrollYProgress, [0.75, 0.9], [1, 0]);
     const contentScale = useTransform(scrollYProgress, [0.75, 0.9], [1, 0.9]);
+    const contentY = useTransform(scrollYProgress, [0.75, 0.9], [0, -50]);
 
     // INTERNAL TIMING: Globe and Tech Stack reveal [0.0 -> 0.35]
     const globeOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
@@ -248,7 +252,14 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
 
                 {/* ─── TEXT: starts at right-half, slides into left-half ─── */}
                 <motion.div
-                    style={{ opacity: contentOpacity, scale: contentScale, x: textSlideX, willChange: "transform, opacity" }}
+                    style={{
+                        opacity: contentOpacity,
+                        scale: contentScale,
+                        x: textSlideX,
+                        y: contentY,
+                        willChange: "transform, opacity",
+                        transform: 'translate3d(0,0,0)'
+                    }}
                     className={`absolute right-0 top-0 w-full lg:w-1/2 h-full flex flex-col justify-center z-20 space-y-10 transition-[text-align,align-items] duration-500 ${textIsLeft ? "items-start text-left" : "items-center lg:items-end text-right"
                         }`}
                 >
@@ -346,12 +357,14 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
 };
 
 const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
+    const isMobile = useIsMobile();
+
     return (
         <div className="w-screen h-full flex items-center bg-background overflow-hidden transition-colors duration-500">
             <WarpBackground
                 perspective={1200}
                 gridColor="transparent"
-                beamsPerSide={6}
+                beamsPerSide={isMobile ? 2 : 6}
                 beamDuration={2.5}
                 beamDelayMax={1}
                 className="border-none p-0 bg-transparent rounded-none h-full w-full flex items-center justify-center"
@@ -435,6 +448,7 @@ const ProfileIntersection = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                         className="relative w-full h-full min-h-[600px] lg:min-h-[800px] shadow-2xl shadow-black/20 dark:shadow-white/5 bg-zinc-100 dark:bg-zinc-900"
+                        style={{ willChange: "clip-path" }}
                     >
                         <motion.div
                             initial={{ scale: 1.15 }}
@@ -792,6 +806,7 @@ const AboutClosingMobile = () => {
 
 // --- Component 5: Audit Funnel ---
 const AuditFunnel = () => {
+    const isMobile = useIsMobile();
     const sectionRef = useRef(null);
     const { scrollYProgress } = useScroll({
         target: sectionRef,
@@ -812,25 +827,25 @@ const AuditFunnel = () => {
     ];
 
     return (
-        <div ref={sectionRef} className="relative overflow-hidden group min-h-[120vh] flex items-center justify-center bg-background z-50 pb-60">
+        <div ref={sectionRef} className="relative overflow-hidden group min-h-[80vh] md:min-h-[120vh] flex items-center justify-center bg-background z-50 pb-20 md:pb-60">
             <motion.div
-                className="flex flex-col items-center text-center py-40 space-y-16 relative z-10 pointer-events-none"
+                className="flex flex-col items-center text-center py-20 md:py-40 space-y-12 md:space-y-16 relative z-10 pointer-events-none"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1 }}
             >
-                <div className="space-y-10 flex flex-col items-center px-6 relative z-10">
+                <div className="space-y-6 md:space-y-10 flex flex-col items-center px-6 relative z-10">
                     <motion.h4
                         style={{ scale, willChange: "transform" }}
-                        className="text-2xl md:text-4xl lg:text-6xl font-black tracking-[-0.05em] text-foreground max-w-6xl tracking-tighter leading-[0.9] lg:px-12 uppercase text-center"
+                        className="text-xl md:text-4xl lg:text-6xl font-black tracking-[-0.05em] text-foreground max-w-6xl tracking-tighter leading-[0.9] lg:px-12 uppercase text-center"
                     >
                         architecting <br></br>
                         <motion.span
                             initial={{ opacity: 0, y: 15 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 }}
-                            className="text-primary italic font-serif font-light lowercase tracking-normal"
+                            className="text-primary italic font-serif-elegant font-light lowercase tracking-normal"
                         >
                             digital reality
                         </motion.span>.
@@ -855,10 +870,12 @@ const AuditFunnel = () => {
                 </div>
             </motion.div>
 
-            {/* Image Trail Layer (On top to catch events) */}
-            <div className="absolute inset-0 z-50">
-                <ImageTrail items={images} variant={3} />
-            </div>
+            {/* Image Trail Layer - Disabled on Mobile for performance */}
+            {!isMobile && (
+                <div className="absolute inset-0 z-50">
+                    <ImageTrail items={images} variant={3} />
+                </div>
+            )}
 
             {/* Subtle Grain Texture Overlay */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay">

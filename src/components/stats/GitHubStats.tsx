@@ -68,7 +68,7 @@ export function GitHubHeatmap({ username }: { username: string }) {
 
     // Gold/Yellow Theme for "Kontribusi GitHub"
     const goldTheme = {
-        light: ['#ebedf0', '#fefce8', '#fef08a', '#facc15', '#ca8a04'],
+        light: ['#ebedf0', '#fef9c3', '#fde047', '#eab308', '#a16207'],
         dark: ['#161b22', '#422006', '#854d0e', '#eab308', '#facc15'],
     };
 
@@ -80,12 +80,12 @@ export function GitHubHeatmap({ username }: { username: string }) {
         <div className="w-full font-sans transition-colors duration-300">
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
-                <Github className="w-6 h-6 text-gray-900 dark:text-white" />
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white tracking-tight">
+                <Github className="w-8 h-8 text-gray-900 dark:text-white" />
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
                     {t('title')}
                 </h2>
             </div>
-            <p className="text-gray-500 dark:text-[#8b949e] mb-6 -mt-3 text-sm">
+            <p className="text-gray-600 dark:text-[#8b949e] mb-8 -mt-2 text-sm md:text-base">
                 {t('description')}
             </p>
 
@@ -124,7 +124,7 @@ export function GitHubHeatmap({ username }: { username: string }) {
             {/* Heatmap Container - Seamless Background */}
             <div className="w-full overflow-hidden mb-10">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-gray-900 dark:text-white text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                    <h3 className="text-gray-900 dark:text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                         Activity Calendar
                     </h3>
@@ -155,7 +155,7 @@ export function GitHubHeatmap({ username }: { username: string }) {
                 </div>
 
                 {/* Custom Legend */}
-                <div className="flex items-center gap-2 mt-4 text-xs text-gray-500 dark:text-[#8b949e]">
+                <div className="flex items-center gap-2 mt-4 text-xs text-gray-600 dark:text-[#8b949e]">
                     <span>{t('less')}</span>
                     <div className="flex gap-1">
                         {(theme === 'dark' ? goldTheme.dark : goldTheme.light).map((color, i) => (
@@ -218,14 +218,14 @@ export function GitHubHeatmap({ username }: { username: string }) {
 
 function StatCard({ label, value, icon }: { label: string, value: string | number, icon?: React.ReactNode }) {
     return (
-        <div className="relative group p-3 border border-gray-200 dark:border-[#30363d] rounded-xl hover:border-yellow-500/30 dark:hover:border-yellow-500/30 transition-all duration-300 bg-transparent hover:bg-gray-50/50 dark:hover:bg-[#161b22]/50">
-            <div className="flex items-center gap-2 mb-2">
-                <div className="p-1 rounded-md text-gray-500 dark:text-gray-400 group-hover:text-yellow-500 transition-colors duration-300">
+        <div className="relative group p-4 border border-gray-300 dark:border-[#30363d] rounded-2xl hover:border-yellow-500/30 dark:hover:border-yellow-500/30 transition-all duration-300 bg-transparent hover:bg-gray-100/50 dark:hover:bg-[#161b22]/50 flex flex-col justify-between min-h-[125px]">
+            <div className="flex items-center gap-2">
+                <div className="text-gray-600 dark:text-gray-400 group-hover:text-yellow-600 dark:group-hover:text-yellow-500 transition-colors duration-300">
                     {icon}
                 </div>
-                <span className="text-gray-500 dark:text-[#8b949e] text-[10px] font-medium uppercase tracking-wider">{label}</span>
+                <span className="text-gray-600 dark:text-[#8b949e] text-[10px] font-bold uppercase tracking-[0.15em] opacity-80">{label}</span>
             </div>
-            <span className="text-base md:text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+            <span className="text-2xl md:text-3xl font-extrabold tracking-tighter text-gray-900 dark:text-white">
                 <Counter value={typeof value === 'string' ? parseFloat(value) : value} decimal={typeof value === 'string' && value.includes('.') ? 1 : 0} />
                 {typeof value === 'string' && value.includes('+') ? '+' : ''}
             </span>
