@@ -9,7 +9,7 @@ const blog = {
   mission: "Sharing knowledge, one post at a time",
   topics: ["AI", "Web3", "Code", "Innovation"],
   status: "ACTIVE",
-  author: "Creative Developer"
+  author: "Software Engineer"
 };
 
 blog.init();

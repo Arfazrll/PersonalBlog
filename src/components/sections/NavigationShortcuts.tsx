@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { cn } from "@/lib/utils";
 import { portfolioData } from "@/data/portfolio";
 import { ArrowUpRight } from "lucide-react";
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Gallery assets for background randomization
 const GALLERY_IMAGES = [
@@ -27,6 +28,7 @@ const GALLERY_IMAGES = [
 ];
 
 export const NavigationShortcuts = () => {
+    const [isOpen, setIsOpen] = useState(false);
     const [hoveredImage, setHoveredImage] = useState<string | null>(null);
     const [itemImageMap, setItemImageMap] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement>(null);
@@ -50,7 +52,6 @@ export const NavigationShortcuts = () => {
         [0, 0.5, 1],
         [1.05, 1, 1.05]
     );
-
     // Randomize images on mount
     useEffect(() => {
         const shuffled = [...GALLERY_IMAGES].sort(() => Math.random() - 0.5);
@@ -64,6 +65,14 @@ export const NavigationShortcuts = () => {
 
         setItemImageMap(map);
     }, []);
+
+    // REFRESH: Synchronize ScrollTrigger with layout shifts (Index Open/Close)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            ScrollTrigger.refresh();
+        }, 850); // Matches duration + small buffer
+        return () => clearTimeout(timer);
+    }, [isOpen]);
 
     const categories = [
         {
@@ -106,7 +115,10 @@ export const NavigationShortcuts = () => {
     return (
         <div
             ref={containerRef}
-            className="w-full max-w-7xl mx-auto px-4 relative min-h-screen flex flex-col justify-center py-20"
+            className={cn(
+                "w-full max-w-full px-0 relative flex flex-col justify-center pt-0 pb-4 transition-all duration-700",
+                isOpen ? "min-h-screen" : "min-h-[15vh]"
+            )}
             onMouseLeave={handleMouseLeave}
         >
             {/*
@@ -114,9 +126,15 @@ export const NavigationShortcuts = () => {
                 - No mode="wait" means images blend into each other.
                 - scroll-linked opacity handles the Hero/Footer leak automatically.
             */}
-            <div className="fixed inset-0 z-[-1] pointer-events-none hidden lg:block overflow-hidden">
+            <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+                {/* Mobile/Fallback Subtle Background */}
+                <div className="absolute inset-0 bg-background lg:hidden opacity-50 dark:opacity-20" />
+                <div className="absolute inset-0 lg:hidden pointer-events-none">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-background" />
+                </div>
+
                 <AnimatePresence>
-                    {hoveredImage && (
+                    {hoveredImage && isOpen && (
                         <motion.div
                             key={hoveredImage}
                             initial={{ opacity: 0 }}
@@ -159,98 +177,94 @@ export const NavigationShortcuts = () => {
                 </AnimatePresence>
             </div>
 
-            {/* Header */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-left mb-16 relative z-10 border-b border-neutral-200 dark:border-neutral-800 pb-8"
-            >
-                <div className="flex items-end justify-between">
-                    <div>
-                        <h2 className="text-4xl md:text-7xl font-black text-neutral-900 dark:text-white mb-2 tracking-tighter">
-                            INDEX
-                        </h2>
-                        <p className="text-neutral-500 dark:text-neutral-400 font-mono text-sm tracking-widest uppercase">
-                            Table of Contents / Navigation
-                        </p>
-                    </div>
-                    <div className="hidden md:block text-right">
-                        <p className="text-xs font-mono text-neutral-400">
-                            LATEST UPDATE<br />
-                            {new Date().getFullYear()}
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* List Layout */}
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-16">
-                {categories.map((category, catIdx) => (
-                    <motion.div
-                        key={category.title}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: catIdx * 0.1 }}
-                        viewport={{ once: true }}
+            {/* Toggle Button Container - Perfected Corner Alignment (Absolute Corner) */}
+            <div className="relative z-[100] flex items-center justify-start py-8 -mt-40 mb-10 px-10">
+                <div className="flex items-center gap-0">
+                    {/* ULTIMATE MINIMALIST CIRCULAR TOGGLE - Force White for Contrast, Sized to be 'just right' */}
+                    <motion.button
+                        onClick={() => setIsOpen(!isOpen)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="bg-white dark:bg-white text-black h-14 w-14 md:h-18 md:w-18 flex items-center justify-center rounded-full shadow-[0_0_50px_rgba(255,255,255,0.3)] group transition-all duration-500 overflow-hidden relative border-none"
                     >
-                        <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-4">
-                            <motion.span
-                                initial={{ scaleX: 0 }}
-                                whileInView={{ scaleX: 1 }}
-                                transition={{ duration: 1, delay: catIdx * 0.2 }}
-                                viewport={{ once: true }}
-                                className="w-8 h-[1px] bg-primary origin-left"
-                            />
-                            {category.title}
-                        </h3>
+                        <motion.div
+                            animate={{
+                                rotate: isOpen ? 135 : 0,
+                            }}
+                            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                            className="relative z-10"
+                        >
+                            <ArrowUpRight className="w-7 h-7 md:w-9 md:h-9 text-black" />
+                        </motion.div>
+                        {/* Signature Glow Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </motion.button>
+                </div>
+            </div>
 
-                        <div className="space-y-0">
-                            {category.items.map((item, idx) => (
-                                <Link
-                                    key={item.id}
-                                    href={item.href || '#'}
-                                    target={item.external ? "_blank" : undefined}
-                                    className="group block relative"
-                                    onMouseEnter={() => {
-                                        setHoveredImage(itemImageMap[item.id]);
-                                    }}
+            {/* Expanding List Section (Original Downward Logic) */}
+            <AnimatePresence mode="wait">
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                    >
+                        <div className="pt-8 px-8 md:px-16 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-16">
+                            {categories.map((category, catIdx) => (
+                                <motion.div
+                                    key={category.title}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: catIdx * 0.1 }}
                                 >
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -10 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.5, delay: (catIdx * 0.2) + (idx * 0.1) }}
-                                        viewport={{ once: true }}
-                                        className="flex items-baseline py-4 border-b border-neutral-200 dark:border-neutral-800 group-hover:border-primary/50 transition-colors duration-500"
-                                    >
-                                        <span className="font-mono text-xs md:text-sm text-neutral-400 group-hover:text-primary transition-all duration-500 w-12 shrink-0">
-                                            {item.id}_
-                                        </span>
-                                        <div className="flex-1 flex items-center justify-between">
-                                            <span className="text-xl md:text-3xl font-medium text-neutral-800 dark:text-neutral-200 group-hover:text-black dark:group-hover:text-white transition-all duration-500 group-hover:tracking-[0.1em] group-hover:italic">
-                                                {item.title}
-                                            </span>
-                                            <div className="flex items-center gap-4">
-                                                <span className="hidden md:block text-[10px] font-mono text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity duration-700 uppercase tracking-widest whitespace-nowrap">
-                                                    More Details
-                                                </span>
-                                                <ArrowUpRight className="w-5 h-5 text-neutral-400 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 text-primary" />
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                </Link>
+                                    <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-4">
+                                        <motion.span
+                                            initial={{ scaleX: 0 }}
+                                            animate={{ scaleX: 1 }}
+                                            transition={{ duration: 1, delay: catIdx * 0.2 }}
+                                            className="w-8 h-[1px] bg-primary origin-left"
+                                        />
+                                        {category.title}
+                                    </h3>
+
+                                    <div className="space-y-0">
+                                        {category.items.map((item, idx) => (
+                                            <Link
+                                                key={item.id}
+                                                href={item.href || '#'}
+                                                target={item.external ? "_blank" : undefined}
+                                                className="group block relative"
+                                                onClick={() => setIsOpen(false)}
+                                                onMouseEnter={() => setHoveredImage(itemImageMap[item.id])}
+                                            >
+                                                <motion.div
+                                                    initial={{ opacity: 0, x: -10 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ duration: 0.5, delay: (catIdx * 0.2) + (idx * 0.1) }}
+                                                    className="flex items-baseline py-4 border-b border-black/[0.05] dark:border-white/[0.05] group-hover:border-primary/50 transition-colors duration-500"
+                                                >
+                                                    <span className="font-mono text-xs md:text-sm text-neutral-400 group-hover:text-primary transition-all duration-500 w-12 shrink-0">
+                                                        {item.id}_
+                                                    </span>
+                                                    <div className="flex-1 flex items-center justify-between">
+                                                        <span className="text-xl md:text-3xl font-medium text-neutral-800 dark:text-neutral-200 group-hover:text-black dark:group-hover:text-white transition-all duration-500 group-hover:tracking-[0.1em] group-hover:italic">
+                                                            {item.title}
+                                                        </span>
+                                                        <ArrowUpRight className="w-5 h-5 text-neutral-400 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 text-primary" />
+                                                    </div>
+                                                </motion.div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </motion.div>
                             ))}
                         </div>
                     </motion.div>
-                ))}
-            </div>
-
-            {/* Mobile Image Preview Logic (Optional or Simplified) */}
-            <div className="mt-20 text-center lg:hidden">
-                <p className="text-xs text-neutral-500 font-mono">
-                    Select a section to navigate
-                </p>
-            </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

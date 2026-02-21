@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Playfair_Display, Alex_Brush } from 'next/font/google';
 import { getMessages, getLocale } from 'next-intl/server';
 import { ThemeProvider, I18nProvider, SmoothScrollProvider } from '@/providers';
 
@@ -14,6 +14,19 @@ const inter = Inter({
 const jetbrainsMono = JetBrains_Mono({
     subsets: ['latin'],
     variable: '--font-jetbrains',
+    display: 'swap',
+});
+
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    variable: '--font-playfair',
+    display: 'swap',
+});
+
+const signature = Alex_Brush({
+    weight: '400',
+    subsets: ['latin'],
+    variable: '--font-signature',
     display: 'swap',
 });
 
@@ -80,7 +93,7 @@ export default async function RootLayout({
 
     return (
         <html lang={locale} data-scroll-behavior="smooth" suppressHydrationWarning>
-            <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans relative`}>
+            <body className={`${inter.variable} ${jetbrainsMono.variable} ${playfair.variable} ${signature.variable} font-sans relative`}>
                 <ThemeProvider>
                     <I18nProvider locale={locale} messages={messages}>
                         <SmoothScrollProvider>

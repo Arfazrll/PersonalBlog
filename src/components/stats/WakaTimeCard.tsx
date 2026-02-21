@@ -50,15 +50,15 @@ export function WakaTimeDashboard({ data }: { data: any }) {
     return (
         <div className="w-full font-sans transition-colors duration-300">
             {/* Header */}
-            <div className="flex items-center gap-3 mb-8">
-                <Clock className="w-8 h-8 text-gray-900 dark:text-white" />
-                <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
+            <div className="flex items-center gap-3 mb-4">
+                <Clock className="w-6 h-6 text-gray-900 dark:text-white" />
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white tracking-tight">
                     {t('title')}
                 </h2>
             </div>
-            <p className="text-gray-500 dark:text-[#8b949e] mb-8 -mt-6">
+            <p className="text-gray-500 dark:text-[#8b949e] mb-6 -mt-3 text-sm">
                 {t('description')}
-                <span className="float-right text-xs mt-1 text-gray-400 dark:text-[#8b949e]">Last updated: Recently</span>
+                <span className="float-right text-[10px] mt-1 text-gray-400 dark:text-[#8b949e]">Last updated: Recently</span>
             </p>
 
             {/* Stats Grid */}
@@ -131,14 +131,14 @@ export function WakaTimeDashboard({ data }: { data: any }) {
 
 function WakaStat({ label, value, icon, highlight = false }: { label: string, value: string, icon?: React.ReactNode, highlight?: boolean }) {
     return (
-        <div className="relative group p-4 md:p-5 border border-gray-200 dark:border-[#30363d] rounded-xl hover:border-yellow-500/30 dark:hover:border-yellow-500/30 transition-all duration-300 bg-transparent hover:bg-gray-50/50 dark:hover:bg-[#161b22]/50">
-            <div className="flex items-center gap-2 mb-3">
-                <div className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 group-hover:text-yellow-500 transition-colors duration-300">
+        <div className="relative group p-3 border border-gray-200 dark:border-[#30363d] rounded-xl hover:border-yellow-500/30 dark:hover:border-yellow-500/30 transition-all duration-300 bg-transparent hover:bg-gray-50/50 dark:hover:bg-[#161b22]/50">
+            <div className="flex items-center gap-2 mb-2">
+                <div className="p-1 rounded-md text-gray-500 dark:text-gray-400 group-hover:text-yellow-500 transition-colors duration-300">
                     {icon}
                 </div>
-                <span className="text-gray-500 dark:text-[#8b949e] text-xs font-medium uppercase tracking-wider">{label}</span>
+                <span className="text-gray-500 dark:text-[#8b949e] text-[10px] font-medium uppercase tracking-wider">{label}</span>
             </div>
-            <span className={`text-lg md:text-xl font-bold tracking-tight ${highlight ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-900 dark:text-white'}`}>
+            <span className={`text-base md:text-lg font-bold tracking-tight ${highlight ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-900 dark:text-white'}`}>
                 {value}
             </span>
         </div>

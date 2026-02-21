@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useTextScramble } from "@/hooks/useTextScramble";
 import type { ISourceOptions } from '@tsparticles/engine';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -18,6 +19,11 @@ import { LoadingScreen } from '@/components/layout';
 import { TextPressure } from '@/components/ui/TextPressure';
 import { portfolioData } from '@/data/portfolio';
 import { cn } from "@/lib/utils";
+import { SocialCorner } from '@/components/layout/SocialCorner';
+const Footer = dynamic(() => import("@/components/layout/Footer").then(mod => mod.Footer), {
+    ssr: false
+});
+
 
 const Hyperspeed = dynamic(() => import('@/components/ui/Hyperspeed'), { ssr: false });
 const { hyperspeedPresets } = require('@/components/ui/Hyperspeed');
@@ -108,14 +114,21 @@ function MultilingualWelcome({ isDarkMode }: { isDarkMode: boolean }) {
     );
 }
 
-function AnimatedBackground() {
+function AnimatedBackground({ scrollYProgress }: { scrollYProgress: any }) {
     const isMobile = useIsMobile();
 
+    // Parallax logic: grid moves slower (0.3x)
+    const yTransform = useTransform(scrollYProgress, [0, 1], [0, -150]);
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3]);
+
     return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+            style={{ y: isMobile ? 0 : yTransform, opacity }}
+            className="absolute inset-0 overflow-hidden pointer-events-none"
+        >
             {/* Grid pattern - works for both light and dark */}
             <div
-                className="absolute inset-0 opacity-[0.04] dark:opacity-[0.02]"
+                className="absolute inset-0 opacity-[0.04] dark:opacity-[0.01]"
                 style={{
                     backgroundImage: `
             linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px),
@@ -124,7 +137,7 @@ function AnimatedBackground() {
                     backgroundSize: '80px 80px',
                 }}
             />
-        </div>
+        </motion.div>
     );
 }
 
@@ -212,28 +225,8 @@ function HeroIntro() {
         if (!containerRef.current) return;
 
         const ctx = gsap.context(() => {
-            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-            tl.fromTo('.hero-badge',
-                { y: 60, opacity: 0, scale: 0.8 },
-                { y: 0, opacity: 1, scale: 1, duration: 1.2 }
-            )
-                .fromTo('.hero-name',
-                    { y: 100, opacity: 0, scale: 0.95 },
-                    { y: 0, opacity: 1, scale: 1, duration: 1.4 },
-                    '-=0.6'
-                )
-                .fromTo('.hero-subtitle',
-                    { y: 50, opacity: 0 },
-                    { y: 0, opacity: 1, duration: 1 },
-                    '-=0.8'
-                )
-                .fromTo('.hero-cta',
-                    { y: 40, opacity: 0, scale: 0.9 },
-                    { y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.15 },
-                    '-=0.5'
-                );
-
+            // Only keeping the scroll-triggered exit animation, 
+            // the entrance is now handled by Framer Motion for better control
             gsap.to('.hero-content', {
                 scale: 0.9,
                 filter: 'blur(20px)',
@@ -283,12 +276,21 @@ function HeroIntro() {
         return () => observer.disconnect();
     }, []);
 
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end start"]
+    });
+
+    const { scrambledText } = useTextScramble("Syahril Arfian Almazril", true, 300);
+
     return (
         <section
             ref={containerRef}
             className="relative min-h-screen flex items-center justify-center overflow-hidden pt-12"
             style={{ willChange: 'transform' }}
         >
+            <AnimatedBackground scrollYProgress={scrollYProgress} />
+
             {/* Hyperspeed Background - Persistent mount with paused state for smoothness */}
             <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${isInView ? 'opacity-100' : 'opacity-0'}`}>
                 <Hyperspeed
@@ -315,10 +317,17 @@ function HeroIntro() {
             >
                 {/* Badge */}
                 <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="hero-badge inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-card text-sm font-medium mb-10 border-primary/20 backdrop-blur-xl"
                 >
                     <span className="relative flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                        <motion.span
+                            animate={{ scale: [1, 3], opacity: [0.6, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                            className="absolute inline-flex h-full w-full rounded-full bg-green-400"
+                        />
                         <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
                     </span>
                     <span className="tracking-wide text-foreground/80">{t('badge')}</span>
@@ -326,48 +335,74 @@ function HeroIntro() {
                 </motion.div>
 
                 {/* Multilingual Welcome */}
-                <div className="hero-welcome mb-[-25px] h-6 flex items-center justify-center overflow-hidden">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="hero-welcome mb-[-25px] h-6 flex items-center justify-center overflow-hidden"
+                >
                     <MultilingualWelcome isDarkMode={isDarkMode} />
-                </div>
+                </motion.div>
 
-                {/* Name - Responsive Switch: Canvas on Desktop, Static Text on Mobile */}
-                <div className="hero-name mb-4 w-full max-w-6xl mx-auto flex items-center justify-center">
-                    {/* Mobile: Static Text (Guarantees wrapping) */}
-                    <h1 className="block md:hidden text-6xl font-black text-center leading-tight tracking-tighter">
-                        <span className="text-foreground">Syahril</span> <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x">
-                            Arfian Almazril
-                        </span>
-                    </h1>
-
-                    {/* Desktop: TextPressure Canvas (No wrapping needed) */}
-                    <div className="hidden md:flex w-full h-[140px] lg:h-[180px] xl:h-[220px] items-center justify-center">
+                {/* Name - Canvas Text */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="hero-name mb-4 w-full max-w-6xl mx-auto flex items-center justify-center"
+                >
+                    {/* Desktop Name */}
+                    <div className="hidden lg:block w-full h-[220px] relative">
                         <TextPressure
                             text="Syahril Arfian Almazril"
-                            flex={false}
+                            flex={true}
                             alpha={false}
                             stroke={false}
                             width={true}
                             weight={true}
                             italic={true}
-                            textColor={isDarkMode ? "#ffffff" : "#0f172a"}
-                            minFontSize={110}
-                            className="w-full h-full flex items-center justify-center"
+                            textColor="hsl(var(--foreground))"
+                            strokeColor="#ff0000"
+                            minFontSize={120}
                         />
                     </div>
-                </div>
-
-                {/* Title */}
-                <motion.div className="hero-subtitle mt-4 mb-8 flex flex-col items-center gap-2">
-                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
-                    <p className="text-xl md:text-2xl lg:text-3xl text-foreground/80 font-medium tracking-wide">
-                        {portfolioData.personal.title} <span className="text-primary mx-2">•</span> {t('role')}
-                    </p>
-                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+                    {/* Mobile Name */}
+                    <div className="block lg:hidden w-full text-center px-4">
+                        <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-foreground">
+                            Syahril <br /> Arfian <br /> Almazril
+                        </h1>
+                    </div>
                 </motion.div>
 
-                {/* Subtitle */}
-                <p
+                {/* Title & Divider */}
+                <div className="mt-4 mb-8 flex flex-col items-center gap-2">
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 0.4, delay: 2.0, ease: "easeInOut" }}
+                        className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"
+                    />
+                    <motion.p
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 2.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        className="text-xl md:text-2xl lg:text-3xl text-foreground/80 font-medium tracking-wide"
+                    >
+                        {portfolioData.personal.title} <span className="text-primary mx-2">•</span> {t('role')}
+                    </motion.p>
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 0.4, delay: 2.0, ease: "easeInOut" }}
+                        className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"
+                    />
+                </div>
+
+                {/* Subtitle / Tagline */}
+                <motion.p
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 2.6, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="hero-subtitle text-base md:text-lg text-muted-foreground/70 max-w-2xl mx-auto mb-12 leading-relaxed"
                     dangerouslySetInnerHTML={{ __html: t.raw('description') }}
                 />
@@ -375,9 +410,9 @@ function HeroIntro() {
                 {/* Minimalist Explore More Link */}
                 <motion.div
                     className="hero-cta flex justify-center"
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 2.0 }}
+                    transition={{ duration: 0.4, delay: 2.9, ease: [0.25, 0.46, 0.45, 0.94] }}
                 >
                     <Link
                         href="#about"
@@ -395,7 +430,7 @@ function HeroIntro() {
                     </Link>
                 </motion.div>
             </animated.div>
-        </section>
+        </section >
     );
 }
 
@@ -448,9 +483,10 @@ function SpotlightCard({ children, className = "" }: { children: React.ReactNode
                       `,
                 }}
             />
-        </div>
+        </div >
     );
 }
+
 
 const StatsSection = dynamic(() => import("@/components/sections/StatsSection"), {
     ssr: false,
@@ -461,6 +497,28 @@ const CTASection = dynamic(() => import("@/components/sections/CTASection"), {
     ssr: false,
     loading: () => <div className="h-[400px] w-full animate-pulse bg-zinc-100/5 dark:bg-zinc-800/5" />
 });
+
+const MetricCTAHijack = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    });
+
+    return (
+        <section ref={containerRef} className="relative h-[1200vh] z-50 bg-background dark:bg-black">
+            <div className="sticky top-0 h-screen w-full z-50 bg-background dark:bg-black">
+                <StatsSection scrollYProgress={scrollYProgress} />
+            </div>
+            <div className="relative z-50 bg-background dark:bg-black shadow-xl dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)] mt-[1000vh]" style={{ willChange: "transform" }}>
+                <div className="h-[25vh]" />
+                <CTASection />
+                <div className="h-4" />
+                <Footer />
+            </div>
+        </section>
+    );
+};
 
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -492,12 +550,12 @@ export default function HomePage() {
     return (
         <>
             {isLoading && <LoadingScreen onComplete={handleLoadingComplete} duration={2500} />}
-            <main className="relative overflow-x-hidden">
+            <main className="relative overflow-x-clip">
                 <HeroIntro />
                 <ExpertiseSection />
                 <AboutSection />
-                <StatsSection />
-                <CTASection />
+                <MetricCTAHijack />
+                <SocialCorner className="fixed bottom-12 right-12 z-[30]" />
             </main>
         </>
     );
