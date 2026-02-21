@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, TrendingUp, Code2, Award } from 'lucide-react';
+import { Code2, Award, Sparkles, TrendingUp } from 'lucide-react';
 import { portfolioData } from '@/data/portfolio';
+import { Counter } from '@/components/ui/Counter';
 
 // Calculate metrics from portfolio data
 const calculateMetrics = () => {
@@ -65,7 +66,12 @@ const StatCard = ({ value, label, icon, delay, gradient, isLowPowerMode }: StatC
                             backgroundSize: isLowPowerMode ? "100% 100%" : "200% 200%"
                         }}
                     >
-                        {value}
+                        <Counter
+                            value={parseFloat(value.replace(/[^0-9.]/g, ''))}
+                            decimal={value.includes('.') ? 1 : 0}
+                        />
+                        {value.includes('+') ? '+' : ''}
+                        {value.includes('%') ? '%' : ''}
                     </motion.div>
 
                     {/* Label */}

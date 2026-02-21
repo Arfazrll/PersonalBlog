@@ -3,7 +3,7 @@ import { PortfolioData } from '@/types';
 export const portfolioData: PortfolioData = {
     personal: {
         name: 'Syahril Arfian Almazril',
-        title: 'Tech Explorer',
+        title: 'AI Engineer',
         subtitle: 'AI Engineer • Full Stack Developer • Blockchain Enthusiast | Bridging Technical Innovation with Strategic Execution',
         bio: 'An Information Technology student at Telkom University with a distinctive profile that fuses deep technical expertise in Artificial Intelligence with proven strategic leadership. Through hands-on experience as an AI Researcher at the Cyber Physical System Laboratory, I develop complex technical solutions from architecting IoT systems and designing software blueprints to engineering advanced Machine Learning models. Currently exploring AI Agents and Blockchain/Web3 technologies. Driven to leverage this integrated skill set to build initiatives that bridge technical innovation with effective execution.',
         avatar: '/about/arfazrll.jpeg',

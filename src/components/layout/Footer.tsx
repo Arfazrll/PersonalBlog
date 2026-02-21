@@ -139,7 +139,7 @@ export function Footer() {
         <>
             {/* Compact Footer - Always visible */}
             <footer className={`${isBlog ? 'absolute bottom-0 w-full border-t-0 pointer-events-none !bg-transparent z-20' : 'relative z-20 mt-auto dark:bg-black'}`}>
-                <div className={`container-creative py-6 md:py-8 pointer-events-auto ${isBlog ? '!bg-transparent' : ''}`}>
+                <div className={`max-w-[1600px] mx-auto relative z-10 px-6 md:px-12 lg:px-24 py-6 md:py-8 pointer-events-auto ${isBlog ? '!bg-transparent' : ''}`}>
                     <div className={`
                         px-6 md:px-8 py-4 md:py-6 transition-all duration-300
                         ${isBlog
@@ -253,7 +253,7 @@ export function Footer() {
                         <div className="min-h-screen flex flex-col pt-20">
                             <Marquee />
 
-                            <div className="flex-1 container-creative flex flex-col justify-center py-12 md:py-24">
+                            <div className="flex-1 max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col justify-center py-12 md:py-24">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-16">
                                     {/* Left Column - CTA */}
                                     <div>
@@ -310,7 +310,7 @@ export function Footer() {
                             </div>
 
                             {/* Bottom Bar in Overlay */}
-                            <div className="container-creative py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
                                 <p className="text-sm text-muted-foreground">
                                     © {currentYear} {portfolioData.personal.name}. {t('copyright')}
                                 </p>

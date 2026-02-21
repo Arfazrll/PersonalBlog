@@ -74,7 +74,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   ::selection {
@@ -267,6 +267,14 @@
   .subheading {
     @apply text-lg md:text-xl text-muted-foreground font-light tracking-wide;
   }
+
+  .font-serif-elegant {
+    font-family: var(--font-playfair), serif;
+  }
+
+  .font-signature {
+    font-family: var(--font-signature), cursive;
+  }
 }
 
 @layer utilities {
@@ -409,44 +417,63 @@
   }
 }
 
-/* Custom Scrollbar for Achievement Cards Container */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+/* --- Global Modern Minimalist Scrollbar (Aggressive Geometric) --- */
+/* Reset standard properties that might interfere with custom styling on Chrome/Edge */
+html, body, * {
+  scrollbar-width: auto;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 10px;
+/* Main scrollbar structure */
+::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px !important;
 }
 
-/* Light Mode Default: Dark Scrollbar */
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  transition: background 0.3s ease;
+/* Aggressively hide ALL buttons/arrows */
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-button:start,
+::-webkit-scrollbar-button:end,
+::-webkit-scrollbar-button:vertical:start:increment,
+::-webkit-scrollbar-button:vertical:start:decrement,
+::-webkit-scrollbar-button:vertical:end:increment,
+::-webkit-scrollbar-button:vertical:end:decrement {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
+/* Scrollbar Track */
+::-webkit-scrollbar-track {
+  background: transparent !important;
 }
 
-/* Dark Mode: White Scrollbar */
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+/* Scrollbar Thumb - Strictly Square */
+::-webkit-scrollbar-thumb {
+  background-color: #000000;
+  border-radius: 0 !important;
+  border: none !important;
 }
 
-.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+/* Dark Mode Overrides */
+.dark ::-webkit-scrollbar-thumb,
+.dark::-webkit-scrollbar-thumb {
+  background-color: #ffffff !important;
+  border-radius: 0 !important;
 }
 
-/* Firefox scrollbar */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+/* Hover States */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #333333 !important;
 }
 
-.dark .custom-scrollbar {
-  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+.dark ::-webkit-scrollbar-thumb:hover,
+.dark::-webkit-scrollbar-thumb:hover {
+  background-color: #e5e5e5 !important;
+}
+
+/* Hide scrollbar corner */
+::-webkit-scrollbar-corner {
+  background: transparent !important;
 }
 ::view-transition-old(root), ::view-transition-new(root) {
     animation: none;

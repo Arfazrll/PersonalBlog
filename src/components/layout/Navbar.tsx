@@ -148,9 +148,9 @@ export function Navbar() {
                 initial="hidden"
                 animate={isVisible || isMenuOpen ? 'visible' : 'hidden'}
                 transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-                className="fixed top-0 left-0 right-0 z-50"
+                className="fixed top-0 left-0 right-0 z-[100]"
             >
-                <div className="container-creative py-4 md:py-6">
+                <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 py-4 md:py-6">
                     <motion.div
                         className={cn(
                             'flex items-center justify-between transition-all duration-500 rounded-full',
@@ -243,7 +243,7 @@ export function Navbar() {
                         animate="open"
                         exit="closed"
                         transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-40 lg:hidden"
+                        className="fixed inset-0 z-[90] lg:hidden"
                     >
                         <motion.div
                             className="absolute inset-0 bg-background"

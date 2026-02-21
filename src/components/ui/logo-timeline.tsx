@@ -89,55 +89,73 @@ export function LogoTimeline({
   const [scope, animate] = useAnimate()
   const isInView = useInView(scope, { once: true })
 
-  // Define internal items for the timeline, categorized for flexible use
+  // Define comprehensive items from portfolioData
   const techItems: LogoItem[] = [
     { label: "React", icon: "react" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 0 },
     { label: "Next.js", icon: "nextjs" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 0 },
     { label: "TypeScript", icon: "typescript" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 0 },
     { label: "Tailwind CSS", icon: "tailwind" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 0 },
-    { label: "Node.js", icon: "nodejs" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 1 },
-    { label: "Express", icon: "express" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 1 },
-    { label: "PostgreSQL", icon: "postgresql" as LogoIconType, animationDelay: 0, animationDuration: 21, row: 1 },
-    { label: "MongoDB", icon: "mongodb" as LogoIconType, animationDelay: 0, animationDuration: 24, row: 1 },
-    { label: "GraphQL", icon: "graphql" as LogoIconType, animationDelay: 0, animationDuration: 27, row: 2 },
-    { label: "Apollo", icon: "apollo" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 2 },
-    { label: "Docker", icon: "docker" as LogoIconType, animationDelay: 0, animationDuration: 29, row: 2 },
-    { label: "Kubernetes", icon: "kubernetes" as LogoIconType, animationDelay: 0, animationDuration: 30, row: 3 },
-    { label: "AWS", icon: "aws" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 3 },
-    { label: "Azure", icon: "azure" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 3 },
-    { label: "GCP", icon: "gcp" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 4 },
-    { label: "Figma", icon: "figma" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 4 },
-    { label: "Vercel", icon: "vercel" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 4 },
+    { label: "Three.js", icon: "framer" as LogoIconType, animationDelay: 0, animationDuration: 24, row: 1 },
+    { label: "GSAP", icon: "framer" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 1 },
+    { label: "Python", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 21, row: 1 },
+    { label: "Flask", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 24, row: 1 },
+    { label: "LangChain", icon: "openai" as LogoIconType, animationDelay: 0, animationDuration: 27, row: 2 },
+    { label: "Ollama", icon: "openai" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 2 },
+    { label: "TensorFlow", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 29, row: 2 },
+    { label: "Keras", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 2 },
+    { label: "Go", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 3 },
+    { label: "Gin", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 3 },
+    { label: "Solidity", icon: "v0" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 3 },
+    { label: "Ethereum", icon: "applePay" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 3 },
+    { label: "Java", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 4 },
+    { label: "Spring Boot", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 4 },
+    { label: "Laravel", icon: "server" as LogoIconType, animationDelay: 0, animationDuration: 21, row: 4 },
+    { label: "PostgreSQL", icon: "postgresql" as LogoIconType, animationDelay: 0, animationDuration: 24, row: 4 },
+    { label: "MongoDB", icon: "mongodb" as LogoIconType, animationDelay: 0, animationDuration: 27, row: 5 },
+    { label: "Firebase", icon: "googleDrive" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 5 },
+    { label: "Prisma", icon: "radix" as LogoIconType, animationDelay: 0, animationDuration: 29, row: 5 },
+    { label: "Docker", icon: "docker" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 5 },
+    { label: "Kubernetes", icon: "kubernetes" as LogoIconType, animationDelay: 0, animationDuration: 30, row: 6 },
+    { label: "AWS", icon: "aws" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 6 },
+    { label: "Azure", icon: "azure" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 6 },
+    { label: "Vercel", icon: "vercel" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 6 },
   ];
 
   const toolItems: LogoItem[] = [
     { label: "Git", icon: "git" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 0 },
     { label: "GitHub", icon: "github" as LogoIconType, animationDelay: 0, animationDuration: 25, row: 0 },
     { label: "VS Code", icon: "vscode" as LogoIconType, animationDelay: 0, animationDuration: 22, row: 0 },
-    { label: "Jira", icon: "jira" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 1 },
-    { label: "Slack", icon: "slack" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 1 },
-    { label: "Postman", icon: "postman" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 2 },
-    { label: "Framer Motion", icon: "framer" as LogoIconType, animationDelay: 0, animationDuration: 21, row: 2 },
-    { label: "Storybook", icon: "storybook" as LogoIconType, animationDelay: 0, animationDuration: 24, row: 3 },
-    { label: "Netlify", icon: "netlify" as LogoIconType, animationDelay: 0, animationDuration: 27, row: 3 },
-    { label: "Stripe", icon: "stripe" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 4 },
-    { label: "Auth0", icon: "auth0" as LogoIconType, animationDelay: 0, animationDuration: 29, row: 4 },
+    { label: "Figma", icon: "figma" as LogoIconType, animationDelay: 0, animationDuration: 28, row: 1 },
+    { label: "Postman", icon: "postman" as LogoIconType, animationDelay: 0, animationDuration: 23, row: 1 },
+    { label: "Jira", icon: "jira" as LogoIconType, animationDelay: 0, animationDuration: 26, row: 2 },
+    { label: "Slack", icon: "slack" as LogoIconType, animationDelay: 0, animationDuration: 21, row: 2 },
+    { label: "Docker", icon: "docker" as LogoIconType, animationDelay: 0, animationDuration: 24, row: 3 },
+    { label: "Vercel", icon: "vercel" as LogoIconType, animationDelay: 0, animationDuration: 27, row: 3 },
+    { label: "Netlify", icon: "netlify" as LogoIconType, animationDelay: 0, animationDuration: 20, row: 4 },
+    { label: "MetaMask", icon: "paypal" as LogoIconType, animationDelay: 0, animationDuration: 29, row: 4 },
   ];
 
   const rows = React.useMemo(() => {
-    // Reduce rows and items on low power mode
-    const rowCount = isLowPowerMode ? 3 : 5;
-    const itemsPerRow = isLowPowerMode ? 6 : 10;
+    // Final polish: 7 rows with unique partitioning
+    const rowCount = 7;
+    const itemsPerRow = 4;
 
     const allItems = [...techItems, ...toolItems];
 
     return Array.from({ length: rowCount }).map((_, rowIndex) => {
       const isReverse = rowIndex % 2 === 1;
+
+      // Fixed duration for all items in a row to maintain relative spacing
+      const rowBaseDuration = 18 + (rowIndex * 2);
+
       const items = Array.from({ length: itemsPerRow }).map((_, i) => {
-        const item = allItems[(i + rowIndex * 3) % allItems.length]; // Cycle through allItems
+        // Partitioned index to ensure NO duplicates across any row
+        const itemIndex = (rowIndex * itemsPerRow + i) % allItems.length;
+        const item = allItems[itemIndex];
+
         return {
           ...item,
-          animationDuration: (item.animationDuration || 20) * (isLowPowerMode ? 1.5 : 1) // Adjust speed
+          animationDuration: rowBaseDuration * (isLowPowerMode ? 1.5 : 1)
         };
       });
       return items;
@@ -197,24 +215,24 @@ export function LogoTimeline({
         </div>
       )}
 
-      {/* Timeline container - responsive margins */}
+      {/* Timeline container - dynamic filling */}
       <div
-        className={cn("relative overflow-hidden mx-4 sm:mx-8 md:mx-16 lg:mx-24", isLowPowerMode ? "h-64" : height)}
+        className={cn("relative overflow-hidden w-full", isLowPowerMode ? "h-64" : height)}
       >
-        {/* Blur effects - Disable on low power */}
+        {/* Blur effects - Subtle Edges */}
         {!isLowPowerMode && (
           <>
-            <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 md:w-32 lg:w-40 bg-gradient-to-r from-background to-transparent z-20 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 md:w-32 lg:w-40 bg-gradient-to-l from-background to-transparent z-20 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-background to-transparent z-20 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-background to-transparent z-20 pointer-events-none" />
           </>
         )}
 
-        <div className="flex flex-col justify-evenly h-full w-full py-2 sm:py-4 relative z-10">
+        <div className="flex flex-col justify-between h-full w-full py-2 sm:py-4 relative z-10">
           {rows.map((rowItems, rowIndex) => {
             const isReverse = rowIndex % 2 === 1
 
             return (
-              <div key={rowIndex} className="relative w-full h-8 sm:h-10">
+              <div key={rowIndex} className="relative w-full h-8 sm:h-12">
                 {/* Dotted track line - Light blue in light mode, white in dark mode */}
                 <div
                   className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-px z-0 dotted-track"
@@ -228,15 +246,16 @@ export function LogoTimeline({
                   return (
                     <motion.div
                       key={`${item.label}-${itemIndex}`}
-                      className="absolute top-1/2 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full border border-border/50 dark:border-white/10 bg-background/90 dark:bg-background/70 backdrop-blur-sm hover:bg-background hover:border-border dark:hover:border-white/20 transition-colors cursor-default z-10 shadow-sm"
+                      className="absolute top-1/2 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full border border-border/40 dark:border-white/5 bg-background/60 dark:bg-background/40 backdrop-blur-sm hover:bg-background/80 transition-colors cursor-default z-10 shadow-sm"
                       style={{ y: "-50%" }}
-                      initial={{ x: isReverse ? "-100%" : "100vw" }}
-                      animate={{ x: isReverse ? "100vw" : "-100%" }}
+                      initial={{ left: isReverse ? "120%" : "-20%" }}
+                      animate={{ left: isReverse ? "-20%" : "120%" }}
                       transition={{
-                        x: {
+                        left: {
                           duration: item.animationDuration,
                           repeat: Infinity,
-                          ease: "linear",
+                          repeatType: "mirror", // Seamless back-and-forth yoyo
+                          ease: "easeInOut", // Natural acceleration/deceleration
                           delay: -((item.animationDuration * offsetPercent) / 100)
                         }
                       }}
@@ -254,10 +273,10 @@ export function LogoTimeline({
         {/* CSS for dotted track - different colors for light/dark mode */}
         <style>{`
           .dotted-track {
-            background-image: repeating-linear-gradient(to right, #60a5fa 0, #60a5fa 3px, transparent 3px, transparent 10px);
+            background-image: repeating-linear-gradient(to right, rgba(96, 165, 250, 0.2) 0, rgba(96, 165, 250, 0.2) 3px, transparent 3px, transparent 10px);
           }
           .dark .dotted-track {
-            background-image: repeating-linear-gradient(to right, rgba(255,255,255,0.15) 0, rgba(255,255,255,0.15) 3px, transparent 3px, transparent 10px);
+            background-image: repeating-linear-gradient(to right, rgba(255,255,255,0.08) 0, rgba(255,255,255,0.08) 3px, transparent 3px, transparent 15px);
           }
         `}</style>
       </div>

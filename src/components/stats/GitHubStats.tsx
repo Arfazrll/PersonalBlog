@@ -8,6 +8,8 @@ import { useTranslations } from 'next-intl';
 import { formatDistanceToNow } from 'date-fns';
 import { GitCommit, Star, Trophy, Zap, TrendingUp, Calendar as CalendarIcon, Github, GitPullRequest, ChevronDown } from 'lucide-react';
 import { portfolioData } from '@/data/portfolio';
+import { animate, useMotionValue, useTransform } from 'framer-motion';
+import { Counter } from '@/components/ui/Counter';
 
 export interface GitHubSummary {
     totalStars: number;
@@ -77,24 +79,25 @@ export function GitHubHeatmap({ username }: { username: string }) {
     return (
         <div className="w-full font-sans transition-colors duration-300">
             {/* Header */}
-            <div className="flex items-center gap-3 mb-8">
-                <Github className="w-8 h-8 text-gray-900 dark:text-white" />
-                <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
+            <div className="flex items-center gap-3 mb-4">
+                <Github className="w-6 h-6 text-gray-900 dark:text-white" />
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white tracking-tight">
                     {t('title')}
                 </h2>
             </div>
-            <p className="text-gray-500 dark:text-[#8b949e] mb-8 -mt-6">
+            <p className="text-gray-500 dark:text-[#8b949e] mb-6 -mt-3 text-sm">
                 {t('description')}
             </p>
 
             {/* NEW STATS (Real-time from API) */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                 {/* Total Contributions */}
                 <StatCard
                     label="Total"
                     value={summary?.totalContributions || 0}
                     icon={<Zap className="w-4 h-4 text-orange-500" />}
                 />
+                {/* ... (rest of cards) ... */}
 
                 {/* Total Commits */}
                 <StatCard
@@ -120,7 +123,7 @@ export function GitHubHeatmap({ username }: { username: string }) {
 
             {/* Heatmap Container - Seamless Background */}
             <div className="w-full overflow-hidden mb-10">
-                <div className="flex items-center justify-between mb-6 px-4 md:px-5">
+                <div className="flex items-center justify-between mb-6">
                     <h3 className="text-gray-900 dark:text-white text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                         Activity Calendar
@@ -134,7 +137,7 @@ export function GitHubHeatmap({ username }: { username: string }) {
                             colorScheme={theme === 'dark' ? 'dark' : 'light'}
                             theme={goldTheme}
                             blockMargin={4}
-                            blockSize={18}
+                            blockSize={23}
                             fontSize={14}
                             showTotalCount={false}
                             showColorLegend={false}
@@ -152,7 +155,7 @@ export function GitHubHeatmap({ username }: { username: string }) {
                 </div>
 
                 {/* Custom Legend */}
-                <div className="flex items-center gap-2 mt-4 px-4 md:px-5 text-xs text-gray-500 dark:text-[#8b949e]">
+                <div className="flex items-center gap-2 mt-4 text-xs text-gray-500 dark:text-[#8b949e]">
                     <span>{t('less')}</span>
                     <div className="flex gap-1">
                         {(theme === 'dark' ? goldTheme.dark : goldTheme.light).map((color, i) => (
@@ -165,7 +168,7 @@ export function GitHubHeatmap({ username }: { username: string }) {
 
             {/* Recent Activity Feed - Collapsible */}
             {summary?.recentActivity && summary.recentActivity.length > 0 && (
-                <div className="w-full px-4 md:px-5 mb-8">
+                <div className="w-full mb-8">
                     <button
                         onClick={() => setShowActivity(!showActivity)}
                         className="w-full flex items-center justify-between group py-2"
@@ -215,15 +218,16 @@ export function GitHubHeatmap({ username }: { username: string }) {
 
 function StatCard({ label, value, icon }: { label: string, value: string | number, icon?: React.ReactNode }) {
     return (
-        <div className="relative group p-4 md:p-5 border border-gray-200 dark:border-[#30363d] rounded-xl hover:border-yellow-500/30 dark:hover:border-yellow-500/30 transition-all duration-300 bg-transparent hover:bg-gray-50/50 dark:hover:bg-[#161b22]/50">
-            <div className="flex items-center gap-2 mb-3">
-                <div className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 group-hover:text-yellow-500 transition-colors duration-300">
+        <div className="relative group p-3 border border-gray-200 dark:border-[#30363d] rounded-xl hover:border-yellow-500/30 dark:hover:border-yellow-500/30 transition-all duration-300 bg-transparent hover:bg-gray-50/50 dark:hover:bg-[#161b22]/50">
+            <div className="flex items-center gap-2 mb-2">
+                <div className="p-1 rounded-md text-gray-500 dark:text-gray-400 group-hover:text-yellow-500 transition-colors duration-300">
                     {icon}
                 </div>
-                <span className="text-gray-500 dark:text-[#8b949e] text-xs font-medium uppercase tracking-wider">{label}</span>
+                <span className="text-gray-500 dark:text-[#8b949e] text-[10px] font-medium uppercase tracking-wider">{label}</span>
             </div>
-            <span className="text-lg md:text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                {value}
+            <span className="text-base md:text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                <Counter value={typeof value === 'string' ? parseFloat(value) : value} decimal={typeof value === 'string' && value.includes('.') ? 1 : 0} />
+                {typeof value === 'string' && value.includes('+') ? '+' : ''}
             </span>
         </div>
     );

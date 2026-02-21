@@ -47,25 +47,20 @@ export default function CTASection() {
     }, []);
 
     return (
-        <section ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden dark:bg-black">
+        <section ref={sectionRef} className="relative py-12 lg:py-16 overflow-hidden bg-background">
             {/* Infinite Ribbons - Moved from Stats Section */}
-            <div className="relative flex h-[400px] w-full items-center justify-center overflow-hidden pointer-events-none mb-20">
-                <InfiniteRibbon rotation={6} className="z-10 py-5 border-y border-blue-100 dark:border-zinc-800 shadow-xl" background="bg-white dark:bg-zinc-800" textColor="text-blue-600 dark:text-zinc-400 font-mono tracking-tighter">
+            <div className="relative flex h-[300px] w-full items-center justify-center overflow-hidden pointer-events-none mb-10">
+                <InfiniteRibbon rotation={6} className="z-10 py-5 border-y border-blue-100 dark:border-white/5 shadow-xl" background="bg-white dark:bg-black" textColor="text-blue-600 dark:text-zinc-400 font-mono tracking-tighter">
                     Next.js • TypeScript • Tailwind • React • Node.js • Three.js •
                 </InfiniteRibbon>
-                <InfiniteRibbon rotation={-6} reverse={true} className="z-20 py-5 border-y border-white/20 dark:border-zinc-700 shadow-2xl" background="bg-blue-600 dark:bg-black" textColor="text-white dark:text-white font-bold tracking-widest uppercase">
+                <InfiniteRibbon rotation={-6} reverse={true} className="z-20 py-5 border-y border-white/20 dark:border-white/5 shadow-2xl" background="bg-blue-600 dark:bg-black" textColor="text-white dark:text-white font-bold tracking-widest uppercase">
                     Creative Developer • UI/UX Design • Full Stack Engineering • System Architecture •
                 </InfiniteRibbon>
             </div>
 
-            {/* Animated background */}
-            <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 dark:from-black dark:via-black/40 dark:to-black"
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 8, repeat: Infinity }}
-            />
 
-            <div className="container-creative relative z-10 text-center cta-content">
+
+            <div className="max-w-[1600px] mx-auto relative z-10 px-6 md:px-12 lg:px-24 text-center cta-content">
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-12">
                     {t('title')}
                     <br />
