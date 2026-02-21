@@ -14,7 +14,7 @@
         "@react-three/drei": "^9.121.4",
         "@react-three/fiber": "^8.17.14",
         "@react-three/postprocessing": "^2.16.5",
-        "@react-three/rapier": "^1.5.1",
+        "@react-three/rapier": "^1.4.0",
         "@splinetool/react-spline": "^4.1.0",
         "@splinetool/runtime": "^1.12.47",
         "@tsparticles/react": "^3.0.0",
