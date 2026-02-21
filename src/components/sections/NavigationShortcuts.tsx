@@ -178,14 +178,14 @@ export const NavigationShortcuts = () => {
             </div>
 
             {/* Toggle Button Container - Perfected Corner Alignment (Absolute Corner) */}
-            <div className="relative z-[100] flex items-center justify-start py-8 -mt-40 mb-10 px-10">
+            <div className="relative z-[100] flex items-center justify-start py-8 -mt-24 md:-mt-40 mb-10 px-8 md:px-10">
                 <div className="flex items-center gap-0">
                     {/* ULTIMATE MINIMALIST CIRCULAR TOGGLE - Force White for Contrast, Sized to be 'just right' */}
                     <motion.button
                         onClick={() => setIsOpen(!isOpen)}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className="bg-white dark:bg-white text-black h-14 w-14 md:h-18 md:w-18 flex items-center justify-center rounded-full shadow-[0_0_50px_rgba(255,255,255,0.3)] group transition-all duration-500 overflow-hidden relative border-none"
+                        className="bg-white dark:bg-white text-black h-14 w-14 md:h-18 md:w-18 flex items-center justify-center rounded-full shadow-[0_0_50px_rgba(255,255,255,0.3)] dark:shadow-none border border-black/5 dark:border-transparent group transition-all duration-500 overflow-hidden relative"
                     >
                         <motion.div
                             animate={{

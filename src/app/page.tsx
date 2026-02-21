@@ -128,11 +128,11 @@ function AnimatedBackground({ scrollYProgress }: { scrollYProgress: any }) {
         >
             {/* Grid pattern - works for both light and dark */}
             <div
-                className="absolute inset-0 opacity-[0.04] dark:opacity-[0.01]"
+                className="absolute inset-0 opacity-[0.08] dark:opacity-[0.01]"
                 style={{
                     backgroundImage: `
-            linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,0,0,0.15) 1px, transparent 1px)
+            linear-gradient(rgba(0,0,0,0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.2) 1px, transparent 1px)
           `,
                     backgroundSize: '80px 80px',
                 }}
@@ -188,7 +188,7 @@ function HeroIntro() {
 
     const [springProps, api] = useReactSpring(() => ({
         xy: [0, 0],
-        config: config.gentle,
+        config: { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.001 },
     }));
 
     const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -380,21 +380,21 @@ function HeroIntro() {
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
                         transition={{ duration: 0.4, delay: 2.0, ease: "easeInOut" }}
-                        className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"
+                        className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 md:opacity-50"
                     />
                     <motion.p
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 2.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                        className="text-xl md:text-2xl lg:text-3xl text-foreground/80 font-medium tracking-wide"
+                        className="text-xl md:text-2xl lg:text-3xl text-foreground/90 dark:text-foreground/80 font-medium tracking-wide"
                     >
-                        {portfolioData.personal.title} <span className="text-primary mx-2">•</span> {t('role')}
+                        {portfolioData.personal.title} <span className="text-primary mx-2 font-bold">•</span> {t('role')}
                     </motion.p>
                     <motion.div
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
                         transition={{ duration: 0.4, delay: 2.0, ease: "easeInOut" }}
-                        className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"
+                        className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 md:opacity-50"
                     />
                 </div>
 
@@ -506,11 +506,11 @@ const MetricCTAHijack = () => {
     });
 
     return (
-        <section ref={containerRef} className="relative h-[1200vh] z-50 bg-background dark:bg-black">
+        <section ref={containerRef} className="relative h-[800vh] z-50 bg-background dark:bg-black">
             <div className="sticky top-0 h-screen w-full z-50 bg-background dark:bg-black">
                 <StatsSection scrollYProgress={scrollYProgress} />
             </div>
-            <div className="relative z-50 bg-background dark:bg-black shadow-xl dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)] mt-[1000vh]" style={{ willChange: "transform" }}>
+            <div className="relative z-50 bg-background dark:bg-black shadow-xl dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)] mt-[600vh]" style={{ transform: 'translate3d(0,0,0)', willChange: "transform" }}>
                 <div className="h-[25vh]" />
                 <CTASection />
                 <div className="h-4" />
