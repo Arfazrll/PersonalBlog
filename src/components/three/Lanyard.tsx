@@ -11,12 +11,7 @@ import { usePerformance } from '@/hooks/usePerformance';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
-declare module '@react-three/fiber' {
-    interface ThreeElements {
-        meshLineGeometry: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & Record<string, any>;
-        meshLineMaterial: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & Record<string, any>;
-    }
-}
+// Types are now handled globally in src/types/three-types.d.ts
 
 useTexture.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg');
 
@@ -156,8 +151,8 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
                         position={[0, -1.2, -0.05]}
                         onPointerOver={() => hover(true)}
                         onPointerOut={() => hover(false)}
-                        onPointerUp={(e) => { (e.target as Element).releasePointerCapture(e.pointerId); drag(false); }}
-                        onPointerDown={(e) => { (e.target as Element).setPointerCapture(e.pointerId); drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))); }}
+                        onPointerUp={(e: any) => { (e.target as Element).releasePointerCapture(e.pointerId); drag(false); }}
+                        onPointerDown={(e: any) => { (e.target as Element).setPointerCapture(e.pointerId); drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))); }}
                     >
                         <RoundedBox args={[1.5, 2.3, 0.02]} radius={0.05} smoothness={4}>
                             <meshPhysicalMaterial color="#0a0a12" clearcoat={1} clearcoatRoughness={0.15} roughness={0.9} metalness={0.8} />

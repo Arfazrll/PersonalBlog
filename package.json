@@ -46,7 +46,7 @@
         "shiki": "^3.21.0",
         "tailwind-merge": "^3.4.0",
         "tailwindcss-animate": "^1.0.7",
-        "three": "^0.173.0",
+        "three": "0.170.0",
         "three-globe": "^2.45.0",
         "tsparticles": "^3.9.1"
     },
@@ -55,7 +55,7 @@
         "@types/node": "^20.10.0",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
-        "@types/three": "^0.173.0",
+        "@types/three": "0.170.0",
         "@typescript-eslint/eslint-plugin": "^6.15.0",
         "@typescript-eslint/parser": "^6.15.0",
         "autoprefixer": "^10.4.0",
