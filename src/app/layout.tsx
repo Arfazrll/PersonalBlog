@@ -66,7 +66,10 @@ export const metadata: Metadata = {
         },
     },
     icons: {
-        icon: '/favicon.svg',
+        icon: [
+            { url: '/Arfazrll_light.svg', media: '(prefers-color-scheme: light)' },
+            { url: '/Arfazrll_dark.svg', media: '(prefers-color-scheme: dark)' },
+        ],
     },
 };
 

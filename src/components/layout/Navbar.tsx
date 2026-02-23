@@ -232,90 +232,91 @@ export function Navbar() {
                         </div>
                     </motion.div>
                 </div>
-            </motion.nav>
+            </motion.nav >
 
             {/* Mobile Menu Overlay */}
             <AnimatePresence>
-                {isMenuOpen && (
-                    <motion.div
-                        variants={menuVariants}
-                        initial="closed"
-                        animate="open"
-                        exit="closed"
-                        transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-[90] lg:hidden"
-                    >
+                {
+                    isMenuOpen && (
                         <motion.div
-                            className="absolute inset-0 bg-background"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        />
-
-                        <div className="relative flex flex-col items-center justify-center h-full overflow-y-auto py-20">
-                            <nav className="flex flex-col items-center gap-6">
-                                {/* Mobile Home */}
-                                <Link
-                                    href="/"
-                                    onClick={closeMenu}
-                                    className="text-3xl font-black text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    {t('home')}
-                                </Link>
-
-                                <Link
-                                    href="/contact"
-                                    onClick={closeMenu}
-                                    className="text-3xl font-black text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    {t('contact')}
-                                </Link>
-
-                                {/* Mobile Links grouped by Categories */}
-                                {navItems.map((category) => (
-                                    <div key={category.label} className="flex flex-col items-center gap-4 py-4 border-b border-white/5 w-full last:border-0 text-center">
-                                        <span className="text-[10px] font-black font-mono text-primary tracking-[0.3em] uppercase opacity-50">
-                                            {category.label}
-                                        </span>
-                                        {category.links.map((link) => (
-                                            <Link
-                                                key={link.label}
-                                                href={link.href}
-                                                onClick={closeMenu}
-                                                className={cn(
-                                                    'text-2xl font-bold transition-all hover:scale-110 active:scale-95 duration-200',
-                                                    pathname === link.href ? 'text-foreground' : 'text-muted-foreground/60 hover:text-foreground'
-                                                )}
-                                            >
-                                                {link.label}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                ))}
-                            </nav>
-
+                            variants={menuVariants}
+                            initial="closed"
+                            animate="open"
+                            exit="closed"
+                            transition={{ duration: 0.3 }}
+                            className="fixed inset-0 z-[90] lg:hidden"
+                        >
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 20 }}
-                                transition={{ delay: 0.5 }}
-                                className="flex items-center gap-4 mt-12"
-                            >
-                                <button
-                                    onClick={toggleLocale}
-                                    className="px-6 py-3 rounded-full glass-card text-sm font-medium hover:bg-muted/50 transition-colors"
+                                className="absolute inset-0 bg-background"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                            />
+
+                            <div className="relative flex flex-col items-center justify-center h-full overflow-y-auto py-20">
+                                <nav className="flex flex-col items-center gap-6">
+                                    {/* Mobile Home */}
+                                    <Link
+                                        href="/"
+                                        onClick={closeMenu}
+                                        className="text-3xl font-black text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                        {t('home')}
+                                    </Link>
+
+                                    <Link
+                                        href="/contact"
+                                        onClick={closeMenu}
+                                        className="text-3xl font-black text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                        {t('contact')}
+                                    </Link>
+
+                                    {/* Mobile Links grouped by Categories */}
+                                    {navItems.map((category) => (
+                                        <div key={category.label} className="flex flex-col items-center gap-4 py-4 border-b border-white/5 w-full last:border-0 text-center">
+                                            <span className="text-[10px] font-black font-mono text-primary tracking-[0.3em] uppercase opacity-50">
+                                                {category.label}
+                                            </span>
+                                            {category.links.map((link) => (
+                                                <Link
+                                                    key={link.label}
+                                                    href={link.href}
+                                                    onClick={closeMenu}
+                                                    className={cn(
+                                                        'text-2xl font-bold transition-all hover:scale-110 active:scale-95 duration-200',
+                                                        pathname === link.href ? 'text-foreground' : 'text-muted-foreground/60 hover:text-foreground'
+                                                    )}
+                                                >
+                                                    {link.label}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </nav>
+
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 20 }}
+                                    transition={{ delay: 0.5 }}
+                                    className="flex items-center gap-4 mt-12"
                                 >
-                                    {currentLocale === 'en' ? 'English' : 'Indonesia'}
-                                </button>
-                                {mounted && (
-                                    <AnimatedThemeToggler
-                                        className="px-6 py-6 glass-card text-sm font-medium hover:bg-muted/50 flex items-center gap-2"
-                                    />
-                                )}
-                            </motion.div>
-                        </div>
-                    </motion.div >
-                )
+                                    <button
+                                        onClick={toggleLocale}
+                                        className="px-6 py-3 rounded-full glass-card text-sm font-medium hover:bg-muted/50 transition-colors"
+                                    >
+                                        {currentLocale === 'en' ? 'English' : 'Indonesia'}
+                                    </button>
+                                    {mounted && (
+                                        <AnimatedThemeToggler
+                                            className="px-6 py-6 glass-card text-sm font-medium hover:bg-muted/50 flex items-center gap-2"
+                                        />
+                                    )}
+                                </motion.div>
+                            </div>
+                        </motion.div >
+                    )
                 }
             </AnimatePresence >
         </>
