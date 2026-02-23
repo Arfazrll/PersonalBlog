@@ -32,7 +32,7 @@ const signature = Alex_Brush({
 
 export const metadata: Metadata = {
     title: {
-        default: 'Portfolio | Full Stack Developer',
+        default: 'Arfazrll | AI & Software Engineer',
         template: '%s | Portfolio',
     },
     description: 'A passionate developer building digital experiences that inspire. Explore my projects, skills, and professional journey.',
@@ -44,13 +44,13 @@ export const metadata: Metadata = {
         type: 'website',
         locale: 'en_US',
         url: 'https://your-domain.com',
-        title: 'Portfolio | Full Stack Developer',
+        title: 'Arfazrll | AI & Software Engineer',
         description: 'A passionate developer building digital experiences that inspire.',
         siteName: 'Portfolio',
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Portfolio | Full Stack Developer',
+        title: 'Arfazrll | AI & Software Engineer',
         description: 'A passionate developer building digital experiences that inspire.',
         creator: '@yourusername',
     },
