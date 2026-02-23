@@ -34,7 +34,7 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
     }, [mouseX, mouseY]);
 
     const title = type === '404' ? '404' : 'ERROR';
-    const subtitle = type === '404' ? 'you are lost!?' : 'EXCEPTION_CAUGHT';
+    const subtitle = type === '404' ? 'YOU ARE LOST!?' : 'EXCEPTION_CAUGHT';
     const description = type === '404'
         ? "The page you're looking for is missing."
         : "An internal technical error has occurred.";
@@ -44,7 +44,7 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-    });
+    }).toUpperCase();
 
     const formattedTime = currentTime.toLocaleTimeString('id-ID', {
         hour: '2-digit',
@@ -92,7 +92,7 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
                     transition={{ delay: 0.2 }}
                     className="flex flex-col items-center gap-4 max-w-md"
                 >
-                    <div className="px-5 py-2 bg-foreground text-background text-[10px] md:text-xs font-black tracking-[0.5em] rounded-full uppercase">
+                    <div className="px-5 py-2 bg-foreground text-background text-[10px] md:text-sm font-black tracking-[0.5em] rounded-full uppercase">
                         {subtitle}
                     </div>
                     <p className="text-muted-foreground text-sm md:text-base font-bold tracking-tight mt-1 opacity-70">
@@ -140,8 +140,8 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
             {/* Decorative Elements - Real-time Info Panel */}
             <div className="absolute bottom-12 left-12 z-20 hidden md:block">
                 <div className="flex flex-col font-mono text-left select-none">
-                    <div className="flex items-center gap-2 text-primary/80 font-black text-[10px] tracking-[0.2em] uppercase mb-1">
-                        <span>Jakarta, Indonesia</span>
+                    <div className="flex items-center gap-2 text-primary font-black text-[11px] tracking-[0.2em] uppercase mb-1 opacity-80">
+                        <span>JAKARTA, INDONESIA</span>
                     </div>
                     <div className="text-[10px] font-black uppercase tracking-[0.1em] text-foreground/40 mb-2">
                         {formattedDate}
@@ -154,6 +154,6 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
 
             {/* Subtle Noise / Grain */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-        </div>
+        </div >
     );
 }
