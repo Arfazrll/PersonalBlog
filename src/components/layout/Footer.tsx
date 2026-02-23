@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,6 +20,7 @@ import {
     Gamepad2,
     Music
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 
 type SocialIconComponent = typeof Github;
@@ -89,6 +91,11 @@ export function Footer() {
     const t = useTranslations('footer');
     const [isExpanded, setIsExpanded] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const currentYear = new Date().getFullYear();
 
@@ -138,7 +145,10 @@ export function Footer() {
     return (
         <>
             {/* Compact Footer - Always visible */}
-            <footer className={`${isBlog ? 'absolute bottom-0 w-full border-t-0 pointer-events-none !bg-transparent z-20' : 'relative z-20 mt-auto dark:bg-black'}`}>
+            <footer className={cn(
+                isBlog ? 'absolute bottom-0 w-full border-t-0 pointer-events-none !bg-transparent z-20' : 'relative z-20 mt-auto dark:bg-black',
+                isExpanded && 'opacity-0 pointer-events-none'
+            )}>
                 <div className={`max-w-[1600px] mx-auto relative z-10 px-6 md:px-12 lg:px-24 py-6 md:py-8 pointer-events-auto ${isBlog ? '!bg-transparent' : ''}`}>
                     <div className={`
                         px-6 md:px-8 py-4 md:py-6 transition-all duration-300
@@ -226,99 +236,109 @@ export function Footer() {
             </footer>
 
             {/* Expanded Footer Overlay */}
-            <AnimatePresence>
-                {isExpanded && (
-                    <motion.div
-                        variants={overlayVariants}
-                        initial="closed"
-                        animate="open"
-                        exit="closed"
-                        transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-[100] overflow-y-auto bg-background/95 backdrop-blur-xl"
-                    >
-                        {/* Close Button */}
-                        <motion.button
-                            onClick={closeExpanded}
-                            className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-50 hover:bg-muted transition-colors text-foreground"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ delay: 0.2 }}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {isExpanded && (
+                        <motion.div
+                            variants={overlayVariants}
+                            initial="closed"
+                            animate="open"
+                            exit="closed"
+                            transition={{ duration: 0.3 }}
+                            className="fixed inset-0 z-[10000] bg-background/95 backdrop-blur-xl flex flex-col"
                         >
-                            <X className="w-5 h-5 md:w-6 md:h-6" />
-                        </motion.button>
+                            {/* Fixed Close Button - Outside the scroll area */}
+                            <motion.button
+                                onClick={closeExpanded}
+                                className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-[10001] hover:bg-muted transition-colors text-foreground"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ delay: 0.2 }}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <X className="w-5 h-5 md:w-6 md:h-6" />
+                            </motion.button>
 
-                        <div className="min-h-screen flex flex-col pt-20">
-                            <Marquee />
+                            {/* Scrollable Content Container */}
+                            <div
+                                className="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar"
+                                data-lenis-prevent
+                            >
+                                <div className="min-h-screen flex flex-col pt-20">
+                                    <Marquee />
 
-                            <div className="flex-1 max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col justify-center py-12 md:py-24">
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-16">
-                                    {/* Left Column - CTA */}
-                                    <div>
-                                        <motion.h2
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.2 }}
-                                            className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.9] text-foreground"
-                                        >
-                                            {t('cta.title')} <br />
-                                            <span className="text-gradient">{t('cta.titleHighlight')}</span>
-                                        </motion.h2>
+                                    <div className="flex-1 max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col justify-center py-12 md:py-24">
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-16">
+                                            {/* Left Column - CTA */}
+                                            <div>
+                                                <motion.h2
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: 0.2 }}
+                                                    className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.9] text-foreground"
+                                                >
+                                                    {t('cta.title')} <br />
+                                                    <span className="text-gradient">{t('cta.titleHighlight')}</span>
+                                                </motion.h2>
 
-                                        <motion.p
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.3 }}
-                                            className="text-xl text-muted-foreground max-w-lg mb-12"
-                                        >
-                                            {t('cta.subtitle')}
-                                        </motion.p>
+                                                <motion.p
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: 0.3 }}
+                                                    className="text-xl text-muted-foreground max-w-lg mb-12"
+                                                >
+                                                    {t('cta.subtitle')}
+                                                </motion.p>
 
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.4 }}
-                                            className="flex flex-col sm:flex-row gap-4"
-                                        >
-                                            <button
-                                                onClick={handleCopyEmail}
-                                                className="group flex items-center gap-3 px-6 py-4 rounded-full bg-secondary/50 border border-border hover:bg-secondary transition-colors w-fit text-foreground"
-                                            >
-                                                <Mail className="w-5 h-5 text-primary" />
-                                                <span className="font-mono">{portfolioData.personal.email}</span>
-                                                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />}
-                                            </button>
-                                        </motion.div>
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: 0.4 }}
+                                                    className="flex flex-col sm:flex-row gap-4"
+                                                >
+                                                    <button
+                                                        onClick={handleCopyEmail}
+                                                        className="group flex items-center gap-3 px-6 py-4 rounded-full bg-secondary/50 border border-border hover:bg-secondary transition-colors w-fit text-foreground"
+                                                    >
+                                                        <Mail className="w-5 h-5 text-primary" />
+                                                        <span className="font-mono">{portfolioData.personal.email}</span>
+                                                        {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />}
+                                                    </button>
+                                                </motion.div>
+                                            </div>
+
+                                            {/* Right Column - Social Grid */}
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 content-center">
+                                                {portfolioData.personal.socialLinks.map((social: SocialLink, i: number) => (
+                                                    <motion.div
+                                                        key={social.platform}
+                                                        initial={{ opacity: 0, scale: 0.9 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        transition={{ delay: 0.4 + (0.1 * i) }}
+                                                    >
+                                                        <SocialCard social={social} />
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    {/* Right Column - Social Grid */}
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 content-center">
-                                        {portfolioData.personal.socialLinks.map((social: SocialLink, i: number) => (
-                                            <motion.div
-                                                key={social.platform}
-                                                initial={{ opacity: 0, scale: 0.9 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ delay: 0.4 + (0.1 * i) }}
-                                            >
-                                                <SocialCard social={social} />
-                                            </motion.div>
-                                        ))}
+                                    {/* Bottom Bar in Overlay */}
+                                    <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
+                                        <p className="text-sm text-muted-foreground">
+                                            © {currentYear} {portfolioData.personal.name}. {t('copyright')}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
 
-                            {/* Bottom Bar in Overlay */}
-                            <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-                                <p className="text-sm text-muted-foreground">
-                                    © {currentYear} {portfolioData.personal.name}. {t('copyright')}
-                                </p>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </>
     );
 }
