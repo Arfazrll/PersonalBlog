@@ -278,7 +278,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
         {
             id: generateId(),
             role: "assistant",
-            content: `Halo! Saya asisten AI untuk portofolio **${portfolioData.personal.name}**. 👋\n\nSaya bisa menjawab pertanyaan seputar:\n- Skill & keahlian teknis\n- Project dan karya\n- Pengalaman kerja\n- Pendidikan\n- Dan info lainnya!\n\nAda yang ingin kamu tanyakan?`,
+            content: `Halo! Saya asisten AI untuk **${portfolioData.personal.name}**. 👋\n\nSaya bisa menjawab pertanyaan seputar:\n- Skill & keahlian teknis\n- Project dan karya\n- Pengalaman kerja\n- Pendidikan\n- Dan info lainnya!\n\nAda yang ingin kamu tanyakan?`,
             timestamp: new Date(),
         },
     ]);
