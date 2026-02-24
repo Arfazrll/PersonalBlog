@@ -42,8 +42,8 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                                 initial={{ opacity: 0, x: -20 }}
                                 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"
                             >
-                                <span className="text-foreground block">ENGINEERING</span>
-                                <span className="text-yellow-600 dark:text-yellow-500 block">METRICS</span>
+                                <span className="text-foreground block">{t('engineering')}</span>
+                                <span className="text-yellow-600 dark:text-yellow-500 block">{t('metrics')}</span>
                             </motion.h2>
                             <motion.div
                                 animate={{ opacity: 1 }}
@@ -51,7 +51,7 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                                 transition={{ delay: 0.2 }}
                                 className="font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] text-gray-600 dark:text-white/30"
                             >
-                                ANALYTICS / INFRASTRUCTURE / PERFORMANCE DATA
+                                {t('analyticsSub')}
                             </motion.div>
                         </div>
 
@@ -62,21 +62,21 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                                 className="flex items-center gap-2"
                             >
                                 <span className="w-1 h-1 rounded-full bg-green-600 dark:bg-green-500 animate-pulse" />
-                                <span className="text-gray-700 dark:text-inherit">STATUS: ONLINE</span>
+                                <span className="text-gray-700 dark:text-inherit">{t('statusOnline')}</span>
                             </motion.div>
                             <motion.div
                                 animate={{ opacity: 1, x: 0 }}
                                 initial={{ opacity: 0, x: 10 }}
                                 transition={{ delay: 0.1 }}
                             >
-                                SYSTEM_LOAD: STABLE
+                                {t('loadStable')}
                             </motion.div>
                             <motion.div
                                 animate={{ opacity: 1, x: 0 }}
                                 initial={{ opacity: 0, x: 10 }}
                                 transition={{ delay: 0.2 }}
                             >
-                                LATENCY: 14MS
+                                {t('latency')}
                             </motion.div>
                         </div>
                     </div>

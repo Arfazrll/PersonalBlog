@@ -8,6 +8,8 @@
         "blog": "Blog",
         "gallery": "Galeri",
         "contact": "Kontak",
+        "resume": "Resume",
+        "tools": "Peralatan",
         "menu": {
             "achievements": "Pencapaian",
             "achievementsDesc": "Sertifikasi, penghargaan, dan pencapaian",
@@ -21,6 +23,14 @@
             "blogDesc": "Pemikiran dan eksplorasi teknis",
             "gallery": "Galeri",
             "galleryDesc": "Arsip visual media dan proyek"
+        },
+        "shortcuts": {
+            "volume1": "Volume I: Identitas",
+            "volume2": "Volume II: Urutan Profesional",
+            "volume3": "Volume III: Matriks Kompetensi",
+            "volume4": "Volume IV: Output Kreatif",
+            "preview": "Mode Pratinjau",
+            "idRef": "ID_REF"
         }
     },
     "hero": {
@@ -48,7 +58,111 @@
         },
         "identity": "Tautan Identitas Dibuat",
         "architecting": "Merancang",
-        "digitalReality": "Realitas Digital"
+        "digitalReality": "Realitas Digital",
+        "leadIn": {
+            "label": "APA YANG SAYA LAKUKAN",
+            "applied": "Terapan",
+            "intelligence": "kecerdasan.",
+            "production": "Produksi",
+            "engineering": "rekayasa.",
+            "thesis": "Saya membangun sistem AI dan <span class='text-primary italic font-serif-elegant font-normal'>infrastruktur</span> yang membuatnya andal dalam skala besar.",
+            "scope": "Berfokus pada model prediktif, aplikasi bertenaga LLM, dan pipeline RAG yang dirancang untuk lingkungan produksi dan performa terukur.",
+            "bridging": "Menghubungkan lab dan sistem langsung.",
+            "integration": "Selain model, saya merancang solusi full-stack: backend yang aman, antarmuka modern, dan pipeline yang skalabel.",
+            "signature": "Azril",
+            "role": "AI & Software Engineer"
+        },
+        "coreEngineering": {
+            "label": "Rekayasa Inti",
+            "title": "<span class='text-primary italic font-serif font-light lowercase'>stack</span> yang Terbukti. <br /> <span class='italic font-serif font-light text-foreground'>hasil</span> yang Terukur.",
+            "p1": "Saya mengembangkan sistem AI terapan menggunakan TensorFlow, Scikit-learn, dan LangChain, menyusun alur kerja dan mengekspos model sebagai layanan melalui Flask dan FastAPI.",
+            "p2": "Diintegrasikan ke dalam aplikasi full-stack dengan Next.js, Express.js, dan Spring Boot, didukung oleh PostgreSQL dan Prisma ORM.",
+            "p3": "Semua proyek menggunakan kontrol versi yang disiplin, kontainerisasi Docker, dan dibangun untuk penerapan produksi yang stabil.",
+            "gpa": "IPK Akademik",
+            "projects": "Proyek yang Dibangun",
+            "years": "Tahun Pengalaman"
+        },
+        "emergingResearch": {
+            "label": "Fase Eksplorasi",
+            "title": "RISET YANG MUNCUL <span class='italic font-serif font-light text-primary lowercase'>&</span> EKSPANSI",
+            "agentic": {
+                "title": "SISTEM AI AGENTIK",
+                "desc": "Menjelajahi agen otonom, orkestrasi multi-agen, dan kerangka kerja penalaran — memperluas fondasi AI terapan saya ke dalam sistem pengambilan keputusan mandiri."
+            },
+            "web3": {
+                "title": "WEB3 & BLOCKCHAIN",
+                "desc": "Membangun aplikasi terdesentralisasi dengan Solidity dan Hardhat. Saat ini sedang mengerjakan pengembangan smart contract melalui proyek-proyek seperti Web3 Guestbook DApp di Ethereum."
+            }
+        },
+        "profile": {
+            "title": "Rekayasa di <br class='hidden lg:block' /> <span class='text-primary italic font-serif font-light lowercase'>persimpangan</span> <br /> Kecerdasan <br /> <span class='text-primary italic font-serif font-light lowercase'>&</span> Infrastruktur.",
+            "narrativeLabel": "Narasi Inti",
+            "narrative": "Sebagai mahasiswa Teknologi Informasi di Universitas Telkom, saya menggabungkan ketelitian akademik dengan rekayasa yang berorientasi pada produksi. Pendekatan saya didasarkan pada dasar-dasar teknis dan pemikiran tingkat sistem.",
+            "pillars": {
+                "reliable": {
+                    "title": "Andal",
+                    "desc": "Dibangun untuk beroperasi di bawah skala dan tekanan dunia nyata."
+                },
+                "optimized": {
+                    "title": "Optimal",
+                    "desc": "Rekayasa berbasis performa dari inti hingga ujung."
+                },
+                "maintainable": {
+                    "title": "Mudah Dipelihara",
+                    "desc": "Dirancang dengan kejelasan dan integritas struktural."
+                },
+                "evolvable": {
+                    "title": "Dapat Berkembang",
+                    "desc": "Dirancang untuk pertumbuhan jangka panjang dan adaptasi teknis."
+                }
+            }
+        },
+        "closing": {
+            "experience": {
+                "label": "LATAR BELAKANG",
+                "title1": "PENGALAMAN",
+                "title2": "UTAMA",
+                "viewMore": "Semua Pengalaman"
+            },
+            "projects": {
+                "label": "PORTOFOLIO",
+                "title1": "PROYEK",
+                "title2": "UNGGULAN",
+                "viewMore": "Semua Proyek"
+            },
+            "experiencesList": [
+                {
+                    "company": "Cyber Physical System Laboratory",
+                    "role": "ASISTEN PENELITI (KONTRAK)",
+                    "desc": "Mengembangkan produk riset berbasis AI dan merancang materi pembelajaran untuk Deep Learning and Computer Vision. Berkontribusi dalam inisiatif riset kolaboratif dalam sistem cerdas."
+                },
+                {
+                    "company": "Pusat Riset HUMIC Engineering",
+                    "role": "MAGANG PENGEMBANG AI",
+                    "desc": "Membangun model deteksi serangan berbasis Transformer untuk aplikasi keamanan siber. Mengelola dataset skala besar melalui pipeline ML penuh — dari prapemprosesan hingga optimasi hiperparameter."
+                },
+                {
+                    "company": "Cyber Physical System Laboratory",
+                    "role": "MAGANG PENELITI COMPUTER VISION",
+                    "desc": "Pengembangan model cerdas end-to-end menggunakan arsitektur Deep Learning terkini. Menerapkan algoritma ML untuk aplikasi AIoT dunia nyata termasuk sistem estimasi pose manusia."
+                }
+            ],
+            "projectsList": [
+                {
+                    "title": "Platform TerraFlow",
+                    "desc": "Solusi IoT perusahaan untuk pertanian presisi. Node sensor ESP32 berkomunikasi langsung dengan Firebase melalui backend Go (Gin), dengan dashboard Next.js untuk monitoring real-time dan kontrol aktuator."
+                },
+                {
+                    "title": "DocsInsight Engine",
+                    "desc": "Platform RAG privat untuk analisis dokumen cerdas. Didukung oleh LLM lokal melalui Ollama, dengan orkestrasi LangChain dan ChromaDB vector search — sepenuhnya self-hosted untuk privasi data."
+                },
+                {
+                    "title": "Manajemen Dental POLABDC",
+                    "desc": "SaaS klinik gigi bertenaga AI dengan prediksi penyakit, manajemen antrean real-time, dan arsitektur Monorepo yang menghubungkan Next.js, Express.js, dan microservice AI Python."
+                }
+            ],
+            "discoverMore": "Temukan Lebih Lanjut"
+        }
     },
     "projects": {
         "title": "Proyek",
@@ -231,7 +345,12 @@
         "avgPerf": "Performa Rata-rata",
         "latency": "LATENSI: 14MS",
         "system": "SISTEM: DARWIN_X64_STABIL",
-        "scanning": "MEMINDAI_SUMBER_DAYA_LANGSUNG"
+        "scanning": "MEMINDAI_SUMBER_DAYA_LANGSUNG",
+        "engineering": "REKAYASA",
+        "metrics": "METRIK",
+        "analyticsSub": "ANALITIK / INFRASTRUKTUR / DATA PERFORMA",
+        "statusOnline": "STATUS: ONLINE",
+        "loadStable": "BEBAN_SISTEM: STABIL"
     },
     "projectHeader": {
         "title": "Merancang Realitas Digital",
@@ -266,7 +385,9 @@
             "innovative": "Inovatif",
             "intelligent": "Cerdas",
             "creative": "Kreatif"
-        }
+        },
+        "ribbon1": "Next.js • TypeScript • Tailwind • React • Node.js • Three.js •",
+        "ribbon2": "Pengembang Kreatif • Desain UI/UX • Rekayasa Full Stack • Arsitektur Sistem •"
     },
     "common": {
         "loading": "Memuat...",
@@ -277,7 +398,8 @@
         "readMore": "Baca Selengkapnya",
         "close": "Tutup",
         "download": "Unduh",
-        "share": "Bagikan"
+        "share": "Bagikan",
+        "scrollAudit": "Gulir untuk Menjelajah"
     },
     "technical": {
         "github": {
@@ -329,5 +451,23 @@
             "video": "Video"
         },
         "viewMedia": "Lihat Media"
+    },
+    "chatbot": {
+        "title": "Asisten AI",
+        "subtitle": "Tanya saya tentang Azril",
+        "placeholder": "Ketik pesan...",
+        "greeting": "Halo! Saya asisten AI untuk **{name}**. 👋\n\nSaya bisa menjawab pertanyaan seputar:\n- Skill & keahlian teknis\n- Project dan karya\n- Pengalaman kerja\n- Pendidikan\n- Dan info lainnya!\n\nAda yang ingin kamu tanyakan?",
+        "suggestions": [
+            "Apa keahlian utama kamu?",
+            "Ceritakan project terbaik kamu",
+            "Apa pengalaman kerja kamu?",
+            "Skill AI apa yang kamu kuasai?"
+        ],
+        "error": "Terjadi kesalahan. Silakan coba lagi.",
+        "invalidResponse": "Respons tidak valid dari server.",
+        "unknownError": "Terjadi kesalahan yang tidak diketahui.",
+        "retry": "Coba lagi",
+        "inputHint": "Enter untuk kirim, Shift+Enter untuk baris baru",
+        "close": "Tutup chat"
     }
 }
