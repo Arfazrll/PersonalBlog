@@ -18,7 +18,8 @@ import {
     Check,
     X,
     Gamepad2,
-    Music
+    Music,
+    Bot
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
@@ -28,7 +29,7 @@ type SocialIconComponent = typeof Github;
 const socialIcons: { [key: string]: SocialIconComponent } = {
     github: Github,
     linkedin: Linkedin,
-    twitter: Twitter,
+    twitter: Bot, // Replaced Twitter logo with AI Bot logo
     instagram: Instagram,
     discord: Gamepad2,
     spotify: Music,
@@ -39,7 +40,7 @@ const marqueeKeys = ['0', '1', '2', '3', '4', '5'];
 function Marquee() {
     const t = useTranslations('footer.marquee') as (key: string) => string;
     return (
-        <div className="relative flex overflow-hidden py-4 bg-muted/30 border-y border-border backdrop-blur-sm">
+        <div className="relative flex overflow-hidden py-4 bg-muted/40 border-y border-foreground/10 dark:border-border backdrop-blur-sm">
             <motion.div
                 className="flex gap-12 whitespace-nowrap"
                 animate={{ x: [0, -1000] }}
@@ -69,19 +70,12 @@ function SocialCard({ social }: { social: SocialLink }) {
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative p-6 rounded-3xl bg-secondary/50 border border-border hover:border-primary/50 overflow-hidden transition-colors"
-            whileHover={{ y: -5 }}
+            className="group relative flex items-center justify-center w-14 h-14 transition-all duration-300"
+            whileHover={{ y: -4, scale: 1.15 }}
         >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-            <div className="relative z-10 flex flex-col items-center gap-4">
-                <div className="p-4 rounded-2xl bg-background group-hover:bg-primary/20 transition-colors duration-300 shadow-sm">
-                    <Icon className="w-8 h-8 text-foreground group-hover:text-primary transition-colors" />
-                </div>
-                <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-                    {social.platform}
-                </span>
-            </div>
+            <Icon className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
+            {/* Subtle glow on hover */}
+            <div className="absolute inset-0 rounded-full bg-primary/0 group-hover:bg-primary/5 transition-all duration-300" />
         </motion.a>
     );
 }
@@ -132,15 +126,14 @@ export function Footer() {
     };
 
     const pathname = usePathname();
-    // Check if path contains 'blog' to handle locales (e.g. /en/blog) and trailing slashes
-    // Check if path contains 'blog' to handle locales (e.g. /en/blog) and trailing slashes
     const isBlog = pathname?.includes('/blog');
-    // Check if it is a specific blog post (detail page) - usually implies URL has `/blog/slug`
-    // If it has '/blog/' or ends in something other than just 'blog', it's likely a detail page.
     const isBlogDetail = pathname?.includes('/blog/') && pathname.split('/blog/')[1]?.length > 0;
 
-    // Hide footer completely on Blog Detail pages as per user request
-    if (isBlogDetail) return null;
+    const previewSocials = portfolioData.personal.socialLinks
+        .filter((s: SocialLink) => s.platform !== 'Discord' && s.platform !== 'Spotify')
+        .slice(0, 4);
+
+    const expandedSocials = previewSocials.filter((s: SocialLink) => s.platform !== 'Twitter');
 
     return (
         <>
@@ -188,19 +181,22 @@ export function Footer() {
                                 </motion.a>
                             </div>
 
-                            <div className="flex items-center gap-3 md:gap-4">
-                                <div className="hidden sm:flex items-center gap-1 md:gap-2">
-                                    {portfolioData.personal.socialLinks.slice(0, 4).map((social: SocialLink) => {
+                            <div className="flex items-center gap-4 md:gap-8 ml-auto">
+                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                    {/* Social Icons */}
+                                    {previewSocials.map((social: SocialLink) => {
                                         const Icon = socialIcons[social.icon];
                                         return (
                                             <motion.a
                                                 key={social.platform}
-                                                href={social.url}
+                                                href={social.platform === 'Twitter' ? undefined : social.url}
+                                                onClick={social.platform === 'Twitter' ? (e) => {
+                                                    e.preventDefault();
+                                                    window.dispatchEvent(new CustomEvent('portfolio:toggle-chatbot'));
+                                                } : undefined}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.95 }}
+                                                className="p-1.5 rounded-full hover:bg-foreground/5 transition-all text-muted-foreground hover:text-foreground hover:scale-110 active:scale-95"
                                                 aria-label={social.platform}
                                             >
                                                 {Icon && <Icon className="w-4 h-4" />}
@@ -212,12 +208,12 @@ export function Footer() {
                                 <motion.button
                                     onClick={toggleExpand}
                                     className={`
-                                        flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full transition-all text-xs font-black uppercase tracking-[0.2em]
-                                        ${isBlog
+                                            flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full transition-all text-xs font-black uppercase tracking-[0.2em]
+                                            ${isBlog
                                             ? 'bg-muted/50 border-2 border-foreground/10 text-foreground hover:bg-muted hover:border-foreground/20'
                                             : 'bg-muted hover:bg-muted/80 text-foreground'
                                         }
-                                    `}
+                                        `}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
@@ -236,109 +232,137 @@ export function Footer() {
             </footer>
 
             {/* Expanded Footer Overlay */}
-            {mounted && createPortal(
-                <AnimatePresence>
-                    {isExpanded && (
-                        <motion.div
-                            variants={overlayVariants}
-                            initial="closed"
-                            animate="open"
-                            exit="closed"
-                            transition={{ duration: 0.3 }}
-                            className="fixed inset-0 z-[10000] bg-background/95 backdrop-blur-xl flex flex-col"
-                        >
-                            {/* Fixed Close Button - Outside the scroll area */}
-                            <motion.button
-                                onClick={closeExpanded}
-                                className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-[10001] hover:bg-muted transition-colors text-foreground"
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                transition={{ delay: 0.2 }}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
+            {
+                mounted && createPortal(
+                    <AnimatePresence>
+                        {isExpanded && (
+                            <motion.div
+                                variants={overlayVariants}
+                                initial="closed"
+                                animate="open"
+                                exit="closed"
+                                transition={{ duration: 0.3 }}
+                                className="fixed inset-0 z-[10000] bg-background/95 backdrop-blur-xl flex flex-col"
                             >
-                                <X className="w-5 h-5 md:w-6 md:h-6" />
-                            </motion.button>
+                                {/* Fixed Close Button - Outside the scroll area */}
+                                <motion.button
+                                    onClick={closeExpanded}
+                                    className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-[10001] hover:bg-muted transition-colors text-foreground"
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.8 }}
+                                    transition={{ delay: 0.2 }}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <X className="w-5 h-5 md:w-6 md:h-6" />
+                                </motion.button>
 
-                            {/* Scrollable Content Container */}
-                            <div
-                                className="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar"
-                                data-lenis-prevent
-                            >
-                                <div className="min-h-screen flex flex-col pt-20">
-                                    <Marquee />
+                                {/* Scrollable Content Container */}
+                                <div
+                                    className="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar"
+                                    data-lenis-prevent
+                                >
+                                    <div className="min-h-screen flex flex-col pt-20">
+                                        <Marquee />
 
-                                    <div className="flex-1 max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col justify-center py-12 md:py-24">
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-16">
-                                            {/* Left Column - CTA */}
-                                            <div>
-                                                <motion.h2
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: 0.2 }}
-                                                    className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.9] text-foreground"
-                                                >
-                                                    {t('cta.title')} <br />
-                                                    <span className="text-gradient">{t('cta.titleHighlight')}</span>
-                                                </motion.h2>
+                                        <div className="flex-1 max-w-[1700px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col justify-center py-12 md:py-24">
+                                            <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-16 lg:gap-32 h-full">
+                                                {/* Left Column - Contact Details & Socials */}
+                                                <div className="flex flex-col justify-center gap-6">
+                                                    <div>
+                                                        <motion.h2
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ delay: 0.2 }}
+                                                            className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.9] text-foreground"
+                                                        >
+                                                            {t('cta.title')} <br />
+                                                            <span className="text-gradient">{t('cta.titleHighlight')}</span>
+                                                        </motion.h2>
 
-                                                <motion.p
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: 0.3 }}
-                                                    className="text-xl text-muted-foreground max-w-lg mb-12"
-                                                >
-                                                    {t('cta.subtitle')}
-                                                </motion.p>
+                                                        <motion.p
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ delay: 0.3 }}
+                                                            className="text-xl text-muted-foreground dark:text-muted-foreground/80 max-w-lg mb-10"
+                                                        >
+                                                            {t('cta.subtitle')}
+                                                        </motion.p>
 
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: 0.4 }}
-                                                    className="flex flex-col sm:flex-row gap-4"
-                                                >
-                                                    <button
-                                                        onClick={handleCopyEmail}
-                                                        className="group flex items-center gap-3 px-6 py-4 rounded-full bg-secondary/50 border border-border hover:bg-secondary transition-colors w-fit text-foreground"
-                                                    >
-                                                        <Mail className="w-5 h-5 text-primary" />
-                                                        <span className="font-mono">{portfolioData.personal.email}</span>
-                                                        {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />}
-                                                    </button>
-                                                </motion.div>
-                                            </div>
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ delay: 0.4 }}
+                                                            className="flex flex-wrap gap-4"
+                                                        >
+                                                            <button
+                                                                onClick={handleCopyEmail}
+                                                                className="group flex items-center gap-4 px-8 py-5 rounded-full bg-secondary/50 border border-white/5 hover:bg-secondary transition-all hover:scale-105 active:scale-95 text-foreground backdrop-blur-sm"
+                                                            >
+                                                                <Mail className="w-5 h-5 text-primary" />
+                                                                <span className="font-mono text-lg">{portfolioData.personal.email}</span>
+                                                                {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />}
+                                                            </button>
+                                                        </motion.div>
+                                                    </div>
 
-                                            {/* Right Column - Social Grid */}
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 content-center">
-                                                {portfolioData.personal.socialLinks.map((social: SocialLink, i: number) => (
+                                                    {/* Social Links Icons Only */}
+                                                    <div className="flex flex-wrap gap-3 justify-start">
+                                                        {expandedSocials.map((social: SocialLink, i: number) => (
+                                                            <motion.div
+                                                                key={social.platform}
+                                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                                animate={{ opacity: 1, scale: 1 }}
+                                                                transition={{ delay: 0.5 + (0.1 * i) }}
+                                                            >
+                                                                <SocialCard social={social} />
+                                                            </motion.div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                {/* Right Column - Wide Square Map Hero (Merges with background) */}
+                                                <div className="flex flex-col justify-center h-full">
                                                     <motion.div
-                                                        key={social.platform}
-                                                        initial={{ opacity: 0, scale: 0.9 }}
+                                                        initial={{ opacity: 0, scale: 1 }}
                                                         animate={{ opacity: 1, scale: 1 }}
-                                                        transition={{ delay: 0.4 + (0.1 * i) }}
+                                                        transition={{ delay: 0.5, duration: 0.8 }}
+                                                        className="w-full h-full min-h-[500px] lg:min-h-[750px] relative transition-all duration-700"
                                                     >
-                                                        <SocialCard social={social} />
+                                                        <iframe
+                                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126920.24131584285!2d106.77412401666497!3d-6.229746450625624!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e3fa73%3A0x7601136971510100!2sJakarta%2C%20Indonesia!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
+                                                            width="100%"
+                                                            height="100%"
+                                                            style={{ border: 0 }}
+                                                            allowFullScreen
+                                                            loading="lazy"
+                                                            referrerPolicy="no-referrer-when-downgrade"
+                                                            className="contrast-[1.2] brightness-[1.0] grayscale-[0.3] dark:invert-[0.95] dark:brightness-[0.8] dark:contrast-[1.2] opacity-100 transition-all duration-1000"
+                                                        />
+                                                        {/* No overlays for maximum clarity */}
                                                     </motion.div>
-                                                ))}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Bottom Bar in Overlay */}
-                                    <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-                                        <p className="text-sm text-muted-foreground">
-                                            © {currentYear} {portfolioData.personal.name}. {t('copyright')}
-                                        </p>
+                                        {/* Bottom Bar in Overlay */}
+                                        <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 mt-auto">
+                                            <p className="text-sm text-muted-foreground font-mono">
+                                                © {currentYear} {portfolioData.personal.name}. {t('copyright')}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>,
-                document.body
-            )}
-
+                            </motion.div>
+                        )}
+                    </AnimatePresence>,
+                    document.body
+                )}
         </>
     );
 }
+
+
+
+

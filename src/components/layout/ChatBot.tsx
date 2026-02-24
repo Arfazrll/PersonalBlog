@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { portfolioData } from "@/data/portfolio";
+import { useTranslations, useLocale } from "next-intl";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Message {
@@ -158,13 +159,7 @@ function inlineFormat(text: string): React.ReactNode {
     });
 }
 
-// ─── Suggested questions ──────────────────────────────────────────────────────
-const SUGGESTED_QUESTIONS = [
-    "Apa keahlian utama kamu?",
-    "Ceritakan project terbaik kamu",
-    "Apa pengalaman kerja kamu?",
-    "Skill AI apa yang kamu kuasai?",
-];
+// ─── Suggested questions moved into component for i18n ───
 
 // ─── Message bubble ───────────────────────────────────────────────────────────
 const MessageBubble = React.memo(function MessageBubble({
@@ -174,6 +169,7 @@ const MessageBubble = React.memo(function MessageBubble({
     message: Message;
     onRetry?: () => void;
 }) {
+    const t = useTranslations("chatbot");
     const isUser = message.role === "user";
 
     return (
@@ -207,8 +203,8 @@ const MessageBubble = React.memo(function MessageBubble({
                         isUser
                             ? "bg-primary text-primary-foreground rounded-tr-sm"
                             : message.error
-                            ? "bg-destructive/10 border border-destructive/20 text-destructive rounded-tl-sm"
-                            : "bg-foreground/8 border border-foreground/8 text-foreground rounded-tl-sm"
+                                ? "bg-destructive/10 border border-destructive/20 text-destructive rounded-tl-sm"
+                                : "bg-foreground/8 border border-foreground/8 text-foreground rounded-tl-sm"
                     )}
                 >
                     {isUser ? (
@@ -225,7 +221,7 @@ const MessageBubble = React.memo(function MessageBubble({
                                     className="flex items-center gap-1 text-xs underline underline-offset-2 hover:opacity-80 w-fit"
                                 >
                                     <RotateCcw className="w-3 h-3" />
-                                    Coba lagi
+                                    {t("retry")}
                                 </button>
                             )}
                         </div>
@@ -274,11 +270,14 @@ function TypingIndicator() {
 
 // ─── ChatWindow ───────────────────────────────────────────────────────────────
 function ChatWindow({ onClose }: { onClose: () => void }) {
+    const t = useTranslations("chatbot");
+    const locale = useLocale();
+
     const [messages, setMessages] = useState<Message[]>([
         {
             id: generateId(),
             role: "assistant",
-            content: `Halo! Saya asisten AI untuk **${portfolioData.personal.name}**. 👋\n\nSaya bisa menjawab pertanyaan seputar:\n- Skill & keahlian teknis\n- Project dan karya\n- Pengalaman kerja\n- Pendidikan\n- Dan info lainnya!\n\nAda yang ingin kamu tanyakan?`,
+            content: t("greeting", { name: portfolioData.personal.name }),
             timestamp: new Date(),
         },
     ]);
@@ -354,12 +353,12 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
                 const res = await fetch("/api/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ messages: apiMessages }),
+                    body: JSON.stringify({ messages: apiMessages, locale }),
                     signal: abortControllerRef.current.signal,
                 });
 
                 if (!res.ok) {
-                    let errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
+                    let errorMessage = t("error");
                     try {
                         const errData = await res.json();
                         errorMessage = errData?.error ?? errorMessage;
@@ -373,7 +372,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
                 const reply = data?.reply;
 
                 if (!reply || typeof reply !== "string") {
-                    throw new Error("Respons tidak valid dari server.");
+                    throw new Error(t("invalidResponse"));
                 }
 
                 setMessages((prev) => [
@@ -391,7 +390,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
                 const errorMsg =
                     err instanceof Error
                         ? err.message
-                        : "Terjadi kesalahan yang tidak diketahui.";
+                        : t("unknownError");
 
                 setMessages((prev) => [
                     ...prev,
@@ -442,6 +441,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
         []
     );
 
+    const SUGGESTED_QUESTIONS = t.raw("suggestions") as string[];
     const showSuggestions = messages.length <= 1;
 
     return (
@@ -471,16 +471,16 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
                         <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-background" />
                     </div>
                     <div>
-                        <p className="text-sm font-semibold leading-none">AI Assistant</p>
+                        <p className="text-sm font-semibold leading-none">{t("title")}</p>
                         <p className="text-[11px] text-foreground/50 mt-0.5">
-                            Ask me about Azril
+                            {t("subtitle")}
                         </p>
                     </div>
                 </div>
                 <button
                     onClick={onClose}
                     className="w-7 h-7 rounded-full flex items-center justify-center text-foreground/50 hover:text-foreground hover:bg-foreground/8 transition-colors"
-                    aria-label="Close chat"
+                    aria-label={t("close")}
                 >
                     <X className="w-4 h-4" />
                 </button>
@@ -563,7 +563,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         disabled={isLoading}
-                        placeholder="Ketik pesan..."
+                        placeholder={t("placeholder")}
                         rows={1}
                         className={cn(
                             "flex-1 resize-none rounded-xl px-3.5 py-2.5 text-sm",
@@ -595,7 +595,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
                     </button>
                 </div>
                 <p className="text-[10px] text-foreground/30 mt-1.5 text-center">
-                    Enter to send, Shift+Enter for newline
+                    {t("inputHint")}
                 </p>
             </div>
         </motion.div>
@@ -603,7 +603,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
 }
 
 // ─── Main ChatBot component ───────────────────────────────────────────────────
-export function ChatBot() {
+export function ChatBot({ headless = false }: { headless?: boolean }) {
     const [isOpen, setIsOpen] = useState(false);
     const [hasNewMsg, setHasNewMsg] = useState(false);
 
@@ -623,51 +623,60 @@ export function ChatBot() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [isOpen, close]);
 
+    // Listen for external toggle events (e.g. from Footer)
+    useEffect(() => {
+        const handleToggle = () => setIsOpen(true);
+        window.addEventListener("portfolio:toggle-chatbot", handleToggle);
+        return () => window.removeEventListener("portfolio:toggle-chatbot", handleToggle);
+    }, []);
+
     return (
         <>
             {/* Chat window */}
             <AnimatePresence>{isOpen && <ChatWindow onClose={close} />}</AnimatePresence>
 
-            {/* Trigger button — designed to match SocialCorner style */}
-            <motion.button
-                onClick={toggle}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className={cn(
-                    "relative p-3 rounded-full transition-all group",
-                    "border border-foreground/10",
-                    isOpen
-                        ? "bg-primary/20 border-primary/40"
-                        : "bg-foreground/5 hover:bg-foreground/10"
-                )}
-                aria-label="Open portfolio chatbot"
-                aria-expanded={isOpen}
-            >
-                <MessageSquare
+            {/* Trigger button — globally fixed corner button */}
+            {!headless && (
+                <motion.button
+                    onClick={toggle}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     className={cn(
-                        "w-5 h-5 transition-colors",
+                        "relative p-3 rounded-full transition-all group",
+                        "border border-foreground/10",
                         isOpen
-                            ? "text-primary"
-                            : "text-foreground/60 group-hover:text-foreground"
+                            ? "bg-primary/20 border-primary/40"
+                            : "bg-foreground/5 hover:bg-foreground/10"
                     )}
-                />
-                {/* Notification dot */}
-                {hasNewMsg && !isOpen && (
-                    <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background"
+                    aria-label="Open portfolio chatbot"
+                    aria-expanded={isOpen}
+                >
+                    <MessageSquare
+                        className={cn(
+                            "w-5 h-5 transition-colors",
+                            isOpen
+                                ? "text-primary"
+                                : "text-foreground/60 group-hover:text-foreground"
+                        )}
                     />
-                )}
-                {/* Pulse ring when closed */}
-                {!isOpen && (
-                    <motion.span
-                        className="absolute inset-0 rounded-full border border-primary/30"
-                        animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0, 0.4] }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                )}
-            </motion.button>
+                    {/* Notification dot */}
+                    {hasNewMsg && !isOpen && (
+                        <motion.span
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background"
+                        />
+                    )}
+                    {/* Pulse ring when closed */}
+                    {!isOpen && (
+                        <motion.span
+                            className="absolute inset-0 rounded-full border border-primary/30"
+                            animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0, 0.4] }}
+                            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                    )}
+                </motion.button>
+            )}
         </>
     );
 }

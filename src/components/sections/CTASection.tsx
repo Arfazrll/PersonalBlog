@@ -51,10 +51,10 @@ export default function CTASection() {
             {/* Infinite Ribbons - Moved from Stats Section */}
             <div className="relative flex h-[300px] w-full items-center justify-center overflow-hidden pointer-events-none mb-10">
                 <InfiniteRibbon rotation={6} className="z-10 py-5 border-y border-blue-200 dark:border-white/5 shadow-xl" background="bg-white dark:bg-zinc-900" textColor="text-blue-700 dark:text-zinc-400 font-mono tracking-tighter">
-                    Next.js • TypeScript • Tailwind • React • Node.js • Three.js •
+                    {t('ribbon1')}
                 </InfiniteRibbon>
                 <InfiniteRibbon rotation={-6} reverse={true} className="z-20 py-5 border-y border-white/40 dark:border-white/10 shadow-2xl" background="bg-blue-600 dark:bg-black" textColor="text-white font-bold tracking-widest uppercase">
-                    Creative Developer • UI/UX Design • Full Stack Engineering • System Architecture •
+                    {t('ribbon2')}
                 </InfiniteRibbon>
             </div>
 

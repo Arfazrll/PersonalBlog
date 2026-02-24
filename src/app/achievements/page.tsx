@@ -752,8 +752,8 @@ export default function AchievementsPage() {
                         >
                             <ErrorBoundary fallback={<div className="text-center opacity-50">Visuals Unavailable</div>}>
                                 <FallingText
-                                    text="Cognition Perception Autonomy Immutable Synapse Velocity Convergence Architecture Algorithm Vanguard Insight Nexus"
-                                    highlightWords={['Cognition', 'Autonomy', 'Immutable', 'Convergence', 'Vanguard']}
+                                    text="Python TensorFlow LangChain Next.js PyTorch OpenCV Blockchain Kubernetes Docker TypeScript DeepLearning Ultralytics Nodejs MLOps Cloud"
+                                    highlightWords={['Python', 'TensorFlow', 'LangChain', 'Blockchain', 'DeepLearning']}
                                     trigger="scroll"
                                     gravity={0.8}
                                     mouseConstraintStiffness={0.2}

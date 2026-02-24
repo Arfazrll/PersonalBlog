@@ -8,6 +8,8 @@
         "blog": "Blog",
         "gallery": "Gallery",
         "contact": "Contact",
+        "resume": "Resume",
+        "tools": "Tools",
         "menu": {
             "achievements": "Achievements",
             "achievementsDesc": "Certifications, awards, and milestones",
@@ -21,6 +23,14 @@
             "blogDesc": "Thoughts and technical explorations",
             "gallery": "Gallery",
             "galleryDesc": "Visual archive of media and projects"
+        },
+        "shortcuts": {
+            "volume1": "Volume I: Identity",
+            "volume2": "Volume II: Professional Sequence",
+            "volume3": "Volume III: Competency Matrix",
+            "volume4": "Volume IV: Creative Output",
+            "preview": "Preview Mode",
+            "idRef": "ID_REF"
         }
     },
     "hero": {
@@ -48,7 +58,112 @@
         },
         "identity": "Identity Link Established",
         "architecting": "Architecting",
-        "digitalReality": "Digital Reality"
+        "digitalReality": "Digital Reality",
+        "leadIn": {
+            "label": "WHAT I DO",
+            "applied": "Applied",
+            "intelligence": "intelligence.",
+            "production": "Production",
+            "engineering": "engineering.",
+            "thesis": "I build AI systems and the <span class='text-primary italic font-serif-elegant font-normal'>infrastructure</span> that makes them reliable at scale.",
+            "scope": "Focusing on predictive models, LLM powered applications, and RAG pipelines designed for production environments and measurable performance.",
+            "bridging": "Bridging labs and live systems.",
+            "integration": "Beyond models, I architect full-stack solutions: secure backends, modern interfaces, and scalable pipelines.",
+            "signature": "Azril",
+            "role": "AI & Software Engineer"
+        },
+        "coreEngineering": {
+            "label": "Core Engineering",
+            "title": "Proven <span class='text-primary italic font-serif font-light lowercase'>stack.</span> <br /> Measurable <span class='italic font-serif font-light text-foreground'>results.</span>",
+            "p1": "I develop applied AI systems using TensorFlow, Scikit-learn, and LangChain, structuring workflows and exposing models as services through Flask and FastAPI.",
+            "p2": "Integrated into full-stack apps with Next.js, Express.js, and Spring Boot, backed by PostgreSQL and Prisma ORM.",
+            "p3": "All projects use disciplined version control, Docker containerization, and are built for stable production deployment.",
+            "gpa": "Academic GPA",
+            "projects": "Projects Built",
+            "years": "Years Exp."
+        },
+        "emergingResearch": {
+            "label": "Exploration Phase",
+            "title": "EMERGING RESEARCH <span class='italic font-serif font-light text-primary lowercase'>&</span> EXPANSION",
+            "agentic": {
+                "title": "AGENTIC AI SYSTEMS",
+                "desc": "Exploring autonomous agents, multi-agent orchestration, and reasoning frameworks — extending my applied AI foundation into self-directed decision-making systems."
+            },
+            "web3": {
+                "title": "WEB3 & BLOCKCHAIN",
+                "desc": "Building decentralized applications with Solidity and Hardhat. Currently hands-on with smart contract development through projects like the Web3 Guestbook DApp on Ethereum."
+            }
+        },
+        "profile": {
+            "title": "Architecting <br class='hidden lg:block' /> Scalable Systems <br /> Where <span class='text-primary italic font-serif font-light lowercase'>Intelligence</span> <br /> Meets Engineering.",
+            "narrativeLabel": "Core Narrative",
+            "narrative": "As an Information Technology student specializing in Artificial Intelligence and Software Engineering, I focus on building systems that bridge research foundations with production-ready implementation.",
+            "narrative2": "My work combines algorithmic thinking, backend engineering, and scalable architecture to deliver solutions that are intelligent, reliable, and built for real-world impact.",
+            "pillars": {
+                "reliable": {
+                    "title": "Robust by Design",
+                    "desc": "Engineered for reliability under scale and operational pressure."
+                },
+                "optimized": {
+                    "title": "Production-Ready",
+                    "desc": "From prototype to deployment with engineering discipline."
+                },
+                "maintainable": {
+                    "title": "Architected for Evolution",
+                    "desc": "Designed to grow, adapt, and sustain long-term system development."
+                },
+                "evolvable": {
+                    "title": "Data-Driven Intelligence",
+                    "desc": "Decisions powered by models, metrics, and measurable performance."
+                }
+            }
+        },
+        "closing": {
+            "experience": {
+                "label": "BACKGROUND",
+                "title1": "KEY",
+                "title2": "EXPERIENCE",
+                "viewMore": "Full Experience"
+            },
+            "projects": {
+                "label": "PORTFOLIO",
+                "title1": "FLAGSHIP",
+                "title2": "PROJECTS",
+                "viewMore": "All Projects"
+            },
+            "experiencesList": [
+                {
+                    "company": "Cyber Physical System Laboratory",
+                    "role": "RESEARCH ASSISTANT (CONTRACT)",
+                    "desc": "Developing AI-driven research products and designing learning materials for Deep Learning and Computer Vision. Contributing to collaborative research initiatives in intelligent systems."
+                },
+                {
+                    "company": "HUMIC Engineering Research Center",
+                    "role": "AI DEVELOPER INTERN",
+                    "desc": "Built Transformer-based attack detection models for cybersecurity applications. Managed large-scale datasets through the full ML pipeline — from preprocessing to hyperparameter optimization."
+                },
+                {
+                    "company": "Cyber Physical System Laboratory",
+                    "role": "COMPUTER VISION RESEARCHER INTERN",
+                    "desc": "End-to-end development of intelligent models using state-of-the-art Deep Learning architectures. Implemented ML algorithms for real-world AIoT applications including human pose estimation systems."
+                }
+            ],
+            "projectsList": [
+                {
+                    "title": "TerraFlow Platform",
+                    "desc": "Enterprise IoT solution for precision agriculture. ESP32 sensor nodes communicate directly with Firebase via a Go (Gin) backend, with a Next.js dashboard for real-time monitoring and actuator control."
+                },
+                {
+                    "title": "DocsInsight Engine",
+                    "desc": "Private RAG platform for intelligent document analysis. Powered by local LLMs through Ollama, with LangChain orchestration and ChromaDB vector search — fully self-hosted for data privacy."
+                },
+                {
+                    "title": "POLABDC Dental Management",
+                    "desc": "AI-powered dental clinic SaaS with disease prediction, real-time queue management, and a Monorepo architecture connecting Next.js, Express.js, and a Python AI microservice."
+                }
+            ],
+            "discoverMore": "Discover More"
+        }
     },
     "projects": {
         "title": "Projects",
@@ -262,7 +377,9 @@
             "innovative": "Innovative",
             "intelligent": "Intelligent",
             "creative": "Creative"
-        }
+        },
+        "ribbon1": "Next.js • TypeScript • Tailwind • React • Node.js • Three.js •",
+        "ribbon2": "Creative Developer • UI/UX Design • Full Stack Engineering • System Architecture •"
     },
     "stats": {
         "systemStatus": "System Status: Analytics Active",
@@ -277,7 +394,12 @@
         "avgPerf": "Average Performance",
         "latency": "LATENCY: 14MS",
         "system": "SYSTEM: DARWIN_X64_STABLE",
-        "scanning": "SCANNING_LIVE_RESOURCES"
+        "scanning": "SCANNING_LIVE_RESOURCES",
+        "engineering": "ENGINEERING",
+        "metrics": "METRICS",
+        "analyticsSub": "ANALYTICS / INFRASTRUCTURE / PERFORMANCE DATA",
+        "statusOnline": "STATUS: ONLINE",
+        "loadStable": "SYSTEM_LOAD: STABLE"
     },
     "projectHeader": {
         "title": "Architecting Digital Reality",
@@ -292,7 +414,8 @@
         "readMore": "Read More",
         "close": "Close",
         "download": "Download",
-        "share": "Share"
+        "share": "Share",
+        "scrollAudit": "Scroll to explore"
     },
     "technical": {
         "github": {
@@ -344,5 +467,23 @@
             "video": "Videos"
         },
         "viewMedia": "View Media"
+    },
+    "chatbot": {
+        "title": "AI Assistant",
+        "subtitle": "Ask me about Azril",
+        "placeholder": "Type a message...",
+        "greeting": "Hi! I'm an AI assistant for **{name}**. 👋\n\nI can answer questions about:\n- Skills & technical expertise\n- Projects and work\n- Experience\n- Education\n- And more!\n\nAnything you'd like to ask?",
+        "suggestions": [
+            "What are your main skills?",
+            "Tell me about your best project",
+            "What is your work experience?",
+            "What AI skills do you have?"
+        ],
+        "error": "An error occurred. Please try again.",
+        "invalidResponse": "Invalid response from server.",
+        "unknownError": "An unknown error occurred.",
+        "retry": "Try again",
+        "inputHint": "Enter to send, Shift+Enter for newline",
+        "close": "Close chat"
     }
 }

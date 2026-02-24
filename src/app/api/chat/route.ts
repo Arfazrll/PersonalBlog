@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { portfolioData } from '@/data/portfolio';
 
 // ─── Build system prompt from portfolio data ─────────────────────────────────
-function buildSystemPrompt(): string {
+function buildSystemPrompt(locale: string = 'en'): string {
     const { personal, projects, experience, education, skills, achievements, softSkills, tools } = portfolioData as any;
 
     const projectList = (projects ?? [])
@@ -74,7 +74,7 @@ ${toolList || 'VS Code, Docker, GitHub, Figma.'}
 ${achievementList || 'See portfolio for details.'}
 
 ## Instructions
-- Answer in the same language the user uses (Indonesian or English).
+- Answer in ${locale === 'id' ? 'Indonesian' : 'English'} (the current interface language). However, if the user asks in a different language, feel free to respond in that language too, while maintaining a professionally friendly tone.
 - Be concise but informative. Use bullet points for lists.
 - If asked about something not in the portfolio, politely say you only have information about ${personal.name}'s portfolio.
 - When recommending projects, include demo links if available.
@@ -91,6 +91,7 @@ interface Message {
 
 interface ChatRequest {
     messages: Message[];
+    locale?: string;
 }
 
 // ─── Groq API call ───────────────────────────────────────────────────────────
@@ -194,7 +195,7 @@ export async function POST(req: NextRequest) {
 
         // Limit to last 20 messages to avoid token overflow
         const messages = body.messages.slice(-20);
-        const systemPrompt = buildSystemPrompt();
+        const systemPrompt = buildSystemPrompt(body.locale);
 
         let reply: string;
         let provider: string;

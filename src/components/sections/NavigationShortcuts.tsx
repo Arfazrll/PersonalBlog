@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { portfolioData } from "@/data/portfolio";
 import { ArrowUpRight } from "lucide-react";
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useTranslations } from 'next-intl';
 
 // Gallery assets for background randomization
 const GALLERY_IMAGES = [
@@ -66,48 +67,44 @@ export const NavigationShortcuts = () => {
         setItemImageMap(map);
     }, []);
 
-    // REFRESH: Synchronize ScrollTrigger with layout shifts (Index Open/Close)
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            ScrollTrigger.refresh();
-        }, 850); // Matches duration + small buffer
-        return () => clearTimeout(timer);
-    }, [isOpen]);
+    const t = useTranslations('navigation');
 
-    const categories = [
+    const categories = useMemo(() => [
         {
-            title: "Volume I: Identity",
+            title: t('shortcuts.volume1'),
             items: [
-                { id: '01', title: 'About Me', href: '/#about' },
-                { id: '02', title: 'Resume', href: portfolioData.personal.resumeUrl, external: true },
-                { id: '03', title: 'Contact', href: '/contact' },
+                { id: '01', title: t('home'), href: '/#about' },
+                { id: '02', title: t('resume'), href: portfolioData.personal.resumeUrl, external: true }, // Using existing key for Resume or adding new?
+                { id: '03', title: t('contact'), href: '/contact' },
             ]
         },
         {
-            title: "Volume II: Professional Sequence",
+            title: t('shortcuts.volume2'),
             items: [
-                { id: '04', title: 'Experience', href: '/experience' },
-                { id: '05', title: 'Education', href: '/experience' },
-                { id: '06', title: 'Projects', href: '/projects' },
-                { id: '07', title: 'Certifications', href: '/achievements' },
+                { id: '04', title: t('experience'), href: '/experience' },
+                { id: '05', title: t('menu.experience'), href: '/experience' }, // Education? Original was Experience too in href
+                { id: '06', title: t('projects'), href: '/projects' },
+                { id: '07', title: t('achievements'), href: '/achievements' },
             ]
         },
         {
-            title: "Volume III: Competency Matrix",
+            title: t('shortcuts.volume3'),
             items: [
-                { id: '08', title: 'Hard Skills', href: '/skills#hard-skills' },
-                { id: '09', title: 'Soft Skills', href: '/skills#soft-skills' },
-                { id: '10', title: 'Tools & Tech', href: '/skills#tools' },
+                { id: '08', title: t('skills'), href: '/skills#hard-skills' },
+                { id: '09', title: t('menu.skills'), href: '/skills#soft-skills' },
+                { id: '10', title: t('tools'), href: '/skills#tools' },
             ]
         },
         {
-            title: "Volume IV: Creative Output",
+            title: t('shortcuts.volume4'),
             items: [
-                { id: '11', title: 'Blog', href: '/blog' },
-                { id: '12', title: 'Gallery', href: '/gallery' },
+                { id: '11', title: t('blog'), href: '/blog' },
+                { id: '12', title: t('gallery'), href: '/gallery' },
             ]
         }
-    ];
+    ], [t]);
+
+    // REFRESH: Synchronize ScrollTrigger with layout shifts (Index Open/Close)
 
     // INNOVATIVE: Global Bounds Tracker (STABILIZED)
     const handleMouseLeave = () => setHoveredImage(null);
@@ -168,8 +165,8 @@ export const NavigationShortcuts = () => {
 
                                 {/* Preview Metadata */}
                                 <div className="absolute bottom-12 right-12 text-right hidden md:block">
-                                    <div className="text-[10px] font-mono tracking-[0.2em] text-primary/60 uppercase mb-1">Preview Mode</div>
-                                    <div className="text-[10px] font-mono tracking-[0.1em] text-primary/40">ID_REF: {hoveredImage.split('/').pop()}</div>
+                                    <div className="text-[10px] font-mono tracking-[0.2em] text-primary/60 uppercase mb-1">{t('shortcuts.preview')}</div>
+                                    <div className="text-[10px] font-mono tracking-[0.1em] text-primary/40">{t('shortcuts.idRef')}: {hoveredImage.split('/').pop()}</div>
                                 </div>
                             </motion.div>
                         </motion.div>

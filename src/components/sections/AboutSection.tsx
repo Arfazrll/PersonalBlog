@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { WarpBackground } from "@/components/ui/warp-background";
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -44,7 +45,7 @@ const SlideReveal = ({ children, delay = 0, y = 30 }: { children: React.ReactNod
 const AboutLeadIn = () => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
-    const isMobile = useIsMobile();
+    const t = useTranslations('about');
 
     return (
         <div ref={ref} style={{ willChange: "transform, opacity" }} className="relative w-full max-w-[1500px] mx-auto px-6 md:px-10 lg:px-12 py-8 md:py-12 overflow-visible">
@@ -56,7 +57,7 @@ const AboutLeadIn = () => {
                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                         className="text-[10px] md:text-[12px] font-mono uppercase tracking-[0.5em] text-primary"
                     >
-                        WHAT I DO
+                        {t('leadIn.label')}
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
@@ -64,8 +65,8 @@ const AboutLeadIn = () => {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85]"
                     >
-                        Applied <br />
-                        <span className="font-serif-elegant italic font-light lowercase text-primary">intelligence.</span>
+                        {t('leadIn.applied')} <br />
+                        <span className="font-serif-elegant italic font-light lowercase text-primary">{t('leadIn.intelligence')}</span>
                     </motion.h2>
                 </div>
 
@@ -78,8 +79,8 @@ const AboutLeadIn = () => {
                         transition={{ duration: 0.8, delay: 0.4 }}
                         className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.85]"
                     >
-                        Production <br />
-                        <span className="font-serif-elegant italic font-light lowercase text-primary">engineering.</span>
+                        {t('leadIn.production')} <br />
+                        <span className="font-serif-elegant italic font-light lowercase text-primary">{t('leadIn.engineering')}</span>
                     </motion.h2>
                 </div>
             </div>
@@ -96,9 +97,10 @@ const AboutLeadIn = () => {
                     className="space-y-4"
                 >
                     <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">...</span>
-                    <p className="text-2xl md:text-3xl lg:text-4xl font-black leading-tight tracking-tight text-foreground">
-                        I build AI systems and the <span className="text-primary italic font-serif-elegant font-normal">infrastructure </span> that makes them reliable at scale.
-                    </p>
+                    <p
+                        className="text-2xl md:text-3xl lg:text-4xl font-black leading-tight tracking-tight text-foreground"
+                        dangerouslySetInnerHTML={{ __html: t.raw('leadIn.thesis') }}
+                    />
                 </motion.div>
 
                 {/* Col 2: The Scope */}
@@ -110,11 +112,11 @@ const AboutLeadIn = () => {
                 >
                     <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">...</span>
                     <p className="text-[13px] md:text-sm lg:text-[15px] text-muted-foreground leading-relaxed">
-                        Focusing on predictive models, LLM powered applications, and RAG pipelines designed for production environments and measurable performance.
+                        {t('leadIn.scope')}
                     </p>
                     <div className="h-px w-10 bg-primary/30" />
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed italic">
-                        Bridging labs and live systems.
+                        {t('leadIn.bridging')}
                     </p>
                 </motion.div>
 
@@ -128,14 +130,14 @@ const AboutLeadIn = () => {
                     <div className="space-y-4">
                         <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">...</span>
                         <p className="text-[13px] md:text-sm lg:text-[15px] text-muted-foreground leading-relaxed">
-                            Beyond models, I architect full-stack solutions: secure backends, modern interfaces, and scalable pipelines.
+                            {t('leadIn.integration')}
                         </p>
                     </div>
 
                     <div className="pt-8 flex items-center justify-between">
                         <div className="flex flex-col">
-                            <span className="text-4xl lg:text-6xl font-signature text-primary">Azril</span>
-                            <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-muted-foreground">AI & Software Engineer </span>
+                            <span className="text-4xl lg:text-6xl font-signature text-primary">{t('leadIn.signature')}</span>
+                            <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-muted-foreground">{t('leadIn.role')}</span>
                         </div>
                     </div>
                 </motion.div>
@@ -182,6 +184,7 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
     useMotionValueEvent(scrollYProgress, "change", (v: any) => {
         setTextIsLeft(v > 0.25);
     });
+    const t = useTranslations('about');
 
     const gpaValue = useCountUp(3.8, 2000, 1);
     const projectsValue = useCountUp(19, 2000, 0);
@@ -208,14 +211,14 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
 
     const globeConfig = {
         pointSize: 4,
-        globeColor: isDark ? "#062056" : "#e2e8f0",
+        globeColor: "#062056",
         showAtmosphere: true,
-        atmosphereColor: isDark ? "#FFFFFF" : "#3b82f6",
+        atmosphereColor: isDark ? "#FFFFFF" : "#60a5fa",
         atmosphereAltitude: 0.1,
-        emissive: isDark ? "#062056" : "#f1f5f9",
+        emissive: "#062056",
         emissiveIntensity: 0.1,
         shininess: 0.9,
-        polygonColor: isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.1)",
+        polygonColor: "rgba(255, 255, 255, 0.7)",
         ambientLight: isDark ? "#38bdf8" : "#3b82f6",
         directionalLeftLight: isDark ? "#ffffff" : "#3b82f6",
         directionalTopLight: isDark ? "#ffffff" : "#ffffff",
@@ -269,23 +272,21 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
                             transition={{ duration: 0.5 }}
                             className="text-[12px] md:text-[13px] font-mono uppercase tracking-[0.2em] text-muted-foreground block"
                         >
-                            Core Engineering
+                            {t('coreEngineering.label')}
                         </motion.span>
                         <motion.h3
                             initial={{ clipPath: "inset(0 100% 0 0)" }} whileInView={{ clipPath: "inset(0 0% 0 0)" }}
                             viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
                             className="text-[40px] md:text-[54px] font-bold text-foreground leading-[1.1] tracking-tight"
-                        >
-                            Proven <span className="text-primary italic font-serif font-light lowercase">stack.</span> <br />
-                            Measurable <span className="italic font-serif font-light text-foreground">results.</span>
-                        </motion.h3>
+                            dangerouslySetInnerHTML={{ __html: t.raw('coreEngineering.title') }}
+                        />
                     </div>
 
                     <div className="space-y-5 max-w-[620px]">
                         {[
-                            { text: "I develop applied AI systems using TensorFlow, Scikit-learn, and LangChain, structuring workflows and exposing models as services through Flask and FastAPI.", delay: 0.5 },
-                            { text: "Integrated into full-stack apps with Next.js, Express.js, and Spring Boot, backed by PostgreSQL and Prisma ORM.", delay: 0.6 },
-                            { text: "All projects use disciplined version control, Docker containerization, and are built for stable production deployment.", delay: 0.7 },
+                            { text: t('coreEngineering.p1'), delay: 0.5 },
+                            { text: t('coreEngineering.p2'), delay: 0.6 },
+                            { text: t('coreEngineering.p3'), delay: 0.7 },
                         ].map((p, i) => (
                             <motion.p key={i}
                                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -299,9 +300,9 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
 
                     <div className="flex flex-row gap-10 md:gap-16 pt-2">
                         {[
-                            { val: gpaValue, label: "Academic GPA", suffix: "", delay: 0.8 },
-                            { val: projectsValue, label: "Projects Built", suffix: "+", delay: 0.9 },
-                            { val: expValue, label: "Years Exp.", suffix: "+", delay: 1.0 },
+                            { val: gpaValue, label: t('coreEngineering.gpa'), suffix: "", delay: 0.8 },
+                            { val: projectsValue, label: t('coreEngineering.projects'), suffix: "+", delay: 0.9 },
+                            { val: expValue, label: t('coreEngineering.years'), suffix: "+", delay: 1.0 },
                         ].map((stat, i) => (
                             <motion.div key={i}
                                 initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -358,6 +359,7 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
 
 const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
     const isMobile = useIsMobile();
+    const t = useTranslations('about');
 
     return (
         <div className="w-screen h-full flex items-center bg-background overflow-hidden transition-colors duration-500">
@@ -379,16 +381,15 @@ const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
                                 transition={{ duration: 0.5 }}
                                 className="text-[12px] md:text-[13px] font-mono uppercase tracking-[0.2em] text-gray-400 block"
                             >
-                                Exploration Phase
+                                {t('emergingResearch.label')}
                             </motion.span>
                             <motion.h3
                                 initial={{ opacity: 0, y: 50 }}
                                 animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                                 transition={{ duration: 0.6, delay: 0.15 }}
                                 className="text-[36px] md:text-[50px] font-bold text-foreground uppercase leading-tight tracking-tight"
-                            >
-                                EMERGING RESEARCH <span className="italic font-serif font-light text-primary lowercase">&</span> EXPANSION
-                            </motion.h3>
+                                dangerouslySetInnerHTML={{ __html: t.raw('emergingResearch.title') }}
+                            />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl">
@@ -398,9 +399,9 @@ const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
                                 transition={{ duration: 0.5, delay: 0.3 }}
                                 className="space-y-3"
                             >
-                                <h4 className="text-[13px] font-bold uppercase tracking-[0.1em] text-foreground">AGENTIC AI SYSTEMS</h4>
+                                <h4 className="text-[13px] font-bold uppercase tracking-[0.1em] text-foreground">{t('emergingResearch.agentic.title')}</h4>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
-                                    Exploring autonomous agents, multi-agent orchestration, and reasoning frameworks — extending my applied AI foundation into self-directed decision-making systems.
+                                    {t('emergingResearch.agentic.desc')}
                                 </p>
                             </motion.div>
                             <motion.div
@@ -409,9 +410,9 @@ const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
                                 transition={{ duration: 0.5, delay: 0.42 }}
                                 className="space-y-3"
                             >
-                                <h4 className="text-[13px] font-bold uppercase tracking-[0.1em] text-foreground">WEB3 & BLOCKCHAIN</h4>
+                                <h4 className="text-[13px] font-bold uppercase tracking-[0.1em] text-foreground">{t('emergingResearch.web3.title')}</h4>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
-                                    Building decentralized applications with Solidity and Hardhat. Currently hands-on with smart contract development through projects like the Web3 Guestbook DApp on Ethereum.
+                                    {t('emergingResearch.web3.desc')}
                                 </p>
                             </motion.div>
                         </div>
@@ -429,6 +430,7 @@ const ProfileIntersection = () => {
         target: sectionRef,
         offset: ["start start", "end start"]
     });
+    const t = useTranslations('about');
 
     // Ultra-Tight Fade Out (Only at the very end of its exit)
     const contentOpacity = useTransform(scrollYProgress, [0.98, 1.0], [1, 0]);
@@ -472,18 +474,15 @@ const ProfileIntersection = () => {
                 {/* Right: Text Block (7/12) - Highlighted */}
                 <div className="lg:col-span-7 flex flex-col justify-center space-y-12 p-8 lg:py-16 lg:pr-16 lg:pl-20 relative">
                     <SlideReveal delay={0.2} y={60}>
-                        <h3 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-[0.9] text-foreground dark:text-white tracking-tighter uppercase">
-                            Engineering at <br className="hidden lg:block" />
-                            the <span className="text-primary italic font-serif font-light lowercase">intersection</span> of <br />
-                            Intelligence <br />
-                            <span className="text-primary italic font-serif font-light lowercase">&</span> Infrastructure.
-                        </h3>
+                        <h3
+                            className="text-3xl md:text-5xl lg:text-6xl font-bold leading-[0.9] text-foreground dark:text-white tracking-tighter uppercase"
+                            dangerouslySetInnerHTML={{ __html: t.raw('profile.title') }}
+                        />
                     </SlideReveal>
 
                     <SlideReveal delay={0.4} y={40}>
                         <div className="space-y-12">
                             <div className="space-y-6 border-l-2 border-primary/20 pl-8">
-                                <h4 className="text-sm font-mono uppercase tracking-[0.3em] text-primary">Core Narrative</h4>
                                 <ScrollReveal
                                     baseOpacity={0.4}
                                     enableBlur={false}
@@ -491,16 +490,25 @@ const ProfileIntersection = () => {
                                     textClassName="text-base md:text-lg text-foreground/90 leading-relaxed font-medium"
                                     containerClassName="!my-0"
                                 >
-                                    As an Information Technology student at Telkom University, I combine academic rigor with production-oriented engineering. My approach is grounded in technical fundamentals and systems-level thinking.
+                                    {t('profile.narrative')}
+                                </ScrollReveal>
+                                <ScrollReveal
+                                    baseOpacity={0.4}
+                                    enableBlur={false}
+                                    blurStrength={2}
+                                    textClassName="text-base md:text-lg text-foreground/90 leading-relaxed font-medium"
+                                    containerClassName="!mt-5 !mb-0"
+                                >
+                                    {t('profile.narrative2')}
                                 </ScrollReveal>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 {[
-                                    { title: "Reliable", desc: "Built to operate under real-world scale and pressure." },
-                                    { title: "Optimized", desc: "Performance-driven engineering from core to edge." },
-                                    { title: "Maintainable", desc: "Architected with clarity and structural integrity." },
-                                    { title: "Evolvable", desc: "Designed for long-term growth and technical adaptation." }
+                                    { title: t('profile.pillars.reliable.title'), desc: t('profile.pillars.reliable.desc') },
+                                    { title: t('profile.pillars.optimized.title'), desc: t('profile.pillars.optimized.desc') },
+                                    { title: t('profile.pillars.maintainable.title'), desc: t('profile.pillars.maintainable.desc') },
+                                    { title: t('profile.pillars.evolvable.title'), desc: t('profile.pillars.evolvable.desc') }
                                 ].map((item, idx) => (
                                     <motion.div
                                         key={idx}
@@ -570,25 +578,28 @@ const ProjectCard = ({ proj, index }: { proj: any, index: number }) => (
 );
 
 
-const ViewMoreCard = ({ href, title }: { href: string, title: string }) => (
-    <Link href={href} className="group block">
-        <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="p-8 border-2 border-dashed border-primary/20 rounded-2xl flex flex-col items-center justify-center gap-6 group-hover:border-primary/50 group-hover:bg-primary/5 transition-all duration-500 min-h-[25vh]"
-        >
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <ArrowRight className="w-8 h-8 text-primary" />
-            </div>
-            <div className="text-center space-y-2">
-                <p className="text-xs font-mono uppercase tracking-[0.2em] text-primary/60 group-hover:text-primary transition-colors">Discover More</p>
-                <h4 className="text-2xl font-bold text-foreground group-hover:italic transition-all">{title}</h4>
-            </div>
-        </motion.div>
-    </Link>
-);
+const ViewMoreCard = ({ href, title }: { href: string, title: string }) => {
+    const t = useTranslations('about');
+    return (
+        <Link href={href} className="group block">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="p-8 border-2 border-dashed border-primary/20 rounded-2xl flex flex-col items-center justify-center gap-6 group-hover:border-primary/50 group-hover:bg-primary/5 transition-all duration-500 min-h-[25vh]"
+            >
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                    <ArrowRight className="w-8 h-8 text-primary" />
+                </div>
+                <div className="text-center space-y-2">
+                    <p className="text-xs font-mono uppercase tracking-[0.2em] text-primary/60 group-hover:text-primary transition-colors">{t('closing.discoverMore')}</p>
+                    <h4 className="text-2xl font-bold text-foreground group-hover:italic transition-all">{title}</h4>
+                </div>
+            </motion.div>
+        </Link>
+    );
+};
 
 const GhostedHeader = ({ label, part1, part2 }: { label: string, part1: string, part2: string }) => (
     <motion.div
@@ -651,38 +662,10 @@ const AboutClosing = () => {
     const smoothLeftY = useSpring(leftY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.001 });
     const smoothRightY = useSpring(rightY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.001 });
 
-    const experiences = [
-        {
-            company: "Cyber Physical System Laboratory",
-            role: "RESEARCH ASSISTANT (CONTRACT)",
-            desc: "Developing AI-driven research products and designing learning materials for Deep Learning and Computer Vision. Contributing to collaborative research initiatives in intelligent systems."
-        },
-        {
-            company: "HUMIC Engineering Research Center",
-            role: "AI DEVELOPER INTERN",
-            desc: "Built Transformer-based attack detection models for cybersecurity applications. Managed large-scale datasets through the full ML pipeline — from preprocessing to hyperparameter optimization."
-        },
-        {
-            company: "Cyber Physical System Laboratory",
-            role: "COMPUTER VISION RESEARCHER INTERN",
-            desc: "End-to-end development of intelligent models using state-of-the-art Deep Learning architectures. Implemented ML algorithms for real-world AIoT applications including human pose estimation systems."
-        }
-    ];
+    const t = useTranslations('about');
+    const experiences = t.raw('closing.experiencesList');
 
-    const projects = [
-        {
-            title: "TerraFlow Platform",
-            desc: "Enterprise IoT solution for precision agriculture. ESP32 sensor nodes communicate directly with Firebase via a Go (Gin) backend, with a Next.js dashboard for real-time monitoring and actuator control."
-        },
-        {
-            title: "DocsInsight Engine",
-            desc: "Private RAG platform for intelligent document analysis. Powered by local LLMs through Ollama, with LangChain orchestration and ChromaDB vector search — fully self-hosted for data privacy."
-        },
-        {
-            title: "POLABDC Dental Management",
-            desc: "AI-powered dental clinic SaaS with disease prediction, real-time queue management, and a Monorepo architecture connecting Next.js, Express.js, and a Python AI microservice."
-        }
-    ];
+    const projects = t.raw('closing.projectsList');
 
     return (
         <section ref={sectionRef} className="relative h-[400vh] hidden md:block z-50 bg-background">
@@ -700,17 +683,17 @@ const AboutClosing = () => {
 
                         {/* LEFT: KEY EXPERIENCE (Scrolls UP) */}
                         <div className="flex flex-col h-full overflow-hidden">
-                            <GhostedHeader label="BACKGROUND" part1="KEY" part2="EXPERIENCE" />
+                            <GhostedHeader label={t('closing.experience.label')} part1={t('closing.experience.title1')} part2={t('closing.experience.title2')} />
                             <div className="flex-1 relative overflow-hidden">
                                 <motion.div
                                     ref={leftTrackRef}
                                     style={{ y: smoothLeftY, willChange: "transform" }}
                                     className="space-y-[15vh]"
                                 >
-                                    {experiences.map((exp, i) => (
+                                    {experiences.map((exp: any, i: number) => (
                                         <ExperienceCard key={i} exp={exp} index={i} />
                                     ))}
-                                    <ViewMoreCard href="/experience" title="Full Experience" />
+                                    <ViewMoreCard href="/experience" title={t('closing.experience.viewMore')} />
                                     {/* Ruang kosong di akhir agar item terakhir sejajar di atas sebelum exit */}
                                     <div className="h-[60vh]" />
                                 </motion.div>
@@ -719,7 +702,7 @@ const AboutClosing = () => {
 
                         {/* RIGHT: FLAGSHIP PROJECTS (Scrolls DOWN) */}
                         <div className="flex flex-col h-full overflow-hidden">
-                            <GhostedHeader label="PORTFOLIO" part1="FLAGSHIP" part2="PROJECTS" />
+                            <GhostedHeader label={t('closing.projects.label')} part1={t('closing.projects.title1')} part2={t('closing.projects.title2')} />
                             <div className="flex-1 relative overflow-hidden">
                                 <motion.div
                                     ref={rightTrackRef}
@@ -727,8 +710,8 @@ const AboutClosing = () => {
                                     className="space-y-[15vh]"
                                 >
                                     <div className="h-[80vh] hidden lg:block" /> {/* Top padding for projects to align with empty space and exit cleanly */}
-                                    <ViewMoreCard href="/projects" title="All Projects" />
-                                    {projects.map((proj, i) => (
+                                    <ViewMoreCard href="/projects" title={t('closing.projects.viewMore')} />
+                                    {projects.map((proj: any, i: number) => (
                                         <ProjectCard key={i} proj={proj} index={i} />
                                     ))}
                                     {/* Ruang kosong di akhir agar item terakhir sejajar di atas sebelum exit */}
@@ -746,24 +729,16 @@ const AboutClosing = () => {
 
 // --- Mobile Version of AboutClosing ---
 const AboutClosingMobile = () => {
-    const experiences = [
-        "Cyber Physical System Laboratory (Research Assistant)",
-        "HUMIC Engineering Research Center (AI Developer Intern)",
-        "Cyber Physical System Laboratory (CV Researcher Intern)"
-    ];
-
-    const projects = [
-        "POLABDC Dental Management",
-        "DocsInsight Engine",
-        "TerraFlow Platform"
-    ];
+    const t = useTranslations('about');
+    const experiences = t.raw('closing.experiencesList');
+    const projects = t.raw('closing.projectsList');
 
     return (
         <div className="md:hidden px-6 py-20 space-y-24 border-t border-white/5">
             <div className="space-y-12">
-                <GhostedHeader label="BACKGROUND" part1="KEY" part2="EXPERIENCE" />
+                <GhostedHeader label={t('closing.experience.label')} part1={t('closing.experience.title1')} part2={t('closing.experience.title2')} />
                 <div className="space-y-12 pl-4">
-                    {experiences.map((item, i) => (
+                    {experiences.map((exp: any, i: number) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, x: -10 }}
@@ -772,19 +747,20 @@ const AboutClosingMobile = () => {
                             transition={{ delay: i * 0.1 }}
                             className="pl-6 border-l border-primary/30"
                         >
-                            <h4 className="text-xl font-bold">{item.split(' (')[0]}</h4>
+                            <h4 className="text-xl font-bold">{exp.company}</h4>
                             <p className="text-xs uppercase font-mono tracking-widest text-muted-foreground mt-1">
-                                {item.split(' (')[1].replace(')', '')}
+                                {exp.role}
                             </p>
                         </motion.div>
                     ))}
                 </div>
+                <ViewMoreCard href="/experience" title={t('closing.experience.viewMore')} />
             </div>
 
             <div className="space-y-12">
-                <GhostedHeader label="PORTFOLIO" part1="FLAGSHIP" part2="PROJECTS" />
+                <GhostedHeader label={t('closing.projects.label')} part1={t('closing.projects.title1')} part2={t('closing.projects.title2')} />
                 <div className="space-y-12 pl-4">
-                    {projects.map((title, i) => (
+                    {projects.map((proj: any, i: number) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, x: -10 }}
@@ -794,10 +770,11 @@ const AboutClosingMobile = () => {
                             className="space-y-3"
                         >
                             <div className="w-10 h-0.5 bg-primary/40" />
-                            <h4 className="text-xl font-bold">{title}</h4>
+                            <h4 className="text-xl font-bold">{proj.title}</h4>
                         </motion.div>
                     ))}
                 </div>
+                <ViewMoreCard href="/projects" title={t('closing.projects.viewMore')} />
             </div>
         </div>
     );
@@ -812,6 +789,8 @@ const AuditFunnel = () => {
         target: sectionRef,
         offset: ["start end", "end start"]
     });
+    const t = useTranslations('about');
+    const tCommon = useTranslations('common');
 
     const scale = useTransform(scrollYProgress, [0, 0.5], [0.6, 1]);
     const lineScaleY = useTransform(scrollYProgress, [0.3, 0.8], [0, 1]);
@@ -840,14 +819,14 @@ const AuditFunnel = () => {
                         style={{ scale, willChange: "transform" }}
                         className="text-xl md:text-4xl lg:text-6xl font-black tracking-[-0.05em] text-foreground max-w-6xl tracking-tighter leading-[0.9] lg:px-12 uppercase text-center"
                     >
-                        architecting <br></br>
+                        {t('architecting')} <br></br>
                         <motion.span
                             initial={{ opacity: 0, y: 15 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 }}
                             className="text-primary italic font-serif-elegant font-light lowercase tracking-normal"
                         >
-                            digital reality
+                            {t('digitalReality')}
                         </motion.span>.
                     </motion.h4>
                 </div>
@@ -859,7 +838,7 @@ const AuditFunnel = () => {
                         transition={{ delay: 0.8 }}
                         className="text-[10px] font-mono text-muted-foreground tracking-[0.5em] uppercase"
                     >
-                        Scroll to audit flow
+                        {tCommon('scrollAudit')}
                     </motion.div>
                     <div className="relative h-40 w-px bg-black/5 dark:bg-white/[0.01] overflow-hidden">
                         <motion.div
