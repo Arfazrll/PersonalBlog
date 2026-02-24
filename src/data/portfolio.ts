@@ -31,16 +31,16 @@ export const portfolioData: PortfolioData = {
                 username: 'syahril-arfian-almazril',
             },
             {
-                platform: 'Twitter',
-                url: 'https://twitter.com/arfazrll',
-                icon: 'twitter',
-                username: '@arfazrll',
-            },
-            {
                 platform: 'Instagram',
                 url: 'https://instagram.com/arfazrll',
                 icon: 'instagram',
                 username: 'arfazrll',
+            },
+            {
+                platform: 'Twitter',
+                url: 'https://twitter.com/arfazrll',
+                icon: 'twitter',
+                username: '@arfazrll',
             },
             {
                 platform: 'Discord',

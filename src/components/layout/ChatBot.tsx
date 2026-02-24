@@ -603,7 +603,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
 }
 
 // ─── Main ChatBot component ───────────────────────────────────────────────────
-export function ChatBot() {
+export function ChatBot({ headless = false }: { headless?: boolean }) {
     const [isOpen, setIsOpen] = useState(false);
     const [hasNewMsg, setHasNewMsg] = useState(false);
 
@@ -623,51 +623,60 @@ export function ChatBot() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [isOpen, close]);
 
+    // Listen for external toggle events (e.g. from Footer)
+    useEffect(() => {
+        const handleToggle = () => setIsOpen(true);
+        window.addEventListener("portfolio:toggle-chatbot", handleToggle);
+        return () => window.removeEventListener("portfolio:toggle-chatbot", handleToggle);
+    }, []);
+
     return (
         <>
             {/* Chat window */}
             <AnimatePresence>{isOpen && <ChatWindow onClose={close} />}</AnimatePresence>
 
-            {/* Trigger button — designed to match SocialCorner style */}
-            <motion.button
-                onClick={toggle}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className={cn(
-                    "relative p-3 rounded-full transition-all group",
-                    "border border-foreground/10",
-                    isOpen
-                        ? "bg-primary/20 border-primary/40"
-                        : "bg-foreground/5 hover:bg-foreground/10"
-                )}
-                aria-label="Open portfolio chatbot"
-                aria-expanded={isOpen}
-            >
-                <MessageSquare
+            {/* Trigger button — globally fixed corner button */}
+            {!headless && (
+                <motion.button
+                    onClick={toggle}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     className={cn(
-                        "w-5 h-5 transition-colors",
+                        "relative p-3 rounded-full transition-all group",
+                        "border border-foreground/10",
                         isOpen
-                            ? "text-primary"
-                            : "text-foreground/60 group-hover:text-foreground"
+                            ? "bg-primary/20 border-primary/40"
+                            : "bg-foreground/5 hover:bg-foreground/10"
                     )}
-                />
-                {/* Notification dot */}
-                {hasNewMsg && !isOpen && (
-                    <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background"
+                    aria-label="Open portfolio chatbot"
+                    aria-expanded={isOpen}
+                >
+                    <MessageSquare
+                        className={cn(
+                            "w-5 h-5 transition-colors",
+                            isOpen
+                                ? "text-primary"
+                                : "text-foreground/60 group-hover:text-foreground"
+                        )}
                     />
-                )}
-                {/* Pulse ring when closed */}
-                {!isOpen && (
-                    <motion.span
-                        className="absolute inset-0 rounded-full border border-primary/30"
-                        animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0, 0.4] }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                )}
-            </motion.button>
+                    {/* Notification dot */}
+                    {hasNewMsg && !isOpen && (
+                        <motion.span
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background"
+                        />
+                    )}
+                    {/* Pulse ring when closed */}
+                    {!isOpen && (
+                        <motion.span
+                            className="absolute inset-0 rounded-full border border-primary/30"
+                            animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0, 0.4] }}
+                            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                    )}
+                </motion.button>
+            )}
         </>
     );
 }
