@@ -483,7 +483,6 @@ const ProfileIntersection = () => {
                     <SlideReveal delay={0.4} y={40}>
                         <div className="space-y-12">
                             <div className="space-y-6 border-l-2 border-primary/20 pl-8">
-                                <h4 className="text-sm font-mono uppercase tracking-[0.3em] text-primary">{t('profile.narrativeLabel')}</h4>
                                 <ScrollReveal
                                     baseOpacity={0.4}
                                     enableBlur={false}
@@ -492,6 +491,15 @@ const ProfileIntersection = () => {
                                     containerClassName="!my-0"
                                 >
                                     {t('profile.narrative')}
+                                </ScrollReveal>
+                                <ScrollReveal
+                                    baseOpacity={0.4}
+                                    enableBlur={false}
+                                    blurStrength={2}
+                                    textClassName="text-base md:text-lg text-foreground/90 leading-relaxed font-medium"
+                                    containerClassName="!mt-5 !mb-0"
+                                >
+                                    {t('profile.narrative2')}
                                 </ScrollReveal>
                             </div>
 

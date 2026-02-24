@@ -95,25 +95,26 @@
             }
         },
         "profile": {
-            "title": "Rekayasa di <br class='hidden lg:block' /> <span class='text-primary italic font-serif font-light lowercase'>persimpangan</span> <br /> Kecerdasan <br /> <span class='text-primary italic font-serif font-light lowercase'>&</span> Infrastruktur.",
+            "title": "Membangun <br class='hidden lg:block' /> Sistem Skalabel <br /> Tempat <span class='text-primary italic font-serif font-light lowercase'>Kecerdasan</span> <br /> Bertemu Rekayasa.",
             "narrativeLabel": "Narasi Inti",
-            "narrative": "Sebagai mahasiswa Teknologi Informasi di Universitas Telkom, saya menggabungkan ketelitian akademik dengan rekayasa yang berorientasi pada produksi. Pendekatan saya didasarkan pada dasar-dasar teknis dan pemikiran tingkat sistem.",
+            "narrative": "Sebagai mahasiswa Teknologi Informasi yang berfokus pada Kecerdasan Buatan dan Rekayasa Perangkat Lunak, saya membangun sistem yang menjembatani fondasi riset dengan implementasi siap produksi.",
+            "narrative2": "Pekerjaan saya memadukan pemikiran algoritmik, rekayasa backend, dan arsitektur yang skalabel untuk menghadirkan solusi yang cerdas, andal, dan siap digunakan di dunia nyata.",
             "pillars": {
                 "reliable": {
-                    "title": "Andal",
-                    "desc": "Dibangun untuk beroperasi di bawah skala dan tekanan dunia nyata."
+                    "title": "Robust by Design",
+                    "desc": "Direkayasa untuk keandalan di bawah skala dan tekanan operasional."
                 },
                 "optimized": {
-                    "title": "Optimal",
-                    "desc": "Rekayasa berbasis performa dari inti hingga ujung."
+                    "title": "Siap Produksi",
+                    "desc": "Dari prototipe hingga deployment dengan disiplin rekayasa."
                 },
                 "maintainable": {
-                    "title": "Mudah Dipelihara",
-                    "desc": "Dirancang dengan kejelasan dan integritas struktural."
+                    "title": "Dirancang untuk Evolusi",
+                    "desc": "Didesain untuk tumbuh, beradaptasi, dan mempertahankan pengembangan sistem jangka panjang."
                 },
                 "evolvable": {
-                    "title": "Dapat Berkembang",
-                    "desc": "Dirancang untuk pertumbuhan jangka panjang dan adaptasi teknis."
+                    "title": "Kecerdasan Berbasis Data",
+                    "desc": "Keputusan didukung oleh model, metrik, dan performa yang terukur."
                 }
             }
         },

@@ -95,25 +95,26 @@
             }
         },
         "profile": {
-            "title": "Engineering at <br class='hidden lg:block' /> the <span class='text-primary italic font-serif font-light lowercase'>intersection</span> of <br /> Intelligence <br /> <span class='text-primary italic font-serif font-light lowercase'>&</span> Infrastructure.",
+            "title": "Architecting <br class='hidden lg:block' /> Scalable Systems <br /> Where <span class='text-primary italic font-serif font-light lowercase'>Intelligence</span> <br /> Meets Engineering.",
             "narrativeLabel": "Core Narrative",
-            "narrative": "As an Information Technology student at Telkom University, I combine academic rigor with production-oriented engineering. My approach is grounded in technical fundamentals and systems-level thinking.",
+            "narrative": "As an Information Technology student specializing in Artificial Intelligence and Software Engineering, I focus on building systems that bridge research foundations with production-ready implementation.",
+            "narrative2": "My work combines algorithmic thinking, backend engineering, and scalable architecture to deliver solutions that are intelligent, reliable, and built for real-world impact.",
             "pillars": {
                 "reliable": {
-                    "title": "Reliable",
-                    "desc": "Built to operate under real-world scale and pressure."
+                    "title": "Robust by Design",
+                    "desc": "Engineered for reliability under scale and operational pressure."
                 },
                 "optimized": {
-                    "title": "Optimized",
-                    "desc": "Performance-driven engineering from core to edge."
+                    "title": "Production-Ready",
+                    "desc": "From prototype to deployment with engineering discipline."
                 },
                 "maintainable": {
-                    "title": "Maintainable",
-                    "desc": "Architected with clarity and structural integrity."
+                    "title": "Architected for Evolution",
+                    "desc": "Designed to grow, adapt, and sustain long-term system development."
                 },
                 "evolvable": {
-                    "title": "Evolvable",
-                    "desc": "Designed for long-term growth and technical adaptation."
+                    "title": "Data-Driven Intelligence",
+                    "desc": "Decisions powered by models, metrics, and measurable performance."
                 }
             }
         },
