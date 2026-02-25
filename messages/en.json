@@ -133,6 +133,16 @@
             },
             "experiencesList": [
                 {
+                    "company": "Dicoding Academy",
+                    "role": "MACHINE LEARNING CODE REVIEWER",
+                    "desc": "Technical evaluation and quality assurance of ML project submissions. Validating logical correctness, efficiency, and enforcing industry best practices for learners."
+                },
+                {
+                    "company": "Advanced Software Engineering Laboratory",
+                    "role": "SYSTEM ANALYST INTERN",
+                    "desc": "Translating complex requirements into SRS documentation and designing system architectures using UML diagrams. Collaborative engineering focused on robust software design."
+                },
+                {
                     "company": "Cyber Physical System Laboratory",
                     "role": "RESEARCH ASSISTANT (CONTRACT)",
                     "desc": "Developing AI-driven research products and designing learning materials for Deep Learning and Computer Vision. Contributing to collaborative research initiatives in intelligent systems."
@@ -149,6 +159,14 @@
                 }
             ],
             "projectsList": [
+                {
+                    "title": "Creative Portfolio Website",
+                    "desc": "Modern, animated portfolio with 3D elements, physics-simulated interactions, and shader-based warp effects. Engineered for high performance and immersive user experience."
+                },
+                {
+                    "title": "SNBTIn - Platform Persiapan SNBT 2025",
+                    "desc": "Leading EdTech platform in Indonesia for exam preparation. Featuring a comprehensive learning ecosystem with interactive videos, practice questions, and real-time analytics."
+                },
                 {
                     "title": "TerraFlow Platform",
                     "desc": "Enterprise IoT solution for precision agriculture. ESP32 sensor nodes communicate directly with Firebase via a Go (Gin) backend, with a Next.js dashboard for real-time monitoring and actuator control."

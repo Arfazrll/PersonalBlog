@@ -23,16 +23,19 @@ export function ConditionalNavigation({ children }: { children: React.ReactNode 
     // During hydration, we must match the server-side render.
     // The server-side render (and initial client render) always displays the layout
     // because it cannot know the pathname during build/SSR.
-    if (isProjectDetail && isMounted) {
-        return <>{children}</>;
-    }
+    const useFullLayout = !isProjectDetail || !isMounted;
 
     return (
-        <div className="relative min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1 relative">{children}</main>
-            <Footer />
-            <BackToTop />
+        <div
+            className={useFullLayout ? "relative min-h-screen flex flex-col" : "contents"}
+            suppressHydrationWarning
+        >
+            {useFullLayout && <Navbar />}
+            <div className={useFullLayout ? "flex-1 relative" : "contents"}>
+                {children}
+            </div>
+            {useFullLayout && <Footer />}
+            {useFullLayout && <BackToTop />}
         </div>
     );
 }

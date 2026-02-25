@@ -12,8 +12,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useTextScramble } from "@/hooks/useTextScramble";
 import type { ISourceOptions } from '@tsparticles/engine';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+
 import { Sparkles, ChevronDown, Mail, ArrowRight, ArrowDown } from 'lucide-react';
 import { LoadingScreen } from '@/components/layout';
 import { TextPressure } from '@/components/ui/TextPressure';
@@ -305,7 +304,7 @@ function HeroIntro() {
             </div>
 
             {/* 3D Scene - Persistent mount for stable layout */}
-            <Scene3D className={`opacity-10 transition-opacity duration-1000 ${isInView ? 'opacity-10' : 'opacity-0'}`} />
+            <Scene3D className={`opacity-10 transition-opacity duration-1000 ${isInView ? 'opacity-10' : 'opacity-0'}`} paused={!isInView} />
 
             {/* Main Content */}
             <animated.div
@@ -524,22 +523,10 @@ export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        AOS.init({
-            duration: 1000,
-            easing: 'ease-out-cubic',
-            once: false,
-            offset: 100,
-            mirror: true,
-        });
-
         const hasLoaded = sessionStorage.getItem('portfolioLoaded');
         if (hasLoaded) {
             setIsLoading(false);
         }
-
-        return () => {
-            AOS.refresh();
-        };
     }, []);
 
     const handleLoadingComplete = () => {

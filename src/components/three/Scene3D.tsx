@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
 
 interface Scene3DProps {
     className?: string;
+    paused?: boolean;
 }
 
-export function Scene3D({ className = '' }: Scene3DProps) {
+export function Scene3D({ className = '', paused = false }: Scene3DProps) {
     const [mounted, setMounted] = useState(false);
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === 'dark';
@@ -34,7 +36,10 @@ export function Scene3D({ className = '' }: Scene3DProps) {
                 {[...Array(25)].map((_, i) => (
                     <div
                         key={i}
-                        className="absolute rounded-full animate-pulse"
+                        className={cn(
+                            "absolute rounded-full",
+                            !paused && "animate-pulse"
+                        )}
                         style={{
                             width: `${Math.random() * 4 + 2}px`,
                             height: `${Math.random() * 4 + 2}px`,
