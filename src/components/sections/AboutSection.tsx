@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { WarpBackground } from "@/components/ui/warp-background";
-import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, useInView } from "framer-motion";
 import { useTheme } from "next-themes";
 import ImageTrail from "@/components/ImageTrail";
 import Image from "next/image";
@@ -14,7 +14,6 @@ import { portfolioData } from "@/data/portfolio";
 import { BeamDivider } from "@/components/ui/BeamDivider";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Github, Linkedin, Instagram, MessageSquare, ArrowRight, ArrowUpRight } from "lucide-react";
-import { useInView } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useCountUp } from "@/hooks/useCountUp";
 import { SocialCorner } from "@/components/layout/SocialCorner";
@@ -23,6 +22,148 @@ import { cn } from "@/lib/utils";
 const World = dynamic(() => import("@/components/ui/globe").then((m) => m.World), {
     ssr: false,
 });
+
+// --- Gallery Images Constant ---
+const GALLERY_IMAGES = [
+    "/gallery/Foto Utama.jpeg",
+    "/gallery/FotoSC1.jpeg",
+    "/gallery/FotoSC2.jpeg",
+    "/gallery/FotoSC3.jpeg",
+    "/gallery/FotoSC4.jpeg",
+    "/gallery/FotoSC5.jpeg",
+    "/gallery/academicaffairsdivision1.jpg",
+    "/gallery/computernetworkpracticumassistant2.jpg",
+    "/gallery/dataentryassistant1.jpg",
+    "/gallery/delegateaiesecfutureleaders20241.jpg",
+    "/gallery/environmentalhygieneteam1.jpg",
+    "/gallery/environmentalhygieneteam2.jpg",
+    "/gallery/logisticsoperatorcampusexpo20242.jpg",
+    "/gallery/researchassistant1.jpg",
+    "/gallery/researchassistant2.jpg"
+];
+
+type PhotoPhase = 'reset' | 'visible' | 'exiting';
+
+const AboutLeadInImageStack = ({ isActive }: { isActive: boolean }) => {
+    const [randomData, setRandomData] = useState<{ src: string, rotate: number, x: number, y: number, initialX: number, initialY: number, initialRotate: number }[]>([]);
+    const [phase, setPhase] = useState<PhotoPhase>('reset');
+    const isInitializedRef = useRef(false);
+
+    useEffect(() => {
+        const shuffled = [...GALLERY_IMAGES]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3);
+
+        const data = shuffled.map((src, i) => {
+            const targetRotate = (i - 1) * 15 + (Math.random() * 8 - 4);
+            const targetX = (i - 1) * 45 + (Math.random() * 10 - 5);
+            const targetY = Math.abs(i - 1) * 10 + (Math.random() * 6 - 3);
+
+            let initialX = 0;
+            let initialY = 0;
+            let initialRotate = 0;
+
+            if (i === 0) {
+                initialX = -400 - (Math.random() * 100);
+                initialY = 50 + (Math.random() * 50);
+                initialRotate = -45;
+            } else if (i === 1) {
+                initialX = Math.random() * 40 - 20;
+                initialY = -300 - (Math.random() * 100);
+                initialRotate = 10;
+            } else {
+                initialX = 400 + (Math.random() * 100);
+                initialY = 80 + (Math.random() * 40);
+                initialRotate = 45;
+            }
+
+            return {
+                src,
+                rotate: Math.round(targetRotate),
+                x: Math.round(targetX),
+                y: Math.round(targetY),
+                initialX: Math.round(initialX),
+                initialY: Math.round(initialY),
+                initialRotate: Math.round(initialRotate)
+            };
+        });
+
+        setRandomData(data);
+    }, []);
+
+    // Phase state machine: reset → visible (fly in) → exiting (fade out) → reset (instant snap back)
+    useEffect(() => {
+        if (randomData.length === 0) return;
+
+        if (isActive) {
+            setPhase('visible');
+            isInitializedRef.current = true;
+        } else if (isInitializedRef.current) {
+            setPhase('exiting');
+            const timer = setTimeout(() => setPhase('reset'), 350);
+            return () => clearTimeout(timer);
+        }
+    }, [isActive, randomData.length]);
+
+    if (randomData.length === 0) return null;
+
+    return (
+        <div className="relative flex items-center justify-center w-56 h-32 md:w-72 md:h-44 mb-8 lg:mb-10 isolate">
+            {randomData.map((item, i) => (
+                <motion.div
+                    key={i}
+                    animate={
+                        phase === 'visible' ? {
+                            opacity: 1, scale: 1,
+                            x: item.x, y: item.y, rotate: item.rotate
+                        } : phase === 'exiting' ? {
+                            // Fade out IN PLACE — no flying back off-screen
+                            opacity: 0, scale: 0.9,
+                            x: item.x, y: item.y, rotate: item.rotate
+                        } : {
+                            // Instant snap to scattered positions (invisible, no animation)
+                            opacity: 0, scale: 0.4,
+                            x: item.initialX, y: item.initialY, rotate: item.initialRotate
+                        }
+                    }
+                    transition={
+                        phase === 'visible' ? {
+                            type: "tween",
+                            duration: 0.9,
+                            ease: [0.16, 1, 0.3, 1],
+                            delay: 0.4 + i * 0.1
+                        } : phase === 'exiting' ? {
+                            duration: 0.3,
+                            ease: "easeOut"
+                        } : {
+                            duration: 0  // instant — user can't see it (opacity is 0)
+                        }
+                    }
+                    className="absolute w-24 h-28 md:w-32 md:h-40 rounded-xl overflow-hidden border-[4px] border-white shadow-[0_10px_30px_rgba(0,0,0,0.3)] bg-white"
+                    style={{
+                        zIndex: i === 1 ? 20 : 10,
+                        backfaceVisibility: "hidden",
+                        WebkitBackfaceVisibility: "hidden",
+                        transform: "translate3d(0,0,0)",
+                        willChange: "transform, opacity"
+                    }}
+                >
+                    <div className="relative w-full h-full">
+                        <Image
+                            src={item.src}
+                            alt="Gallery Piece"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100px, 120px"
+                            priority
+                        />
+                        <div className="absolute inset-0 bg-black/5 pointer-events-none" />
+                    </div>
+                </motion.div>
+            ))}
+        </div>
+    );
+};
 
 // --- Utility: Slide Reveal (Smooth & Cinematic) ---
 const SlideReveal = ({ children, delay = 0, y = 30 }: { children: React.ReactNode; delay?: number; y?: number }) => (
@@ -42,41 +183,44 @@ const SlideReveal = ({ children, delay = 0, y = 30 }: { children: React.ReactNod
 );
 
 // --- Component 1: Editorial Lead-in ---
-const AboutLeadIn = () => {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+const AboutLeadIn = ({ isActive }: { isActive: boolean }) => {
     const t = useTranslations('about');
 
     return (
-        <div ref={ref} style={{ willChange: "transform, opacity" }} className="relative w-full max-w-[1500px] mx-auto px-6 md:px-10 lg:px-12 py-8 md:py-12 overflow-visible">
+        <div className="relative w-full max-w-[1500px] mx-auto px-6 md:px-10 lg:px-12 py-8 md:py-12 overflow-visible">
             {/* Header Section: Compact Horizontal Blueprint */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative">
-                <div className="space-y-4">
+                <div className="space-y-4 relative z-30">
                     <motion.span
                         initial={{ opacity: 0, x: -10 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : {}}
+                        animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                        transition={{ duration: 0.4 }}
                         className="text-[10px] md:text-[12px] font-mono uppercase tracking-[0.5em] text-primary"
+                        style={{ backfaceVisibility: "hidden" }}
                     >
                         {t('leadIn.label')}
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.8, delay: 0.2 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.6, delay: isActive ? 0.2 : 0 }}
                         className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85]"
+                        style={{ backfaceVisibility: "hidden" }}
                     >
                         {t('leadIn.applied')} <br />
                         <span className="font-serif-elegant italic font-light lowercase text-primary">{t('leadIn.intelligence')}</span>
                     </motion.h2>
                 </div>
 
-                <div className="hidden lg:block flex-grow h-px bg-primary/10 mx-8 mb-4 lg:mb-6" />
+                <div className="flex flex-grow items-center justify-center px-4 md:px-0 order-2 md:order-none my-8 md:my-0 pb-10 md:pb-0">
+                    <AboutLeadInImageStack isActive={isActive} />
+                </div>
 
-                <div className="text-left md:text-right space-y-4 mt-8 md:mt-0">
+                <div className="text-left md:text-right space-y-4 mt-8 md:mt-0 relative z-30">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.8, delay: 0.4 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.6, delay: isActive ? 0.4 : 0 }}
                         className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.85]"
                     >
                         {t('leadIn.production')} <br />
@@ -92,8 +236,8 @@ const AboutLeadIn = () => {
                 {/* Col 1: The Thesis */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.6 }}
+                    animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ delay: isActive ? 0.6 : 0 }}
                     className="space-y-4"
                 >
                     <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">...</span>
@@ -106,8 +250,8 @@ const AboutLeadIn = () => {
                 {/* Col 2: The Scope */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.8 }}
+                    animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ delay: isActive ? 0.8 : 0 }}
                     className="space-y-4 border-l border-primary/10 pl-12 lg:pl-16"
                 >
                     <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">...</span>
@@ -123,8 +267,8 @@ const AboutLeadIn = () => {
                 {/* Col 3: The Integration & Signoff */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 1 }}
+                    animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ delay: isActive ? 1 : 0 }}
                     className="space-y-4 border-l border-primary/10 pl-12 lg:pl-16 flex flex-col justify-between"
                 >
                     <div className="space-y-4">
@@ -932,6 +1076,25 @@ export default function AboutSection() {
     const opacity = useTransform(scrollYProgress, [0.05, 0.25], [1, 0]);
     const yLeadIn = useTransform(scrollYProgress, [0, 0.3], [0, -350]);
 
+    const leadInTriggerRef = useRef(null);
+    const isVisibleInViewport = useInView(leadInTriggerRef, {
+        margin: "-10% 0px -10% 0px", // Trigger when 10% in view
+        once: false
+    });
+
+    // Track whether the lead-in section is visually active.
+    const [isLeadInActive, setIsLeadInActive] = useState(false);
+
+    useEffect(() => {
+        // Animation is active if we are in the viewport AND in the top phase of scroll
+        const scrollV = scrollYProgress.get();
+        setIsLeadInActive(isVisibleInViewport && scrollV < 0.10);
+    }, [isVisibleInViewport, scrollYProgress]);
+
+    useMotionValueEvent(scrollYProgress, "change", (v) => {
+        setIsLeadInActive(isVisibleInViewport && v < 0.10);
+    });
+
     return (
         <section
             id="about"
@@ -941,10 +1104,11 @@ export default function AboutSection() {
             {/* 1. STICKY PLANE - Lead-in */}
             <div className="sticky top-0 h-screen w-full flex items-center justify-center z-0 overflow-hidden pointer-events-none">
                 <motion.div
-                    style={{ scale, opacity, y: yLeadIn, willChange: "transform, opacity" }}
+                    style={{ scale, opacity, y: yLeadIn }}
                     className="relative py-20 px-6 w-full max-w-[1600px] mx-auto"
+                    ref={leadInTriggerRef}
                 >
-                    <AboutLeadIn />
+                    <AboutLeadIn isActive={isLeadInActive} />
                 </motion.div>
             </div>
 
@@ -965,6 +1129,6 @@ export default function AboutSection() {
                     <AuditFunnel />
                 </div>
             </div>
-        </section>
+        </section >
     );
 }
