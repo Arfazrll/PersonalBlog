@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +13,18 @@ export function Scene3D({ className = '', paused = false }: Scene3DProps) {
     const [mounted, setMounted] = useState(false);
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === 'dark';
+
+    // Memoize random particle data to prevent recalculation on every render
+    const particles = useMemo(() =>
+        Array.from({ length: 15 }, () => ({
+            width: Math.random() * 4 + 2,
+            height: Math.random() * 4 + 2,
+            left: Math.random() * 100,
+            top: Math.random() * 100,
+            delay: Math.random() * 3,
+            duration: 2 + Math.random() * 3,
+        })), []
+    );
 
     useEffect(() => {
         setMounted(true);
@@ -33,7 +45,7 @@ export function Scene3D({ className = '', paused = false }: Scene3DProps) {
                 }}
             />
             <div className="absolute inset-0 overflow-hidden">
-                {[...Array(25)].map((_, i) => (
+                {particles.map((p, i) => (
                     <div
                         key={i}
                         className={cn(
@@ -41,13 +53,13 @@ export function Scene3D({ className = '', paused = false }: Scene3DProps) {
                             !paused && "animate-pulse"
                         )}
                         style={{
-                            width: `${Math.random() * 4 + 2}px`,
-                            height: `${Math.random() * 4 + 2}px`,
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
+                            width: `${p.width}px`,
+                            height: `${p.height}px`,
+                            left: `${p.left}%`,
+                            top: `${p.top}%`,
                             backgroundColor: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(59,130,246,0.4)',
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${2 + Math.random() * 3}s`,
+                            animationDelay: `${p.delay}s`,
+                            animationDuration: `${p.duration}s`,
                         }}
                     />
                 ))}
