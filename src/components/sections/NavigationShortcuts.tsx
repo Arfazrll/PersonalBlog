@@ -118,61 +118,57 @@ export const NavigationShortcuts = () => {
             )}
             onMouseLeave={handleMouseLeave}
         >
-            {/*
-                Innovative Cross-Fade Background
-                - No mode="wait" means images blend into each other.
-                - scroll-linked opacity handles the Hero/Footer leak automatically.
-            */}
-            <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
-                {/* Mobile/Fallback Subtle Background */}
-                <div className="absolute inset-0 bg-background lg:hidden opacity-50 dark:opacity-20" />
-                <div className="absolute inset-0 lg:hidden pointer-events-none">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-background" />
-                </div>
+            {/* Innovative Cross-Fade Background - Only render when menu is open */}
+            {isOpen && (
+                <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+                    {/* Mobile/Fallback Subtle Background */}
+                    <div className="absolute inset-0 bg-background lg:hidden opacity-50 dark:opacity-20" />
+                    <div className="absolute inset-0 lg:hidden pointer-events-none">
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-background" />
+                    </div>
 
-                <AnimatePresence>
-                    {hoveredImage && isOpen && (
-                        <motion.div
-                            key={hoveredImage}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            style={{
-                                scale: backgroundScale,
-                                // Combine with fixed opacity logic
-                                // Note: We use style for scroll progress but Framer's animate for hover
-                            }}
-                            className="absolute inset-0 w-full h-full"
-                        >
+                    <AnimatePresence>
+                        {hoveredImage && (
                             <motion.div
-                                style={{ opacity: backgroundOpacity }}
+                                key={hoveredImage}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                style={{
+                                    scale: backgroundScale,
+                                }}
                                 className="absolute inset-0 w-full h-full"
                             >
-                                <Image
-                                    src={hoveredImage}
-                                    alt="Section Preview"
-                                    fill
-                                    className="object-cover grayscale contrast-125 brightness-75 scale-110"
-                                    priority
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                                <motion.div
+                                    style={{ opacity: backgroundOpacity }}
+                                    className="absolute inset-0 w-full h-full"
+                                >
+                                    <Image
+                                        src={hoveredImage}
+                                        alt="Section Preview"
+                                        fill
+                                        className="object-cover grayscale contrast-125 brightness-75 scale-110"
+                                        priority
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
 
-                                {/* Scan Line Overlay */}
-                                <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
-                                    <div className="w-full h-1 bg-primary/40 absolute top-[-5%] animate-[scan_4s_linear_infinite]" />
-                                    <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
-                                </div>
+                                    {/* Scan Line Overlay */}
+                                    <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
+                                        <div className="w-full h-1 bg-primary/40 absolute top-[-5%] animate-[scan_4s_linear_infinite]" />
+                                        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
+                                    </div>
 
-                                {/* Preview Metadata */}
-                                <div className="absolute bottom-12 right-12 text-right hidden md:block">
-                                    <div className="text-[10px] font-mono tracking-[0.2em] text-primary/60 uppercase mb-1">{t('shortcuts.preview')}</div>
-                                    <div className="text-[10px] font-mono tracking-[0.1em] text-primary/40">{t('shortcuts.idRef')}: {hoveredImage.split('/').pop()}</div>
-                                </div>
+                                    {/* Preview Metadata */}
+                                    <div className="absolute bottom-12 right-12 text-right hidden md:block">
+                                        <div className="text-[10px] font-mono tracking-[0.2em] text-primary/60 uppercase mb-1">{t('shortcuts.preview')}</div>
+                                        <div className="text-[10px] font-mono tracking-[0.1em] text-primary/40">{t('shortcuts.idRef')}: {hoveredImage.split('/').pop()}</div>
+                                    </div>
+                                </motion.div>
                             </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            )}
 
             {/* Toggle Button Container - Perfected Corner Alignment (Absolute Corner) */}
             <div className="relative z-[100] flex items-center justify-start py-8 -mt-24 md:-mt-40 mb-10 px-8 md:px-10">

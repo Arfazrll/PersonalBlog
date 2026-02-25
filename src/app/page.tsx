@@ -3,15 +3,12 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, useScroll, useTransform, AnimatePresence, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
-import { useSpring as useReactSpring, animated, config } from '@react-spring/web';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useTextScramble } from "@/hooks/useTextScramble";
-import type { ISourceOptions } from '@tsparticles/engine';
 
 import { Sparkles, ChevronDown, Mail, ArrowRight, ArrowDown } from 'lucide-react';
 import { LoadingScreen } from '@/components/layout';
@@ -45,32 +42,7 @@ const ExpertiseSection = dynamic(() => import("@/components/sections/ExpertiseSe
     loading: () => <div className="h-[500px] w-full animate-pulse bg-zinc-100/5 dark:bg-zinc-800/5" />
 });
 
-const particlesOptions: ISourceOptions = {
-    background: { color: { value: 'transparent' } },
-    fpsLimit: 60,
-    particles: {
-        color: { value: ['#3b82f6', '#8b5cf6', '#06b6d4'] },
-        links: {
-            color: '#ffffff',
-            distance: 150,
-            enable: true,
-            opacity: 0.1,
-            width: 1,
-        },
-        move: {
-            enable: true,
-            speed: 1,
-            direction: 'none',
-            random: true,
-            straight: false,
-            outModes: { default: 'out' },
-        },
-        number: { density: { enable: true }, value: 25 },
-        opacity: { value: { min: 0.1, max: 0.4 } },
-        size: { value: { min: 1, max: 3 } },
-    },
-    detectRetina: true,
-};
+
 
 const welcomeWords = [
     { lang: 'English', text: 'Hello, I am' },
@@ -180,27 +152,21 @@ function ScrollIndicator() {
 
 function HeroIntro() {
     const containerRef = useRef<HTMLElement>(null);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+    const smoothX = useSpring(mouseX, { stiffness: 40, damping: 20, mass: 0.1 });
+    const smoothY = useSpring(mouseY, { stiffness: 40, damping: 20, mass: 0.1 });
     const [isDarkMode, setIsDarkMode] = useState(true);
     const t = useTranslations('hero');
     const isMobile = useIsMobile();
 
-    const [springProps, api] = useReactSpring(() => ({
-        xy: [0, 0],
-        config: { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.001 },
-    }));
-
     const handleMouseMove = useCallback((e: MouseEvent) => {
         if (isMobile) return;
-        requestAnimationFrame(() => {
-            const { clientX, clientY } = e;
-            const { innerWidth, innerHeight } = window;
-            const x = (clientX - innerWidth / 2) / 40;
-            const y = (clientY - innerHeight / 2) / 40;
-            api.start({ xy: [x, y] });
-            setMousePosition({ x, y });
-        });
-    }, [api, isMobile]);
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        mouseX.set((clientX - innerWidth / 2) / 40);
+        mouseY.set((clientY - innerHeight / 2) / 40);
+    }, [isMobile, mouseX, mouseY]);
 
     useEffect(() => {
         if (isMobile) return;
@@ -220,29 +186,6 @@ function HeroIntro() {
         return () => observer.disconnect();
     }, []);
 
-    useEffect(() => {
-        if (!containerRef.current) return;
-
-        const ctx = gsap.context(() => {
-            // Only keeping the scroll-triggered exit animation, 
-            // the entrance is now handled by Framer Motion for better control
-            gsap.to('.hero-content', {
-                scale: 0.9,
-                filter: 'blur(20px)',
-                opacity: 0,
-                y: -100,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: 'top top',
-                    end: 'bottom top',
-                    scrub: 0.5,
-                },
-            });
-        }, containerRef);
-
-        return () => ctx.revert();
-    }, []);
 
     const firstName = portfolioData.personal.name.split(' ')[0];
     const lastName = portfolioData.personal.name.split(' ').slice(1).join(' ');
@@ -280,13 +223,17 @@ function HeroIntro() {
         offset: ["start start", "end start"]
     });
 
-    const { scrambledText } = useTextScramble("Syahril Arfian Almazril", true, 300);
+    // Hero exit animation using framer-motion (unified with mouse parallax — no GSAP conflict)
+    const heroOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+    const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.92]);
+    const heroScrollY = useTransform(scrollYProgress, [0, 0.5], [0, -80]);
+
+
 
     return (
         <section
             ref={containerRef}
             className="relative min-h-screen flex items-center justify-center overflow-hidden pt-12"
-            style={{ willChange: 'transform' }}
         >
             <AnimatedBackground scrollYProgress={scrollYProgress} />
 
@@ -307,11 +254,14 @@ function HeroIntro() {
             <Scene3D className={`opacity-10 transition-opacity duration-1000 ${isInView ? 'opacity-10' : 'opacity-0'}`} paused={!isInView} />
 
             {/* Main Content */}
-            <animated.div
+            <motion.div
                 className="hero-content relative z-10 container-creative text-center px-4 max-w-5xl mx-auto"
                 style={{
-                    transform: isMobile ? 'none' : springProps.xy.to((x, y, ...args: any[]) => `translate3d(${x}px, ${y}px, 0)`),
-                    willChange: 'transform, opacity'
+                    x: isMobile ? 0 : smoothX,
+                    y: isMobile ? 0 : smoothY,
+                    opacity: heroOpacity,
+                    scale: heroScale,
+                    translateY: heroScrollY,
                 }}
             >
                 {/* Badge */}
@@ -428,7 +378,7 @@ function HeroIntro() {
                         <ArrowDown className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:translate-y-3 transition-all duration-700" />
                     </Link>
                 </motion.div>
-            </animated.div>
+            </motion.div>
         </section >
     );
 }
@@ -505,11 +455,11 @@ const MetricCTAHijack = () => {
     });
 
     return (
-        <section ref={containerRef} className="relative h-[800vh] z-50 bg-background dark:bg-black">
+        <section ref={containerRef} className="relative h-[500vh] z-50 bg-background dark:bg-black">
             <div className="sticky top-0 h-screen w-full z-50 bg-background dark:bg-black">
                 <StatsSection scrollYProgress={scrollYProgress} />
             </div>
-            <div className="relative z-50 bg-background dark:bg-black shadow-xl dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)] mt-[600vh]" style={{ transform: 'translate3d(0,0,0)', willChange: "transform" }}>
+            <div className="relative z-50 bg-background dark:bg-black shadow-xl dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)] mt-[300vh]" style={{ transform: 'translate3d(0,0,0)' }}>
                 <div className="h-[25vh]" />
                 <CTASection />
                 <div className="h-4" />

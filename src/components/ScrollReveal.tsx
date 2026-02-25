@@ -106,13 +106,9 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       );
     }
 
-    // Refresh ScrollTrigger after a short delay to account for layout shifts from framer-motion (SlideReveal)
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 1000);
+
 
     return () => {
-      clearTimeout(timer);
       ScrollTrigger.getAll().forEach(trigger => {
         if (trigger.vars.id?.toString().startsWith('reveal-')) {
           trigger.kill();

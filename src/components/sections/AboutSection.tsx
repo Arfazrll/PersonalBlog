@@ -49,7 +49,12 @@ const AboutLeadInImageStack = ({ isActive }: { isActive: boolean }) => {
     const [phase, setPhase] = useState<PhotoPhase>('reset');
     const isInitializedRef = useRef(false);
 
+    // ⚠️ Fix 1: Mount guard — prevent render during hydration (SSR/client mismatch with Math.random)
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
     useEffect(() => {
+        if (!mounted) return;
         const shuffled = [...GALLERY_IMAGES]
             .sort(() => 0.5 - Math.random())
             .slice(0, 3);
@@ -89,7 +94,7 @@ const AboutLeadInImageStack = ({ isActive }: { isActive: boolean }) => {
         });
 
         setRandomData(data);
-    }, []);
+    }, [mounted]);
 
     // Phase state machine: reset → visible (fly in) → exiting (fade out) → reset (instant snap back)
     useEffect(() => {
@@ -105,23 +110,25 @@ const AboutLeadInImageStack = ({ isActive }: { isActive: boolean }) => {
         }
     }, [isActive, randomData.length]);
 
-    if (randomData.length === 0) return null;
+    // ⚠️ Fix 1b: Don't render anything until client mounted + data ready
+    if (!mounted || randomData.length === 0) return null;
 
     return (
-        <div className="relative flex items-center justify-center w-56 h-32 md:w-72 md:h-44 mb-8 lg:mb-10 isolate">
+        // ⚠️ Fix 4: Fixed parent dimensions to prevent layout shift
+        <div className="relative flex items-center justify-center w-56 h-32 md:w-72 md:h-44 mb-8 lg:mb-10" style={{ contain: 'layout' }}>
             {randomData.map((item, i) => (
                 <motion.div
                     key={i}
+                    // ⚠️ Fix 4b: No animation on first paint — start from initial position silently
+                    initial={false}
                     animate={
                         phase === 'visible' ? {
                             opacity: 1, scale: 1,
                             x: item.x, y: item.y, rotate: item.rotate
                         } : phase === 'exiting' ? {
-                            // Fade out IN PLACE — no flying back off-screen
                             opacity: 0, scale: 0.9,
                             x: item.x, y: item.y, rotate: item.rotate
                         } : {
-                            // Instant snap to scattered positions (invisible, no animation)
                             opacity: 0, scale: 0.4,
                             x: item.initialX, y: item.initialY, rotate: item.initialRotate
                         }
@@ -136,16 +143,13 @@ const AboutLeadInImageStack = ({ isActive }: { isActive: boolean }) => {
                             duration: 0.3,
                             ease: "easeOut"
                         } : {
-                            duration: 0  // instant — user can't see it (opacity is 0)
+                            duration: 0
                         }
                     }
                     className="absolute w-24 h-28 md:w-32 md:h-40 rounded-xl overflow-hidden border-[4px] border-white shadow-[0_10px_30px_rgba(0,0,0,0.3)] bg-white"
                     style={{
                         zIndex: i === 1 ? 20 : 10,
-                        backfaceVisibility: "hidden",
-                        WebkitBackfaceVisibility: "hidden",
-                        transform: "translate3d(0,0,0)",
-                        willChange: "transform, opacity"
+                        // ⚠️ Fix 3: Removed willChange, translate3d, backfaceVisibility — they force persistent GPU layers
                     }}
                 >
                     <div className="relative w-full h-full">
@@ -155,7 +159,8 @@ const AboutLeadInImageStack = ({ isActive }: { isActive: boolean }) => {
                             fill
                             className="object-cover"
                             sizes="(max-width: 768px) 100px, 120px"
-                            priority
+                            // ⚠️ Fix 2: Only center card (i===1) gets priority — triple priority causes reflow flicker
+                            priority={i === 1}
                         />
                         <div className="absolute inset-0 bg-black/5 pointer-events-none" />
                     </div>
@@ -616,7 +621,6 @@ const ProfileIntersection = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                         className="relative w-full h-full min-h-[600px] lg:min-h-[800px] shadow-2xl shadow-black/20 dark:shadow-white/5 bg-zinc-100 dark:bg-zinc-900"
-                        style={{ willChange: "clip-path" }}
                     >
                         <motion.div
                             initial={{ scale: 1.15 }}
@@ -821,7 +825,7 @@ const AboutClosing = () => {
     const projects = t.raw('closing.projectsList');
 
     return (
-        <section ref={sectionRef} className="relative h-[700vh] hidden md:block z-50 bg-background">
+        <section ref={sectionRef} className="relative h-[500vh] hidden md:block z-50 bg-background">
             <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
 
                 {/* Visual Anchors: Fade Masks */}
@@ -840,7 +844,7 @@ const AboutClosing = () => {
                             <div className="flex-1 relative overflow-hidden">
                                 <motion.div
                                     ref={leftTrackRef}
-                                    style={{ y: smoothLeftY, willChange: "transform" }}
+                                    style={{ y: smoothLeftY }}
                                     className="flex flex-col"
                                 >
                                     {/* Entry Spacer: Viewport starts empty at t=0 */}
@@ -863,7 +867,7 @@ const AboutClosing = () => {
                             <div className="flex-1 relative overflow-hidden">
                                 <motion.div
                                     ref={rightTrackRef}
-                                    style={{ y: smoothRightY, willChange: "transform" }}
+                                    style={{ y: smoothRightY }}
                                     className="flex flex-col"
                                 >
                                     {/* Symmetry Spacer: Corresponds to Left's Bottom Spacer at start scroll */}
@@ -1047,7 +1051,7 @@ const ScrollHijackSection = () => {
     });
 
     return (
-        <div ref={sectionRef} className="relative h-[400vh]">
+        <div ref={sectionRef} className="relative h-[300vh]">
             <div className="sticky top-0 h-screen w-full overflow-hidden z-50">
                 <motion.div
                     className="flex h-full"

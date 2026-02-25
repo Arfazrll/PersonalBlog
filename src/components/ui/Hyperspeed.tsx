@@ -162,6 +162,7 @@ const Hyperspeed: React.FC<HyperspeedProps> = ({ effectOptions, className, pause
                 }}
                 dpr={1} // Lock to 1 for maximum performance
                 performance={{ min: 0.5 }}
+                frameloop={paused ? "never" : "always"}
             >
                 <FogController color={bgColor} paused={paused} />
                 <MovingRoad color={roadColor} paused={paused} />
