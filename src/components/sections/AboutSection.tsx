@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -176,6 +176,13 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
     const globeOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
     const logoOpacity = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]);
 
+    // MOUNT GUARD: Unmount Globe when fully faded to save resources
+    const [isGlobeMounted, setIsGlobeMounted] = useState(true);
+    useMotionValueEvent(globeOpacity, "change", (v: any) => {
+        if (v <= 0 && isGlobeMounted) setIsGlobeMounted(false);
+        else if (v > 0 && !isGlobeMounted) setIsGlobeMounted(true);
+    });
+
     // SLIDE OFFSET: Shift text column to make room for logos
     const textSlideX = useTransform(scrollYProgress, [0.15, 0.35], ["0%", "-92%"]);
 
@@ -249,7 +256,7 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
                     className="hidden lg:block absolute left-0 top-0 w-1/2 h-full z-10 pointer-events-none"
                 >
                     <div className="relative w-full h-full">
-                        <World data={sampleArcs} globeConfig={globeConfig} />
+                        {isGlobeMounted && <World data={sampleArcs} globeConfig={globeConfig} />}
                     </div>
                 </motion.div>
 
@@ -357,18 +364,33 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
     );
 };
 
-const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
+const EmergingResearchPanel = ({ isVisible: isParentVisible }: { isVisible: boolean }) => {
     const isMobile = useIsMobile();
     const t = useTranslations('about');
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isCurrentlyVisible, setIsCurrentlyVisible] = useState(false);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        const observer = new IntersectionObserver(([entry]) => {
+            setIsCurrentlyVisible(entry.isIntersecting);
+        }, { threshold: 0.1 });
+        observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    // Active if parent thinks it's visible AND it's physically in the viewport
+    const active = isParentVisible && isCurrentlyVisible;
 
     return (
-        <div className="w-screen h-full flex items-center bg-background overflow-hidden transition-colors duration-500">
+        <div ref={containerRef} className="w-screen h-full flex items-center bg-background overflow-hidden transition-colors duration-500">
             <WarpBackground
                 perspective={1200}
                 gridColor="transparent"
                 beamsPerSide={isMobile ? 2 : 6}
                 beamDuration={2.5}
                 beamDelayMax={1}
+                paused={!active}
                 className="border-none p-0 bg-transparent rounded-none h-full w-full flex items-center justify-center"
             >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full h-full px-[8%] md:px-[10%]">
@@ -377,7 +399,7 @@ const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
                         <div className="space-y-4 max-w-2xl">
                             <motion.span
                                 initial={{ opacity: 0, y: 30 }}
-                                animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                                animate={isParentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                                 transition={{ duration: 0.5 }}
                                 className="text-[12px] md:text-[13px] font-mono uppercase tracking-[0.2em] text-gray-400 block"
                             >
@@ -385,7 +407,7 @@ const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
                             </motion.span>
                             <motion.h3
                                 initial={{ opacity: 0, y: 50 }}
-                                animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                                animate={isParentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                                 transition={{ duration: 0.6, delay: 0.15 }}
                                 className="text-[36px] md:text-[50px] font-bold text-foreground uppercase leading-tight tracking-tight"
                                 dangerouslySetInnerHTML={{ __html: t.raw('emergingResearch.title') }}
@@ -395,7 +417,7 @@ const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
-                                animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                                animate={isParentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                                 transition={{ duration: 0.5, delay: 0.3 }}
                                 className="space-y-3"
                             >
@@ -406,7 +428,7 @@ const EmergingResearchPanel = ({ isVisible }: { isVisible: boolean }) => {
                             </motion.div>
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
-                                animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                                animate={isParentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                                 transition={{ duration: 0.5, delay: 0.42 }}
                                 className="space-y-3"
                             >
@@ -538,41 +560,27 @@ const ProfileIntersection = () => {
     );
 };
 
-// --- Sub-Components for Opposite Scroll ---
-const ExperienceCard = ({ exp, index }: { exp: any, index: number }) => (
+// --- Unified Closing Card for Bitwise Symmetry ---
+const ClosingCard = ({ title, subtitle, desc, index, direction }: { title: string, subtitle: string, desc: string, index: number, direction: 'left' | 'right' }) => (
     <motion.div
-        initial={{ opacity: 0, x: -20 }}
+        initial={{ opacity: 0, x: direction === 'left' ? -20 : 20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        whileHover={{ x: 4 }}
-        className="group relative pl-8 border-l-2 border-foreground/10 dark:border-white/5 hover:border-primary transition-colors duration-500 py-16 cursor-default flex flex-col justify-center min-h-[50vh]"
+        whileHover={{ x: direction === 'left' ? 4 : -4 }}
+        className={cn(
+            "group relative pl-8 border-l-2 border-foreground/10 dark:border-white/5 hover:border-primary transition-colors duration-500 py-24 cursor-default flex flex-col justify-center min-h-[70vh]",
+            direction === 'right' && "pl-8" // Both use left border for symmetry? Or mirrored? User screenshot shows left border for both.
+        )}
     >
-        <h4 className="text-3xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
-            {exp.company}
+        <h4 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+            {title}
         </h4>
-        <div className="text-[12px] font-mono uppercase tracking-[0.2em] text-muted-foreground/40 font-bold mt-2">
-            {exp.role}
+        <div className="text-[12px] md:text-[14px] font-mono uppercase tracking-[0.2em] text-muted-foreground/40 font-bold mt-4">
+            {subtitle}
         </div>
-        <p className="text-[16px] text-muted-foreground/60 leading-relaxed max-w-lg font-medium mt-6 group-hover:text-muted-foreground/90 transition-colors">
-            {exp.desc}
-        </p>
-    </motion.div>
-);
-
-const ProjectCard = ({ proj, index }: { proj: any, index: number }) => (
-    <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: index * 0.1 }}
-        className="space-y-4"
-    >
-        <h4 className="text-2xl md:text-3xl font-bold text-foreground">
-            {proj.title}
-        </h4>
-        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-            {proj.desc}
+        <p className="text-[16px] md:text-[18px] text-muted-foreground/60 leading-relaxed max-w-lg font-medium mt-8 group-hover:text-muted-foreground/90 transition-colors">
+            {desc}
         </p>
     </motion.div>
 );
@@ -649,18 +657,19 @@ const AboutClosing = () => {
         return () => window.removeEventListener("resize", updateBounds);
     }, []);
 
-    const leftY = useTransform(scrollYProgress, [0.15, 0.7], [0, -leftMax]);
-    const rightY = useTransform(scrollYProgress, [0.15, 0.7], [-rightMax, 0]);
+    const leftY = useTransform(scrollYProgress, [0, 1], [0, -leftMax]);
+    const rightY = useTransform(scrollYProgress, [0, 1], [-rightMax, 0]);
 
     // Section Visibility: Smoother fade in/out that respects the focus area
     const sectionOpacity = useTransform(
         scrollYProgress,
-        [0, 0.05, 0.85, 0.98],
+        [0, 0.05, 0.95, 1],
         [0, 1, 1, 0]
     );
 
-    const smoothLeftY = useSpring(leftY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.001 });
-    const smoothRightY = useSpring(rightY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.001 });
+    const smoothLeftY = useSpring(leftY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.1 });
+    const smoothRightY = useSpring(rightY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.1 });
+
 
     const t = useTranslations('about');
     const experiences = t.raw('closing.experiencesList');
@@ -668,7 +677,7 @@ const AboutClosing = () => {
     const projects = t.raw('closing.projectsList');
 
     return (
-        <section ref={sectionRef} className="relative h-[400vh] hidden md:block z-50 bg-background">
+        <section ref={sectionRef} className="relative h-[700vh] hidden md:block z-50 bg-background">
             <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
 
                 {/* Visual Anchors: Fade Masks */}
@@ -688,14 +697,18 @@ const AboutClosing = () => {
                                 <motion.div
                                     ref={leftTrackRef}
                                     style={{ y: smoothLeftY, willChange: "transform" }}
-                                    className="space-y-[15vh]"
+                                    className="flex flex-col"
                                 >
+                                    {/* Entry Spacer: Viewport starts empty at t=0 */}
+                                    <div className="h-[100vh]" />
                                     {experiences.map((exp: any, i: number) => (
-                                        <ExperienceCard key={i} exp={exp} index={i} />
+                                        <ClosingCard key={i} title={exp.company} subtitle={exp.role} desc={exp.desc} index={i} direction="left" />
                                     ))}
-                                    <ViewMoreCard href="/experience" title={t('closing.experience.viewMore')} />
-                                    {/* Ruang kosong di akhir agar item terakhir sejajar di atas sebelum exit */}
-                                    <div className="h-[60vh]" />
+                                    <div className="py-24">
+                                        <ViewMoreCard href="/experience" title={t('closing.experience.viewMore')} />
+                                    </div>
+                                    {/* Exit Spacer: Viewport ends empty at t=1 */}
+                                    <div className="h-[100vh]" />
                                 </motion.div>
                             </div>
                         </div>
@@ -707,15 +720,18 @@ const AboutClosing = () => {
                                 <motion.div
                                     ref={rightTrackRef}
                                     style={{ y: smoothRightY, willChange: "transform" }}
-                                    className="space-y-[15vh]"
+                                    className="flex flex-col"
                                 >
-                                    <div className="h-[80vh] hidden lg:block" /> {/* Top padding for projects to align with empty space and exit cleanly */}
-                                    <ViewMoreCard href="/projects" title={t('closing.projects.viewMore')} />
-                                    {projects.map((proj: any, i: number) => (
-                                        <ProjectCard key={i} proj={proj} index={i} />
+                                    {/* Symmetry Spacer: Corresponds to Left's Bottom Spacer at start scroll */}
+                                    <div className="h-[100vh]" />
+                                    <div className="py-24">
+                                        <ViewMoreCard href="/projects" title={t('closing.projects.viewMore')} />
+                                    </div>
+                                    {[...projects].reverse().map((proj: any, i: number) => (
+                                        <ClosingCard key={i} title={proj.title} subtitle="Featured Project" desc={proj.desc} index={i} direction="right" />
                                     ))}
-                                    {/* Ruang kosong di akhir agar item terakhir sejajar di atas sebelum exit */}
-                                    <div className="h-[60vh]" />
+                                    {/* Exit Spacer: Corresponds to Left's Top Spacer at end scroll */}
+                                    <div className="h-[100vh]" />
                                 </motion.div>
                             </div>
                         </div>

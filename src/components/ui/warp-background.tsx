@@ -14,6 +14,7 @@ interface WarpBackgroundProps extends HTMLAttributes<HTMLDivElement> {
   beamDelayMin?: number
   beamDuration?: number
   gridColor?: string
+  paused?: boolean
 }
 
 const Beam = ({
@@ -21,11 +22,13 @@ const Beam = ({
   x,
   delay,
   duration,
+  paused,
 }: {
   width: string | number
   x: string | number
   delay: number
   duration: number
+  paused?: boolean
 }) => {
   const hue = useMemo(() => Math.floor(Math.random() * 360), [])
   const ar = useMemo(() => Math.floor(Math.random() * 10) + 1, [])
@@ -42,7 +45,7 @@ const Beam = ({
       }
       className="absolute top-0 left-[var(--x)] [aspect-ratio:1/var(--aspect-ratio)] [width:var(--width)] [background-image:var(--background)] mix-blend-screen opacity-70"
       initial={{ y: "100cqmax", x: "-50%" }}
-      animate={{ y: "-100cqi", x: "-50%" }}
+      animate={paused ? {} : { y: "-100cqi", x: "-50%" }}
       transition={{
         duration,
         delay,
@@ -63,6 +66,7 @@ export const WarpBackground: React.FC<WarpBackgroundProps> = ({
   beamDelayMin = 0,
   beamDuration = 3,
   gridColor = "var(--border)",
+  paused = false,
   ...props
 }) => {
   const generateBeams = useCallback(() => {
@@ -106,6 +110,7 @@ export const WarpBackground: React.FC<WarpBackgroundProps> = ({
               x={`${beam.x * beamSize}%`}
               delay={beam.delay}
               duration={beamDuration}
+              paused={paused}
             />
           ))}
         </div>
@@ -118,6 +123,7 @@ export const WarpBackground: React.FC<WarpBackgroundProps> = ({
               x={`${beam.x * beamSize}%`}
               delay={beam.delay}
               duration={beamDuration}
+              paused={paused}
             />
           ))}
         </div>
@@ -130,6 +136,7 @@ export const WarpBackground: React.FC<WarpBackgroundProps> = ({
               x={`${beam.x * beamSize}%`}
               delay={beam.delay}
               duration={beamDuration}
+              paused={paused}
             />
           ))}
         </div>
@@ -142,6 +149,7 @@ export const WarpBackground: React.FC<WarpBackgroundProps> = ({
               x={`${beam.x * beamSize}%`}
               delay={beam.delay}
               duration={beamDuration}
+              paused={paused}
             />
           ))}
         </div>

@@ -133,6 +133,16 @@
             },
             "experiencesList": [
                 {
+                    "company": "Dicoding Academy",
+                    "role": "PENGULAS KODE MACHINE LEARNING",
+                    "desc": "Evaluasi teknis dan penjaminan kualitas pengajuan proyek ML. Memvalidasi kebenaran logis, efisiensi, dan menegakkan praktik terbaik industri bagi peserta."
+                },
+                {
+                    "company": "Advanced Software Engineering Laboratory",
+                    "role": "MAGANG ANALIS SISTEM",
+                    "desc": "Menerjemahkan persyaratan kompleks ke dalam dokumentasi SRS dan merancang arsitektur sistem menggunakan diagram UML. Rekayasa kolaboratif yang berfokus pada desain perangkat lunak yang kuat."
+                },
+                {
                     "company": "Cyber Physical System Laboratory",
                     "role": "ASISTEN PENELITI (KONTRAK)",
                     "desc": "Mengembangkan produk riset berbasis AI dan merancang materi pembelajaran untuk Deep Learning and Computer Vision. Berkontribusi dalam inisiatif riset kolaboratif dalam sistem cerdas."
@@ -150,7 +160,15 @@
             ],
             "projectsList": [
                 {
-                    "title": "Platform TerraFlow",
+                    "title": "Creative Portfolio Website",
+                    "desc": "Portofolio modern dan beranimasi dengan elemen 3D, interaksi simulasi fisika, dan efek warp berbasis shader. Direkayasa untuk performa tinggi dan pengalaman pengguna yang imersif."
+                },
+                {
+                    "title": "SNBTIn - Platform Persiapan SNBT 2025",
+                    "desc": "Platform EdTech terkemuka di Indonesia untuk persiapan ujian. Menampilkan ekosistem pembelajaran komprehensif dengan video interaktif, latihan soal, dan analitik real-time."
+                },
+                {
+                    "title": "TerraFlow Platform",
                     "desc": "Solusi IoT perusahaan untuk pertanian presisi. Node sensor ESP32 berkomunikasi langsung dengan Firebase melalui backend Go (Gin), dengan dashboard Next.js untuk monitoring real-time dan kontrol aktuator."
                 },
                 {
