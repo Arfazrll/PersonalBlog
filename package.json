@@ -44,7 +44,7 @@
         "react-icons": "^5.5.0",
         "react-tooltip": "^5.30.0",
         "shiki": "^3.21.0",
-        "tailwind-merge": "^3.4.0",
+        "tailwind-merge": "^3.5.0",
         "tailwindcss-animate": "^1.0.7",
         "three": "0.170.0",
         "three-globe": "^2.45.0",

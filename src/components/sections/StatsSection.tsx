@@ -35,7 +35,7 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="w-full flex flex-col gap-6"
                 >
-                    <div className="mb-12 flex flex-col md:flex-row items-end justify-between border-b border-black/20 dark:border-white/[0.02] pb-8 gap-8">
+                    <div className="mb-8 flex flex-col md:flex-row items-end justify-between pb-4 gap-8">
                         <div className="flex flex-col gap-4">
                             <motion.h2
                                 animate={{ opacity: 1, x: 0 }}
@@ -79,6 +79,16 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                                 {t('latency')}
                             </motion.div>
                         </div>
+                    </div>
+
+                    {/* Separator Line */}
+                    <div className="w-full flex justify-center mb-10">
+                        <motion.div
+                            animate={{ opacity: 1, scaleX: 1 }}
+                            initial={{ opacity: 0, scaleX: 0 }}
+                            transition={{ delay: 0.3, duration: 0.8 }}
+                            className="h-px w-full bg-foreground/10 dark:bg-white/10 origin-left"
+                        />
                     </div>
 
                     <div className="flex flex-col gap-8 w-full pb-12">

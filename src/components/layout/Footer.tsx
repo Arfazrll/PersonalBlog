@@ -70,10 +70,11 @@ function SocialCard({ social }: { social: SocialLink }) {
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex items-center justify-center w-14 h-14 transition-all duration-300"
-            whileHover={{ y: -4, scale: 1.15 }}
+            className="group relative flex items-center gap-2 px-4 h-11 md:h-12 transition-all duration-300 rounded-full border border-white/5 bg-secondary/30 hover:bg-secondary/50 backdrop-blur-sm shadow-sm"
+            whileHover={{ y: -4, scale: 1.05 }}
         >
-            <Icon className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
+            <Icon className="w-7 h-7 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
+            <span className="text-sm md:text-base font-bold tracking-wide text-muted-foreground group-hover:text-foreground transition-colors">{social.platform}</span>
             {/* Subtle glow on hover */}
             <div className="absolute inset-0 rounded-full bg-primary/0 group-hover:bg-primary/5 transition-all duration-300" />
         </motion.a>
@@ -86,9 +87,14 @@ export function Footer() {
     const [isExpanded, setIsExpanded] = useState(false);
     const [copied, setCopied] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [copyrightIndex, setCopyrightIndex] = useState(0);
 
     useEffect(() => {
         setMounted(true);
+        const interval = setInterval(() => {
+            setCopyrightIndex(prev => (prev + 1) % 2);
+        }, 2500); // Trigger every 2.5s
+        return () => clearInterval(interval);
     }, []);
 
     const currentYear = new Date().getFullYear();
@@ -150,38 +156,34 @@ export function Footer() {
                             : 'glass-card'
                         }
                     `}>
-                        <div className="flex items-center justify-between flex-wrap gap-4">
-                            <div className="flex items-center gap-4 md:gap-6">
-                                <motion.a
-                                    href="https://drive.google.com/file/d/1mfYs2MOHpwEFLe-Ld4OCcgS1Lbo6wW7O/view?usp=sharing"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`
-                                        group flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-full 
-                                        transition-all duration-500
-                                        ${isBlog
-                                            ? 'bg-foreground text-background hover:bg-primary dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 border-2 border-foreground/5 dark:border-white/10 shadow-lg shadow-black/5 hover:scale-105 active:scale-95'
-                                            : 'bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20 hover:border-primary/40'
-                                        }
-                                    `}
-                                    whileHover={{ y: -2 }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    <span className={`text-xs md:text-sm font-black uppercase tracking-[0.2em] ${isBlog ? '' : 'text-gradient'}`}>
-                                        View Resume
-                                    </span>
-                                    <svg
-                                        className={`w-4 h-4 md:w-5 md:h-5 ${isBlog ? 'text-background dark:text-primary' : 'text-primary'} group-hover:translate-x-1 transition-transform`}
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m0 0l-3-3m3 3l-3 3m9-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </motion.a>
+                        <div className="flex items-center justify-between gap-4">
+                            {/* Left Side - Animated Copyright */}
+                            <div className="flex items-center gap-1.5 md:gap-2 pl-2 md:pl-4 z-10 overflow-hidden h-6">
+                                <span className={`text-xs md:text-sm font-bold uppercase tracking-widest ${isBlog ? 'text-muted-foreground' : 'text-gradient'}`}>
+                                    © {currentYear}
+                                </span>
+                                <div className="relative w-[280px] h-full flex items-center">
+                                    <AnimatePresence mode="popLayout">
+                                        {mounted && (
+                                            <motion.span
+                                                key={copyrightIndex}
+                                                initial={{ y: 20, opacity: 0 }}
+                                                animate={{ y: 0, opacity: 1 }}
+                                                exit={{ y: -20, opacity: 0 }}
+                                                transition={{ duration: 0.5, ease: "easeInOut" }}
+                                                className={`absolute left-0 text-xs md:text-sm font-bold uppercase tracking-widest whitespace-nowrap ${isBlog ? 'text-muted-foreground' : 'text-gradient'}`}
+                                            >
+                                                {copyrightIndex === 0
+                                                    ? `${portfolioData.personal.name}.`
+                                                    : "All rights reserved."}
+                                            </motion.span>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             </div>
 
-                            <div className="flex items-center gap-4 md:gap-8 ml-auto">
+                            {/* Right Side - Socials & More Button */}
+                            <div className="flex items-center justify-end gap-4 md:gap-8 z-10 ml-auto">
                                 <div className="flex items-center gap-1.5 sm:gap-2">
                                     {/* Social Icons */}
                                     {previewSocials.map((social: SocialLink) => {
@@ -328,7 +330,7 @@ export function Footer() {
                                                         initial={{ opacity: 0, scale: 1 }}
                                                         animate={{ opacity: 1, scale: 1 }}
                                                         transition={{ delay: 0.5, duration: 0.8 }}
-                                                        className="w-full h-full min-h-[500px] lg:min-h-[750px] relative transition-all duration-700"
+                                                        className="w-full h-full min-h-[500px] lg:min-h-[750px] relative transition-all duration-700 overflow-hidden"
                                                     >
                                                         <iframe
                                                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126920.24131584285!2d106.77412401666497!3d-6.229746450625624!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e3fa73%3A0x7601136971510100!2sJakarta%2C%20Indonesia!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
@@ -340,17 +342,35 @@ export function Footer() {
                                                             referrerPolicy="no-referrer-when-downgrade"
                                                             className="contrast-[1.2] brightness-[1.0] grayscale-[0.3] dark:invert-[0.95] dark:brightness-[0.8] dark:contrast-[1.2] opacity-100 transition-all duration-1000"
                                                         />
-                                                        {/* No overlays for maximum clarity */}
+
+                                                        {/* Edge Blending Gradients for the Map */}
+                                                        <div className="absolute inset-0 pointer-events-none z-10">
+                                                            {/* Top Edge */}
+                                                            <div className="absolute inset-x-0 top-0 h-16 md:h-24 bg-gradient-to-b from-background to-transparent" />
+                                                            {/* Bottom Edge */}
+                                                            <div className="absolute inset-x-0 bottom-0 h-16 md:h-24 bg-gradient-to-t from-background to-transparent" />
+                                                            {/* Left Edge */}
+                                                            <div className="absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-background to-transparent" />
+                                                            {/* Right Edge */}
+                                                            <div className="absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-background to-transparent" />
+                                                        </div>
                                                     </motion.div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Bottom Bar in Overlay */}
-                                        <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 mt-auto">
-                                            <p className="text-sm text-muted-foreground font-mono">
-                                                © {currentYear} {portfolioData.personal.name}. {t('copyright')}
-                                            </p>
+                                        <div className="w-full relative mt-auto pt-8 pb-8">
+                                            {/* Fading Edge Border Line */}
+                                            <div
+                                                className="absolute top-0 inset-x-0 h-[1px] bg-border"
+                                                style={{ maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)" }}
+                                            />
+                                            <div className="max-w-[1700px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col items-center justify-center text-center gap-4">
+                                                <p className="text-sm text-muted-foreground font-mono">
+                                                    © {currentYear} {portfolioData.personal.name}. {t('copyright')}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
