@@ -59,6 +59,10 @@
     --chart-4: 0 0% 35%;
     --chart-5: 0 0% 20%;
   }
+  .theme {
+    --animate-marquee-left: marquee-left var(--duration, 30s) linear infinite;
+    --animate-marquee-right: marquee-right var(--duration, 30s) linear infinite;
+  }
 }
 
 @layer base {
@@ -488,3 +492,22 @@ html, body, * {
     transform: translateX(100%);
     }
   }
+
+@theme inline {
+  @keyframes marquee-left {
+  from {
+    transform: translateX(0);
+    }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-right {
+  from {
+    transform: translateX(calc(-100% - var(--gap)));
+    }
+  to {
+    transform: translateX(0);
+    }
+  }
+}

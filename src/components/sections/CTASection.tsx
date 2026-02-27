@@ -91,7 +91,7 @@ export default function CTASection() {
                         </Link>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link href="/projects" className="btn-outline-creative text-lg px-10 py-5 inline-flex items-center gap-3">
+                        <Link href="/resume" className="btn-outline-creative text-lg px-10 py-5 inline-flex items-center gap-3">
                             <Layers className="w-5 h-5" />
                             <span>{t('work')}</span>
                         </Link>

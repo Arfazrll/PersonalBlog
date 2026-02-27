@@ -140,44 +140,44 @@
                 {
                     "company": "Advanced Software Engineering Laboratory",
                     "role": "SYSTEM ANALYST INTERN",
-                    "desc": "Translating complex requirements into SRS documentation and designing system architectures using UML diagrams. Collaborative engineering focused on robust software design."
+                    "desc": "Translating complex requirements into SRS documentation and designing system architectures using UML diagrams. focused on software design."
                 },
                 {
                     "company": "Cyber Physical System Laboratory",
                     "role": "RESEARCH ASSISTANT (CONTRACT)",
-                    "desc": "Developing AI-driven research products and designing learning materials for Deep Learning and Computer Vision. Contributing to collaborative research initiatives in intelligent systems."
+                    "desc": "Developing AI-driven research products and designing learning materials for Deep Learning and Computer Vision. Contributing to intelligent systems."
                 },
                 {
                     "company": "HUMIC Engineering Research Center",
                     "role": "AI DEVELOPER INTERN",
-                    "desc": "Built Transformer-based attack detection models for cybersecurity applications. Managed large-scale datasets through the full ML pipeline — from preprocessing to hyperparameter optimization."
+                    "desc": "Built Transformer-based attack detection models for cybersecurity applications. Managed large-scale datasets through the full ML pipeline."
                 },
                 {
                     "company": "Cyber Physical System Laboratory",
                     "role": "COMPUTER VISION RESEARCHER INTERN",
-                    "desc": "End-to-end development of intelligent models using state-of-the-art Deep Learning architectures. Implemented ML algorithms for real-world AIoT applications including human pose estimation systems."
+                    "desc": "End-to-end development of intelligent models using state-of-the-art Deep Learning architectures. Implemented ML algorithms for real-world applications."
                 }
             ],
             "projectsList": [
                 {
                     "title": "Creative Portfolio Website",
-                    "desc": "Modern, animated portfolio with 3D elements, physics-simulated interactions, and shader-based warp effects. Engineered for high performance and immersive user experience."
+                    "desc": "Modern, animated portfolio with 3D elements, physics-simulated interactions, and shader-based warp effects. Engineered for high performance & optimization."
                 },
                 {
                     "title": "SNBTIn - Platform Persiapan SNBT 2025",
-                    "desc": "Leading EdTech platform in Indonesia for exam preparation. Featuring a comprehensive learning ecosystem with interactive videos, practice questions, and real-time analytics."
+                    "desc": "Leading EdTech platform in Indonesia for exam preparation. Featuring a comprehensive learning ecosystem with interactive and real-time analytics."
                 },
                 {
                     "title": "TerraFlow Platform",
-                    "desc": "Enterprise IoT solution for precision agriculture. ESP32 sensor nodes communicate directly with Firebase via a Go (Gin) backend, with a Next.js dashboard for real-time monitoring and actuator control."
+                    "desc": "Enterprise IoT solution for precision agriculture. ESP32 sensor nodes communicate with Firebase via a Go (Gin), with a Next.js dashboard for real-time monitoring"
                 },
                 {
                     "title": "DocsInsight Engine",
-                    "desc": "Private RAG platform for intelligent document analysis. Powered by local LLMs through Ollama, with LangChain orchestration and ChromaDB vector search — fully self-hosted for data privacy."
+                    "desc": "Private RAG platform for intelligent document analysis. Powered by local LLMs through Ollama, with LangChain orchestration and ChromaDB vector search."
                 },
                 {
                     "title": "POLABDC Dental Management",
-                    "desc": "AI-powered dental clinic SaaS with disease prediction, real-time queue management, and a Monorepo architecture connecting Next.js, Express.js, and a Python AI microservice."
+                    "desc": "AI-powered dental clinic SaaS with disease prediction, real-time queue management, and a Monorepo architecture Next.js, Express.js, and Python"
                 }
             ],
             "discoverMore": "Discover More"
@@ -387,9 +387,9 @@
     "ctaSection": {
         "title": "Let's Build Something",
         "together": "Together",
-        "subtitle": "Ready to collaborate on AI, Web Development, or Blockchain projects? Let's make it happen.",
-        "start": "Start a Project",
-        "work": "View My Work",
+        "subtitle": "Open to strategic collaborations in AI driven systems and scalable full Stack Engineering. Let’s transform ambitious ideas into production ready solutions.",
+        "start": "Hire Me",
+        "work": "View My Resume",
         "words": {
             "amazing": "Amazing",
             "innovative": "Innovative",

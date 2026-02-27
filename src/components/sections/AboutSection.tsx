@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { WarpBackground } from "@/components/ui/warp-background";
-import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
 import { useTheme } from "next-themes";
 import ImageTrail from "@/components/ImageTrail";
 import Image from "next/image";
@@ -23,7 +23,6 @@ const World = dynamic(() => import("@/components/ui/globe").then((m) => m.World)
     ssr: false,
 });
 
-// --- Gallery Images Constant ---
 const GALLERY_IMAGES = [
     "/gallery/Foto Utama.jpeg",
     "/gallery/FotoSC1.jpeg",
@@ -42,114 +41,34 @@ const GALLERY_IMAGES = [
     "/gallery/researchassistant2.jpg"
 ];
 
-type PhotoPhase = 'reset' | 'visible' | 'exiting';
-
-const AboutLeadInImageStack = ({ isActive }: { isActive: boolean }) => {
-    const [randomData, setRandomData] = useState<{ src: string, rotate: number, x: number, y: number, initialX: number, initialY: number, initialRotate: number }[]>([]);
-    const [phase, setPhase] = useState<PhotoPhase>('reset');
-    const isInitializedRef = useRef(false);
-
-    // ⚠️ Fix 1: Mount guard — prevent render during hydration (SSR/client mismatch with Math.random)
+const AboutLeadInImageStack = () => {
+    const [randomData, setRandomData] = useState<{ src: string, rotate: number, x: number, y: number }[]>([]);
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
 
     useEffect(() => {
         if (!mounted) return;
-        const shuffled = [...GALLERY_IMAGES]
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 3);
-
-        const data = shuffled.map((src, i) => {
-            const targetRotate = (i - 1) * 15 + (Math.random() * 8 - 4);
-            const targetX = (i - 1) * 45 + (Math.random() * 10 - 5);
-            const targetY = Math.abs(i - 1) * 10 + (Math.random() * 6 - 3);
-
-            let initialX = 0;
-            let initialY = 0;
-            let initialRotate = 0;
-
-            if (i === 0) {
-                initialX = -400 - (Math.random() * 100);
-                initialY = 50 + (Math.random() * 50);
-                initialRotate = -45;
-            } else if (i === 1) {
-                initialX = Math.random() * 40 - 20;
-                initialY = -300 - (Math.random() * 100);
-                initialRotate = 10;
-            } else {
-                initialX = 400 + (Math.random() * 100);
-                initialY = 80 + (Math.random() * 40);
-                initialRotate = 45;
-            }
-
-            return {
-                src,
-                rotate: Math.round(targetRotate),
-                x: Math.round(targetX),
-                y: Math.round(targetY),
-                initialX: Math.round(initialX),
-                initialY: Math.round(initialY),
-                initialRotate: Math.round(initialRotate)
-            };
-        });
-
+        const shuffled = [...GALLERY_IMAGES].sort(() => 0.5 - Math.random()).slice(0, 3);
+        const data = shuffled.map((src, i) => ({
+            src,
+            rotate: Math.round((i - 1) * 15 + (Math.random() * 8 - 4)),
+            x: Math.round((i - 1) * 45 + (Math.random() * 10 - 5)),
+            y: Math.round(Math.abs(i - 1) * 10 + (Math.random() * 6 - 3)),
+        }));
         setRandomData(data);
     }, [mounted]);
 
-    // Phase state machine: reset → visible (fly in) → exiting (fade out) → reset (instant snap back)
-    useEffect(() => {
-        if (randomData.length === 0) return;
-
-        if (isActive) {
-            setPhase('visible');
-            isInitializedRef.current = true;
-        } else if (isInitializedRef.current) {
-            setPhase('exiting');
-            const timer = setTimeout(() => setPhase('reset'), 350);
-            return () => clearTimeout(timer);
-        }
-    }, [isActive, randomData.length]);
-
-    // ⚠️ Fix 1b: Don't render anything until client mounted + data ready
     if (!mounted || randomData.length === 0) return null;
 
     return (
-        // ⚠️ Fix 4: Fixed parent dimensions to prevent layout shift
-        <div className="relative flex items-center justify-center w-56 h-32 md:w-72 md:h-44 mb-8 lg:mb-10" style={{ contain: 'layout' }}>
+        <div className="relative flex items-center justify-center w-56 h-32 md:w-72 md:h-44 mb-8 lg:mb-10">
             {randomData.map((item, i) => (
-                <motion.div
-                    key={i}
-                    // ⚠️ Fix 4b: No animation on first paint — start from initial position silently
-                    initial={false}
-                    animate={
-                        phase === 'visible' ? {
-                            opacity: 1, scale: 1,
-                            x: item.x, y: item.y, rotate: item.rotate
-                        } : phase === 'exiting' ? {
-                            opacity: 0, scale: 0.9,
-                            x: item.x, y: item.y, rotate: item.rotate
-                        } : {
-                            opacity: 0, scale: 0.4,
-                            x: item.initialX, y: item.initialY, rotate: item.initialRotate
-                        }
-                    }
-                    transition={
-                        phase === 'visible' ? {
-                            type: "tween",
-                            duration: 0.9,
-                            ease: [0.16, 1, 0.3, 1],
-                            delay: 0.4 + i * 0.1
-                        } : phase === 'exiting' ? {
-                            duration: 0.3,
-                            ease: "easeOut"
-                        } : {
-                            duration: 0
-                        }
-                    }
+                <div
+                    key={item.src}
                     className="absolute w-24 h-28 md:w-32 md:h-40 rounded-xl overflow-hidden border-[4px] border-white shadow-[0_10px_30px_rgba(0,0,0,0.3)] bg-white"
                     style={{
                         zIndex: i === 1 ? 20 : 10,
-                        // ⚠️ Fix 3: Removed willChange, translate3d, backfaceVisibility — they force persistent GPU layers
+                        transform: `translate(${item.x}px, ${item.y}px) rotate(${item.rotate}deg)`,
                     }}
                 >
                     <div className="relative w-full h-full">
@@ -159,12 +78,11 @@ const AboutLeadInImageStack = ({ isActive }: { isActive: boolean }) => {
                             fill
                             className="object-cover"
                             sizes="(max-width: 768px) 100px, 120px"
-                            // ⚠️ Fix 2: Only center card (i===1) gets priority — triple priority causes reflow flicker
                             priority={i === 1}
                         />
                         <div className="absolute inset-0 bg-black/5 pointer-events-none" />
                     </div>
-                </motion.div>
+                </div>
             ))}
         </div>
     );
@@ -188,7 +106,7 @@ const SlideReveal = ({ children, delay = 0, y = 30 }: { children: React.ReactNod
 );
 
 // --- Component 1: Editorial Lead-in ---
-const AboutLeadIn = ({ isActive }: { isActive: boolean }) => {
+const AboutLeadIn = () => {
     const t = useTranslations('about');
 
     return (
@@ -198,7 +116,8 @@ const AboutLeadIn = ({ isActive }: { isActive: boolean }) => {
                 <div className="space-y-4 relative z-30">
                     <motion.span
                         initial={{ opacity: 0, x: -10 }}
-                        animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
                         transition={{ duration: 0.4 }}
                         className="text-[10px] md:text-[12px] font-mono uppercase tracking-[0.5em] text-primary"
                         style={{ backfaceVisibility: "hidden" }}
@@ -207,8 +126,9 @@ const AboutLeadIn = ({ isActive }: { isActive: boolean }) => {
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
-                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 0.6, delay: isActive ? 0.2 : 0 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
                         className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85]"
                         style={{ backfaceVisibility: "hidden" }}
                     >
@@ -218,14 +138,15 @@ const AboutLeadIn = ({ isActive }: { isActive: boolean }) => {
                 </div>
 
                 <div className="flex flex-grow items-center justify-center px-4 md:px-0 order-2 md:order-none my-8 md:my-0 pb-10 md:pb-0">
-                    <AboutLeadInImageStack isActive={isActive} />
+                    <AboutLeadInImageStack />
                 </div>
 
                 <div className="text-left md:text-right space-y-4 mt-8 md:mt-0 relative z-30">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
-                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 0.6, delay: isActive ? 0.4 : 0 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
                         className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.85]"
                     >
                         {t('leadIn.production')} <br />
@@ -241,11 +162,12 @@ const AboutLeadIn = ({ isActive }: { isActive: boolean }) => {
                 {/* Col 1: The Thesis */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ delay: isActive ? 0.6 : 0 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.6 }}
                     className="space-y-4"
                 >
-                    <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">...</span>
+                    <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">01</span>
                     <p
                         className="text-2xl md:text-3xl lg:text-4xl font-black leading-tight tracking-tight text-foreground"
                         dangerouslySetInnerHTML={{ __html: t.raw('leadIn.thesis') }}
@@ -255,11 +177,12 @@ const AboutLeadIn = ({ isActive }: { isActive: boolean }) => {
                 {/* Col 2: The Scope */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ delay: isActive ? 0.8 : 0 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8 }}
                     className="space-y-4 border-l border-primary/10 pl-12 lg:pl-16"
                 >
-                    <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">...</span>
+                    <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">02</span>
                     <p className="text-[13px] md:text-sm lg:text-[15px] text-muted-foreground leading-relaxed">
                         {t('leadIn.scope')}
                     </p>
@@ -272,12 +195,13 @@ const AboutLeadIn = ({ isActive }: { isActive: boolean }) => {
                 {/* Col 3: The Integration & Signoff */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ delay: isActive ? 1 : 0 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 1 }}
                     className="space-y-4 border-l border-primary/10 pl-12 lg:pl-16 flex flex-col justify-between"
                 >
                     <div className="space-y-4">
-                        <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">...</span>
+                        <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">03</span>
                         <p className="text-[13px] md:text-sm lg:text-[15px] text-muted-foreground leading-relaxed">
                             {t('leadIn.integration')}
                         </p>
@@ -620,7 +544,7 @@ const ProfileIntersection = () => {
                         whileInView={{ clipPath: "circle(75% at 50% 50%)" }}
                         viewport={{ once: true }}
                         transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative w-full h-full min-h-[600px] lg:min-h-[800px] shadow-2xl shadow-black/20 dark:shadow-white/5 bg-zinc-100 dark:bg-zinc-900"
+                        className="relative w-full h-full min-h-[600px] lg:min-h-[800px] shadow-2xl shadow-black/20 dark:shadow-white/5 bg-background dark:bg-black"
                     >
                         <motion.div
                             initial={{ scale: 1.15 }}
@@ -637,7 +561,19 @@ const ProfileIntersection = () => {
                                 priority
                             />
                         </motion.div>
-                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-1000" />
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-1000 pointer-events-none" />
+
+                        {/* Edge Blending Gradients (Slight Awan / Blur effect into background) */}
+                        <div className="absolute inset-0 pointer-events-none z-10 transition-opacity duration-1000 opacity-90 group-hover:opacity-40">
+                            {/* Top Edge */}
+                            <div className="absolute inset-x-0 top-0 h-10 md:h-12 bg-gradient-to-b from-background dark:from-black to-transparent" />
+                            {/* Bottom Edge */}
+                            <div className="absolute inset-x-0 bottom-0 h-10 md:h-12 bg-gradient-to-t from-background dark:from-black to-transparent" />
+                            {/* Left Edge */}
+                            <div className="absolute inset-y-0 left-0 w-8 md:w-10 bg-gradient-to-r from-background dark:from-black to-transparent" />
+                            {/* Right Edge */}
+                            <div className="absolute inset-y-0 right-0 w-8 md:w-10 bg-gradient-to-l from-background dark:from-black to-transparent" />
+                        </div>
                     </motion.div>
                 </div>
 
@@ -708,68 +644,82 @@ const ProfileIntersection = () => {
     );
 };
 
-// --- Unified Closing Card for Bitwise Symmetry ---
+// --- Unified Typography-Focused Card for Bitwise Symmetry ---
 const ClosingCard = ({ title, subtitle, desc, index, direction }: { title: string, subtitle: string, desc: string, index: number, direction: 'left' | 'right' }) => (
     <motion.div
-        initial={{ opacity: 0, x: direction === 'left' ? -20 : 20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        whileHover={{ x: direction === 'left' ? 4 : -4 }}
-        className={cn(
-            "group relative pl-8 border-l-2 border-foreground/10 dark:border-white/5 hover:border-primary transition-colors duration-500 py-24 cursor-default flex flex-col justify-center min-h-[70vh]",
-            direction === 'right' && "pl-8" // Both use left border for symmetry? Or mirrored? User screenshot shows left border for both.
-        )}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className={`group relative h-[50vh] flex flex-col justify-center ${direction === 'right' ? 'items-end text-right' : 'items-start text-left'}`}
     >
-        <h4 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
-            {title}
-        </h4>
-        <div className="text-[12px] md:text-[14px] font-mono uppercase tracking-[0.2em] text-muted-foreground/40 font-bold mt-4">
-            {subtitle}
+        <div className={`flex flex-col gap-6 relative z-10 w-full px-4 ${direction === 'right' ? 'items-end' : 'items-start'}`}>
+            {/* Minimalist Index & Role Indicator */}
+            <div className={`flex items-center gap-6 w-full ${direction === 'left' ? 'flex-row-reverse' : ''}`}>
+                <span className="text-xl md:text-2xl font-serif-elegant italic text-muted-foreground/30 group-hover:text-primary transition-colors duration-500">
+                    {String(index + 1).padStart(2, '0')}
+                </span>
+                <div className="h-px bg-foreground/10 flex-1 group-hover:bg-primary/30 transition-colors duration-500" />
+                <span className="text-[11px] md:text-[13px] font-mono uppercase tracking-[0.3em] text-primary/80 font-semibold group-hover:tracking-[0.4em] transition-all duration-700">
+                    {subtitle}
+                </span>
+            </div>
+
+            {/* Title with subtle hover shift */}
+            <h4 className={`text-4xl md:text-5xl lg:text-[64px] font-black text-foreground tracking-tighter leading-[1.1] transition-all duration-500 ${direction === 'right' ? 'group-hover:pr-4 origin-right' : 'group-hover:pl-4 origin-left'}`}>
+                {title}
+            </h4>
+
+            {/* Description fading in slightly on hover */}
+            <p className="text-[16px] md:text-[18px] lg:text-[20px] text-muted-foreground/60 leading-relaxed max-w-[85%] font-medium mt-4 group-hover:text-foreground/90 transition-colors duration-500 line-clamp-3">
+                {desc}
+            </p>
         </div>
-        <p className="text-[16px] md:text-[18px] text-muted-foreground/60 leading-relaxed max-w-lg font-medium mt-8 group-hover:text-muted-foreground/90 transition-colors">
-            {desc}
-        </p>
     </motion.div>
 );
-
 
 const ViewMoreCard = ({ href, title }: { href: string, title: string }) => {
     const t = useTranslations('about');
     return (
-        <Link href={href} className="group block">
+        <Link href={href} className="group block h-[50vh] flex flex-col justify-center">
             <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-                className="p-8 border-2 border-dashed border-primary/20 rounded-2xl flex flex-col items-center justify-center gap-6 group-hover:border-primary/50 group-hover:bg-primary/5 transition-all duration-500 min-h-[25vh]"
+                transition={{ duration: 1 }}
+                className="relative flex flex-col items-center justify-center gap-10"
             >
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                    <ArrowRight className="w-8 h-8 text-primary" />
+                {/* Minimalist circular arrow */}
+                <div className="w-24 h-24 rounded-full border border-primary/20 flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all duration-700 ease-out">
+                    <ArrowRight className="w-10 h-10 text-primary group-hover:text-primary-foreground group-hover:translate-x-2 transition-all duration-500" />
                 </div>
-                <div className="text-center space-y-2">
-                    <p className="text-xs font-mono uppercase tracking-[0.2em] text-primary/60 group-hover:text-primary transition-colors">{t('closing.discoverMore')}</p>
-                    <h4 className="text-2xl font-bold text-foreground group-hover:italic transition-all">{title}</h4>
+
+                <div className="text-center space-y-4">
+                    <p className="text-[12px] md:text-[14px] font-mono uppercase tracking-[0.4em] text-muted-foreground group-hover:text-primary transition-colors">{t('closing.discoverMore')}</p>
+                    <h4 className="text-4xl lg:text-5xl font-black text-foreground/80 group-hover:text-foreground transition-all">{title}</h4>
                 </div>
             </motion.div>
         </Link>
     );
 };
 
-const GhostedHeader = ({ label, part1, part2 }: { label: string, part1: string, part2: string }) => (
+const GhostedHeader = ({ label, part1, part2, direction = "left" }: { label: string, part1: string, part2: string, direction?: "left" | "right" }) => (
     <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="space-y-2 mb-12 h-32 flex flex-col justify-end"
+        className={`space-y-3 mb-16 h-32 flex flex-col justify-end ${direction === 'right' ? 'items-end text-right' : 'items-start text-left'}`}
     >
-        <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-muted-foreground/40 block">
-            {label}
-        </span>
-        <h3 className="text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none whitespace-nowrap">
-            {part1} <span className="text-black/10 dark:text-white/[0.05]">{part2}</span>
+        <div className={`flex items-center gap-4 ${direction === 'right' ? 'flex-row-reverse' : ''}`}>
+            <div className="w-8 h-px bg-primary/50" />
+            <span className="text-[10px] md:text-[11px] font-mono uppercase tracking-[0.3em] text-primary/80 font-bold">
+                {label}
+            </span>
+        </div>
+        <h3 className={`text-4xl md:text-5xl lg:text-5xl xl:text-[54px] font-black uppercase tracking-tighter leading-none flex items-center gap-x-3 gap-y-1 ${direction === 'right' ? 'flex-row-reverse flex-wrap-reverse justify-start' : 'flex-wrap'}`}>
+            <span className="text-foreground drop-shadow-sm">{part1}</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground/20 to-transparent dark:from-white/20 dark:to-transparent">{part2}</span>
         </h3>
     </motion.div>
 );
@@ -779,34 +729,48 @@ const AboutClosing = () => {
     const leftTrackRef = useRef<HTMLDivElement>(null);
     const rightTrackRef = useRef<HTMLDivElement>(null);
 
-    const [leftMax, setLeftMax] = React.useState(0);
-    const [rightMax, setRightMax] = React.useState(0);
+    const t = useTranslations('about');
+
+    const [bounds, setBounds] = React.useState({ leftStart: 0, leftEnd: 0, rightStart: 0, rightEnd: 0 });
 
     const { scrollYProgress } = useScroll({
         target: sectionRef,
         offset: ["start start", "end end"]
     });
 
-    // Calculate translation distance based on content vs viewport
+    // Calculate exact translation distances based on absolute DOM boxes
     React.useLayoutEffect(() => {
         const updateBounds = () => {
             if (leftTrackRef.current && rightTrackRef.current) {
-                const viewportH = window.innerHeight * 0.6; // Approx area minus headers
+                // Expand container area
+                const containerH = leftTrackRef.current.parentElement?.clientHeight || window.innerHeight * 0.82;
+
                 const leftH = leftTrackRef.current.scrollHeight;
                 const rightH = rightTrackRef.current.scrollHeight;
 
-                setLeftMax(Math.max(0, leftH - viewportH));
-                setRightMax(Math.max(0, rightH - viewportH));
+                // Make the start and end fully offscreen for the "blank" entrance/exit
+                // Left moves UP (positive to negative)
+                const leftStart = containerH;
+                const leftEnd = -leftH;
+
+                // Right moves DOWN (negative to positive)
+                const rightStart = -rightH;
+                const rightEnd = containerH;
+
+                setBounds({ leftStart, leftEnd, rightStart, rightEnd });
             }
         };
 
-        updateBounds();
+        const timer = setTimeout(updateBounds, 100); // give DOM time to render fonts
         window.addEventListener("resize", updateBounds);
-        return () => window.removeEventListener("resize", updateBounds);
-    }, []);
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener("resize", updateBounds);
+        };
+    }, [t]);
 
-    const leftY = useTransform(scrollYProgress, [0, 1], [0, -leftMax]);
-    const rightY = useTransform(scrollYProgress, [0, 1], [-rightMax, 0]);
+    const leftY = useTransform(scrollYProgress, [0, 1], [bounds.leftStart, bounds.leftEnd]);
+    const rightY = useTransform(scrollYProgress, [0, 1], [bounds.rightStart, bounds.rightEnd]);
 
     // Section Visibility: Smoother fade in/out that respects the focus area
     const sectionOpacity = useTransform(
@@ -818,11 +782,13 @@ const AboutClosing = () => {
     const smoothLeftY = useSpring(leftY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.1 });
     const smoothRightY = useSpring(rightY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.1 });
 
+    const experiences = t.raw('closing.experiencesList') || [];
+    const projects = t.raw('closing.projectsList') || [];
 
-    const t = useTranslations('about');
-    const experiences = t.raw('closing.experiencesList');
-
-    const projects = t.raw('closing.projectsList');
+    // Equal length arrays to ensure perfect 1:1 row alignment
+    const maxLength = Math.max(experiences.length, projects.length);
+    const paddedExperiences = Array.from({ length: maxLength }).map((_, i) => experiences[i] || null);
+    const paddedProjects = Array.from({ length: maxLength }).map((_, i) => projects[i] || null);
 
     return (
         <section ref={sectionRef} className="relative h-[500vh] hidden md:block z-50 bg-background">
@@ -836,7 +802,7 @@ const AboutClosing = () => {
                     style={{ opacity: sectionOpacity }}
                     className="max-w-[1600px] mx-auto w-full px-12 md:px-20"
                 >
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 h-[70vh]">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 h-[82vh] max-h-[900px] mb-8 pb-12">
 
                         {/* LEFT: KEY EXPERIENCE (Scrolls UP) */}
                         <div className="flex flex-col h-full overflow-hidden">
@@ -847,39 +813,35 @@ const AboutClosing = () => {
                                     style={{ y: smoothLeftY }}
                                     className="flex flex-col"
                                 >
-                                    {/* Entry Spacer: Viewport starts empty at t=0 */}
-                                    <div className="h-[100vh]" />
-                                    {experiences.map((exp: any, i: number) => (
-                                        <ClosingCard key={i} title={exp.company} subtitle={exp.role} desc={exp.desc} index={i} direction="left" />
+                                    {paddedExperiences.map((exp: any, i: number) => (
+                                        exp ? (
+                                            <ClosingCard key={i} title={exp.company} subtitle={exp.role} desc={exp.desc} index={i} direction="left" />
+                                        ) : (
+                                            <div key={`empty-exp-${i}`} className="h-[50vh]" />
+                                        )
                                     ))}
-                                    <div className="py-24">
-                                        <ViewMoreCard href="/experience" title={t('closing.experience.viewMore')} />
-                                    </div>
-                                    {/* Exit Spacer: Viewport ends empty at t=1 */}
-                                    <div className="h-[100vh]" />
+                                    <ViewMoreCard href="/experience" title={t('closing.experience.viewMore')} />
                                 </motion.div>
                             </div>
                         </div>
 
                         {/* RIGHT: FLAGSHIP PROJECTS (Scrolls DOWN) */}
-                        <div className="flex flex-col h-full overflow-hidden">
-                            <GhostedHeader label={t('closing.projects.label')} part1={t('closing.projects.title1')} part2={t('closing.projects.title2')} />
+                        <div className="flex flex-col h-full overflow-hidden items-end">
+                            <GhostedHeader direction="right" label={t('closing.projects.label')} part1={t('closing.projects.title1')} part2={t('closing.projects.title2')} />
                             <div className="flex-1 relative overflow-hidden">
                                 <motion.div
                                     ref={rightTrackRef}
                                     style={{ y: smoothRightY }}
                                     className="flex flex-col"
                                 >
-                                    {/* Symmetry Spacer: Corresponds to Left's Bottom Spacer at start scroll */}
-                                    <div className="h-[100vh]" />
-                                    <div className="py-24">
-                                        <ViewMoreCard href="/projects" title={t('closing.projects.viewMore')} />
-                                    </div>
-                                    {[...projects].reverse().map((proj: any, i: number) => (
-                                        <ClosingCard key={i} title={proj.title} subtitle="Featured Project" desc={proj.desc} index={i} direction="right" />
+                                    <ViewMoreCard href="/projects" title={t('closing.projects.viewMore')} />
+                                    {paddedProjects.map((proj: any, i: number) => (
+                                        proj ? (
+                                            <ClosingCard key={i} title={proj.title} subtitle="Featured Project" desc={proj.desc} index={i} direction="right" />
+                                        ) : (
+                                            <div key={`empty-proj-${i}`} className="h-[50vh]" />
+                                        )
                                     ))}
-                                    {/* Exit Spacer: Corresponds to Left's Top Spacer at end scroll */}
-                                    <div className="h-[100vh]" />
                                 </motion.div>
                             </div>
                         </div>
@@ -959,15 +921,30 @@ const AuditFunnel = () => {
     const scale = useTransform(scrollYProgress, [0, 0.5], [0.6, 1]);
     const lineScaleY = useTransform(scrollYProgress, [0.3, 0.8], [0, 1]);
 
-    const images = [
-        "https://images.unsplash.com/photo-1550741111-3d5f730d28aa?q=80&w=400&h=300&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=400&h=300&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400&h=300&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1558494949-ef010cbdcc51?q=80&w=400&h=300&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1504384308090-c89e170e6929?q=80&w=400&h=300&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=400&h=300&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=400&h=300&auto=format&fit=crop"
-    ];
+    const [images, setImages] = useState<string[]>([]);
+
+    useEffect(() => {
+        const galleryItems = [
+            "/gallery/Foto Utama.jpeg",
+            "/gallery/FotoSC1.jpeg",
+            "/gallery/FotoSC2.jpeg",
+            "/gallery/FotoSC3.jpeg",
+            "/gallery/FotoSC4.jpeg",
+            "/gallery/FotoSC5.jpeg",
+            "/gallery/academicaffairsdivision1.jpg",
+            "/gallery/computernetworkpracticumassistant2.jpg",
+            "/gallery/dataentryassistant1.jpg",
+            "/gallery/delegateaiesecfutureleaders20241.jpg",
+            "/gallery/environmentalhygieneteam1.jpg",
+            "/gallery/environmentalhygieneteam2.jpg",
+            "/gallery/logisticsoperatorcampusexpo20242.jpg",
+            "/gallery/researchassistant1.jpg",
+            "/gallery/researchassistant2.jpg"
+        ];
+        // Shuffle and pick 8 random images for the trail to avoid overwhelming the DOM
+        const shuffled = [...galleryItems].sort(() => 0.5 - Math.random());
+        setImages(shuffled.slice(0, 8));
+    }, []);
 
     return (
         <div ref={sectionRef} className="relative overflow-hidden group min-h-[80vh] md:min-h-[120vh] flex items-center justify-center bg-background z-50 pb-20 md:pb-60">
@@ -1081,23 +1058,6 @@ export default function AboutSection() {
     const yLeadIn = useTransform(scrollYProgress, [0, 0.3], [0, -350]);
 
     const leadInTriggerRef = useRef(null);
-    const isVisibleInViewport = useInView(leadInTriggerRef, {
-        margin: "-10% 0px -10% 0px", // Trigger when 10% in view
-        once: false
-    });
-
-    // Track whether the lead-in section is visually active.
-    const [isLeadInActive, setIsLeadInActive] = useState(false);
-
-    useEffect(() => {
-        // Animation is active if we are in the viewport AND in the top phase of scroll
-        const scrollV = scrollYProgress.get();
-        setIsLeadInActive(isVisibleInViewport && scrollV < 0.10);
-    }, [isVisibleInViewport, scrollYProgress]);
-
-    useMotionValueEvent(scrollYProgress, "change", (v) => {
-        setIsLeadInActive(isVisibleInViewport && v < 0.10);
-    });
 
     return (
         <section
@@ -1112,7 +1072,7 @@ export default function AboutSection() {
                     className="relative py-20 px-6 w-full max-w-[1600px] mx-auto"
                     ref={leadInTriggerRef}
                 >
-                    <AboutLeadIn isActive={isLeadInActive} />
+                    <AboutLeadIn />
                 </motion.div>
             </div>
 
