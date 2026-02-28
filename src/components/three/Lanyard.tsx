@@ -25,6 +25,7 @@ extend({ MeshLineGeometry, MeshLineMaterial });
 // Preload assets for faster startup
 useGLTF.preload('/lanyard/card.glb');
 useTexture.preload('/lanyard/lanyard.png');
+useTexture.preload('/lanyard/desain-kartu.png');
 
 interface LanyardProps {
     position?: [number, number, number];
@@ -169,38 +170,17 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, isDark = false }:
 
     const { nodes, materials } = useGLTF('/lanyard/card.glb') as any;
     const texture = useTexture('/lanyard/lanyard.png');
+    const customCardTexture = useTexture('/lanyard/desain-kartu.png');
 
-    const cardTexture = useMemo(() => {
-        if (!materials.base.map) return null;
-        if (!isDark) return materials.base.map;
+    // The GLTF model requires flipY to be false for its UV mapping
+    customCardTexture.flipY = false;
 
-        const img = materials.base.map.image;
-        if (!img) return materials.base.map;
+    // Use the custom card texture directly without color inversion,
+    // so user photos don't look like negative films in light mode.
+    const cardTexture = customCardTexture;
 
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return materials.base.map;
-
-        ctx.drawImage(img, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            data[i] = 255 - data[i];
-            data[i + 1] = 255 - data[i + 1];
-            data[i + 2] = 255 - data[i + 2];
-        }
-        ctx.putImageData(imageData, 0, 0);
-
-        const tex = new THREE.CanvasTexture(canvas);
-        tex.flipY = materials.base.map.flipY;
-        tex.wrapS = materials.base.map.wrapS;
-        tex.wrapT = materials.base.map.wrapT;
-        tex.colorSpace = materials.base.map.colorSpace;
-        return tex;
-    }, [materials.base.map, isDark]);
-
+    // Use the original lanyard texture directly for light mode (black)
+    // For dark mode, convert the black background to dark grey (#333333)
     const stringTexture = useMemo(() => {
         if (!texture) return null;
         if (!isDark) return texture;
@@ -217,13 +197,20 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, isDark = false }:
         ctx.drawImage(img, 0, 0);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
+
+        // Target grey value for the black background in dark mode
+        const greyValue = 50; // equivalent to dark grey
+
         for (let i = 0; i < data.length; i += 4) {
+            // Check brightness to determine if it's the black background or a white star
             const brightness = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
-            const color = brightness < 128 ? 255 : 0;
-            data[i] = color;
-            data[i + 1] = color;
-            data[i + 2] = color;
-            data[i + 3] = 255;
+
+            // If it's dark (background), turn it to dark grey. If it's bright (star), keep it.
+            if (brightness < 128) {
+                data[i] = greyValue;
+                data[i + 1] = greyValue;
+                data[i + 2] = greyValue;
+            }
         }
         ctx.putImageData(imageData, 0, 0);
 
@@ -327,20 +314,18 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, isDark = false }:
                         }}
                     >
                         <mesh geometry={nodes.card.geometry}>
-                            <meshPhysicalMaterial
+                            <meshBasicMaterial
                                 map={cardTexture}
                                 map-anisotropy={16}
-                                clearcoat={isMobile ? 0 : 1}
-                                clearcoatRoughness={0.15}
-                                roughness={0.9}
-                                metalness={0.8}
+                                color="#ffffff"
+                                toneMapped={false}
                             />
                         </mesh>
                         <mesh geometry={nodes.clip.geometry} material={materials.metal}>
-                            <meshStandardMaterial color={isDark ? "#ffffff" : "#111111"} roughness={0.3} metalness={0.8} />
+                            <meshStandardMaterial color={isDark ? "#333333" : "#111111"} roughness={0.3} metalness={0.8} />
                         </mesh>
                         <mesh geometry={nodes.clamp.geometry}>
-                            <meshStandardMaterial color={isDark ? "#ffffff" : "#111111"} roughness={0.3} metalness={0.8} />
+                            <meshStandardMaterial color={isDark ? "#333333" : "#111111"} roughness={0.3} metalness={0.8} />
                         </mesh>
                     </group>
                 </RigidBody>

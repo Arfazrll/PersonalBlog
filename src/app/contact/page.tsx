@@ -347,10 +347,10 @@ export default function ContactPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
 
                         {/* LEFT COLUMN: Lanyard */}
-                        <div className="col-span-1 lg:col-span-4 sticky top-0 h-[600px] lg:h-[90vh] pointer-events-none z-20">
+                        <div className="col-span-1 lg:col-span-4 relative lg:sticky top-0 h-[400px] md:h-[500px] lg:h-[90vh] pointer-events-none z-20">
                             {/* Anchor Slot/Bar for Lanyard */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 lg:w-96 h-2 bg-gradient-to-r from-transparent via-foreground/20 to-transparent blur-[2px] rounded-full z-30 mt-[-1px]" />
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 lg:w-48 h-[3px] bg-gradient-to-r from-transparent via-foreground/40 to-transparent rounded-full z-30" />
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 md:w-64 lg:w-96 h-2 bg-gradient-to-r from-transparent via-foreground/20 to-transparent blur-[2px] rounded-full z-30 mt-[-1px]" />
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 md:w-32 lg:w-48 h-[3px] bg-gradient-to-r from-transparent via-foreground/40 to-transparent rounded-full z-30" />
 
                             <div className="w-full h-full pointer-events-auto overflow-visible">
                                 {!isLowPowerMode ? (
@@ -370,7 +370,7 @@ export default function ContactPage() {
                         </div>
 
                         {/* RIGHT COLUMN: Content Stack */}
-                        <div className="col-span-1 lg:col-span-8 flex flex-col gap-16 relative z-10">
+                        <div className="col-span-1 lg:col-span-8 flex flex-col gap-16 relative z-10 pt-10 lg:pt-0">
 
                             {/* Social Connect */}
                             <motion.div
