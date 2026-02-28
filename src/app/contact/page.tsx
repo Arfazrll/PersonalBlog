@@ -9,7 +9,7 @@ import { portfolioData } from '@/data/portfolio';
 import dynamic from 'next/dynamic';
 import ScrollVelocity from '@/components/ui/ScrollVelocity';
 
-const Lanyard = dynamic<{ isLowPowerMode?: boolean }>(() => import('@/components/three/Lanyard').then(mod => mod.Lanyard), {
+const Lanyard = dynamic<{ position?: [number, number, number], gravity?: [number, number, number], isLowPowerMode?: boolean }>(() => import('@/components/three/Lanyard').then(mod => mod.Lanyard), {
     ssr: false,
     loading: () => <div className="w-full h-full flex items-center justify-center bg-transparent"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>
 });
@@ -95,7 +95,7 @@ const InputGroup = ({ label, name, type = "text", value, onChange, required = fa
                     value={value}
                     onChange={onChange}
                     required={required}
-                    rows={1} 
+                    rows={1}
                     className="peer block w-full appearance-none border-0 border-b-2 border-foreground/20 bg-transparent py-2.5 px-0 text-xl font-medium text-foreground focus:border-foreground focus:outline-none focus:ring-0 transition-colors duration-300 resize-y min-h-[50px] max-h-[200px]"
                     placeholder=" "
                 />
@@ -347,12 +347,15 @@ export default function ContactPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
 
                         {/* LEFT COLUMN: Lanyard */}
-                        {/* Shorter height 600px to raise bottom, top sticky align */}
-                        <div className="hidden lg:flex lg:col-span-4 sticky top-20 h-[600px] pointer-events-none">
-                            <div className="w-full h-full pointer-events-auto">
+                        <div className="col-span-1 lg:col-span-4 sticky top-0 h-[600px] lg:h-[90vh] pointer-events-none z-20">
+                            {/* Anchor Slot/Bar for Lanyard */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 lg:w-96 h-2 bg-gradient-to-r from-transparent via-foreground/20 to-transparent blur-[2px] rounded-full z-30 mt-[-1px]" />
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 lg:w-48 h-[3px] bg-gradient-to-r from-transparent via-foreground/40 to-transparent rounded-full z-30" />
+
+                            <div className="w-full h-full pointer-events-auto overflow-visible">
                                 {!isLowPowerMode ? (
                                     <ErrorBoundary fallback={<div className="w-full h-full flex items-center justify-center opacity-50">Interactive Card Unavailable</div>}>
-                                        <Lanyard isLowPowerMode={isLowPowerMode} />
+                                        <Lanyard position={[0, 0, 15]} gravity={[0, -40, 0]} isLowPowerMode={isLowPowerMode} />
                                     </ErrorBoundary>
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center p-8">
@@ -367,7 +370,7 @@ export default function ContactPage() {
                         </div>
 
                         {/* RIGHT COLUMN: Content Stack */}
-                        <div className="col-span-1 lg:col-span-8 flex flex-col gap-16">
+                        <div className="col-span-1 lg:col-span-8 flex flex-col gap-16 relative z-10">
 
                             {/* Social Connect */}
                             <motion.div
@@ -391,22 +394,7 @@ export default function ContactPage() {
                                 <ContactForm />
                             </motion.div>
 
-                            {/* Mobile Lanyard Fallback */}
-                            <div className="lg:hidden h-[400px] w-full relative">
-                                {!isLowPowerMode ? (
-                                    <ErrorBoundary fallback={<div className="h-full flex items-center justify-center opacity-50">Interactive Card Unavailable</div>}>
-                                        <Lanyard isLowPowerMode={isLowPowerMode} />
-                                    </ErrorBoundary>
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center p-8">
-                                        <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-primary/5">
-                                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 italic font-serif">
-                                                Archive ID // Static
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+
                         </div>
                     </div>
                 </div>

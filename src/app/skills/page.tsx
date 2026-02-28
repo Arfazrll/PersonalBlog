@@ -62,7 +62,7 @@ function TechSchematic() {
                 transition={{ duration: 1, delay: 0.5 }}
                 className="absolute top-20 right-20 font-mono text-[8px] uppercase tracking-[0.5em] text-primary/20 rotate-90 origin-right select-none"
             >
-                System_Ref: 0xFF-01 // Architectural_Blueprint_Active
+
             </motion.div>
         </div>
     );
@@ -85,7 +85,6 @@ export default function SkillsPage() {
         <div ref={containerRef} className="min-h-screen bg-background relative selection:bg-primary/20">
             <TechSchematic />
 
-            {/* ==================== HERO: ROBOT (PRESERVED) ==================== */}
             <section className="relative h-screen flex items-end justify-center overflow-hidden pb-12">
                 <div className="absolute inset-0 z-0">
                     <SplineScene
@@ -148,16 +147,10 @@ export default function SkillsPage() {
                 <VaporFog className="opacity-30" />
             </div>
 
-            {/* ==================== NEW: SOFT SKILLS (MINIMALIST) ==================== */}
             <SoftSkills />
-
-            {/* ==================== NEW: HARD SKILLS (CATEGORIZED) ==================== */}
             <HardSkills />
-
-            {/* ==================== HYPER-ARSENAL (PRESERVED) ==================== */}
             <section className="py-48 px-8 relative overflow-hidden bg-background">
                 <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
-                    {/* Removed heavy particles, using simpler static/CSS if needed */}
                 </div>
 
                 <div className="max-w-7xl mx-auto relative z-10">
