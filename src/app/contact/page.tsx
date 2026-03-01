@@ -19,9 +19,9 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = false }: { items: any[], direction?: 'left' | 'right', speed?: number, isLowPowerMode?: boolean }) {
     return (
-        <div className="flex overflow-hidden relative w-full group py-4 select-none">
+        <div className="flex overflow-hidden relative w-full group/ticker py-4 select-none">
             <motion.div
-                className="flex gap-4 flex-nowrap"
+                className="flex gap-4 flex-nowrap hover:[animation-play-state:paused]"
                 initial={{ x: direction === 'left' ? 0 : '-25%' }}
                 animate={isLowPowerMode ? { x: direction === 'left' ? 0 : '-25%' } : { x: direction === 'left' ? '-50%' : 0 }}
                 transition={{
@@ -125,11 +125,28 @@ function ContactForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('loading');
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        window.location.href = `mailto:${portfolioData.personal.email}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`From: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`)}`;
-        setStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        setTimeout(() => setStatus('idle'), 3000);
+
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                setStatus('success');
+                setFormData({ name: '', email: '', subject: '', message: '' });
+            } else {
+                setStatus('error');
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setStatus('error');
+        } finally {
+            setTimeout(() => setStatus('idle'), 3000);
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -186,7 +203,7 @@ function ContactForm() {
 
 function FAQSection() {
     const t = useTranslations('contact');
-    const [openIndex, setOpenIndex] = useState<number | null>(0);
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     const faqs = [
         {
