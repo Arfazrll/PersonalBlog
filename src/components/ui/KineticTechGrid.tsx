@@ -74,6 +74,7 @@ const TechCard = ({ tech, idx, scrollYProgress, isLowPowerMode }: { tech: TechIt
                     fill
                     className="object-contain grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500 unoptimized"
                     unoptimized
+                    loading="lazy"
                 />
             </div>
 

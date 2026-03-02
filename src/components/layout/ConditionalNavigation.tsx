@@ -13,17 +13,21 @@ export function ConditionalNavigation({ children }: { children: React.ReactNode 
         setIsMounted(true);
     }, []);
 
-    // Hide navbar and footer on project detail pages (/projects/[slug])
-    // A project detail page usually has more than 2 segments (e.g., /projects/my-project)
+    // Hide navbar and footer on project and blog detail pages
+    // A detail page usually has more than 2 segments (e.g., /projects/slug, /blog/slug)
     const segments = pathname?.split('/').filter(Boolean) || [];
-    // Handle both /projects/... and /en/projects/... or /id/projects/...
+
+    // Handle both /path/... and /en/path/... or /id/path/...
     const projectsIndex = segments.indexOf('projects');
     const isProjectDetail = projectsIndex !== -1 && segments.length > projectsIndex + 1;
+
+    const blogIndex = segments.indexOf('blog');
+    const isBlogDetail = blogIndex !== -1 && segments.length > blogIndex + 1;
 
     // During hydration, we must match the server-side render.
     // The server-side render (and initial client render) always displays the layout
     // because it cannot know the pathname during build/SSR.
-    const useFullLayout = !isProjectDetail || !isMounted;
+    const useFullLayout = (!isProjectDetail && !isBlogDetail) || !isMounted;
 
     return (
         <div

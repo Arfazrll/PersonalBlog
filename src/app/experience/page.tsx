@@ -28,8 +28,8 @@ import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 import { Experience, Education } from '@/types';
 
-import ExperienceMarquee from '../../components/sections/ExperienceMarquee';
-import ExperienceStickyScroll from '../../components/sections/ExperienceStickyScroll';
+const ExperienceMarquee = dynamic(() => import('../../components/sections/ExperienceMarquee'), { ssr: true });
+const ExperienceStickyScroll = dynamic(() => import('../../components/sections/ExperienceStickyScroll'), { ssr: true });
 import { Timeline } from '@/components/ui/timeline';
 import { HeroHighlight, Highlight } from '@/components/ui/hero-highlight';
 
@@ -487,7 +487,7 @@ function CollapsibleExperienceCard({ exp, idx, isLowPowerMode }: { exp: Experien
                     {/* Logo (Left Side) - Always visible */}
                     <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-black rounded-2xl flex items-center justify-center shrink-0 border border-neutral-100 dark:border-neutral-800 p-2 shadow-sm">
                         {exp.logo ? (
-                            <Image src={exp.logo} alt={exp.company} width={48} height={48} className="object-contain" unoptimized />
+                            <Image src={exp.logo} alt={exp.company} width={48} height={48} className="object-contain" unoptimized loading="lazy" />
                         ) : (
                             <Briefcase className="w-8 h-8 text-neutral-300" />
                         )}
@@ -685,7 +685,7 @@ const LinkPreviewCard = ({ url, title, id, logo }: { url: string; title?: string
                 </div>
                 {logo && (
                     <div className="shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 overflow-hidden p-2">
-                        <Image src={logo} alt="Logo" width={64} height={64} className="w-full h-full object-contain lowercase" unoptimized />
+                        <Image src={logo} alt="Logo" width={64} height={64} className="w-full h-full object-contain lowercase" unoptimized loading="lazy" />
                     </div>
                 )}
             </div>
@@ -777,6 +777,7 @@ function TimelineGallery({ images, id, title, externalLink, logo }: { images: st
                                     fill
                                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                                     unoptimized
+                                    loading="lazy"
                                     onError={() => handleImageError(item.index)}
                                 />
                             </motion.div>

@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { useMotionValue, motion, useMotionTemplate } from "framer-motion";
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 export const HeroHighlight = ({
   children,
@@ -16,6 +16,7 @@ export const HeroHighlight = ({
 }) => {
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
+  const rafRef = useRef<number | null>(null);
 
   // SVG patterns for different states and themes
   const dotPatterns = {
@@ -35,11 +36,21 @@ export const HeroHighlight = ({
     clientY,
   }: React.MouseEvent<HTMLDivElement>) {
     if (!currentTarget || isLowPowerMode) return;
-    let { left, top } = currentTarget.getBoundingClientRect();
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
+    const { left, top } = currentTarget.getBoundingClientRect();
+
+    rafRef.current = requestAnimationFrame(() => {
+      mouseX.set(clientX - left);
+      mouseY.set(clientY - top);
+    });
   }
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
   return (
     <div
       className={cn(

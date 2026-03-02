@@ -6,7 +6,11 @@ import { useTranslations } from 'next-intl';
 import { portfolioData } from '@/data/portfolio';
 import { BlogCard } from '@/components/ui/BlogCard';
 import { BentoHero } from '@/components/sections/blog/BentoHero';
-import { MarqueeClosing } from '@/components/sections/blog/MarqueeClosing';
+import dynamic from 'next/dynamic';
+
+const MarqueeClosing = dynamic(() => import('@/components/sections/blog/MarqueeClosing').then(m => m.MarqueeClosing), {
+    ssr: false,
+});
 import { Search, Filter, Grid3X3, List, ImageIcon, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';

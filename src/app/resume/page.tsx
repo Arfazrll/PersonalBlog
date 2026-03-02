@@ -3,8 +3,10 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Download, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { usePerformance } from '@/hooks/usePerformance';
 
 export default function ResumePage() {
+    const { isLowPowerMode } = usePerformance();
     // File ID: 1mfYs2MOHpwEFLe-Ld4OCcgS1Lbo6wW7O
     const fileId = "1mfYs2MOHpwEFLe-Ld4OCcgS1Lbo6wW7O";
     const resumeUrl = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
@@ -17,7 +19,7 @@ export default function ResumePage() {
 
             {/* Header / Controls */}
             <motion.div
-                initial={{ opacity: 0, y: -20 }}
+                initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="container-creative px-6 mb-4 flex-none flex flex-col md:flex-row justify-between items-center gap-4"
             >
@@ -44,7 +46,7 @@ export default function ResumePage() {
 
             {/* Resume Viewer */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
                 className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-6 min-h-0 pb-4 relative"
@@ -74,6 +76,7 @@ export default function ResumePage() {
                         className="w-full h-full border-none relative z-10 transition-all duration-300 pointer-events-auto"
                         allow="autoplay"
                         title="Resume Viewer"
+                        loading="lazy"
                     />
                 </div>
             </motion.div>

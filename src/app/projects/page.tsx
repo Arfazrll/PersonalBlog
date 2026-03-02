@@ -13,8 +13,11 @@ import { HeroParallax } from '@/components/ui/hero-parallax';
 import { LogoTimeline, LogoItem } from '@/components/ui/logo-timeline';
 import { Icons } from '@/components/icons';
 import { Meteors } from '@/components/ui/meteors';
-import { ProjectContact } from '@/components/sections/ProjectContact';
-import { ProjectStats } from '@/components/sections/ProjectStats';
+import dynamic from 'next/dynamic';
+
+const ProjectContact = dynamic(() => import('@/components/sections/ProjectContact').then(mod => mod.ProjectContact), { ssr: true });
+const ProjectStats = dynamic(() => import('@/components/sections/ProjectStats').then(mod => mod.ProjectStats), { ssr: true });
+
 import { usePerformance } from '@/hooks/usePerformance';
 import { ProjectPlaceholder } from '@/components/projects/ProjectPlaceholder';
 
@@ -43,14 +46,27 @@ function ProjectListItem({
     const isOngoing = project.status === 'ongoing';
     const displayIndex = String(index + 1).padStart(2, '0');
 
+    const rafRef = useRef<number | null>(null);
+
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!itemRef.current) return;
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
         const rect = itemRef.current.getBoundingClientRect();
-        mouseX.set(e.clientX - rect.left);
-        mouseY.set(e.clientY - rect.top);
-        cursorX.set(e.clientX + 20);
-        cursorY.set(e.clientY - 60);
+
+        rafRef.current = requestAnimationFrame(() => {
+            mouseX.set(e.clientX - rect.left);
+            mouseY.set(e.clientY - rect.top);
+            cursorX.set(e.clientX + 20);
+            cursorY.set(e.clientY - 60);
+        });
     };
+
+    useEffect(() => {
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, []);
 
     const techText = project.techStack.join(' • ');
     const bgGradient = useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(255, 255, 255, 0.03), transparent 40%)`;
@@ -202,6 +218,7 @@ function ProjectListItem({
                                     <img
                                         src={project.image}
                                         alt={project.title}
+                                        loading="lazy"
                                         className="absolute inset-0 w-full h-full object-cover opacity-90 block transition-transform duration-500 hover:scale-105"
                                     />
                                 ) : (
@@ -227,25 +244,39 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
     const pixelX = useMotionValue(0);
     const pixelY = useMotionValue(0);
 
+    const rafRef = useRef<number | null>(null);
+
     const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [8, -8]), { stiffness: 300, damping: 30 });
     const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [-8, 8]), { stiffness: 300, damping: 30 });
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!cardRef.current) return;
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
         const rect = cardRef.current.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        mouseX.set(x);
-        mouseY.set(y);
-        pixelX.set(e.clientX - rect.left);
-        pixelY.set(e.clientY - rect.top);
+
+        rafRef.current = requestAnimationFrame(() => {
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            mouseX.set(x);
+            mouseY.set(y);
+            pixelX.set(e.clientX - rect.left);
+            pixelY.set(e.clientY - rect.top);
+        });
     };
 
     const handleMouseLeave = () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
         mouseX.set(0);
         mouseY.set(0);
         setIsHovered(false);
     };
+
+    useEffect(() => {
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, []);
 
     const isOngoing = project.status === 'ongoing';
     const bgGradient = useMotionTemplate`radial-gradient(800px circle at ${pixelX}px ${pixelY}px, ${isOngoing ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}, transparent 40%)`;
@@ -486,25 +517,39 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
     const pixelX = useMotionValue(0);
     const pixelY = useMotionValue(0);
 
+    const rafRef = useRef<number | null>(null);
+
     const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [6, -6]), { stiffness: 400, damping: 25 });
     const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [-6, 6]), { stiffness: 400, damping: 25 });
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!cardRef.current) return;
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
         const rect = cardRef.current.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        mouseX.set(x);
-        mouseY.set(y);
-        pixelX.set(e.clientX - rect.left);
-        pixelY.set(e.clientY - rect.top);
+
+        rafRef.current = requestAnimationFrame(() => {
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            mouseX.set(x);
+            mouseY.set(y);
+            pixelX.set(e.clientX - rect.left);
+            pixelY.set(e.clientY - rect.top);
+        });
     };
 
     const handleMouseLeave = () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
         mouseX.set(0);
         mouseY.set(0);
         setIsHovered(false);
     };
+
+    useEffect(() => {
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, []);
 
     const isOngoing = project.status === 'ongoing';
     const bgGradient = useMotionTemplate`radial-gradient(500px circle at ${pixelX}px ${pixelY}px, ${isOngoing ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.12)'}, transparent 40%)`;
@@ -551,6 +596,7 @@ function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Pro
                             <img
                                 src={project.image}
                                 alt={project.title}
+                                loading="lazy"
                                 className="w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />

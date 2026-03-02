@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,9 +10,30 @@ import { cn } from "@/lib/utils";
 
 export default function BlogPortalFooter({ isLowPowerMode }: { isLowPowerMode?: boolean }) {
     const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
+    const frameRef = useRef<number | null>(null);
 
     // Get latest 3 blogs
     const latestBlogs = portfolioData.blogs.slice(0, 3);
+
+    const handleHover = (image: string | null) => {
+        if (isLowPowerMode) return;
+
+        if (frameRef.current) {
+            cancelAnimationFrame(frameRef.current);
+        }
+
+        frameRef.current = requestAnimationFrame(() => {
+            setHoveredBlog(image);
+        });
+    };
+
+    useEffect(() => {
+        return () => {
+            if (frameRef.current) {
+                cancelAnimationFrame(frameRef.current);
+            }
+        };
+    }, []);
 
     return (
         <section className="relative bg-background text-foreground py-32 overflow-hidden">
@@ -44,8 +65,8 @@ export default function BlogPortalFooter({ isLowPowerMode }: { isLowPowerMode?: 
                         <Link key={blog.id} href={`/blog/${blog.slug}`} className="group relative">
                             <div
                                 className="flex flex-col md:flex-row items-baseline py-12 border-b border-neutral-500 dark:border-white/20 group-hover:border-cyan-500/50 transition-colors"
-                                onMouseEnter={() => !isLowPowerMode && setHoveredBlog(blog.image)}
-                                onMouseLeave={() => !isLowPowerMode && setHoveredBlog(null)}
+                                onMouseEnter={() => handleHover(blog.image)}
+                                onMouseLeave={() => handleHover(null)}
                             >
                                 <span className="font-mono text-xs text-muted-foreground w-24 mb-4 md:mb-0">
                                     0{index + 1} //
@@ -109,6 +130,7 @@ export default function BlogPortalFooter({ isLowPowerMode }: { isLowPowerMode?: 
                                 src={hoveredBlog}
                                 alt="Blog Preview"
                                 fill
+                                loading="lazy"
                                 className="object-cover grayscale"
                             />
                         </div>

@@ -1,5 +1,5 @@
 import { motion, useMotionValue } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { MoveRight } from 'lucide-react';
 import Link from 'next/link';
 import { Terminal, TypingAnimation, AnimatedSpan } from '@/components/ui/terminal';
@@ -12,12 +12,28 @@ export const SkillsClosing = () => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
+    const rafRef = useRef<number | null>(null);
+
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (isLowPowerMode) return;
-        const rect = e.currentTarget.getBoundingClientRect();
-        mouseX.set(e.clientX - rect.left);
-        mouseY.set(e.clientY - rect.top);
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+        const { clientX, clientY, currentTarget } = e;
+        const target = currentTarget;
+        const rect = target.getBoundingClientRect();
+
+        rafRef.current = requestAnimationFrame(() => {
+            mouseX.set(clientX - rect.left);
+            mouseY.set(clientY - rect.top);
+        });
     };
+
+    // Cleanup RAF on unmount
+    useEffect(() => {
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, []);
 
     return (
         <section

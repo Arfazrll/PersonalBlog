@@ -760,7 +760,7 @@ export const DomeGallery: React.FC<DomeGalleryProps> = ({
                     />
                     <div
                         ref={frameRef}
-                        className="h-full aspect-square flex max-[1/1]:h-auto max-[1/1]:w-full"
+                        className="h-full aspect-square flex portrait:h-auto portrait:w-full"
                         style={{ borderRadius: 'var(--enlarge-radius, 32px)' }}
                     />
                 </div>

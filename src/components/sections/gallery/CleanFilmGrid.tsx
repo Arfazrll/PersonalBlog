@@ -305,6 +305,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                                     src={item.thumbnail || item.url}
                                                     alt={item.title}
                                                     fill
+                                                    loading="lazy"
                                                     className={cn(
                                                         "object-cover transition-transform duration-700",
                                                         !isLowPowerMode && "group-hover/card:scale-110"
@@ -382,6 +383,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                                 alt={item.title}
                                                 width={800}
                                                 height={600}
+                                                loading="lazy"
                                                 className={cn(
                                                     "object-cover transition-transform duration-700",
                                                     !isLowPowerMode && "group-hover:scale-105"

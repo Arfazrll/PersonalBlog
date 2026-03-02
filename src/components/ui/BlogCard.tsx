@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
 import Link from 'next/link';
 import { Calendar, ArrowUpRight, Brain, Blocks, Code2, Library, Sparkles } from 'lucide-react';
@@ -29,12 +30,21 @@ export function BlogCard({ post, index, isLowPowerMode }: BlogCardProps) {
     // Mouse interaction for glow
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+    const frameRef = useRef<number | null>(null);
 
     const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent) => {
         if (isLowPowerMode) return;
-        const { left, top } = currentTarget.getBoundingClientRect();
-        mouseX.set(clientX - left);
-        mouseY.set(clientY - top);
+
+        if (frameRef.current) {
+            cancelAnimationFrame(frameRef.current);
+        }
+
+        frameRef.current = requestAnimationFrame(() => {
+            if (!currentTarget) return;
+            const { left, top } = currentTarget.getBoundingClientRect();
+            mouseX.set(clientX - left);
+            mouseY.set(clientY - top);
+        });
     };
 
     const backgroundStyle = useMotionTemplate`
