@@ -101,6 +101,7 @@ const ProjectGallery = ({
                         <img
                             src={img}
                             alt={`Gallery Image ${idx + 1}`}
+                            loading="lazy"
                             className="w-full h-auto object-contain block rounded-lg shadow-2xl shadow-black/20 dark:shadow-black/60 transition-transform duration-500 group-hover:scale-[1.01]"
                         />
 
@@ -547,7 +548,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                             >
                                 {/* Background Layer */}
                                 {p.image ? (
-                                    <img src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                    <img src={p.image} alt={p.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                                 ) : (
                                     <ProjectPlaceholder className="absolute inset-0" title="No Preview" />
                                 )}

@@ -10,8 +10,6 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // Configure Nodemailer transporter (fallback to Gmail if standard SMTP fails)
-        // Using environment variables for security. You must configure these in .env.local
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 465,

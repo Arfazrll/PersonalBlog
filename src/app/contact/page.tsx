@@ -60,7 +60,7 @@ function SocialCard({ item }: { item: any }) {
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex h-[140px] w-[280px] flex-col justify-between rounded-3xl border border-primary/5 bg-primary/[0.03] dark:bg-white/[0.02] p-6 shadow-2xl transition-all hover:bg-primary/10 dark:hover:bg-white/5 hover:scale-[1.02] hover:-translate-y-1 backdrop-blur-sm overflow-hidden flex-shrink-0"
+            className="group relative flex h-[140px] w-[280px] flex-col justify-between rounded-3xl border border-neutral-200 dark:border-white/5 bg-white dark:bg-white/[0.02] p-6 shadow-sm dark:shadow-2xl transition-all hover:bg-neutral-50 dark:hover:bg-white/5 hover:border-neutral-300 hover:scale-[1.02] hover:-translate-y-1 backdrop-blur-md overflow-hidden flex-shrink-0"
         >
             <div className="absolute -top-6 -right-6 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity transform group-hover:scale-125 duration-700">
                 <Icon className="w-40 h-40" />
@@ -396,7 +396,7 @@ export default function ContactPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
-                                <div className="flex flex-col gap-6">
+                                <div className="flex flex-col gap-1">
                                     <SocialTicker items={row1Real} direction="right" speed={50} isLowPowerMode={isLowPowerMode} />
                                     <SocialTicker items={row2Real} direction="left" speed={50} isLowPowerMode={isLowPowerMode} />
                                 </div>

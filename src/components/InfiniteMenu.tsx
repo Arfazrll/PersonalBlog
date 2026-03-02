@@ -1143,7 +1143,7 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
             shadow-xl
             transition-all
             duration-500
-            ease-[cubic-bezier(0.23,1,0.32,1)]
+            [transition-timing-function:cubic-bezier(0.23,1,0.32,1)]
             ${isMoving
               ? 'bottom-0 opacity-0 pointer-events-none scale-50 -translate-x-1/2 translate-y-full'
               : 'bottom-[10%] md:bottom-[12%] opacity-100 pointer-events-auto scale-100 -translate-x-1/2'

@@ -1,8 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import ManifestoHero from "@/components/sections/gallery/ManifestoHero";
-import CleanFilmGrid from "@/components/sections/gallery/CleanFilmGrid";
-import BlogPortalFooter from "@/components/sections/gallery/BlogPortalFooter";
+const CleanFilmGrid = dynamic(() => import("@/components/sections/gallery/CleanFilmGrid"), {
+    ssr: false,
+});
+const BlogPortalFooter = dynamic(() => import("@/components/sections/gallery/BlogPortalFooter"), {
+    ssr: false,
+});
 import { usePerformance } from "@/hooks/usePerformance";
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 

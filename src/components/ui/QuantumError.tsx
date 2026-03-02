@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Home, MoveLeft, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
+import { usePerformance } from '@/hooks/usePerformance';
 
 interface QuantumErrorProps {
     type?: '404' | '500';
@@ -11,9 +12,11 @@ interface QuantumErrorProps {
 }
 
 export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
+    const { isLowPowerMode } = usePerformance();
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
     const [currentTime, setCurrentTime] = useState(new Date());
+    const frameRef = React.useRef<number | null>(null);
 
     const springConfig = { damping: 25, stiffness: 150 };
     const rotateX = useSpring(useTransform(mouseY, [0, 1000], [10, -10]), springConfig);
@@ -21,8 +24,16 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
-            mouseX.set(e.clientX);
-            mouseY.set(e.clientY);
+            if (isLowPowerMode) return;
+
+            if (frameRef.current) {
+                cancelAnimationFrame(frameRef.current);
+            }
+
+            frameRef.current = requestAnimationFrame(() => {
+                mouseX.set(e.clientX);
+                mouseY.set(e.clientY);
+            });
         };
         const timer = setInterval(() => setCurrentTime(new Date()), 1000);
 
@@ -30,8 +41,11 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             clearInterval(timer);
+            if (frameRef.current) {
+                cancelAnimationFrame(frameRef.current);
+            }
         };
-    }, [mouseX, mouseY]);
+    }, [mouseX, mouseY, isLowPowerMode]);
 
     const title = type === '404' ? '404' : 'ERROR';
     const subtitle = type === '404' ? 'YOU ARE LOST!?' : 'EXCEPTION_CAUGHT';
@@ -71,18 +85,20 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
                     </motion.h1>
 
                     {/* Ghost Layers for Glitch Effect */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-30 mix-blend-difference pointer-events-none">
-                        <motion.span
-                            animate={{
-                                x: [0, -4, 4, -2, 0],
-                                y: [0, 2, -2, 1, 0]
-                            }}
-                            transition={{ duration: 0.2, repeat: Infinity, repeatType: 'reverse', ease: 'linear' }}
-                            className="text-[12rem] md:text-[18rem] font-black text-primary select-none"
-                        >
-                            {title}
-                        </motion.span>
-                    </div>
+                    {!isLowPowerMode && (
+                        <div className="absolute inset-0 flex items-center justify-center opacity-30 mix-blend-difference pointer-events-none">
+                            <motion.span
+                                animate={{
+                                    x: [0, -4, 4, -2, 0],
+                                    y: [0, 2, -2, 1, 0]
+                                }}
+                                transition={{ duration: 0.2, repeat: Infinity, repeatType: 'reverse', ease: 'linear' }}
+                                className="text-[12rem] md:text-[18rem] font-black text-primary select-none"
+                            >
+                                {title}
+                            </motion.span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Subtitle & Status */}

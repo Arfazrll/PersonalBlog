@@ -160,18 +160,27 @@ function HeroIntro() {
     const t = useTranslations('hero');
     const isMobile = useIsMobile();
 
+    const rafRef = useRef<number | null>(null);
+
     const handleMouseMove = useCallback((e: MouseEvent) => {
         if (isMobile) return;
-        const { clientX, clientY } = e;
-        const { innerWidth, innerHeight } = window;
-        mouseX.set((clientX - innerWidth / 2) / 40);
-        mouseY.set((clientY - innerHeight / 2) / 40);
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+        rafRef.current = requestAnimationFrame(() => {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+            mouseX.set((clientX - innerWidth / 2) / 40);
+            mouseY.set((clientY - innerHeight / 2) / 40);
+        });
     }, [isMobile, mouseX, mouseY]);
 
     useEffect(() => {
         if (isMobile) return;
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
     }, [handleMouseMove, isMobile]);
 
     useEffect(() => {

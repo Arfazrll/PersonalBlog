@@ -28,14 +28,31 @@ export const ToolsSection = () => {
     const mouseX = useMotionValue(-1000);
     const mouseY = useMotionValue(-1000);
 
+    const rafRef = useRef<number | null>(null);
+
     const handleMouseMove = (e: React.MouseEvent) => {
         if (isLowPowerMode) return;
-        if (containerRef.current) {
-            const rect = containerRef.current.getBoundingClientRect();
-            mouseX.set(e.clientX - rect.left);
-            mouseY.set(e.clientY - rect.top);
-        }
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+        const { clientX, clientY, currentTarget } = e;
+        // In this specific case, the event is attached to the grid container
+        // To accurately get the rect relative to the target without querying every frame,
+        // we can still use currentTarget.getBoundingClientRect() but within the throttle
+        const target = currentTarget as HTMLElement;
+        const rect = target.getBoundingClientRect();
+
+        rafRef.current = requestAnimationFrame(() => {
+            mouseX.set(clientX - rect.left);
+            mouseY.set(clientY - rect.top);
+        });
     };
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, []);
 
     const handleMouseLeave = () => {
         // Optional: Reset or leave as is

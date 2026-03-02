@@ -64,19 +64,25 @@ export default function CTASection() {
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-12">
                     {t('title')}
                     <br />
-                    <AnimatePresence mode="wait">
-                        <motion.span
-                            key={words[currentWord]}
-                            initial={{ y: 60, opacity: 0, rotateX: -60 }}
-                            animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                            exit={{ y: -60, opacity: 0, rotateX: 60 }}
-                            transition={{ duration: 0.5 }}
-                            className="inline-block text-gradient"
-                        >
-                            {words[currentWord]}
-                        </motion.span>
-                    </AnimatePresence>
-                    {' '}{t('together')}
+                    <span className="inline-grid place-items-center">
+                        {/* Invisible longest word ensures the container NEVER changes width/height */}
+                        <span className="col-start-1 row-start-1 invisible pointer-events-none text-gradient mx-2">
+                            {words.reduce((a, b) => a.length > b.length ? a : b, "")}
+                        </span>
+                        <AnimatePresence>
+                            <motion.span
+                                key={words[currentWord]}
+                                initial={{ y: 50, opacity: 0, rotateX: -90 }}
+                                animate={{ y: 0, opacity: 1, rotateX: 0 }}
+                                exit={{ y: -50, opacity: 0, rotateX: 90 }}
+                                transition={{ duration: 0.4, ease: "easeOut" }}
+                                className="col-start-1 row-start-1 inline-block text-gradient mx-2"
+                            >
+                                {words[currentWord]}
+                            </motion.span>
+                        </AnimatePresence>
+                    </span>
+                    <span className="whitespace-nowrap">{t('together')}</span>
                 </h2>
 
                 <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-16">

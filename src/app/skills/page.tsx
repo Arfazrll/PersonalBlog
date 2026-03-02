@@ -6,12 +6,13 @@ import { useTranslations } from 'next-intl';
 import { portfolioData } from '@/data/portfolio';
 import { SplineScene } from '@/components/ui/SplineScene';
 import { TextPressure } from '@/components/ui/TextPressure';
-import { KineticTechGrid } from '@/components/ui/KineticTechGrid';
-import { SoftSkills } from '@/components/sections/skills/SoftSkills';
-import { HardSkills } from '@/components/sections/skills/HardSkills';
-import { ToolsSection } from '@/components/sections/skills/ToolsSection';
-import { SkillsClosing } from '@/components/sections/skills/SkillsClosing';
-import Particles from '@/components/ui/Particles';
+import dynamic from 'next/dynamic';
+
+const KineticTechGrid = dynamic(() => import('@/components/ui/KineticTechGrid').then(mod => mod.KineticTechGrid), { ssr: true });
+const SoftSkills = dynamic(() => import('@/components/sections/skills/SoftSkills').then(mod => mod.SoftSkills), { ssr: true });
+const HardSkills = dynamic(() => import('@/components/sections/skills/HardSkills').then(mod => mod.HardSkills), { ssr: true });
+const ToolsSection = dynamic(() => import('@/components/sections/skills/ToolsSection').then(mod => mod.ToolsSection), { ssr: true });
+const SkillsClosing = dynamic(() => import('@/components/sections/skills/SkillsClosing').then(mod => mod.SkillsClosing), { ssr: true });
 import { cn } from '@/lib/utils';
 
 // ==================== [PRESERVED CONSTANTS] ==================== //

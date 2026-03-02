@@ -7,7 +7,12 @@ import { Search, SortAsc, SortDesc, ExternalLink, X, Calendar, Building2, Trophy
 import { cn, formatDate } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import { Achievement } from '@/types';
-import FallingText from '@/components/effects/FallingText';
+import dynamic from 'next/dynamic';
+
+const FallingText = dynamic(() => import('@/components/effects/FallingText'), {
+    ssr: false,
+    loading: () => <div className="h-[400px] w-full animate-pulse bg-zinc-100/5 dark:bg-zinc-800/5 rounded-xl" />
+});
 import CertificateHeroScroll from '@/components/sections/CertificateHeroScroll';
 import { usePerformance } from '@/hooks/usePerformance';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -36,12 +41,27 @@ const AchievementCard = React.memo(React.forwardRef<HTMLDivElement, {
         const mouseX = useMotionValue(0);
         const mouseY = useMotionValue(0);
 
+        const rafRef = React.useRef<number | null>(null);
+
         const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
             if (isLowPowerMode) return;
-            const { left, top } = e.currentTarget.getBoundingClientRect();
-            mouseX.set(e.clientX - left);
-            mouseY.set(e.clientY - top);
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+            const { clientX, clientY, currentTarget } = e;
+            const { left, top } = currentTarget.getBoundingClientRect();
+
+            rafRef.current = requestAnimationFrame(() => {
+                mouseX.set(clientX - left);
+                mouseY.set(clientY - top);
+            });
         };
+
+        // Cleanup on unmount
+        React.useEffect(() => {
+            return () => {
+                if (rafRef.current) cancelAnimationFrame(rafRef.current);
+            };
+        }, []);
 
         const springConfig = { stiffness: 150, damping: 20 };
         const mouseXSpring = useSpring(mouseX, springConfig);
@@ -121,6 +141,7 @@ const AchievementCard = React.memo(React.forwardRef<HTMLDivElement, {
                                             src={`${achievement.image}#toolbar=0&navpanes=0&scrollbar=0`}
                                             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                                             title={achievement.title}
+                                            loading="lazy"
                                         />
                                         {/* Overlay to capture clicks and prevent iframe interaction in card */}
                                         <div className="absolute inset-0 z-10 bg-transparent" />
@@ -130,6 +151,7 @@ const AchievementCard = React.memo(React.forwardRef<HTMLDivElement, {
                                         src={achievement.image}
                                         alt={achievement.title}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-100"
+                                        loading="lazy"
                                     />
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
@@ -313,6 +335,7 @@ function AchievementModal({ achievement, onClose, isLowPowerMode }: { achievemen
                                             src={`${achievement.image}#toolbar=0&view=FitH`}
                                             className="w-full h-full border-0"
                                             title={achievement.title}
+                                            loading="lazy"
                                         />
                                     </div>
                                 </motion.div>
@@ -328,6 +351,7 @@ function AchievementModal({ achievement, onClose, isLowPowerMode }: { achievemen
                                             src={achievement.image}
                                             alt={achievement.title}
                                             className="w-full h-auto object-contain shadow-2xl rounded-lg"
+                                            loading="lazy"
                                         />
                                     </motion.div>
                                 </div>
@@ -519,6 +543,7 @@ export default function AchievementsPage() {
                     )}
                     animate={isLowPowerMode ? {} : { scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
                     transition={{ duration: 5, repeat: Infinity }}
+                    style={{ willChange: "transform, opacity" }}
                 />
                 <motion.div
                     className={cn(
@@ -527,6 +552,7 @@ export default function AchievementsPage() {
                     )}
                     animate={isLowPowerMode ? {} : { scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
                     transition={{ duration: 6, repeat: Infinity, delay: 1 }}
+                    style={{ willChange: "transform, opacity" }}
                 />
             </div>
 
