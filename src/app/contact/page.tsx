@@ -7,14 +7,15 @@ import { Send, CheckCircle, AlertCircle, Loader2, Disc, Music, ArrowUpRight, Spa
 import { cn } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
 import dynamic from 'next/dynamic';
-import ScrollVelocity from '@/components/ui/ScrollVelocity';
 
 const Lanyard = dynamic<{ position?: [number, number, number], gravity?: [number, number, number], isLowPowerMode?: boolean }>(() => import('@/components/three/Lanyard').then(mod => mod.Lanyard), {
     ssr: false,
     loading: () => <div className="w-full h-full flex items-center justify-center bg-transparent"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>
 });
 
-import { Meteors } from '@/components/ui/meteors';
+const DynamicScrollVelocity = dynamic(() => import('@/components/ui/ScrollVelocity'), { ssr: false });
+const Meteors = dynamic(() => import('@/components/ui/meteors').then(mod => mod.Meteors), { ssr: false });
+
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = false }: { items: any[], direction?: 'left' | 'right', speed?: number, isLowPowerMode?: boolean }) {
@@ -22,8 +23,8 @@ function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = 
         <div className="flex overflow-hidden relative w-full group/ticker py-4 select-none">
             <motion.div
                 className="flex gap-4 flex-nowrap hover:[animation-play-state:paused]"
-                initial={{ x: direction === 'left' ? 0 : '-25%' }}
-                animate={isLowPowerMode ? { x: direction === 'left' ? 0 : '-25%' } : { x: direction === 'left' ? '-50%' : 0 }}
+                initial={{ x: direction === 'left' ? 0 : '-50%' }}
+                animate={isLowPowerMode ? { x: direction === 'left' ? 0 : '-50%' } : { x: direction === 'left' ? '-50%' : 0 }}
                 transition={{
                     ease: "linear",
                     duration: speed,
@@ -31,8 +32,8 @@ function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = 
                 }}
                 style={{ width: "max-content" }}
             >
-                {/* 4x Duplication */}
-                {[...items, ...items, ...items, ...items].map((item, idx) => (
+                {/* 2x Duplication (Optimized from 4x) */}
+                {[...items, ...items].map((item, idx) => (
                     <SocialCard key={`${item.platform}-${idx}`} item={item} />
                 ))}
             </motion.div>
@@ -333,7 +334,7 @@ export default function ContactPage() {
             <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none z-0" />
             <div className="fixed inset-0 bg-background/60 backdrop-blur-[2px] pointer-events-none z-0" />
             <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
-                {!isLowPowerMode && <Meteors number={100} />}
+                {!isLowPowerMode && <Meteors number={50} />}
             </div>
 
             {/* 3. MAIN CONTENT: (Header + Form + Lanyard) */}
@@ -349,7 +350,7 @@ export default function ContactPage() {
                 {/* Header Section (Flows normally) */}
                 <div className="relative w-full pt-48 pb-20">
                     <div className="w-full flex items-center justify-center opacity-20 select-none pointer-events-none">
-                        <ScrollVelocity
+                        <DynamicScrollVelocity
                             texts={[t('hero.ticker.build'), t('hero.ticker.freelance')]}
                             velocity={20}
                             className="text-7xl md:text-[9rem] font-black tracking-tight uppercase whitespace-nowrap"
@@ -430,9 +431,9 @@ export default function ContactPage() {
                 }
                 }
             >
-                {/* Dedicated Meteors for FAQ Section */}
+                {/* Dedicated Meteors for FAQ Section - Reduced count */}
                 <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
-                    {!isLowPowerMode && <Meteors number={60} />}
+                    {!isLowPowerMode && <Meteors number={30} />}
                 </div>
 
                 {/* Ultra-Smooth Sheet Edge: Tallest gradient for deep cinematic transition */}
