@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Menu, X, Moon, Sun, Globe, ChevronDown } from 'lucide-react';
+import { Menu, X, Moon, Sun, Globe, ChevronDown, Focus } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
@@ -196,6 +196,17 @@ export function Navbar() {
 
                         {/* Controls */}
                         <div className="flex items-center gap-2 md:gap-3">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="p-2 md:p-2.5 rounded-full bg-muted/80 hover:bg-muted transition-colors"
+                                aria-label="Focus mode"
+                            >
+                                <Link href="https://arfazrllworkspace.vercel.app/" target="_blank" rel="noopener noreferrer">
+                                    <Focus className="w-4 h-4" />
+                                </Link>
+                            </motion.button>
+
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
