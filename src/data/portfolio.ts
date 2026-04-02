@@ -59,6 +59,103 @@ export const portfolioData: PortfolioData = {
     projects: [
         {
             id: 'project-1',
+            slug: 'swarm-agent-orchestrator',
+            title: 'Swarm AI Blog Writer',
+            description: 'Production-grade multi-agent blog generation engine powered by Pydantic AI and Groq (Llama 3.3 70B).',
+            longDescription: 'Swarm AI Blog Writer is a production-grade, multi-agent blog generation engine where multiple specialized AI agents orchestrate in a synchronized pipeline to create long-form, research-backed blog posts exported as professional PDF reports. Powered by Pydantic AI structured validation and Groq\'s Llama 3.3 70B, the system features a Planner, Researcher, Writer, and Editor agent working in harmony. A premium SaaS-grade Vue.js 3 frontend with GSAP animations and a bento-grid layout delivers the interaction layer, while a serverless Flask backend handles AI inference and PDF generation.',
+
+            techStack: ['Vue.js 3', 'Vite 5', 'TypeScript', 'Tailwind CSS 3', 'GSAP 3', 'Python', 'Flask', 'Pydantic v2', 'Groq API', 'Llama 3.3 70B', 'FPDF2'],
+            tools: ['VS Code', 'Vercel', 'Postman', 'GitHub'],
+            status: 'completed',
+            repoUrl: 'https://github.com/Arfazrll/Swarm-Agent-Orchestrator',
+            demoUrl: '#',
+            startDate: '2025-03-01',
+            role: 'AI Engineer & Full Stack Developer',
+            customTimeline: 'March 2025',
+            team: 'Personal Project',
+
+            highlights: ['Multi-Agent Orchestration', '70B LLM via Groq', 'Professional PDF Export'],
+            category: 'AI & Machine Learning',
+            features: [
+                {
+                    title: 'Multi-Agent Orchestration',
+                    items: [
+                        '**Planner Agent**: Generates a structured 5-section blog outline validated by Pydantic v2 schemas before passing to the next stage.',
+                        '**Researcher Agent**: Performs deep-dive research for each section using Llama 3.3 70B, enriching content with factual context.',
+                        '**Writer Agent**: Crafts the final 1000+ word Markdown article from the research data, ensuring stylistic coherence.',
+                        '**Editor Agent**: Reviews and refines the draft for clarity, grammar, and professional tone before PDF export.'
+                    ]
+                },
+                {
+                    title: 'Premium SaaS Frontend',
+                    items: [
+                        '**Vue.js 3 + GSAP**: Fluid, GSAP-powered animations on a high-contrast minimalist interface for a premium feel.',
+                        '**Bento-Grid Layout**: Modern card-based feature showcase using Tailwind CSS 3 for a polished SaaS aesthetic.',
+                        '**Live Generation Panel**: Real-time progress feed showing agent pipeline status as the blog is being generated.',
+                        '**Lucide VueNext Icons**: Consistent, scalable icon system integrated throughout the UI components.'
+                    ]
+                },
+                {
+                    title: 'AI & Validation Pipeline',
+                    items: [
+                        '**Pydantic v2 Schemas**: Strict structured validation (BlogPlan, FinalBlog) enforced at each agent handoff to prevent hallucinated outputs.',
+                        '**Groq Inference**: Standardized on Llama 3.3 70B via Groq API for superior reasoning speed and schema adherence.',
+                        '**5-Section Planning**: Comprehensive outline generation covering introduction, body sections, and conclusion for long-form articles.'
+                    ]
+                },
+                {
+                    title: 'Infrastructure & Deployment',
+                    items: [
+                        '**Serverless Architecture**: Flask backend structured as a flat, serverless-compatible API for Vercel deployment.',
+                        '**Professional PDF Export**: Automatic Markdown-to-PDF rendering via FPDF2 with automated artifact cleanup after delivery.',
+                        '**Vercel Routing**: `vercel.json` routes all `/api/*` requests to the Flask serverless handler; Vite-built frontend served from `dist/`.'
+                    ]
+                }
+            ],
+            installation: [
+                {
+                    title: 'Clone the Repository',
+                    code: 'git clone https://github.com/Arfazrll/Swarm-Agent-Orchestrator.git\ncd Swarm-Agent-Orchestrator',
+                    type: 'code'
+                },
+                {
+                    title: 'Install Frontend Dependencies',
+                    code: 'npm install',
+                    type: 'code'
+                },
+                {
+                    title: 'Install Backend Dependencies',
+                    code: 'pip install -r requirements.txt',
+                    type: 'code'
+                },
+                {
+                    title: 'Environment Configuration',
+                    code: '# Create .env in the root directory\nGROQ_API_KEY=your_groq_key_here',
+                    type: 'code'
+                },
+                {
+                    title: 'Run Development Servers',
+                    code: '# Terminal 1 — Frontend\nnpm run dev\n\n# Terminal 2 — Backend\npython api/index.py\n# Visit http://localhost:5173',
+                    type: 'code'
+                }
+            ],
+            challengesAndSolutions: [
+                {
+                    problem: 'Agent Pipeline Validation Failures',
+                    solution: 'Enforced strict Pydantic v2 schemas (BlogPlan, FinalBlog) at every agent handoff boundary. Any malformed LLM output triggers a re-prompt before the pipeline advances, ensuring 100% schema-valid data flow.'
+                },
+                {
+                    problem: 'Serverless Cold-Start Latency',
+                    solution: 'Restructured the Flask application into a flat, serverless-compatible API layout for Vercel, minimizing dependency loading overhead and achieving sub-400ms cold-start initialization.'
+                },
+                {
+                    problem: 'PDF Encoding Artifacts',
+                    solution: 'Built a custom Markdown sanitization layer before FPDF2 rendering that strips unsupported Unicode characters and normalizes heading/emphasis syntax, producing clean, professional PDF output without encoding errors.'
+                }
+            ]
+        },
+        {
+            id: 'project-2',
             slug: 'creative-portfolio-website',
             title: 'Creative Portfolio Website',
             description: 'Modern, animated portfolio with 3D elements and smooth animations.',
@@ -150,7 +247,7 @@ WAKATIME_API_KEY=your_wakatime_key`
 
         },
         {
-            id: 'project-2',
+            id: 'project-3',
             slug: 'snbtin-platform',
             title: 'SNBTIn - Platform Persiapan SNBT 2025',
             description: 'Platform e-learning #1 di Indonesia untuk persiapan SNBT bagi siswa SMA.',
@@ -239,7 +336,7 @@ WAKATIME_API_KEY=your_wakatime_key`
 
         },
         {
-            id: 'project-3',
+            id: 'project-4',
             slug: 'terraflow-platform',
             title: 'Terraflow Platform',
             description: 'Enterprise-grade IoT solution for precision agriculture.',
@@ -318,7 +415,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ],
         },
         {
-            id: 'project-4',
+            id: 'project-5',
             slug: 'docsinsight-engine',
             title: 'DocsInsight Engine',
             description: 'Enterprise RAG System for intelligent document analysis.',
@@ -402,7 +499,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-5',
+            id: 'project-6',
             slug: 'donasiaku',
             title: 'Donasiaku',
             description: 'Platform Penyaluran Donasi Barang Layak Pakai.',
@@ -492,7 +589,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-6',
+            id: 'project-7',
             slug: 'security-automation-genai',
             title: 'Security Automation with GenAI',
             description: 'AI-driven cybersecurity threat detection system using Transformers.',
@@ -577,7 +674,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-7',
+            id: 'project-8',
             slug: 'web3-guestbook-dapp',
             title: 'Web3 Guestbook DApp',
             description: 'Decentralized guestbook on Ethereum allowing for immutable messages.',
@@ -662,7 +759,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-8',
+            id: 'project-9',
             slug: 'digilibzx',
             title: 'Digilibzx',
             description: 'Modern full-stack digital library management system with AI-powered features.',
@@ -747,7 +844,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-9',
+            id: 'project-11',
             slug: 'polabdc-dental-management',
             title: 'POLABDC Dental Management',
             description: 'AI-powered Dental Clinic Management SaaS for digitized operations.',
@@ -834,7 +931,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-10',
+            id: 'project-12',
             slug: 'deep-learning-image-classifier',
             title: 'Deep Learning Image Classifier',
             description: 'Interactive educational platform for visualizing CNN and Transfer Learning mechanics.',
@@ -919,7 +1016,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-11',
+            id: 'project-13',
             slug: 'ai-book-discovery-platform',
             title: 'AI Book Discovery Platform',
             description: 'Local RAG-based book recommendation system with semantic search.',
@@ -999,7 +1096,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-12',
+            id: 'project-14',
             slug: 'mytelkomsel-sentiment-analysis',
             title: 'MyTelkomsel Sentiment Analysis',
             description: 'Comparing ML/DL architectures for Indonesian app review sentiment classification.',
@@ -1084,7 +1181,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-13',
+            id: 'project-15',
             slug: 'neurovision-real-time-detection',
             title: 'NeuroVision (Real-time Detection)',
             description: 'Advanced real-time object detection using YOLOv3 and Darknet-53.',
@@ -1169,7 +1266,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-14',
+            id: 'project-16',
             slug: 'voices-unheard',
             title: 'Voices Unheard',
             description: 'Secure, anonymous digital sanctuary for conflict-affected story sharing.',
@@ -1254,7 +1351,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-15',
+            id: 'project-17',
             slug: 'smart-motion-detection-system',
             title: 'Smart Motion Detection System',
             description: 'AIoT motion detection using YOLO11-Pose and MQTT for smart home automation.',
@@ -1339,7 +1436,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-16',
+            id: 'project-18',
             slug: 'solar-energy-pinn-prediction',
             title: 'Solar Energy PINN Prediction',
             description: 'AI-powered solar energy prediction system integrating Physics-Informed Neural Networks (PINN).',
@@ -1424,7 +1521,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-17',
+            id: 'project-19',
             slug: 'credit-risk-analysis-lstm',
             title: 'Credit Risk Analysis LSTM',
             description: 'High-precision loan default prediction using stacked LSTM layers and sequential financial modeling.',
@@ -1509,7 +1606,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-18',
+            id: 'project-20',
             slug: 'hand-gesture-recognition',
             title: 'Hand Gesture Recognition',
             description: 'Real-time hand tracking and skeletal landmark detection using MediaPipe and OpenCV.',
@@ -1594,7 +1691,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-19',
+            id: 'project-21',
             slug: 'data-analyst-dashboard',
             title: 'Data Analyst Dashboard',
             description: 'Interactive analytics tool for e-commerce data exploration using Dash and Plotly.',
@@ -1677,7 +1774,7 @@ WAKATIME_API_KEY=your_wakatime_key`
                     solution: "Implemented hierarchical filtering (Category -> Sub-category) to keep visualizations focused and easy to interpret for non-technical stakeholders."
                 }
             ]
-        },
+        }
     ],
     experiences: [
         // 1. PROFESSIONAL EXPERIENCE
