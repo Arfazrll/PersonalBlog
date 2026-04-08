@@ -509,167 +509,73 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
     );
 }
 
-function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean }) {
-    const cardRef = useRef<HTMLDivElement>(null);
-    const [isHovered, setIsHovered] = useState(false);
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const pixelX = useMotionValue(0);
-    const pixelY = useMotionValue(0);
-
-    const rafRef = useRef<number | null>(null);
-
-    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [6, -6]), { stiffness: 400, damping: 25 });
-    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [-6, 6]), { stiffness: 400, damping: 25 });
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!cardRef.current) return;
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-        const rect = cardRef.current.getBoundingClientRect();
-
-        rafRef.current = requestAnimationFrame(() => {
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            mouseX.set(x);
-            mouseY.set(y);
-            pixelX.set(e.clientX - rect.left);
-            pixelY.set(e.clientY - rect.top);
-        });
-    };
-
-    const handleMouseLeave = () => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        mouseX.set(0);
-        mouseY.set(0);
-        setIsHovered(false);
-    };
-
-    useEffect(() => {
-        return () => {
-            if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        };
-    }, []);
-
+function ProjectCard({ project, onClick, index }: { project: Project; onClick: () => void; index: number; }) {
     const isOngoing = project.status === 'ongoing';
-    const bgGradient = useMotionTemplate`radial-gradient(500px circle at ${pixelX}px ${pixelY}px, ${isOngoing ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.12)'}, transparent 40%)`;
 
     return (
         <motion.article
-            initial={{ opacity: 0, y: isLowPowerMode ? 25 : 50 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-30px" }}
-            transition={{ duration: isLowPowerMode ? 0.4 : 0.6, delay: index * 0.1 }}
-            className="group cursor-pointer perspective-1000"
-            data-project-slug={project.slug}
+            transition={{ duration: 0.6, delay: 0.1 * (index % 2) }}
+            className="group cursor-pointer flex flex-col gap-6"
             onClick={onClick}
         >
-            <motion.div
-                ref={cardRef}
-                className="relative h-full min-h-[320px] sm:min-h-[380px] rounded-2xl overflow-hidden"
-                style={isLowPowerMode ? {} : { rotateX, rotateY, transformStyle: 'preserve-3d' }}
-                onMouseMove={handleMouseMove}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={handleMouseLeave}
-                whileHover={isLowPowerMode ? {} : { scale: 1.03, y: -8 }}
-                transition={{ duration: 0.3 }}
-            >
-                {/* Gradient Border */}
-                {!isLowPowerMode && (
-                    <motion.div
-                        className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                        style={{
-                            background: isOngoing
-                                ? 'linear-gradient(135deg, #10b981, #06b6d4)'
-                                : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                        }}
+            {/* Top Image Box */}
+            <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden bg-secondary/10 border border-foreground/5 dark:border-white/10 shadow-sm transition-all duration-500 group-hover:shadow-2xl dark:shadow-none shadow-black/5 group-hover:-translate-y-1">
+                {project.image ? (
+                    <img
+                        src={project.image}
+                        alt={project.title}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                ) : (
+                    <ProjectPlaceholder className="absolute inset-0" title={project.title} />
                 )}
+                
+                {/* Subtle overlay on hover */}
+                <div className="absolute inset-0 bg-foreground/5 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            </div>
 
-                {/* Card Body */}
-                <div className="relative h-full bg-zinc-950/95 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden flex flex-col justify-end">
-
-                    {/* Project Image Background - OR No Image Styled Bg */}
-                    {/* Project Image Background - OR No Image Styled Bg */}
-                    {project.image ? (
-                        <div className="absolute inset-0 z-0">
-                            <img
-                                src={project.image}
-                                alt={project.title}
-                                loading="lazy"
-                                className="w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />
-                        </div>
-                    ) : (
-                        <div className="absolute inset-0 z-0">
-                            <ProjectPlaceholder className="absolute inset-0" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
-                        </div>
-                    )}
-
-                    {/* Spotlight */}
-                    {!isLowPowerMode && (
-                        <motion.div
-                            className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300"
-                            style={{
-                                opacity: isHovered ? 1 : 0,
-                                background: bgGradient
-                            }}
-                        />
-                    )}
-
-                    {/* Content */}
-                    <div className="relative z-30 p-6 sm:p-8">
-                        {/* Status Badge */}
-                        <div className={cn(
-                            "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 backdrop-blur-sm",
-                            isOngoing
-                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                : "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                        )}>
-                            <span className={cn(
-                                "w-1.5 h-1.5 rounded-full",
-                                isOngoing ? "bg-emerald-400 animate-pulse" : "bg-blue-400"
-                            )} />
-                            {project.status === 'ongoing' ? 'in development' : 'completed'}
-                        </div>
-
-                        {/* Title */}
-                        <motion.h3
-                            className="text-2xl sm:text-3xl font-bold text-white mb-3 line-clamp-1"
-                            animate={{ x: isHovered ? 4 : 0 }}
-                        >
-                            {project.title}
-                        </motion.h3>
-
-                        {/* Description */}
-                        <p className="text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-2">
-                            {project.description}
-                        </p>
-
-                        {/* Tech Stack */}
-                        <div className="flex flex-wrap gap-2">
-                            {project.techStack.slice(0, 3).map((tech) => (
-                                <span
-                                    key={tech}
-                                    className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-zinc-300 border border-white/5"
-                                >
-                                    {tech}
-                                </span>
-                            ))}
-                            {project.techStack.length > 3 && (
-                                <span className={cn(
-                                    "px-2.5 py-1.5 rounded-lg text-xs font-medium border",
-                                    isOngoing ? "bg-emerald-500/5 text-emerald-400 border-emerald-500/20" : "bg-blue-500/5 text-blue-400 border-blue-500/20"
-                                )}>
-                                    +{project.techStack.length - 3}
-                                </span>
-                            )}
-                        </div>
+            {/* Bottom Content Box */}
+            <div className="flex flex-col flex-grow px-1 md:px-0">
+                
+                {/* Title & Badge Row */}
+                <div className="flex items-start justify-between gap-4 mb-3">
+                    <h3 className="text-3xl sm:text-4xl font-serif-elegant text-foreground group-hover:text-primary transition-colors tracking-tight">
+                        {project.title}
+                    </h3>
+                    <div className="shrink-0 mt-1 sm:mt-2">
+                        <span className="px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-mono tracking-wide border border-foreground/15 dark:border-white/20 text-muted-foreground bg-transparent transition-colors group-hover:border-primary/30 group-hover:bg-primary/5 uppercase">
+                            {project.category || (isOngoing ? 'In Development' : 'Completed')}
+                        </span>
                     </div>
                 </div>
-            </motion.div>
+
+                {/* Description */}
+                <p className="text-muted-foreground/80 md:text-lg leading-relaxed mb-6 line-clamp-3">
+                    {project.description}
+                </p>
+
+                {/* Footer Tech Badges */}
+                <div className="mt-auto flex flex-wrap gap-2 sm:gap-2.5 items-center">
+                    {project.techStack.slice(0, 4).map((tech) => {
+                        const Icon = Icons[getIconKey(tech)];
+                        return (
+                            <div key={tech} className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-foreground/10 dark:border-white/10 text-[11px] sm:text-xs font-medium text-foreground/70 bg-transparent transition-colors group-hover:border-foreground/20 dark:group-hover:border-white/20 hover:!bg-secondary/10">
+                                {Icon ? <Icon className="w-3.5 h-3.5" /> : <div className="w-1.5 h-1.5 rounded-full bg-foreground/30" />}
+                                {tech}
+                            </div>
+                        );
+                    })}
+                    {project.techStack.length > 4 && (
+                        <span className="text-xs font-mono text-muted-foreground opacity-60 ml-1">
+                            +{project.techStack.length - 4}
+                        </span>
+                    )}
+                </div>
+            </div>
         </motion.article>
     );
 }
@@ -1082,7 +988,7 @@ export default function ProjectsPage() {
                             </AnimatePresence>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16 md:gap-y-24">
                             <AnimatePresence mode="popLayout">
                                 {filteredProjects.slice(0, visibleCount).map((project, index) => (
                                     <ProjectCard
@@ -1095,7 +1001,6 @@ export default function ProjectsPage() {
                                             router.push(`/projects/${project.slug}`);
                                         }}
                                         index={index}
-                                        isLowPowerMode={isLowPowerMode}
                                     />
                                 ))}
                             </AnimatePresence>
