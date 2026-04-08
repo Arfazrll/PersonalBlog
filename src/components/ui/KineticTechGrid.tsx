@@ -1,11 +1,12 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { usePerformance } from '@/hooks/usePerformance';
 
 interface TechItem {
     name: string;
     icon: string;
+    category?: string;
 }
 
 interface KineticTechGridProps {
@@ -13,24 +14,43 @@ interface KineticTechGridProps {
     className?: string;
 }
 
+// Map tech names to descriptions that mimic the professional tone of Image 1
+const techDescriptions: Record<string, string> = {
+    'Python': 'High-performance AI modeling and automation.',
+    'TypeScript': 'Type-safe scalable application logic.',
+    'JavaScript': 'Dynamic and interactive web development.',
+    'Solidity': 'Immutable blockchain smart contracts.',
+    'React': 'Interactive component-based user interfaces.',
+    'Next.js': 'Production-grade React application framework.',
+    'Node.js': 'Scalable asynchronous server-side execution.',
+    'TensorFlow': 'Deep learning and neural network architectures.',
+    'Scikit-learn': 'Predictive data analysis and machine learning.',
+    'Pandas': 'High-performance data manipulation and analysis.',
+    'NumPy': 'Fundamental scientific computing capabilities.',
+    'Tailwind CSS': 'Rapid utility-first styling and design.',
+    'Redis': 'In-memory data structure store and caching.',
+    'PostgreSQL': 'Robust relational database architecture.',
+    'Kubernetes': 'Automated container deployment and scaling.',
+    'Docker': 'Standardized containerized environments.',
+    'Terraform': 'Infrastructure as code provisioning.',
+    'LangChain': 'Large language model application orchestration.',
+    'PyTorch': 'Dynamic neural networks for research and production.',
+    'OpenCV': 'Real-time computer vision capabilities.',
+};
+
 export const KineticTechGrid = ({ items, className }: KineticTechGridProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { isLowPowerMode } = usePerformance();
 
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"]
-    });
-
     return (
         <div ref={containerRef} className={className}>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 relative">
+            {/* Grid uses 1 column mobile, 2 tablet, 3 desktop (like Image 1) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative">
                 {items.map((tech, idx) => (
                     <TechCard
                         key={`${tech.name}-${idx}`}
                         tech={tech}
                         idx={idx}
-                        scrollYProgress={scrollYProgress}
                         isLowPowerMode={isLowPowerMode}
                     />
                 ))}
@@ -39,55 +59,46 @@ export const KineticTechGrid = ({ items, className }: KineticTechGridProps) => {
     );
 };
 
-const TechCard = ({ tech, idx, scrollYProgress, isLowPowerMode }: { tech: TechItem, idx: number, scrollYProgress: any, isLowPowerMode?: boolean }) => {
+const TechCard = ({ tech, idx, isLowPowerMode }: { tech: TechItem, idx: number, isLowPowerMode?: boolean }) => {
     const cardRef = useRef<HTMLDivElement>(null);
 
-    // Simplified parallax with clamped values for better performance
-    const yRange = idx % 2 === 0 ? [20, -20] : [-20, 20];
-    const rotateRange = idx % 3 === 0 ? [4, -4] : [-4, 4];
-
-    const yOffset = useTransform(scrollYProgress, [0, 1], yRange);
-    const rotateOffset = useTransform(scrollYProgress, [0, 1], rotateRange);
-
-    // Reduced spring stiffness for smoother, less calculation-heavy animation
-    const springY = useSpring(yOffset, { stiffness: 60, damping: 25, restDelta: 0.001 });
-    const springRotate = useSpring(rotateOffset, { stiffness: 60, damping: 25, restDelta: 0.001 });
+    const description = techDescriptions[tech.name] || `Builds cutting-edge ${tech.name} architectures.`;
 
     return (
         <motion.div
             ref={cardRef}
-            style={isLowPowerMode ? {} : {
-                y: springY,
-                rotateZ: springRotate,
-                willChange: 'transform' // GPU hint
-            }}
-            whileHover={{ scale: 1.05, zIndex: 10 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="group relative h-48 rounded-3xl overflow-hidden border border-border/50 bg-card text-card-foreground flex flex-col items-center justify-center gap-6 p-8 transition-colors hover:border-primary/50 hover:bg-muted/50 shadow-sm dark:shadow-none"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: (idx % 3) * 0.1 }}
+            whileHover={{ scale: 1.02, zIndex: 10 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            className="group relative rounded-[20px] bg-white dark:bg-card border border-gray-100 dark:border-border/50 flex flex-row items-center gap-4 p-3 transition-all hover:border-gray-200 dark:hover:border-primary/50 hover:shadow-lg dark:hover:bg-muted/50 shadow-sm"
         >
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-[20px]" />
 
-            <div className="w-16 h-16 relative">
-                <Image
-                    src={tech.icon}
-                    alt={tech.name}
-                    fill
-                    className="object-contain grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500 unoptimized"
-                    unoptimized
-                    loading="lazy"
-                />
+            {/* Left Icon Container equivalent to the medical icons in image 1 */}
+            <div className="w-[60px] h-[60px] rounded-[14px] flex-shrink-0 flex items-center justify-center bg-gray-50 dark:bg-background relative overflow-hidden transition-all group-hover:bg-white dark:group-hover:bg-background/80 shadow-inner group-hover:shadow-md">
+                <div className="w-8 h-8 relative">
+                    <Image
+                        src={tech.icon}
+                        alt={tech.name}
+                        fill
+                        className="object-contain grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-300 unoptimized"
+                        unoptimized
+                        loading="lazy"
+                    />
+                </div>
             </div>
 
-            <div className="text-center relative z-10">
-                <span className="block text-[10px] font-black tracking-[0.3em] uppercase text-muted-foreground group-hover:text-primary transition-colors">
+            {/* Right Text Content Container */}
+            <div className="flex flex-col flex-grow text-left justify-center pr-2 relative z-10 overflow-hidden">
+                <span className="text-[13px] sm:text-sm font-bold text-gray-900 dark:text-foreground group-hover:text-primary transition-colors truncate">
                     {tech.name}
                 </span>
-                <div className="mt-2 w-0 group-hover:w-full h-[1px] bg-primary mx-auto transition-all duration-500" />
-            </div>
-
-            {/* Micro-details for "Blueprint" aesthetic */}
-            <div className="absolute top-4 right-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                <span className="font-mono text-[8px]">{idx.toString(16).padStart(2, '0')}</span>
+                <span className="text-[11px] sm:text-xs text-gray-500 dark:text-muted-foreground mt-[2px] leading-snug line-clamp-2">
+                    {description}
+                </span>
             </div>
         </motion.div>
     );

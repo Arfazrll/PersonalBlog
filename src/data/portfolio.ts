@@ -57,8 +57,89 @@ export const portfolioData: PortfolioData = {
         ],
     },
     projects: [
-        {
+                {
             id: 'project-1',
+            slug: 'browser-automation-agent',
+            title: 'Browser Automation Agent',
+            description: 'A command-line interface (CLI) tool for AI-driven browser automation.',
+            longDescription: 'Agent Browser is a command-line interface (CLI) tool for AI-driven browser automation. Built on top of browser-use, this tool allows you to command an AI agent to perform complex browser interactions, scraping, and testing using natural language.',
+
+            techStack: ['Python 3.11+', 'browser-use', 'Gemini', 'Groq'],
+            tools: ['VS Code', 'CLI', 'uv'],
+            status: 'completed',
+            repoUrl: 'https://github.com/Arfazrll/Browser-Automation-Agent.git',
+            demoUrl: '#',
+            startDate: '2026-04-01',
+            role: 'AI Engineer',
+            customTimeline: 'April 2026',
+            team: 'Personal Project',
+
+            highlights: ['Natural Language Control', 'Multiple LLM Support', 'Smart Rate Limiting'],
+            category: 'AI & Machine Learning',
+            features: [
+                {
+                    title: 'Core Capabilities',
+                    items: [
+                        '**Natural Language Control**: Command the browser to navigate, click, fill forms, and extract information using simple text prompts.',
+                        '**Multiple LLM Support**: Easily toggle between powerful models like Google Gemini and Groq.',
+                        '**Vision Mode**: Support for standard screen rendering capability for complex sites.'
+                    ]
+                },
+                {
+                    title: 'Performance & Optimization',
+                    items: [
+                        '**Smart Rate Limiting**: Built-in delay mechanism and fallback handling to gracefully circumvent free-tier API rate limits.',
+                        '**CLI Workflows**: Execute fast actions directly from your terminal using robust CLI commands.',
+                        '**Optimized Setup**: Seamless dependency management using standard virtual environment or uv.'
+                    ]
+                },
+                {
+                    title: 'Logging & Outputs',
+                    items: [
+                        '**Execution Traces**: Application logs are automatically written to the logs/ directory for easy debugging.',
+                        '**Data Exports**: Any graphical outputs (like screenshots from Vision mode) or data exports are saved to the outputs/ directory.'
+                    ]
+                }
+            ],
+            installation: [
+                {
+                    title: 'Clone and Setup',
+                    code: 'git clone https://github.com/Arfazrll/Browser-Automation-Agent.git\ncd Browser-Automation-Agent\npython -m venv venv\nvenv\\Scripts\\activate',
+                    type: 'code'
+                },
+                {
+                    title: 'Install Dependencies',
+                    code: 'pip install -e .',
+                    type: 'code'
+                },
+                {
+                    title: 'Environment Configuration',
+                    code: 'cp .env.example .env\n# Fill in GOOGLE_API_KEY or GROQ_API_KEY',
+                    type: 'code'
+                },
+                {
+                    title: 'Run Agent',
+                    code: 'agentbrowser run --help\nagentbrowser run "Cari jadwal libur nasional Indonesia 2026 di Google dan rangkum"',
+                    type: 'code'
+                }
+            ],
+            challengesAndSolutions: [
+                {
+                    problem: "API Rate Limits Exhaustion",
+                    solution: "Implemented a smart rate limiting delay mechanism and fallback handling to gracefully circumvent free-tier API restrictions (e.g., Gemini 15 RPM Free Tier)."
+                },
+                {
+                    problem: "Complex DOM Navigation",
+                    solution: "Integrated a Vision Mode to capture screenshots and allow the LLM to process visual context for dynamically rendered sites."
+                },
+                {
+                    problem: "Command-Line Interface Scalability",
+                    solution: "Engineered a robust CLI framework offering specific workflow executions, dynamic LLM toggling (--llm gemini), and vision toggles (--vision)."
+                }
+            ]
+        },
+{
+            id: 'project-2',
             slug: 'swarm-agent-orchestrator',
             title: 'Swarm AI Blog Writer',
             description: 'Production-grade multi-agent blog generation engine powered by Pydantic AI and Groq (Llama 3.3 70B).',
@@ -155,7 +236,7 @@ export const portfolioData: PortfolioData = {
             ]
         },
         {
-            id: 'project-2',
+            id: 'project-3',
             slug: 'creative-portfolio-website',
             title: 'Creative Portfolio Website',
             description: 'Modern, animated portfolio with 3D elements and smooth animations.',
@@ -247,7 +328,7 @@ WAKATIME_API_KEY=your_wakatime_key`
 
         },
         {
-            id: 'project-3',
+            id: 'project-4',
             slug: 'snbtin-platform',
             title: 'SNBTIn - Platform Persiapan SNBT 2025',
             description: 'Platform e-learning #1 di Indonesia untuk persiapan SNBT bagi siswa SMA.',
@@ -336,7 +417,7 @@ WAKATIME_API_KEY=your_wakatime_key`
 
         },
         {
-            id: 'project-4',
+            id: 'project-5',
             slug: 'terraflow-platform',
             title: 'Terraflow Platform',
             description: 'Enterprise-grade IoT solution for precision agriculture.',
@@ -415,7 +496,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ],
         },
         {
-            id: 'project-5',
+            id: 'project-6',
             slug: 'docsinsight-engine',
             title: 'DocsInsight Engine',
             description: 'Enterprise RAG System for intelligent document analysis.',
@@ -499,7 +580,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-6',
+            id: 'project-7',
             slug: 'donasiaku',
             title: 'Donasiaku',
             description: 'Platform Penyaluran Donasi Barang Layak Pakai.',
@@ -589,7 +670,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-7',
+            id: 'project-8',
             slug: 'security-automation-genai',
             title: 'Security Automation with GenAI',
             description: 'AI-driven cybersecurity threat detection system using Transformers.',
@@ -674,7 +755,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-8',
+            id: 'project-9',
             slug: 'web3-guestbook-dapp',
             title: 'Web3 Guestbook DApp',
             description: 'Decentralized guestbook on Ethereum allowing for immutable messages.',
@@ -759,7 +840,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-9',
+            id: 'project-10',
             slug: 'digilibzx',
             title: 'Digilibzx',
             description: 'Modern full-stack digital library management system with AI-powered features.',
@@ -844,7 +925,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-11',
+            id: 'project-12',
             slug: 'polabdc-dental-management',
             title: 'POLABDC Dental Management',
             description: 'AI-powered Dental Clinic Management SaaS for digitized operations.',
@@ -931,7 +1012,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-12',
+            id: 'project-13',
             slug: 'deep-learning-image-classifier',
             title: 'Deep Learning Image Classifier',
             description: 'Interactive educational platform for visualizing CNN and Transfer Learning mechanics.',
@@ -1016,7 +1097,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-13',
+            id: 'project-14',
             slug: 'ai-book-discovery-platform',
             title: 'AI Book Discovery Platform',
             description: 'Local RAG-based book recommendation system with semantic search.',
@@ -1096,7 +1177,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-14',
+            id: 'project-15',
             slug: 'mytelkomsel-sentiment-analysis',
             title: 'MyTelkomsel Sentiment Analysis',
             description: 'Comparing ML/DL architectures for Indonesian app review sentiment classification.',
@@ -1181,7 +1262,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-15',
+            id: 'project-16',
             slug: 'neurovision-real-time-detection',
             title: 'NeuroVision (Real-time Detection)',
             description: 'Advanced real-time object detection using YOLOv3 and Darknet-53.',
@@ -1266,7 +1347,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-16',
+            id: 'project-17',
             slug: 'voices-unheard',
             title: 'Voices Unheard',
             description: 'Secure, anonymous digital sanctuary for conflict-affected story sharing.',
@@ -1351,7 +1432,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-17',
+            id: 'project-18',
             slug: 'smart-motion-detection-system',
             title: 'Smart Motion Detection System',
             description: 'AIoT motion detection using YOLO11-Pose and MQTT for smart home automation.',
@@ -1436,7 +1517,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-18',
+            id: 'project-19',
             slug: 'solar-energy-pinn-prediction',
             title: 'Solar Energy PINN Prediction',
             description: 'AI-powered solar energy prediction system integrating Physics-Informed Neural Networks (PINN).',
@@ -1521,7 +1602,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-19',
+            id: 'project-20',
             slug: 'credit-risk-analysis-lstm',
             title: 'Credit Risk Analysis LSTM',
             description: 'High-precision loan default prediction using stacked LSTM layers and sequential financial modeling.',
@@ -1606,7 +1687,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-20',
+            id: 'project-21',
             slug: 'hand-gesture-recognition',
             title: 'Hand Gesture Recognition',
             description: 'Real-time hand tracking and skeletal landmark detection using MediaPipe and OpenCV.',
@@ -1691,7 +1772,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             ]
         },
         {
-            id: 'project-21',
+            id: 'project-22',
             slug: 'data-analyst-dashboard',
             title: 'Data Analyst Dashboard',
             description: 'Interactive analytics tool for e-commerce data exploration using Dash and Plotly.',
@@ -2590,7 +2671,6 @@ WAKATIME_API_KEY=your_wakatime_key`
         { name: 'OpenCV', icon: 'https://cdn.simpleicons.org/opencv', category: 'library' },
         { name: 'FastAPI', icon: 'https://cdn.simpleicons.org/fastapi', category: 'framework' },
         { name: 'Flask', icon: 'https://cdn.simpleicons.org/flask', category: 'framework' },
-        { name: 'Hugging Face', icon: 'https://cdn.simpleicons.org/huggingface', category: 'library' },
     ],
     hardSkills: [
         { name: 'System Architecture', level: 'intermediate', category: 'software', description: 'Designing robust, scalable, and high-performance system architectures for complex applications.' },
