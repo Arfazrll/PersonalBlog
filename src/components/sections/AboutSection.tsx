@@ -48,20 +48,23 @@ const AboutLeadInImageStack = () => {
 
     useEffect(() => {
         if (!mounted) return;
-        const shuffled = [...GALLERY_IMAGES].sort(() => 0.5 - Math.random()).slice(0, 3);
-        const data = shuffled.map((src, i) => ({
-            src,
-            rotate: Math.round((i - 1) * 15 + (Math.random() * 8 - 4)),
-            x: Math.round((i - 1) * 45 + (Math.random() * 10 - 5)),
-            y: Math.round(Math.abs(i - 1) * 10 + (Math.random() * 6 - 3)),
-        }));
+        const shuffled = [...GALLERY_IMAGES].sort(() => 0.5 - Math.random()).slice(0, 2);
+        const data = shuffled.map((src, i) => {
+            const offsetMultiplier = i === 0 ? -1 : 1;
+            return {
+                src,
+                rotate: Math.round(offsetMultiplier * 15 + (Math.random() * 8 - 4)),
+                x: Math.round(offsetMultiplier * 25 + (Math.random() * 10 - 5)),
+                y: Math.round(Math.random() * 10 - 5),
+            };
+        });
         setRandomData(data);
     }, [mounted]);
 
     if (!mounted || randomData.length === 0) return null;
 
     return (
-        <div className="relative flex items-center justify-center w-56 h-32 md:w-72 md:h-44 mb-8 lg:mb-10">
+        <div className="relative flex items-center justify-center w-56 h-32 md:w-72 md:h-44 mb-8 lg:mb-10 overflow-visible">
             {randomData.map((item, i) => (
                 <div
                     key={item.src}
@@ -110,107 +113,68 @@ const AboutLeadIn = () => {
     const t = useTranslations('about');
 
     return (
-        <div className="relative w-full max-w-[1500px] mx-auto px-6 md:px-10 lg:px-12 py-8 md:py-12 overflow-visible">
-            {/* Header Section: Compact Horizontal Blueprint */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative">
-                <div className="space-y-4 relative z-30">
-                    <motion.span
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4 }}
-                        className="text-[10px] md:text-[12px] font-mono uppercase tracking-[0.5em] text-primary"
-                        style={{ backfaceVisibility: "hidden" }}
-                    >
-                        {t('leadIn.label')}
-                    </motion.span>
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85]"
-                        style={{ backfaceVisibility: "hidden" }}
-                    >
-                        {t('leadIn.applied')} <br />
-                        <span className="font-serif-elegant italic font-light lowercase text-primary">{t('leadIn.intelligence')}</span>
-                    </motion.h2>
-                </div>
-
-                <div className="flex flex-grow items-center justify-center px-4 md:px-0 order-2 md:order-none my-8 md:my-0 pb-10 md:pb-0">
-                    <AboutLeadInImageStack />
-                </div>
-
-                <div className="text-left md:text-right space-y-4 mt-8 md:mt-0 relative z-30">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.85]"
-                    >
-                        {t('leadIn.production')} <br />
-                        <span className="font-serif-elegant italic font-light lowercase text-primary">{t('leadIn.engineering')}</span>
-                    </motion.h2>
-                </div>
+        <div className="w-full max-w-[1500px] mr-auto px-4 lg:px-6 pt-4 pb-8 md:pb-12 text-left">
+            
+            {/* Top header navigation style (Habito/Guangxi) */}
+            <div className="flex justify-between items-center border-b border-foreground/10 pb-6 mb-12 md:mb-16">
+                <span className="text-base md:text-lg font-bold tracking-tight text-foreground flex items-center gap-3">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
+                    {t('leadIn.label')}
+                </span>
+                <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-muted-foreground">
+                    {t('leadIn.role')}
+                </span>
             </div>
 
-            {/* Main Content: 3-Column Blueprint Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 pt-8 lg:pt-10 relative">
-                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+            {/* Massive Heading (Guangxi Cai Style) */}
+            <motion.h2 
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="text-[42px] sm:text-[56px] md:text-[76px] lg:text-[96px] xl:text-[110px] font-semibold tracking-[-0.04em] leading-[1.03] text-foreground max-w-[1400px] mb-12 md:mb-20"
+            >
+                <span className="uppercase tracking-[-0.05em]">{t('leadIn.applied')} <span className="text-muted-foreground">{t('leadIn.intelligence')}</span></span> <br className="hidden md:block" />
+                <span className="uppercase tracking-[-0.05em]">{t('leadIn.production')}</span> <span className="font-serif-elegant italic font-normal text-primary tracking-normal capitalize">{t('leadIn.engineering')}</span>.
+            </motion.h2>
 
-                {/* Col 1: The Thesis */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+            {/* Footer blocks / Details (Guangxi Cai bottom columns) */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-10">
+                {/* Thesis left side */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.6 }}
-                    className="space-y-4"
+                    transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="md:col-span-5"
                 >
-                    <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">01</span>
-                    <p
-                        className="text-2xl md:text-3xl lg:text-4xl font-black leading-tight tracking-tight text-foreground"
+                    <p 
+                        className="text-lg md:text-[22px] font-medium text-foreground leading-[1.4] tracking-[-0.02em]"
                         dangerouslySetInnerHTML={{ __html: t.raw('leadIn.thesis') }}
                     />
                 </motion.div>
 
-                {/* Col 2: The Scope */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                {/* Scope & Integration right side */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.8 }}
-                    className="space-y-4 border-l border-primary/10 pl-12 lg:pl-16"
+                    transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="md:col-span-6 md:col-start-7 flex flex-col sm:flex-row gap-10 sm:gap-12 lg:gap-16 text-sm"
                 >
-                    <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">02</span>
-                    <p className="text-[13px] md:text-sm lg:text-[15px] text-muted-foreground leading-relaxed">
-                        {t('leadIn.scope')}
-                    </p>
-                    <div className="h-px w-10 bg-primary/30" />
-                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed italic">
-                        {t('leadIn.bridging')}
-                    </p>
-                </motion.div>
-
-                {/* Col 3: The Integration & Signoff */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 1 }}
-                    className="space-y-4 border-l border-primary/10 pl-12 lg:pl-16 flex flex-col justify-between"
-                >
-                    <div className="space-y-4">
-                        <span className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">03</span>
-                        <p className="text-[13px] md:text-sm lg:text-[15px] text-muted-foreground leading-relaxed">
-                            {t('leadIn.integration')}
+                    <div className="flex-1 space-y-4">
+                        <span className="text-foreground/90 font-semibold block border-b border-foreground/10 pb-3">Scope & Platform</span>
+                        <p className="text-muted-foreground leading-relaxed">
+                            {t('leadIn.scope')}
+                        </p>
+                        <p className="text-primary italic leading-relaxed">
+                            {t('leadIn.bridging')}
                         </p>
                     </div>
-
-                    <div className="pt-8 flex items-center justify-between">
-                        <div className="flex flex-col">
-                            <span className="text-4xl lg:text-6xl font-signature text-primary">{t('leadIn.signature')}</span>
-                            <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-muted-foreground">{t('leadIn.role')}</span>
+                    <div className="flex-1 space-y-4 flex flex-col">
+                        <span className="text-foreground/90 font-semibold block border-b border-foreground/10 pb-3">Integration</span>
+                        <p className="text-muted-foreground leading-relaxed">
+                            {t('leadIn.integration')}
+                        </p>
+                        <div className="mt-8 md:mt-auto pt-6 flex-grow flex items-end">
+                             <span className="text-4xl lg:text-5xl font-signature text-foreground block">{t('leadIn.signature')}</span>
                         </div>
                     </div>
                 </motion.div>
@@ -1053,9 +1017,10 @@ export default function AboutSection() {
         offset: ["start start", "end end"]
     });
 
-    const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85]);
-    const opacity = useTransform(scrollYProgress, [0.05, 0.25], [1, 0]);
-    const yLeadIn = useTransform(scrollYProgress, [0, 0.3], [0, -350]);
+    // REALIGNED TIMING: Parent is ~900vh long. The first 100vh delay = ~11% (0.11) of total scroll.
+    const scale = useTransform(scrollYProgress, [0, 0.12], [1, 0.92]);
+    const opacity = useTransform(scrollYProgress, [0.03, 0.12], [1, 0]);
+    const yLeadIn = useTransform(scrollYProgress, [0, 0.12], [0, -80]);
 
     const leadInTriggerRef = useRef(null);
 
@@ -1066,10 +1031,10 @@ export default function AboutSection() {
             className="relative bg-background text-foreground dark:bg-black dark:text-white transition-colors duration-500"
         >
             {/* 1. STICKY PLANE - Lead-in */}
-            <div className="sticky top-0 h-screen w-full flex items-center justify-center z-0 overflow-hidden pointer-events-none">
+            <div className="sticky top-0 h-screen w-full flex items-start justify-center z-0 overflow-hidden pointer-events-none pt-[5vh] sm:pt-[10vh]">
                 <motion.div
                     style={{ scale, opacity, y: yLeadIn }}
-                    className="relative py-20 px-6 w-full max-w-[1600px] mx-auto"
+                    className="relative pb-10 px-4 md:px-6 w-full max-w-[1600px] mx-auto"
                     ref={leadInTriggerRef}
                 >
                     <AboutLeadIn />
@@ -1079,9 +1044,7 @@ export default function AboutSection() {
 
 
             {/* 2. OVERLAY LAYER - Hijack Zone & Footer */}
-            <div className="relative pointer-events-none">
-                {/* Removed transparent gap to close visual hole */}
-
+            <div className="relative pointer-events-none mt-[80vh] md:mt-[100vh]">
                 {/* Content wrapper with background and border - now arrives later */}
                 <div className="bg-background dark:bg-black border-t border-foreground/10 dark:border-white/5 transition-colors duration-500 pointer-events-auto">
                     <ScrollHijackSection />

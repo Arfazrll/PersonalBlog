@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { portfolioData } from '@/data/portfolio';
 import { SplineScene } from '@/components/ui/SplineScene';
@@ -82,18 +82,29 @@ export default function SkillsPage() {
     const t = useTranslations('skills');
     const containerRef = useRef<HTMLDivElement>(null);
 
+    // Parallax values based on global scroll position
+    const { scrollY } = useScroll();
+    const yHeroText = useTransform(scrollY, [0, 800], [0, 350]);
+    const opacityHero = useTransform(scrollY, [0, 600], [1, 0]);
+
+    const yHeroSpline = useTransform(scrollY, [0, 1000], [0, 200]);
+    const scaleSpline = useTransform(scrollY, [0, 800], [1, 1.05]);
+
     return (
         <div ref={containerRef} className="min-h-screen bg-background relative selection:bg-primary/20">
             <TechSchematic />
 
             <section className="relative h-screen flex items-end justify-center overflow-hidden pb-12">
-                <div className="absolute inset-0 z-0">
+                <motion.div
+                    className="absolute inset-0 z-0"
+                    style={{ y: yHeroSpline, scale: scaleSpline, willChange: 'transform' }}
+                >
                     <SplineScene
                         scene="https://prod.spline.design/qVnpleqGGhqRlQYK/scene.splinecode"
                         className="w-full h-full opacity-60 md:opacity-100"
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background pointer-events-none" />
-                </div>
+                </motion.div>
 
                 <div className="relative z-10 text-center px-6 w-full pointer-events-none select-none">
                     <motion.div
@@ -101,7 +112,7 @@ export default function SkillsPage() {
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-                        style={{ willChange: 'transform, opacity' }}
+                        style={{ willChange: 'transform, opacity', y: yHeroText, opacity: opacityHero }}
                     >
                         <div className="h-[160px] md:h-[220px] w-full max-w-full mx-auto relative flex items-center justify-center overflow-visible">
                             <TextPressure
