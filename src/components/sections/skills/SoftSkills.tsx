@@ -53,7 +53,7 @@ export const SoftSkills = () => {
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header - Refined Theme-Aware Layout */}
                 <div className="mb-24 flex flex-col items-start gap-4">
-                    <motion.h2 
+                    <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -69,7 +69,7 @@ export const SoftSkills = () => {
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="text-foreground text-lg font-sans max-w-2xl pt-6 leading-relaxed border-t border-border mt-4"
                     >
-                        Interpersonal capabilities engineered for high-impact 
+                        Interpersonal capabilities engineered for high-impact
                         leadership and systemic problem solving in complex environments.
                     </motion.p>
                 </div>
@@ -79,12 +79,12 @@ export const SoftSkills = () => {
                     <BentoSkillCard skill={skills[1]} index={2} illustration={skillVisuals['Critical Thinking']} />
                     <BentoSkillCard skill={skills[2]} index={3} illustration={skillVisuals['Public Speaking']} />
 
-                    <BentoSkillCard 
-                        skill={skills[6]} 
-                        index={4} 
-                        className="lg:col-span-2" 
-                        illustration={skillVisuals['Adaptability']} 
-                        isWide 
+                    <BentoSkillCard
+                        skill={skills[6]}
+                        index={4}
+                        className="lg:col-span-2"
+                        illustration={skillVisuals['Adaptability']}
+                        isWide
                     />
 
                     {/* Item 05: Problem Solving (Normal) */}
@@ -107,16 +107,16 @@ export const SoftSkills = () => {
     );
 };
 
-const BentoSkillCard = ({ 
-    skill, 
-    index, 
-    className, 
-    illustration, 
-    isWide 
-}: { 
-    skill: any, 
-    index: number, 
-    className?: string, 
+const BentoSkillCard = ({
+    skill,
+    index,
+    className,
+    illustration,
+    isWide
+}: {
+    skill: any,
+    index: number,
+    className?: string,
     illustration?: string,
     isWide?: boolean
 }) => {
@@ -196,7 +196,7 @@ const BentoMoreCard = ({ index }: { index: number }) => {
         >
             <AnimatePresence mode="wait">
                 {!isHovered ? (
-                    <motion.div 
+                    <motion.div
                         key="normal"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -207,7 +207,7 @@ const BentoMoreCard = ({ index }: { index: number }) => {
                             <h3 className="text-4xl font-bold text-foreground italic">Read More</h3>
                             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors">#{String(index).padStart(2, '0')}</span>
                         </div>
-                        
+
                         <div className="relative z-0 flex items-center justify-center w-full h-60 my-10">
                             <Image
                                 src={skillVisuals['More']}
@@ -229,7 +229,7 @@ const BentoMoreCard = ({ index }: { index: number }) => {
                         </div>
                     </motion.div>
                 ) : (
-                    <motion.div 
+                    <motion.div
                         key="hover"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -240,7 +240,7 @@ const BentoMoreCard = ({ index }: { index: number }) => {
                             <h4 className="text-[10px] font-mono uppercase tracking-[0.3em] text-muted-foreground/40 border-b border-border pb-2">Skill Expansion</h4>
                             <div className="grid grid-cols-1 gap-y-3">
                                 {EXTRA_SKILLS.map((skill, i) => (
-                                    <motion.div 
+                                    <motion.div
                                         key={skill}
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}

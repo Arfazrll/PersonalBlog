@@ -51,7 +51,7 @@ export const SkillsClosing = () => {
                     <span>System Architecture</span>
                 </motion.div>
             </div>
-            
+
             <div className="absolute bottom-12 inset-x-4 md:inset-x-8 lg:inset-x-12 overflow-hidden opacity-[0.03] dark:opacity-[0.05] pointer-events-none">
                 <motion.div
                     animate={isLowPowerMode ? {} : { x: ["-50%", "0%"] }}
@@ -65,7 +65,7 @@ export const SkillsClosing = () => {
 
             {/* 3. CENTER CONTENT: "The Split" */}
             <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-                
+
                 {/* LEFT: Massive Statement & Action */}
                 <div className="space-y-10 md:space-y-12">
                     <motion.div
@@ -81,7 +81,7 @@ export const SkillsClosing = () => {
                         </h2>
 
                         <p className="text-base md:text-lg text-muted-foreground/70 max-w-lg leading-relaxed font-medium">
-                            Precision engineering meets <span className="text-foreground font-bold underline decoration-primary/30 underline-offset-4">unbound imagination</span>. 
+                            Precision engineering meets <span className="text-foreground font-bold underline decoration-primary/30 underline-offset-4">unbound imagination</span>.
                             Let's transform ambitious ideas into production-ready solutions and construct a legacy of innovation.
                         </p>
                     </motion.div>
@@ -93,7 +93,7 @@ export const SkillsClosing = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        <Link 
+                        <Link
                             href="/projects"
                             className="group relative inline-flex items-center gap-4 bg-primary/10 hover:bg-primary/20 backdrop-blur-md border border-primary/20 text-primary px-10 py-5 rounded-xl text-lg font-black transition-all shadow-2xl hover:shadow-primary/20 active:scale-95 uppercase tracking-tight"
                         >
@@ -116,7 +116,7 @@ export const SkillsClosing = () => {
                         >
                             {/* Connection Node */}
                             <div className="absolute -left-[41px] md:-left-[57px] top-4 w-4 h-4 rounded-full bg-background border-4 border-primary/40 group-hover:border-primary transition-colors duration-500 z-20" />
-                            
+
                             {/* Glide Pill Marker */}
                             <div className="mb-6">
                                 <span className="inline-block px-4 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-foreground font-extrabold text-xs uppercase tracking-[0.2em] shadow-sm border border-border/50">
@@ -134,7 +134,7 @@ export const SkillsClosing = () => {
                             </div>
                         </motion.div>
                     ))}
-                    
+
                     {/* Background Progress Line Glow */}
                     <div className="absolute top-0 bottom-0 -left-[1px] w-[2px] bg-gradient-to-b from-primary/50 via-primary/20 to-transparent" />
                 </div>

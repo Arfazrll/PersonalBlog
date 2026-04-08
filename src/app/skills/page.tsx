@@ -58,7 +58,7 @@ function TechSchematic() {
 function Bubble({ b, mouseX, mouseY }: { b: any, mouseX: any, mouseY: any }) {
     const ref = useRef<HTMLDivElement>(null);
     const [center, setCenter] = useState({ x: 0, y: 0 });
-    
+
     useEffect(() => {
         const updateCenter = () => {
             if (!ref.current) return;
@@ -87,10 +87,10 @@ function Bubble({ b, mouseX, mouseY }: { b: any, mouseX: any, mouseY: any }) {
         <motion.div
             ref={ref}
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
+            animate={{
                 y: [0, -35, 0],
             }}
-            style={{ 
+            style={{
                 position: 'absolute',
                 top: b.top,
                 left: 'left' in b ? b.left : undefined,
@@ -98,21 +98,21 @@ function Bubble({ b, mouseX, mouseY }: { b: any, mouseX: any, mouseY: any }) {
                 opacity: opacityFactor,
                 scale: scaleFactor
             }}
-            transition={{ 
-                duration: 8 + Math.random() * 4, 
-                repeat: Infinity, 
+            transition={{
+                duration: 8 + Math.random() * 4,
+                repeat: Infinity,
                 delay: b.delay,
-                ease: "easeInOut" 
+                ease: "easeInOut"
             }}
             className="flex items-center justify-center w-14 h-14 md:w-20 md:h-20 rounded-full bg-foreground/[0.05] dark:bg-white/5 backdrop-blur-2xl border border-foreground/10 dark:border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.05)] transition-colors duration-500"
         >
-            <motion.img 
-                src={`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${b.icon}/${b.icon}-original.svg`} 
-                className="w-7 h-7 md:w-10 md:h-10" 
-                style={{ 
+            <motion.img
+                src={`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${b.icon}/${b.icon}-original.svg`}
+                className="w-7 h-7 md:w-10 md:h-10"
+                style={{
                     filter: useTransform(grayscale, (v) => `grayscale(${v}%)`),
                 }}
-                alt={b.icon} 
+                alt={b.icon}
             />
         </motion.div>
     );
@@ -156,7 +156,7 @@ function VaporFog({ className }: { className?: string }) {
 export default function SkillsPage() {
     const t = useTranslations('skills');
     const containerRef = useRef<HTMLDivElement>(null);
-    
+
     // Mouse values
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -176,8 +176,8 @@ export default function SkillsPage() {
     const scaleSpline = useTransform(scrollY, [0, 800], [1, 1.05]);
 
     return (
-        <div 
-            ref={containerRef} 
+        <div
+            ref={containerRef}
             onMouseMove={handleMouseMove}
             className="min-h-screen bg-background relative selection:bg-primary/20"
         >
@@ -211,40 +211,40 @@ export default function SkillsPage() {
                     >
                         {/* REFINED: Titanium Solid Typography with Crystalline Sheen */}
                         <div className="relative group px-10">
-                            <motion.h1 
+                            <motion.h1
                                 className="relative text-[10vw] md:text-[8vw] font-black italic uppercase leading-none tracking-tighter text-foreground drop-shadow-[0_0_20px_rgba(var(--foreground),0.15)] select-none pointer-events-none"
                             >
                                 SKILLS & TOOLS
-                                
+
                                 {/* Crystalline Sheen (Refined Elliptical Pulse) */}
                                 <div className="absolute inset-x-0 inset-y-0 flex justify-center pointer-events-none overflow-hidden">
                                     {/* Left-ward Sheen */}
                                     <motion.div
-                                        animate={{ 
-                                            left: ["50%", "2%"], 
+                                        animate={{
+                                            left: ["50%", "2%"],
                                             opacity: [0, 0.5, 0],
                                             scale: [0.8, 1.1, 0.8]
                                         }}
-                                        transition={{ 
-                                            duration: 4, 
-                                            repeat: Infinity, 
-                                            repeatDelay: 3, 
-                                            ease: "easeInOut" 
+                                        transition={{
+                                            duration: 4,
+                                            repeat: Infinity,
+                                            repeatDelay: 3,
+                                            ease: "easeInOut"
                                         }}
                                         className="absolute top-0 bottom-0 w-[40%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.4)_0%,transparent_70%)] blur-md rounded-[100%]"
                                     />
                                     {/* Right-ward Sheen */}
                                     <motion.div
-                                        animate={{ 
-                                            left: ["50%", "98%"], 
+                                        animate={{
+                                            left: ["50%", "98%"],
                                             opacity: [0, 0.5, 0],
                                             scale: [0.8, 1.1, 0.8]
                                         }}
-                                        transition={{ 
-                                            duration: 4, 
-                                            repeat: Infinity, 
-                                            repeatDelay: 3, 
-                                            ease: "easeInOut" 
+                                        transition={{
+                                            duration: 4,
+                                            repeat: Infinity,
+                                            repeatDelay: 3,
+                                            ease: "easeInOut"
                                         }}
                                         style={{ translateX: "-100%" }}
                                         className="absolute top-0 bottom-0 w-[40%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.4)_0%,transparent_70%)] blur-md rounded-[100%]"
@@ -295,11 +295,11 @@ export default function SkillsPage() {
 
                 <div className="max-w-7xl mx-auto relative z-10 w-full mt-12 md:mt-16">
                     <div className="relative w-full flex flex-col justify-center items-center mb-0">
-                                <ArchedTechIconsInteractive 
-                                    key="arched-tech-icons-interactive"
-                                    icons={portfolioData.techStack.map(t => techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`))} 
-                                />
-                        
+                        <ArchedTechIconsInteractive
+                            key="arched-tech-icons-interactive"
+                            icons={portfolioData.techStack.map(t => techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`))}
+                        />
+
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
