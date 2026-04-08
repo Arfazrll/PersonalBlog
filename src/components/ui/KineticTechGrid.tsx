@@ -71,8 +71,11 @@ const TechCard = ({ tech, idx, isLowPowerMode }: { tech: TechItem, idx: number, 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: (idx % 3) * 0.1 }}
-            whileHover={{ scale: 1.02, zIndex: 10 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            whileHover={{ 
+                scale: 1.02, 
+                zIndex: 10,
+                transition: { type: 'spring', stiffness: 400, damping: 30 }
+            }}
             className="group relative rounded-[20px] bg-white dark:bg-card border border-gray-100 dark:border-border/50 flex flex-row items-center gap-4 p-3 transition-all hover:border-gray-200 dark:hover:border-primary/50 hover:shadow-lg dark:hover:bg-muted/50 shadow-sm"
         >
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-[20px]" />
