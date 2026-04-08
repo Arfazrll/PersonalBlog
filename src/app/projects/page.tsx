@@ -57,9 +57,23 @@ function ProjectListItem({
         rafRef.current = requestAnimationFrame(() => {
             mouseX.set(e.clientX - rect.left);
             mouseY.set(e.clientY - rect.top);
-            cursorX.set(e.clientX + 20);
-            cursorY.set(e.clientY - 60);
+            cursorX.set(e.clientX);
+            cursorY.set(e.clientY);
         });
+    };
+
+    const handleMouseEnter = (e: React.MouseEvent) => {
+        // Synchronously update coordinates to prevent the (0,0) render bug
+        cursorX.set(e.clientX);
+        cursorY.set(e.clientY);
+        
+        if (itemRef.current) {
+            const rect = itemRef.current.getBoundingClientRect();
+            mouseX.set(e.clientX - rect.left);
+            mouseY.set(e.clientY - rect.top);
+        }
+        
+        setIsHovered(true);
     };
 
     useEffect(() => {
@@ -80,7 +94,7 @@ function ProjectListItem({
             transition={{ duration: 0.5, delay: index * 0.08 }}
             className="group relative"
             data-project-slug={project.slug}
-            onMouseEnter={() => setIsHovered(true)}
+            onMouseEnter={handleMouseEnter}
             onMouseLeave={() => setIsHovered(false)}
             onMouseMove={handleMouseMove}
             onClick={onClick}
@@ -197,21 +211,20 @@ function ProjectListItem({
                 <AnimatePresence>
                     {isHovered && (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                            transition={{ duration: 0.3 }}
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.3, exit: { duration: 0.1 }, ease: [0.16, 1, 0.3, 1] }}
                             className="fixed pointer-events-none z-50 hidden lg:block"
                             style={{
                                 left: cursorX,
                                 top: cursorY,
-                                translateY: 20, // Offset to lower the preview relative to cursor
-                                x: 20,
-                                translateX: '-50%'
+                                x: "-50%",
+                                y: "-50%"
                             }}
                         >
                             <div className={cn(
-                                "w-80 h-48 rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl transition-all duration-300",
+                                "w-[500px] h-[300px] rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl transition-all duration-300",
                                 "border-white/10 bg-zinc-950"
                             )}>
                                 {project.image ? (

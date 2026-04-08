@@ -1,16 +1,13 @@
 'use client';
 
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { portfolioData } from '@/data/portfolio';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { useState, useRef, useEffect } from 'react';
 
-import { usePerformance } from '@/hooks/usePerformance';
-
-// Logo mapping
+// Logo mapping - keeping the existing refined mappings
 const toolLogos: Record<string, string> = {
-    'VS Code': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg',
+    'VS Code': 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg',
     'Figma': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg',
     'Postman': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg',
     'GitHub': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg',
@@ -23,171 +20,120 @@ const toolLogos: Record<string, string> = {
 };
 
 export const ToolsSection = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const { isLowPowerMode } = usePerformance();
-    const mouseX = useMotionValue(-1000);
-    const mouseY = useMotionValue(-1000);
-
-    const rafRef = useRef<number | null>(null);
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if (isLowPowerMode) return;
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-        const { clientX, clientY, currentTarget } = e;
-        // In this specific case, the event is attached to the grid container
-        // To accurately get the rect relative to the target without querying every frame,
-        // we can still use currentTarget.getBoundingClientRect() but within the throttle
-        const target = currentTarget as HTMLElement;
-        const rect = target.getBoundingClientRect();
-
-        rafRef.current = requestAnimationFrame(() => {
-            mouseX.set(clientX - rect.left);
-            mouseY.set(clientY - rect.top);
-        });
-    };
-
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => {
-            if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        };
-    }, []);
-
-    const handleMouseLeave = () => {
-        // Optional: Reset or leave as is
-    };
+    const topRow = portfolioData.tools.slice(0, 5);
+    const bottomRow = portfolioData.tools.slice(5, 10);
 
     return (
         <section
             id="tools"
-            className="py-32 relative bg-background min-h-screen flex flex-col items-center justify-center overflow-hidden"
+            className="py-32 relative bg-background min-h-[80vh] flex flex-col items-center justify-center overflow-hidden"
         >
             {/* BACKGROUND AMBIENCE */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--background)_0%,_#050505_100%)] z-0" />
 
-            {/* NOISE FILTER for Texture */}
-            <div className="absolute inset-0 opacity-[0.03] z-0 pointer-events-none mix-blend-overlay"
-                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")` }}
-            />
-
             {/* HEADER */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true, margin: "-100px" }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative z-10 text-center mb-24 mix-blend-difference pointer-events-none select-none"
+                className="relative z-10 text-center mb-24 pointer-events-none select-none px-6"
             >
                 <motion.span
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 0.4 }}
+                    whileInView={{ opacity: 0.6 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-[10px] font-mono uppercase tracking-[0.8em] text-foreground block mb-4"
+                    className="text-xs font-bold uppercase tracking-[0.4em] text-foreground block mb-6"
                 >
-                    Domain // 04
+                    My Ecosystem
                 </motion.span>
-                <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter text-foreground whitespace-nowrap leading-[0.95]">
-                    Technical <span className="font-thin not-italic text-foreground/30 tracking-tighter">Tools</span>
+                <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-foreground mb-8 max-w-4xl mx-auto leading-[1.1]">
+                    The modern development stack
                 </h2>
+                <p className="max-w-3xl mx-auto text-lg md:text-xl text-foreground/60 leading-relaxed font-medium px-4">
+                    A single tool doesn't build the full application. That is why we bring together
+                    Python, React, Next.js, and more, all in one cohesive ecosystem.
+                </p>
             </motion.div>
 
-            {/* INTERACTIVE GRID */}
-            <div
-                ref={containerRef}
-                className="relative z-20 w-full max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-16 md:gap-24"
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-            >
-                {portfolioData.tools.map((tool, index) => (
-                    <MistItem
-                        key={tool.name}
-                        tool={tool}
-                        mouseX={mouseX}
-                        mouseY={mouseY}
-                        index={index}
-                        isLowPowerMode={isLowPowerMode}
-                    />
-                ))}
+            {/* MARQUEE ROWS - Constrained container for side spacing */}
+            <div className="relative z-20 w-full max-w-[1700px] mx-auto px-4 md:px-8 lg:px-12">
+                <div className="flex flex-col gap-12 mask-horizontal-fixed">
+                    {/* Row 1: Left to Right */}
+                    <MarqueeRow items={topRow} direction="right" speed={45} />
+
+                    {/* Row 2: Right to Left */}
+                    <MarqueeRow items={bottomRow} direction="left" speed={40} />
+                </div>
             </div>
 
             <div className="absolute bottom-12 text-center w-full pointer-events-none opacity-30 text-white/50">
-                <p className="text-[10px] font-mono uppercase tracking-[0.4em]">
-                    --- Daily Arsenal ---
-                </p>
             </div>
+
+            {/* CSS Mask optimized for performance */}
+            <style jsx global>{`
+                .mask-horizontal-fixed {
+                    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+                    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+                    /* Hardware acceleration for mask rendering */
+                    transform: translateZ(0); 
+                }
+            `}</style>
         </section>
     );
 };
 
-const MistItem = ({ tool, mouseX, mouseY, index = 0, isLowPowerMode }: { tool: any, mouseX: any, mouseY: any, index?: number, isLowPowerMode?: boolean }) => {
-    const itemRef = useRef<HTMLDivElement>(null);
-    const iconUrl = toolLogos[tool.name] || (tool.icon?.includes('http') ? tool.icon : `https://cdn.simpleicons.org/${tool.name.toLowerCase().replace(/[\s.]/g, '')}`);
-
-    // Distance Calculation (Memoized or conditional)
-    const distance = useTransform([mouseX, mouseY], ([x, y]) => {
-        if (isLowPowerMode || !itemRef.current) return 1000;
-
-        const rect = itemRef.current.getBoundingClientRect();
-        const container = itemRef.current.parentElement?.getBoundingClientRect();
-        if (!container) return 1000;
-
-        const centerX = (rect.left - container.left) + rect.width / 2;
-        const centerY = (rect.top - container.top) + rect.height / 2;
-
-        const dx = (x as number) - centerX;
-        const dy = (y as number) - centerY;
-        return Math.sqrt(dx * dx + dy * dy);
-    });
-
-    // --- ANIMATIONS ---
-    const blur = useTransform(distance, [0, 500], [0, 2]);
-    const opacity = useTransform(distance, [0, 400], [1, 0.4]);
-    const scale = useTransform(distance, [0, 300], [1.1, 0.9]);
-    const grayscale = useTransform(distance, [0, 200], [0, 80]);
-    const y = useTransform(distance, [0, 300], [-10, 0]);
-
-    // Use motion templates conditionally or handle in style
-    const filterValue = useMotionTemplate`blur(${blur}px) grayscale(${grayscale}%)`;
+const MarqueeRow = ({ items, direction, speed }: { items: any[], direction: 'left' | 'right', speed: number }) => {
+    // 4x duplication for ultra-smooth loop on all screen widths
+    const doubledItems = [...items, ...items, ...items, ...items];
 
     return (
-        <motion.div
-            ref={itemRef}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: index * 0.05, ease: "easeOut" }}
-            style={isLowPowerMode ? { opacity: 1, scale: 1, y: 0 } : {
-                opacity,
-                scale,
-                y,
-            }}
-            className="flex flex-col items-center justify-center gap-6 group"
-        >
-            {/* ICON CONTAINER - Filter applied here */}
+        <div className="flex w-full overflow-hidden py-4">
             <motion.div
-                className="relative w-20 h-20 md:w-24 md:h-24 transition-transform duration-500 ease-out"
-                style={isLowPowerMode ? { filter: 'none' } : {
-                    filter: filterValue
+                className="flex gap-8 whitespace-nowrap"
+                style={{
+                    willChange: "transform",
+                    backfaceVisibility: "hidden",
+                    transformStyle: "preserve-3d"
+                }}
+                animate={{
+                    x: direction === 'right' ? ['-50%', '0%'] : ['0%', '-50%'],
+                }}
+                transition={{
+                    duration: speed,
+                    repeat: Infinity,
+                    ease: "linear",
                 }}
             >
+                {doubledItems.map((tool, idx) => (
+                    <ToolPill key={`${tool.name}-${idx}`} tool={tool} />
+                ))}
+            </motion.div>
+        </div>
+    );
+};
+
+const ToolPill = ({ tool }: { tool: any }) => {
+    const iconUrl = toolLogos[tool.name] || tool.icon;
+
+    return (
+        <div className="flex items-center gap-6 px-10 py-5 bg-[#0a0a0a]/10 dark:bg-white/5 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-full transition-all duration-300 hover:scale-105 hover:bg-black/20 dark:hover:bg-white/10 group select-none">
+            <div className="relative w-10 h-10 md:w-12 md:h-12 shrink-0">
                 <Image
                     src={iconUrl}
                     alt={tool.name}
                     fill
-                    className="object-contain drop-shadow-2xl"
+                    className={cn(
+                        "object-contain filter grayscale transition-all duration-500 group-hover:grayscale-0 group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]",
+                        tool.name === 'GitHub' && "dark:invert"
+                    )}
                     unoptimized
                 />
-            </motion.div>
-
-            {/* LABEL - No filter, always sharp */}
-            <div className="flex flex-col items-center gap-1">
-                <span className="text-sm md:text-base font-bold uppercase tracking-[0.2em] text-white text-center">
-                    {tool.name}
-                </span>
-                <div className="h-[1px] w-12 bg-primary/50 opacity-50" />
             </div>
-        </motion.div>
+            <span className="text-xl md:text-2xl font-bold uppercase tracking-[0.1em] text-black/70 dark:text-white/70 group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
+                {tool.name}
+            </span>
+        </div>
     );
 };

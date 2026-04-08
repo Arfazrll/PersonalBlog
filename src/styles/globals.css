@@ -511,3 +511,19 @@ html, body, * {
     }
   }
 }
+
+/* Bulletproof Native Compositor Arc Animations - Bypassing JS Main Thread Ghosting */
+@keyframes arc-spin {
+  from { transform: translateZ(0) rotate(0deg); }
+  to { transform: translateZ(0) rotate(360deg); }
+}
+@keyframes arc-spin-reverse {
+  from { transform: translateZ(0) rotate(360deg); }
+  to { transform: translateZ(0) rotate(0deg); }
+}
+.animate-arc-spin {
+  animation: arc-spin 60s linear infinite;
+}
+.animate-arc-spin-reverse {
+  animation: arc-spin-reverse 60s linear infinite;
+}

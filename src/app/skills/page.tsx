@@ -9,6 +9,7 @@ import { TextPressure } from '@/components/ui/TextPressure';
 import dynamic from 'next/dynamic';
 
 const KineticTechGrid = dynamic(() => import('@/components/ui/KineticTechGrid').then(mod => mod.KineticTechGrid), { ssr: true });
+const ArchedTechIconsInteractive = dynamic(() => import('@/components/ui/ArchedTechIcons').then(mod => mod.ArchedTechIconsInteractive), { ssr: true });
 const SoftSkills = dynamic(() => import('@/components/sections/skills/SoftSkills').then(mod => mod.SoftSkills), { ssr: true });
 const HardSkills = dynamic(() => import('@/components/sections/skills/HardSkills').then(mod => mod.HardSkills), { ssr: true });
 const ToolsSection = dynamic(() => import('@/components/sections/skills/ToolsSection').then(mod => mod.ToolsSection), { ssr: true });
@@ -165,33 +166,44 @@ export default function SkillsPage() {
                 <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
                 </div>
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ margin: "-100px", once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="text-center mb-24 space-y-4"
-                    >
-                        <motion.span
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
+                <div className="max-w-7xl mx-auto relative z-10 w-full mt-12 md:mt-16">
+                    <div className="relative w-full flex flex-col justify-center items-center mb-0">
+                                <ArchedTechIconsInteractive 
+                                    key="arched-tech-icons-interactive"
+                                    icons={portfolioData.techStack.map(t => techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`))} 
+                                />
+                        
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ margin: "-100px", once: true }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                            className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
+                            transition={{ duration: 0.6 }}
+                            className="text-center space-y-4 max-w-3xl mx-auto px-4 relative z-10 pointer-events-auto -mt-[30px] sm:-mt-[50px] md:-mt-[70px]"
                         >
-                            Tech_Arsenal // 03
-                        </motion.span>
-                        <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-foreground whitespace-nowrap">
-                            <span className="font-thin not-italic text-foreground/30">Tech</span> Stack
-                        </h2>
-                    </motion.div>
+                            <motion.span
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ margin: "-100px", once: true }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                                className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
+                            >
+                                MY ECOSYSTEM
+                            </motion.span>
+                            <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-foreground">
+                                The modern development stack
+                            </h2>
+                            <p className="text-sm md:text-base text-muted-foreground leading-relaxed pt-2">
+                                A single tool doesn&apos;t build the full application. That is why we bring together Python, React, Next.js, and more, all in one cohesive ecosystem.
+                            </p>
+                        </motion.div>
+                    </div>
 
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ margin: "-100px", once: true }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="mt-16 sm:mt-20 md:mt-24 w-full"
                     >
                         <KineticTechGrid
                             items={portfolioData.techStack.map(t => ({
