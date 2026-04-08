@@ -68,7 +68,7 @@ export const HardSkills = () => {
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header - Synchronized & Right Aligned */}
                 <div className="mb-24 flex flex-col items-end gap-4 text-right">
-                    <motion.h2 
+                    <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -84,14 +84,14 @@ export const HardSkills = () => {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-foreground text-lg font-sans max-w-2xl pt-6 leading-relaxed border-t border-border mt-4"
                     >
-                        High-fidelity engineering expertise focused on systemic performance, 
+                        High-fidelity engineering expertise focused on systemic performance,
                         infrastructure resilience, and intelligent neural architectures.
                     </motion.p>
                 </div>
 
                 {/* INTEGRATED SPLIT-VIEW CONTAINER (Blogie AI Style + Layout Expansion) */}
                 <div className="relative border border-border/40 rounded-[40px] overflow-hidden shadow-2xl shadow-black/5 bg-card/10 transition-colors duration-500">
-                    
+
                     {/* Integrated Tab Bar - Subtle Vertical Grid */}
                     <div className="flex border-b border-border/40 bg-secondary/5 h-16 md:h-14">
                         {categories.map((cat) => (
@@ -100,14 +100,14 @@ export const HardSkills = () => {
                                 onClick={() => setActiveTab(cat)}
                                 className={cn(
                                     "flex-1 px-4 text-[11px] md:text-xs font-mono uppercase tracking-[0.2em] transition-all duration-300 relative border-r border-border/40 last:border-r-0",
-                                    activeTab === cat 
-                                        ? "bg-card text-foreground" 
+                                    activeTab === cat
+                                        ? "bg-card text-foreground"
                                         : "text-muted-foreground/50 hover:text-foreground hover:bg-secondary/10"
                                 )}
                             >
                                 <span className="relative z-10">{CATEGORY_META[cat]?.label || cat}</span>
                                 {activeTab === cat && (
-                                    <motion.div 
+                                    <motion.div
                                         layoutId="activeTabIndicator"
                                         className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary/80"
                                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
@@ -119,7 +119,7 @@ export const HardSkills = () => {
 
                     {/* DYNAMIC CONTENT AREA (SPLIT-VIEW) */}
                     <div className="flex flex-col lg:flex-row min-h-[520px] relative">
-                        <motion.div 
+                        <motion.div
                             layout
                             className={cn(
                                 "p-10 md:p-16 flex flex-col justify-between transition-all duration-700 ease-in-out",
@@ -151,12 +151,12 @@ export const HardSkills = () => {
                             </AnimatePresence>
 
                             <div className="mt-12 flex items-center gap-4">
-                                <button 
+                                <button
                                     onClick={() => setIsExpanded(!isExpanded)}
                                     className={cn(
                                         "group flex items-center gap-3 px-8 py-4 rounded-full font-bold transition-all duration-500 shadow-xl active:scale-95",
-                                        isExpanded 
-                                            ? "bg-white text-black hover:bg-white/90" 
+                                        isExpanded
+                                            ? "bg-white text-black hover:bg-white/90"
                                             : "bg-foreground text-background hover:scale-105 shadow-black/10"
                                     )}
                                 >
@@ -167,14 +167,14 @@ export const HardSkills = () => {
                                         <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform duration-500" />
                                     )}
                                 </button>
-                                
+
                                 {isExpanded && (
-                                    <motion.span 
+                                    <motion.span
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         className="text-[10px] font-mono uppercase tracking-widest text-primary/40 animate-pulse"
                                     >
-                                       
+
                                     </motion.span>
                                 )}
                             </div>
@@ -205,7 +205,7 @@ export const HardSkills = () => {
                                                         <span className="text-[10px] font-sans font-medium px-2 py-0.5 bg-background border border-border/20 rounded text-muted-foreground/50 uppercase tracking-wider">{skill.level || 'Exp'}</span>
                                                     </div>
                                                     <div className="w-full h-0.5 bg-background/30 rounded-full overflow-hidden mb-4">
-                                                        <motion.div 
+                                                        <motion.div
                                                             initial={{ width: 0 }}
                                                             animate={{ width: skill.level === 'expert' ? '95%' : skill.level === 'advanced' ? '80%' : '60%' }}
                                                             transition={{ duration: 1.2, delay: 0.4 + idx * 0.05 }}
