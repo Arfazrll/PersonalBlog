@@ -669,7 +669,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                     <h3 className="text-lg font-bold mb-6">Related Topics</h3>
                                     <div className="flex flex-wrap gap-3">
                                         {post.tags.map(tag => (
-                                            <Link key={tag} href={`/search?q=${tag}`} className="px-4 py-2 bg-secondary/10 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-transparent hover:border-primary/20 rounded-lg text-sm transition-all font-medium">
+                                            <Link key={tag} href={`/blog?q=${tag}`} className="px-4 py-2 bg-secondary/10 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-transparent hover:border-primary/20 rounded-lg text-sm transition-all font-medium">
                                                 #{tag}
                                             </Link>
                                         ))}
@@ -1076,7 +1076,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                         ).map(tag => (
                                             <Link
                                                 key={tag}
-                                                href={`/search?q=${tag}`}
+                                                href={`/blog?q=${tag}`}
                                                 className="px-3 py-1.5 bg-secondary/5 hover:bg-primary/10 text-xs font-medium text-muted-foreground hover:text-primary border border-border/40 hover:border-primary/20 rounded-md transition-all"
                                             >
                                                 {tag}

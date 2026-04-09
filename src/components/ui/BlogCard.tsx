@@ -8,16 +8,18 @@ import { useTranslations } from 'next-intl';
 interface BlogCardProps {
     post: BlogPost;
     index: number;
+    isHovered?: boolean;
     isLowPowerMode?: boolean;
 }
 
-export function BlogCard({ post, index, isLowPowerMode }: BlogCardProps) {
+export function BlogCard({ post, index, isHovered, isLowPowerMode }: BlogCardProps) {
     const t = useTranslations('blog');
 
     return (
         <Link
             href={`/blog/${post.slug}`}
-            className="group block h-full cursor-none"
+            className="block h-full cursor-none outline-none"
+            data-blog-id={post.id}
         >
             <motion.div
                 initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: 20 }}
@@ -26,7 +28,7 @@ export function BlogCard({ post, index, isLowPowerMode }: BlogCardProps) {
                 transition={{ duration: 0.6, delay: isLowPowerMode ? 0 : index * 0.1 }}
                 className={cn(
                     "relative aspect-[16/9] w-full bg-background rounded-none overflow-hidden border border-foreground/10 dark:border-white/5 transition-all duration-500 shadow-xl",
-                    "hover:border-primary/30"
+                    isHovered ? "border-primary/40 shadow-2xl scale-[1.01]" : "border-foreground/10"
                 )}
             >
                 {/* Immersive Background Image */}
@@ -34,22 +36,34 @@ export function BlogCard({ post, index, isLowPowerMode }: BlogCardProps) {
                     src={post.image}
                     alt={post.title}
                     fill
-                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                    className={cn(
+                        "object-cover transition-transform duration-1000",
+                        isHovered ? "scale-105" : "scale-100"
+                    )}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
 
                 {/* Permanent Gradient Overlay for Legibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-70 group-hover:opacity-95 transition-opacity duration-700" />
+                <div className={cn(
+                    "absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-700",
+                    isHovered ? "opacity-95" : "opacity-70"
+                )} />
 
                 {/* Integrated Content Overlay */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
                     {/* Title (Always visible, clean, first in order) */}
-                    <h3 className="text-2xl lg:text-3xl font-black text-white transition-colors leading-[1.1] tracking-tighter drop-shadow-lg">
+                    <h3 className={cn(
+                        "text-2xl lg:text-3xl font-black text-white transition-all leading-[1.1] tracking-tighter drop-shadow-lg",
+                        isHovered ? "translate-y-0" : "translate-y-2"
+                    )}>
                         {post.title}
                     </h3>
 
                     {/* The Reveal Section (Appears BELOW the title) */}
-                    <div className="max-h-0 opacity-0 group-hover:max-h-[200px] group-hover:opacity-100 group-hover:mt-4 transition-all duration-700 ease-in-out overflow-hidden space-y-4">
+                    <div className={cn(
+                        "transition-all duration-700 ease-in-out overflow-hidden space-y-4",
+                        isHovered ? "max-h-[200px] opacity-100 mt-4" : "max-h-0 opacity-0 mt-0"
+                    )}>
                         <p className="text-xs text-white/80 line-clamp-3 leading-relaxed font-medium">
                             {post.excerpt}
                         </p>
