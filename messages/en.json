@@ -470,11 +470,10 @@
         "back": "Back to Blog",
         "noResults": "No articles found",
         "categories": {
-            "all": "All",
-            "ai": "AI & ML",
-            "web3": "Blockchain",
-            "coding": "Development",
-            "other": "Insights"
+            "applied-ai": "Applied AI",
+            "software-development": "Software Dev",
+            "about-me": "About Me",
+            "more": "More"
         }
     },
     "gallery": {

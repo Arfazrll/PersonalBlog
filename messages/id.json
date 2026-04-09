@@ -455,11 +455,10 @@
         "back": "Kembali ke Blog",
         "noResults": "Tidak ada artikel ditemukan",
         "categories": {
-            "all": "Semua",
-            "ai": "AI & ML",
-            "web3": "Blockchain",
-            "coding": "Development",
-            "other": "Wawasan"
+            "applied-ai": "Applied AI",
+            "software-development": "Software Dev",
+            "about-me": "About Me",
+            "more": "More"
         }
     },
     "gallery": {

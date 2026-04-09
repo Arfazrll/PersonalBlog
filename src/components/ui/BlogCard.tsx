@@ -1,11 +1,9 @@
-import { useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Calendar, ArrowUpRight, Brain, Blocks, Code2, Library, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { BlogPost } from '@/types';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import { useTheme } from 'next-themes';
 
 interface BlogCardProps {
     post: BlogPost;
@@ -13,131 +11,58 @@ interface BlogCardProps {
     isLowPowerMode?: boolean;
 }
 
-const CategoryIcon = ({ category, className }: { category: string; className?: string }) => {
-    switch (category) {
-        case 'ai': return <Brain className={className} />;
-        case 'web3': return <Blocks className={className} />;
-        case 'coding': return <Code2 className={className} />;
-        default: return <Library className={className} />;
-    }
-};
-
 export function BlogCard({ post, index, isLowPowerMode }: BlogCardProps) {
     const t = useTranslations('blog');
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
-
-    // Mouse interaction for glow
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const frameRef = useRef<number | null>(null);
-
-    const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent) => {
-        if (isLowPowerMode) return;
-
-        if (frameRef.current) {
-            cancelAnimationFrame(frameRef.current);
-        }
-
-        frameRef.current = requestAnimationFrame(() => {
-            if (!currentTarget) return;
-            const { left, top } = currentTarget.getBoundingClientRect();
-            mouseX.set(clientX - left);
-            mouseY.set(clientY - top);
-        });
-    };
-
-    const backgroundStyle = useMotionTemplate`
-        radial-gradient(
-            600px circle at ${mouseX}px ${mouseY}px,
-            rgba(var(--primary-rgb), ${isDark ? 0.1 : 0.05}),
-            transparent 80%
-        )
-    `;
 
     return (
-        <Link href={`/blog/${post.slug}`} className="block h-full cursor-pointer">
+        <Link
+            href={`/blog/${post.slug}`}
+            className="group block h-full cursor-none"
+        >
             <motion.div
                 initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: isLowPowerMode ? 0 : index * 0.1 }}
-                onMouseMove={handleMouseMove}
                 className={cn(
-                    "group relative flex flex-col h-full transition-all duration-500 rounded-[2rem] overflow-hidden p-8 lg:p-10",
-                    "bg-card border-2 border-foreground/15 dark:border-white/[0.08]",
-                    "hover:border-primary/40 dark:hover:border-primary/40",
-                    "shadow-sm hover:shadow-xl dark:shadow-none transition-shadow"
+                    "relative aspect-[16/9] w-full bg-background rounded-none overflow-hidden border border-foreground/10 dark:border-white/5 transition-all duration-500 shadow-xl",
+                    "hover:border-primary/30"
                 )}
             >
-                {/* Spotlight Glow Effect - Hidden in Low Power Mode */}
-                {!isLowPowerMode && (
-                    <motion.div
-                        className="pointer-events-none absolute -inset-px rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
-                        style={{ background: backgroundStyle }}
+                {/* Immersive Background Image */}
+                <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
 
-                    />
-                )}
+                {/* Permanent Gradient Overlay for Legibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-70 group-hover:opacity-95 transition-opacity duration-700" />
 
-                {/* Background Decorative Icon - Subtle & Large */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] dark:opacity-[0.02] group-hover:opacity-[0.06] dark:group-hover:opacity-[0.04] transition-opacity duration-700 pointer-events-none z-0 scale-[2.5] blur-[1px]">
-                    <CategoryIcon category={post.category} className="w-64 h-64 text-foreground" />
-                </div>
+                {/* Integrated Content Overlay */}
+                <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                    {/* Title (Always visible, clean, first in order) */}
+                    <h3 className="text-2xl lg:text-3xl font-black text-white transition-colors leading-[1.1] tracking-tighter drop-shadow-lg">
+                        {post.title}
+                    </h3>
 
-                {/* Content Container - Relative to stay above glow */}
-                <div className="relative z-10 h-full flex flex-col">
-
-                    {/* Header: Cat & Date */}
-                    <div className="flex items-center justify-between mb-10">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-foreground/[0.03] border border-foreground/[0.08] flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/20 transition-colors">
-                                <CategoryIcon category={post.category} className="w-4 h-4 text-primary" />
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground group-hover:text-primary transition-colors">
-                                {t(`categories.${post.category}`)}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/[0.03] border border-foreground/[0.05]">
-                            <Calendar className="w-3 h-3 text-muted-foreground/40" />
-                            <span className="text-[10px] font-bold text-muted-foreground tracking-wider">
-                                {new Date(post.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Body: Title & Excerpt */}
-                    <div className="flex-grow">
-                        <h3 className="text-2xl lg:text-3xl font-black mb-6 text-foreground group-hover:text-primary transition-colors leading-[1.1] tracking-tighter">
-                            {post.title}
-                        </h3>
-                        <p className="text-sm lg:text-base text-muted-foreground group-hover:text-foreground/80 transition-colors line-clamp-3 leading-relaxed font-medium mb-10">
+                    {/* The Reveal Section (Appears BELOW the title) */}
+                    <div className="max-h-0 opacity-0 group-hover:max-h-[200px] group-hover:opacity-100 group-hover:mt-4 transition-all duration-700 ease-in-out overflow-hidden space-y-4">
+                        <p className="text-xs text-white/80 line-clamp-3 leading-relaxed font-medium">
                             {post.excerpt}
                         </p>
-                    </div>
-
-                    {/* Footer: Action & Tags */}
-                    <div className="mt-auto pt-8 flex items-center justify-between border-t border-foreground/[0.05] group-hover:border-primary/20 transition-colors">
-                        <div
-                            className="group/link flex items-center gap-3 text-sm font-black text-muted-foreground group-hover:text-foreground transition-all tracking-widest uppercase"
-                        >
-                            <span>Insights</span>
-                            <div className="w-8 h-[2px] bg-foreground/10 group-hover/link:w-12 group-hover/link:bg-primary transition-all duration-500" />
-                            <ArrowUpRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all" />
+                        <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white bg-white/10 backdrop-blur-md px-3 py-1 rounded-none border border-white/10">
+                                {t(`categories.${post.category}`)}
+                            </span>
+                            <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">
+                                {new Date(post.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}
+                            </span>
                         </div>
-
-                        {post.tags.length > 0 && (
-                            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-md bg-foreground/[0.02] border border-foreground/[0.05]">
-                                <Sparkles className="w-3 h-3 text-primary/40" />
-                                <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest">
-                                    {post.tags[0]}
-                                </span>
-                            </div>
-                        )}
                     </div>
                 </div>
-
-                {/* Corner Decorative Element */}
-                <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             </motion.div>
         </Link>
     );
