@@ -314,13 +314,13 @@ export default function SkillsPage() {
                                 transition={{ duration: 0.5, delay: 0.2 }}
                                 className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
                             >
-                                MY ECOSYSTEM
+                                CORE TECHNOLOGIES
                             </motion.span>
                             <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-foreground">
-                                The modern development stack
+                                The Engineering Foundation
                             </h2>
                             <p className="text-sm md:text-base text-muted-foreground leading-relaxed pt-2">
-                                A single tool doesn&apos;t build the full application. That is why we bring together Python, React, Next.js, and more, all in one cohesive ecosystem.
+                                Building scalable architectures using modern languages and frameworks optimized for high-performance execution.
                             </p>
                         </motion.div>
                     </div>
