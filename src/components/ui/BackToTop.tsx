@@ -86,7 +86,7 @@ export function BackToTop() {
                     ref={ref}
                     onMouseMove={handleMouseMove}
                     onMouseLeave={handleMouseLeave}
-                    className="fixed bottom-6 right-6 z-[100] w-32 h-32 flex items-center justify-center pointer-events-auto"
+                    className="fixed bottom-6 right-6 z-[100] w-32 h-32 flex items-center justify-center pointer-events-auto hide-on-modal transition-all duration-300"
                 >
                     <motion.button
                         initial={{ opacity: 0, scale: 0.5 }}

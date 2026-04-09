@@ -149,7 +149,7 @@ export const portfolioData: PortfolioData = {
             tools: ['VS Code', 'Vercel', 'Postman', 'GitHub'],
             status: 'completed',
             repoUrl: 'https://github.com/Arfazrll/Swarm-Agent-Orchestrator',
-            demoUrl: '#',
+            demoUrl: 'https://swarmagentblog.vercel.app/',
             startDate: '2025-03-01',
             role: 'AI Engineer & Full Stack Developer',
             customTimeline: 'March 2025',
