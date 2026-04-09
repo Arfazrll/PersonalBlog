@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect, Suspense } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, animate } from 'framer-motion';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { portfolioData } from '@/data/portfolio';
 import { BlogCard } from '@/components/ui/BlogCard';
@@ -17,20 +18,30 @@ import { cn } from '@/lib/utils';
 import { usePerformance } from '@/hooks/usePerformance';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-export default function BlogPage() {
+function BlogContent() {
     const t = useTranslations('blog');
+    const searchParams = useSearchParams();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const [sortBy, setSortBy] = useState<'latest' | 'oldest'>('latest');
     const [isHoveringSort, setIsHoveringSort] = useState(false);
-    const [isGridHovered, setIsGridHovered] = useState(false);
     const { isLowPowerMode } = usePerformance();
     const POSTS_PER_PAGE = 9;
 
-    // DOM Refs for Zero-Lag Cursor Tracking
-    const containerRef = useRef<HTMLDivElement>(null);
-    const cursorRef = useRef<HTMLDivElement>(null);
+    // Master Hover State for perfect synchronization
+    const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
+    const mousePosRef = useRef({ x: 0, y: 0 });
+
+    // Framer Motion Values for high-performance tracking
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+    const cursorOpacity = useMotionValue(0);
+
+    // Spring configuration for smooth but extremely responsive movement
+    const springConfig = { stiffness: 1000, damping: 50, mass: 0.1 };
+    const springX = useSpring(mouseX, springConfig);
+    const springY = useSpring(mouseY, springConfig);
 
     const gridRef = useRef<HTMLDivElement>(null);
     const categories = ['all', 'applied-ai', 'software-development', 'about-me', 'more'];
@@ -59,6 +70,16 @@ export default function BlogPage() {
         currentPage * POSTS_PER_PAGE
     );
 
+    // Handle URL parameters for search
+    useEffect(() => {
+        const q = searchParams.get('q');
+        if (q) {
+            setSearchQuery(q);
+            // Optional: reset category if searching via URL tags
+            setSelectedCategory('all');
+        }
+    }, [searchParams]);
+
     // Reset pagination when category or search changes
     useEffect(() => {
         setCurrentPage(1);
@@ -70,34 +91,27 @@ export default function BlogPage() {
         gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    // Cursor system: debounce-based scroll-end detection (handles trackpad inertia reliably)
+    // Master Hover Controller: Synchronizes cursor and card expansion
     useEffect(() => {
         if (isLowPowerMode) return;
 
-        let isScrolling = false;
-        let scrollEndTimer: ReturnType<typeof setTimeout>;
+        const updateHoverTarget = (x: number, y: number) => {
+            const element = document.elementFromPoint(x, y);
+            const card = element?.closest('[data-blog-id]');
+            const id = card?.getAttribute('data-blog-id') || null;
+            setHoveredCardId(id);
+        };
 
         const handleMouseMove = (e: MouseEvent) => {
-            if (!cursorRef.current) return;
-            cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-            if (!isScrolling) {
-                cursorRef.current.style.opacity = '1';
-            }
+            mouseX.set(e.clientX);
+            mouseY.set(e.clientY);
+            mousePosRef.current = { x: e.clientX, y: e.clientY };
+            updateHoverTarget(e.clientX, e.clientY);
         };
 
         const handleScroll = () => {
-            if (!cursorRef.current) return;
-            // Hide on first scroll frame
-            if (!isScrolling) {
-                isScrolling = true;
-                cursorRef.current.style.opacity = '0';
-            }
-            // Reset the timer on EVERY scroll event (catches inertia frames)
-            clearTimeout(scrollEndTimer);
-            scrollEndTimer = setTimeout(() => {
-                isScrolling = false;
-                // Cursor stays hidden — shows on next tiny mousemove
-            }, 50);
+            // Continually update the hover target as the page moves under the mouse
+            updateHoverTarget(mousePosRef.current.x, mousePosRef.current.y);
         };
 
         window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -106,9 +120,17 @@ export default function BlogPage() {
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('scroll', handleScroll);
-            clearTimeout(scrollEndTimer);
         };
-    }, [isLowPowerMode]);
+    }, [isLowPowerMode, mouseX, mouseY]);
+
+    // Couple cursor visibility to the master hover state
+    useEffect(() => {
+        if (hoveredCardId) {
+            animate(cursorOpacity, 1, { duration: 0.3 });
+        } else {
+            animate(cursorOpacity, 0, { duration: 0.2 });
+        }
+    }, [hoveredCardId, cursorOpacity]);
 
     return (
         <main className="min-h-screen bg-background overflow-hidden selection:bg-primary/30">
@@ -261,19 +283,27 @@ export default function BlogPage() {
                         </div>
                     </div>
 
-                    {/* Blog Grid Area */}
                     <div
                         ref={gridRef}
                         className="max-w-screen-2xl mx-auto pt-10 relative"
-                        onMouseEnter={() => setIsGridHovered(true)}
-                        onMouseLeave={() => setIsGridHovered(false)}
                     >
-                        {/* Native Floating Cursor (Exclusion Blend Design) */}
-                        <div
-                            ref={cursorRef}
+                        {/* High-Performance Framer Motion Cursor */}
+                        <motion.div
                             className="pointer-events-none fixed left-0 top-0 z-[100] flex items-center justify-center mix-blend-exclusion"
                             style={{
-                                visibility: isGridHovered ? 'visible' : 'hidden'
+                                x: springX,
+                                y: springY,
+                                opacity: cursorOpacity,
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                            }}
+                            initial={{ scale: 0.8 }}
+                            animate={{
+                                scale: !!hoveredCardId ? 1 : 0.8,
+                            }}
+                            transition={{
+                                scale: { duration: 0.4, ease: 'backOut' }
                             }}
                         >
                             <div className="flex flex-col items-center text-center -translate-x-1/2 -translate-y-1/2 leading-[1.1]">
@@ -284,12 +314,18 @@ export default function BlogPage() {
                                     Detail
                                 </span>
                             </div>
-                        </div>
+                        </motion.div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                             <AnimatePresence mode="popLayout">
                                 {paginatedPosts.map((post, idx) => (
-                                    <BlogCard key={post.id} post={post} index={idx} isLowPowerMode={isLowPowerMode} />
+                                    <BlogCard 
+                                        key={post.id} 
+                                        post={post} 
+                                        index={idx} 
+                                        isHovered={hoveredCardId === post.id}
+                                        isLowPowerMode={isLowPowerMode} 
+                                    />
                                 ))}
                             </AnimatePresence>
                         </div>
@@ -359,5 +395,12 @@ export default function BlogPage() {
                 <MarqueeClosing isLowPowerMode={isLowPowerMode} />
             </ErrorBoundary>
         </main>
+    );
+}
+export default function BlogPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-background animate-pulse" />}>
+            <BlogContent />
+        </Suspense>
     );
 }
