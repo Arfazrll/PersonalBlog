@@ -212,7 +212,8 @@ function HeroIntro() {
         };
     }, [isDarkMode]);
 
-    const [isInView, setIsInView] = useState(true);
+    const [isInView, setIsInView] = useState(false);
+    const [isFullyReady, setIsFullyReady] = useState(false);
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -220,12 +221,23 @@ function HeroIntro() {
             ([entry]) => setIsInView(entry.isIntersecting),
             {
                 threshold: 0,
-                rootMargin: '200px' // Start rendering 200px before entering viewport
+                rootMargin: '200px'
             }
         );
         observer.observe(containerRef.current);
         return () => observer.disconnect();
     }, []);
+
+    // DELAYED ACTIVATION: 
+    // Wait for the portal zoom (1.5s) to mostly finish before activating heavy assets
+    useEffect(() => {
+        if (isInView) {
+            const timer = setTimeout(() => setIsFullyReady(true), 1000);
+            return () => clearTimeout(timer);
+        } else {
+            setIsFullyReady(false);
+        }
+    }, [isInView]);
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -247,11 +259,11 @@ function HeroIntro() {
             <AnimatedBackground scrollYProgress={scrollYProgress} />
 
             {/* Hyperspeed Background - Persistent mount with paused state for smoothness */}
-            <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${isInView ? 'opacity-100' : 'opacity-0'}`}>
+            <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${isFullyReady ? 'opacity-100' : 'opacity-0'}`}>
                 <Hyperspeed
                     effectOptions={currentHyperspeedOptions}
                     className={isDarkMode ? "opacity-40" : "opacity-20"}
-                    paused={!isInView}
+                    paused={!isFullyReady}
                 />
                 <div className={`absolute inset-0 bg-gradient-to-b ${isDarkMode
                     ? "from-background/0 via-background/40 to-background"
@@ -260,7 +272,7 @@ function HeroIntro() {
             </div>
 
             {/* 3D Scene - Persistent mount for stable layout */}
-            <Scene3D className={`opacity-10 transition-opacity duration-1000 ${isInView ? 'opacity-10' : 'opacity-0'}`} paused={!isInView} />
+            <Scene3D className={`opacity-10 transition-opacity duration-1000 ${isFullyReady ? 'opacity-10' : 'opacity-0'}`} paused={!isFullyReady} />
 
             {/* Main Content */}
             <motion.div
@@ -277,7 +289,7 @@ function HeroIntro() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    transition={{ duration: 0.8, delay: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="hero-badge inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-card text-sm font-medium mb-10 border-primary/20 backdrop-blur-xl"
                 >
                     <span className="relative flex h-2.5 w-2.5">
@@ -296,7 +308,7 @@ function HeroIntro() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    transition={{ duration: 0.8, delay: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="hero-welcome mb-[-25px] h-6 flex items-center justify-center overflow-hidden"
                 >
                     <MultilingualWelcome isDarkMode={isDarkMode} />
@@ -306,7 +318,7 @@ function HeroIntro() {
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 1.0, delay: 1.5, ease: [0.16, 1, 0.3, 1] }}
                     className="hero-name mb-4 w-full max-w-6xl mx-auto flex items-center justify-center"
                 >
                     {/* Desktop Name */}
@@ -337,13 +349,13 @@ function HeroIntro() {
                     <motion.div
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
-                        transition={{ duration: 0.4, delay: 2.0, ease: "easeInOut" }}
+                        transition={{ duration: 0.6, delay: 2.2, ease: "easeInOut" }}
                         className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 md:opacity-50"
                     />
                     <motion.p
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 2.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        transition={{ duration: 0.6, delay: 2.5, ease: [0.25, 0.46, 0.45, 0.94] }}
                         className="text-xl md:text-2xl lg:text-3xl text-foreground/90 dark:text-foreground/80 font-medium tracking-wide"
                     >
                         {portfolioData.personal.title} <span className="text-primary mx-2 font-bold">•</span> {t('role')}
@@ -351,7 +363,7 @@ function HeroIntro() {
                     <motion.div
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
-                        transition={{ duration: 0.4, delay: 2.0, ease: "easeInOut" }}
+                        transition={{ duration: 0.6, delay: 2.2, ease: "easeInOut" }}
                         className="h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 md:opacity-50"
                     />
                 </div>
@@ -360,7 +372,7 @@ function HeroIntro() {
                 <motion.p
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 2.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    transition={{ duration: 0.6, delay: 2.8, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="hero-subtitle text-base md:text-lg text-muted-foreground/70 max-w-2xl mx-auto mb-12 leading-relaxed"
                     dangerouslySetInnerHTML={{ __html: t.raw('description') }}
                 />
@@ -370,7 +382,7 @@ function HeroIntro() {
                     className="hero-cta flex justify-center"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 2.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    transition={{ duration: 0.6, delay: 3.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                 >
                     <Link
                         href="#about"
@@ -480,29 +492,48 @@ const MetricCTAHijack = () => {
 
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
+    const [isExiting, setIsExiting] = useState(false);
 
     useEffect(() => {
         const hasLoaded = sessionStorage.getItem('portfolioLoaded');
         if (hasLoaded) {
             setIsLoading(false);
+            setIsExiting(true);
         }
     }, []);
 
     const handleLoadingComplete = () => {
         setIsLoading(false);
+        // FORCE SCROLL RESET: Fixes the bug where browser restores scroll to About section
+        window.scrollTo({ top: 0, behavior: 'instant' });
         sessionStorage.setItem('portfolioLoaded', 'true');
+    };
+
+    const handleExitStart = () => {
+        setIsExiting(true);
     };
 
     return (
         <>
-            {isLoading && <LoadingScreen onComplete={handleLoadingComplete} duration={2500} />}
-            <main className="relative overflow-x-clip">
+            {isLoading && (
+                <LoadingScreen
+                    onComplete={handleLoadingComplete}
+                    onExitStart={handleExitStart}
+                    duration={2500}
+                />
+            )}
+            <motion.main
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={isExiting ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+                className="relative overflow-x-clip"
+            >
                 <HeroIntro />
                 <ExpertiseSection />
                 <AboutSection />
                 <MetricCTAHijack />
                 <SocialCorner className="fixed bottom-12 right-12 z-[30]" />
-            </main>
+            </motion.main>
         </>
     );
 }

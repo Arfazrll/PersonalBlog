@@ -419,6 +419,14 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Utility to hide elements when any modal is open */
+  body[data-modal-open="true"] .hide-on-modal {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    transition: all 0.3s ease-in-out;
+  }
 }
 
 /* --- Global Modern Minimalist Scrollbar (Aggressive Geometric) --- */

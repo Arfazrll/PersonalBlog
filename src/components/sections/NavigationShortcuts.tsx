@@ -73,7 +73,7 @@ export const NavigationShortcuts = () => {
         {
             title: t('shortcuts.volume1'),
             items: [
-                { id: '01', title: t('home'), href: '/#about' },
+                { id: '01', title: t('home'), href: '/#hero' },
                 { id: '02', title: t('resume'), href: portfolioData.personal.resumeUrl, external: true }, // Using existing key for Resume or adding new?
                 { id: '03', title: t('contact'), href: '/contact' },
             ]

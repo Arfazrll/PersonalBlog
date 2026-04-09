@@ -5,10 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface LoadingScreenProps {
     onComplete?: () => void;
+    onExitStart?: () => void;
     duration?: number;
 }
 
-export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProps) {
+export function LoadingScreen({ onComplete, onExitStart, duration = 2500 }: LoadingScreenProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [progress, setProgress] = useState(0);
 
@@ -32,26 +33,41 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
         if (progress === 100) {
             const timer = setTimeout(() => {
                 setIsLoading(false);
+                onExitStart?.();
                 setTimeout(() => {
                     onComplete?.();
-                }, 800);
+                }, 1500); // Matched with exit transition duration
             }, 500); // Small pause at 100% for impact
             return () => clearTimeout(timer);
         }
     }, [progress, onComplete]);
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             {isLoading && (
                 <motion.div
-                    initial={{ opacity: 1 }}
+                    initial={{ opacity: 1, scale: 1 }}
                     exit={{
+                        scale: 6, // Reduced from 40 for hardware smoothness
                         opacity: 0,
-                        transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+                        filter: "blur(10px)", // Reduced for performance
+                        transition: { 
+                            duration: 1.5, // Slightly longer for cinematic look
+                            ease: [0.22, 1, 0.36, 1] // Buttery-smooth quintic ease
+                        }
                     }}
                     className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background overflow-hidden"
                 >
-                    <div className="relative flex flex-col items-center w-full max-w-[280px]">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{
+                            scale: 0.8,
+                            opacity: 0,
+                            transition: { duration: 0.8, ease: "easeIn" }
+                        }}
+                        className="relative flex flex-col items-center w-full max-w-[280px]"
+                    >
                         {/* Counter */}
                         <div className="flex items-baseline mb-8">
                             <motion.span
@@ -85,7 +101,7 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
                                 {progress < 100 ? 'Loading' : 'Ready'}
                             </span>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Subtle aesthetic dot */}
                     <motion.div
