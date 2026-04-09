@@ -1,24 +1,37 @@
 'use client';
 
-import { use } from 'react';
-import { motion } from 'framer-motion';
+import { use, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { portfolioData } from '@/data/portfolio';
-import { Clock, Copy, Linkedin, Github, BookOpen, Link as LinkIcon, ArrowLeft } from 'lucide-react';
+import { Clock, Copy, Linkedin, Github, BookOpen, Link as LinkIcon, ArrowLeft, Check } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
     const t = useTranslations('blog');
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     const implementedSlugs = [
         'future-of-ai-agents',
         'web3-ux-challenges',
         'mastering-nextjs-performance',
         'ai-driven-security',
-        'llm-fine-tuning'
+        'llm-fine-tuning',
+        'smart-contract-security',
+        'modern-state-management',
+        'iot-edge-computing',
+        'ai-in-healthcare',
+        'the-architects-manifesto'
     ];
     const isImplemented = implementedSlugs.includes(slug);
 
@@ -94,8 +107,24 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                     </div>
 
                     <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-secondary/10 hover:bg-secondary/20 text-muted-foreground hover:text-foreground text-xs font-bold uppercase tracking-wider rounded-lg transition-all">
-                            <Copy className="w-4 h-4" /> <span className="hidden sm:inline">Copy link</span>
+                        <button
+                            onClick={handleCopy}
+                            className={cn(
+                                "flex items-center gap-2 px-4 py-2 transition-all text-xs font-bold uppercase tracking-wider rounded-lg",
+                                copied
+                                    ? "bg-primary text-background"
+                                    : "bg-secondary/10 hover:bg-secondary/20 text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            {copied ? (
+                                <>
+                                    <Check className="w-4 h-4" /> <span>Copied!</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Copy className="w-4 h-4" /> <span className="hidden sm:inline">Copy link</span>
+                                </>
+                            )}
                         </button>
                         <div className="w-px h-6 bg-border/40 hidden sm:block" />
                         <Link href="https://linkedin.com/in/syahril-arfian-almazril" target="_blank" className="p-2 text-muted-foreground hover:text-primary transition-colors bg-secondary/10 rounded-lg hover:bg-primary/10">
@@ -400,6 +429,231 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                 </>
                             )}
 
+                             {slug === 'smart-contract-security' && (
+                                <>
+                                    <h2 id="audits" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">The Necessity of Rigorous Audits</h2>
+                                    <p className="mb-8">
+                                        In the decentralized world, code is law. But when that law has a loophole, millions of dollars can vanish in an instant. <strong>Smart Contract Security</strong> is no longer just a best practice; it is the foundation of trust in Web3. A single reentrancy vulnerability or an unchecked mathematical overflow can lead to catastrophic exploits.
+                                    </p>
+                                    <p className="mb-8">
+                                        Audit patterns have evolved from simple manual reviews to sophisticated automated formal verification. We are now seeing the integration of AI-powered static analysis tools that can scan thousands of lines of Solidity in seconds, identifying common patterns of vulnerability like <em>Flash Loan Attacks</em> or <em>Oracle Manipulation</em>.
+                                    </p>
+
+                                    <div className="my-12 relative w-full aspect-video rounded-2xl overflow-hidden border border-border/40 bg-secondary/5">
+                                        <Image
+                                            src="https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop"
+                                            alt="Smart Contract Security"
+                                            fill
+                                            loading="lazy"
+                                            className="object-cover hover:scale-105 transition-transform duration-700"
+                                        />
+                                    </div>
+
+                                    <h2 id="patterns" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">Securing the Layers</h2>
+                                    <p className="mb-8">
+                                        Security must be holistic. It starts at the language level but extends to the architectural design.
+                                    </p>
+                                    <ul className="list-disc pl-6 mb-8 sapce-y-2 text-muted-foreground">
+                                        <li><strong>Access Control:</strong> Implementing robust Role-Based Access Control (RBAC) to ensure only authorized entities can execute critical functions.</li>
+                                        <li><strong>Invariant Testing:</strong> Defining properties that must always hold true, regardless of the state, and using fuzzing to try and break them.</li>
+                                        <li><strong>Pausability:</strong> Building "Circuit Breakers" into contracts that allow developers to freeze functionality during a detected attack.</li>
+                                    </ul>
+
+                                    <blockquote className="border-l-4 border-primary pl-6 my-12 italic text-xl font-medium text-foreground">
+                                        "A secure smart contract is one that assumes every user is a potential attacker and every external call is a potential exploit."
+                                        <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
+                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                            </div>
+                                            <div>
+                                                <div className="text-foreground">{post.author.name}</div>
+                                                <div className="text-muted-foreground text-xs font-normal">Blockchain Security Auditor</div>
+                                            </div>
+                                        </footer>
+                                    </blockquote>
+                                </>
+                            )}
+
+                            {slug === 'modern-state-management' && (
+                                <>
+                                    <h2 id="beyond-redux" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">Moving Beyond Redux Complexity</h2>
+                                    <p className="mb-8">
+                                        For years, Redux was the undisputed king of React state management. However, its boilerplate-heavy nature often led to "State Management Fatigue." Today, we are witnessing a renaissance of minimalist libraries like <strong>Zustand</strong> and <strong>Jotai</strong>, which prioritize developer experience without sacrificing performance.
+                                    </p>
+                                    <p className="mb-8">
+                                        Zustand, in particular, has gained massive traction by providing a simple, hook-based API that doesn't require wrapping your whole app in a provider. It allows for atomic state updates and easy integration with middleware like Immer for immutable state manipulation.
+                                    </p>
+
+                                    <div className="my-12 relative w-full aspect-video rounded-2xl overflow-hidden border border-border/40 bg-secondary/5">
+                                        <Image
+                                            src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2000&auto=format&fit=crop"
+                                            alt="State Management"
+                                            fill
+                                            loading="lazy"
+                                            className="object-cover hover:scale-105 transition-transform duration-700"
+                                        />
+                                    </div>
+
+                                    <h2 id="atomic-vs-global" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">Atomic vs. Global State</h2>
+                                    <p className="mb-8">
+                                        Choosing the right pattern depends on your application's architecture.
+                                    </p>
+                                    <ul className="list-disc pl-6 mb-8 sapce-y-2 text-muted-foreground">
+                                        <li><strong>Global State (Zustand):</strong> Best for shared data like user profiles or global settings that many components need.</li>
+                                        <li><strong>Atomic State (Jotai/Recoil):</strong> Ideal for independent pieces of state that need to be highly reactive and decoupled.</li>
+                                        <li><strong>Server State (React Query):</strong> Crucial for managing data fetched from APIs, handling caching, and synchronization automatically.</li>
+                                    </ul>
+
+                                    <blockquote className="border-l-4 border-primary pl-6 my-12 italic text-xl font-medium text-foreground">
+                                        "The best state management is the one you don't notice. It should be as invisible as possible, only revealing itself when needed."
+                                        <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
+                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                            </div>
+                                            <div>
+                                                <div className="text-foreground">{post.author.name}</div>
+                                                <div className="text-muted-foreground text-xs font-normal">Senior Frontend Engineer</div>
+                                            </div>
+                                        </footer>
+                                    </blockquote>
+                                </>
+                            )}
+
+                            {slug === 'iot-edge-computing' && (
+                                <>
+                                    <h2 id="edge-vs-cloud" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">Processing at the Edge</h2>
+                                    <p className="mb-8">
+                                        In Industrial IoT, latency is the enemy. Waiting for a round-trip to a cloud server to shut down a malfunctioning machine can take precious seconds that an organization doesn't have. <strong>Edge Computing</strong> brings the intelligence directly to the hardware—leveraging powerful microcontrollers like the ESP32 or Raspberry Pi to process data locally.
+                                    </p>
+                                    <p className="mb-8">
+                                        By filtering and analyzing data at the edge, we significantly reduce bandwidth costs and improve system reliability. Even if the network goes down, the edge node continues to operate, making critical decisions based on real-time sensor inputs.
+                                    </p>
+
+                                    <div className="my-12 relative w-full aspect-video rounded-2xl overflow-hidden border border-border/40 bg-secondary/5">
+                                        <Image
+                                            src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop"
+                                            alt="Edge Computing"
+                                            fill
+                                            loading="lazy"
+                                            className="object-cover hover:scale-105 transition-transform duration-700"
+                                        />
+                                    </div>
+
+                                    <h2 id="hw-optimization" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">Hardware-Level Optimization</h2>
+                                    <p className="mb-8">
+                                        Implementing AI at the edge requires significant optimization to fit within limited memory constraints.
+                                    </p>
+                                    <ul className="list-disc pl-6 mb-8 sapce-y-2 text-muted-foreground">
+                                        <li><strong>TinyML:</strong> Deploying quantized machine learning models that can run on simple microcontrollers.</li>
+                                        <li><strong>Local Storage:</strong> Using SPIFFS or LittleFS for local data logging and configuration management.</li>
+                                        <li><strong>Energy Efficiency:</strong> Implementing deep sleep modes and asynchronous processing to maximize battery life.</li>
+                                    </ul>
+
+                                    <blockquote className="border-l-4 border-primary pl-6 my-12 italic text-xl font-medium text-foreground">
+                                        "The cloud is for reflection; the edge is for action."
+                                        <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
+                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                            </div>
+                                            <div>
+                                                <div className="text-foreground">{post.author.name}</div>
+                                                <div className="text-muted-foreground text-xs font-normal">IoT Solutions Architect</div>
+                                            </div>
+                                        </footer>
+                                    </blockquote>
+                                </>
+                            )}
+
+                            {slug === 'ai-in-healthcare' && (
+                                <>
+                                    <h2 id="diagnostics" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">AI as a Diagnostic Tool</h2>
+                                    <p className="mb-8">
+                                        Healthcare is one of the most promising frontiers for Artificial Intelligence. Computer Vision models are now capable of identifying early signs of diseases in X-rays, MRIs, and CT scans with a precision that often exceeds human capability. This <strong>Diagnostic Augmentation</strong> doesn't replace doctors; it empowers them.
+                                    </p>
+                                    <p className="mb-8">
+                                        The real challenge isn't the model's accuracy—it's <strong>Explainability</strong>. For a doctor to trust an AI's diagnosis, they need to understand *why* the model made that decision. Techniques like Grad-CAM are being used to highlight the specific pixels that a CNN focused on during its analysis.
+                                    </p>
+
+                                    <div className="my-12 relative w-full aspect-video rounded-2xl overflow-hidden border border-border/40 bg-secondary/5">
+                                        <Image
+                                            src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop"
+                                            alt="Healthcare AI"
+                                            fill
+                                            loading="lazy"
+                                            className="object-cover hover:scale-105 transition-transform duration-700"
+                                        />
+                                    </div>
+
+                                    <h2 id="ethics" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">Ethics & Data Privacy</h2>
+                                    <p className="mb-8">
+                                        When dealing with medical data, privacy is paramount.
+                                    </p>
+                                    <ul className="list-disc pl-6 mb-8 sapce-y-2 text-muted-foreground">
+                                        <li><strong>HIPAA Compliance:</strong> Ensuring all AI systems adhere to strict regulatory standards for patient confidentiality.</li>
+                                        <li><strong>Anonymization:</strong> Developing robust pipelines to strip Personal Identifiable Information (PII) before training.</li>
+                                        <li><strong>Federated Learning:</strong> Training models across multi-institutional datasets without ever moving the raw data from its home server.</li>
+                                    </ul>
+
+                                    <blockquote className="border-l-4 border-primary pl-6 my-12 italic text-xl font-medium text-foreground">
+                                        "AI in healthcare is not about replacing the human touch, but about providing the superhuman insight that saves lives."
+                                        <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
+                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                            </div>
+                                            <div>
+                                                <div className="text-foreground">{post.author.name}</div>
+                                                <div className="text-muted-foreground text-xs font-normal">Medical AI Researcher</div>
+                                            </div>
+                                        </footer>
+                                    </blockquote>
+                                </>
+                            )}
+
+                            {slug === 'the-architects-manifesto' && (
+                                <>
+                                    <h2 id="manifesto" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">The Philosophy of the Digital Garden</h2>
+                                    <p className="mb-8">
+                                        A portfolio should not be a static graveyard of past projects. It should be a <strong>Digital Garden</strong>—a living, breathing space where ideas are planted, cultivated, and eventually shared as mature insights. As an AI Engineer, my goal is not just to build software, but to architect systems that are as elegant as they are intelligent.
+                                    </p>
+                                    <p className="mb-8">
+                                        This manifesto is a reflection of my commitment to continuous learning and open-source contribution. In an era where technology moves at a breakneck pace, the true value lies in deep focus, ethical engineering, and the pursuit of technological beauty.
+                                    </p>
+
+                                    <div className="my-12 relative w-full aspect-video rounded-2xl overflow-hidden border border-border/40 bg-secondary/5">
+                                        <Image
+                                            src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2000&auto=format&fit=crop"
+                                            alt="Manifesto"
+                                            fill
+                                            loading="lazy"
+                                            className="object-cover hover:scale-105 transition-transform duration-700"
+                                        />
+                                    </div>
+
+                                    <h2 id="principles" className="text-3xl font-bold mb-6 text-foreground scroll-mt-32">My Core Engineering Principles</h2>
+                                    <p className="mb-8">
+                                        These are the values that guide every line of code I write:
+                                    </p>
+                                    <ul className="list-disc pl-6 mb-8 sapce-y-2 text-muted-foreground">
+                                        <li><strong>Intelligence with Intent:</strong> AI should solve real problems, not just provide novel interactions.</li>
+                                        <li><strong>Scalability by Design:</strong> Architecting systems that can grow gracefully without losing performance.</li>
+                                        <li><strong>Human-Centric Engineering:</strong> Technology serves people, and its primary focus should be improving human agency.</li>
+                                    </ul>
+
+                                    <blockquote className="border-l-4 border-primary pl-6 my-12 italic text-xl font-medium text-foreground">
+                                        "We don't just build tools; we build the future. Let us build it with wisdom and craft."
+                                        <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
+                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                            </div>
+                                            <div>
+                                                <div className="text-foreground">{post.author.name}</div>
+                                                <div className="text-muted-foreground text-xs font-normal">AI Architect</div>
+                                            </div>
+                                        </footer>
+                                    </blockquote>
+                                </>
+                            )}
+
                             {!isImplemented && (
                                 <div className="flex flex-col items-center justify-center py-20 text-center">
                                     <div className="p-4 rounded-full bg-secondary/10 text-muted-foreground mb-4">
@@ -524,6 +778,56 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                                 {item.label}
                                             </a>
                                         ))}
+
+                                        {slug === 'smart-contract-security' && [
+                                            { id: 'audits', label: 'Rigorous Audits' },
+                                            { id: 'patterns', label: 'Securing Layers' }
+                                        ].map((item, index) => (
+                                            <a key={item.id} href={`#${item.id}`} className="group flex items-center gap-3 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground">
+                                                <span className="h-px w-4 bg-transparent group-hover:bg-border transition-all" />
+                                                {item.label}
+                                            </a>
+                                        ))}
+
+                                        {slug === 'modern-state-management' && [
+                                            { id: 'beyond-redux', label: 'Beyond Redux' },
+                                            { id: 'atomic-vs-global', label: 'Atomic vs Global' }
+                                        ].map((item, index) => (
+                                            <a key={item.id} href={`#${item.id}`} className="group flex items-center gap-3 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground">
+                                                <span className="h-px w-4 bg-transparent group-hover:bg-border transition-all" />
+                                                {item.label}
+                                            </a>
+                                        ))}
+
+                                        {slug === 'iot-edge-computing' && [
+                                            { id: 'edge-vs-cloud', label: 'Edge vs Cloud' },
+                                            { id: 'hw-optimization', label: 'HW Optimization' }
+                                        ].map((item, index) => (
+                                            <a key={item.id} href={`#${item.id}`} className="group flex items-center gap-3 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground">
+                                                <span className="h-px w-4 bg-transparent group-hover:bg-border transition-all" />
+                                                {item.label}
+                                            </a>
+                                        ))}
+
+                                        {slug === 'ai-in-healthcare' && [
+                                            { id: 'diagnostics', label: 'AI Diagnostics' },
+                                            { id: 'ethics', label: 'Ethics & Privacy' }
+                                        ].map((item, index) => (
+                                            <a key={item.id} href={`#${item.id}`} className="group flex items-center gap-3 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground">
+                                                <span className="h-px w-4 bg-transparent group-hover:bg-border transition-all" />
+                                                {item.label}
+                                            </a>
+                                        ))}
+
+                                        {slug === 'the-architects-manifesto' && [
+                                            { id: 'manifesto', label: 'The Manifesto' },
+                                            { id: 'principles', label: 'Core Principles' }
+                                        ].map((item, index) => (
+                                            <a key={item.id} href={`#${item.id}`} className="group flex items-center gap-3 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground">
+                                                <span className="h-px w-4 bg-transparent group-hover:bg-border transition-all" />
+                                                {item.label}
+                                            </a>
+                                        ))}
                                     </div>
                                 </div>
 
@@ -621,6 +925,74 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                                 category: "Research",
                                                 url: "https://arxiv.org/abs/2106.09685"
                                             }
+                                        ] : slug === 'smart-contract-security' ? [
+                                            {
+                                                title: "ConsenSys Audit Best Practices",
+                                                time: "Guide",
+                                                image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Security",
+                                                url: "https://consensys.net/blog/developers/blockchain-security-best-practices/"
+                                            },
+                                            {
+                                                title: "OpenZeppelin Documentation",
+                                                time: "Docs",
+                                                image: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Technical",
+                                                url: "https://docs.openzeppelin.com/"
+                                            }
+                                        ] : slug === 'modern-state-management' ? [
+                                            {
+                                                title: "Zustand Repo",
+                                                time: "Repo",
+                                                image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Library",
+                                                url: "https://github.com/pmndrs/zustand"
+                                            },
+                                            {
+                                                title: "React State Management 2024",
+                                                time: "Article",
+                                                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Strategy",
+                                                url: "https://react.dev/learn/managing-state"
+                                            }
+                                        ] : slug === 'iot-edge-computing' ? [
+                                            {
+                                                title: "AWS IoT Core Documentation",
+                                                time: "Docs",
+                                                image: "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Cloud",
+                                                url: "https://docs.aws.amazon.com/iot/"
+                                            },
+                                            {
+                                                title: "TinyML Official Guide",
+                                                time: "Guide",
+                                                image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Edge AI",
+                                                url: "https://www.tinyml.org/"
+                                            }
+                                        ] : slug === 'ai-in-healthcare' ? [
+                                            {
+                                                title: "Stanford AI in Medicine",
+                                                time: "Research",
+                                                image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Academic",
+                                                url: "https://aimi.stanford.edu/"
+                                            },
+                                            {
+                                                title: "WHO AI Health Ethics",
+                                                time: "Report",
+                                                image: "https://images.unsplash.com/photo-1532187863486-abf9d39d99c5?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Ethics",
+                                                url: "https://www.who.int/publications/i/item/9789240029200"
+                                            }
+                                        ] : slug === 'the-architects-manifesto' ? [
+                                            {
+                                                title: "The Digital Gardeners",
+                                                time: "Community",
+                                                image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2000&auto=format&fit=crop",
+                                                category: "Philosophy",
+                                                url: "https://maggieappleton.com/garden-history"
+                                            }
                                         ] : [
                                             {
                                                 title: "AutoGPT & BabyAGI: The Beginning",
@@ -692,7 +1064,15 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                                     ? ['CyberSec', 'AI', 'ZeroTrust', 'ThreatIntel', 'DevSecOps', 'Malware']
                                                     : slug === 'llm-fine-tuning'
                                                         ? ['LLM', 'FineTuning', 'Ollama', 'Python', 'AI', 'OpenSource']
-                                                        : ['Agents', 'LLM', 'Automation', 'Enterprise', 'RAG', 'VectorDB', 'Python']
+                                                        : slug === 'smart-contract-security'
+                                                            ? ['Web3', 'Security', 'Solidity', 'Ethereum', 'Audit', 'Crypto']
+                                                            : slug === 'modern-state-management'
+                                                                ? ['React', 'Zustand', 'Frontend', 'JavaScript', 'State', 'Redux']
+                                                                : slug === 'iot-edge-computing'
+                                                                    ? ['IoT', 'Edge', 'Embedded', 'AI', 'Hardware', 'Firmware']
+                                                                    : slug === 'ai-in-healthcare'
+                                                                        ? ['AI', 'Health', 'Ethics', 'Privacy', 'BioTech', 'MedTech']
+                                                                        : ['Agents', 'LLM', 'Automation', 'Enterprise', 'RAG', 'VectorDB', 'Python']
                                         ).map(tag => (
                                             <Link
                                                 key={tag}
