@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -19,7 +19,8 @@ import {
     X,
     Gamepad2,
     Music,
-    Bot
+    Bot,
+    Focus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { portfolioData } from '@/data/portfolio';
@@ -189,20 +190,33 @@ export function Footer() {
                                     {previewSocials.map((social: SocialLink) => {
                                         const Icon = socialIcons[social.icon];
                                         return (
-                                            <motion.a
-                                                key={social.platform}
-                                                href={social.platform === 'Twitter' ? undefined : social.url}
-                                                onClick={social.platform === 'Twitter' ? (e) => {
-                                                    e.preventDefault();
-                                                    window.dispatchEvent(new CustomEvent('portfolio:toggle-chatbot'));
-                                                } : undefined}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="p-1.5 rounded-full hover:bg-foreground/5 transition-all text-muted-foreground hover:text-foreground hover:scale-110 active:scale-95"
-                                                aria-label={social.platform}
-                                            >
-                                                {Icon && <Icon className="w-4 h-4" />}
-                                            </motion.a>
+                                            <Fragment key={social.platform}>
+                                                {social.platform === 'Twitter' && (
+                                                    <motion.a
+                                                        href="https://arfazrllworkspace.vercel.app/"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-1.5 rounded-full hover:bg-foreground/5 transition-all text-muted-foreground hover:text-foreground hover:scale-110 active:scale-95"
+                                                        aria-label="Workspace"
+                                                    >
+                                                        <Focus className="w-4 h-4" />
+                                                    </motion.a>
+                                                )}
+                                                <motion.a
+                                                    key={social.platform}
+                                                    href={social.platform === 'Twitter' ? undefined : social.url}
+                                                    onClick={social.platform === 'Twitter' ? (e) => {
+                                                        e.preventDefault();
+                                                        window.dispatchEvent(new CustomEvent('portfolio:toggle-chatbot'));
+                                                    } : undefined}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="p-1.5 rounded-full hover:bg-foreground/5 transition-all text-muted-foreground hover:text-foreground hover:scale-110 active:scale-95"
+                                                    aria-label={social.platform}
+                                                >
+                                                    {Icon && <Icon className="w-4 h-4" />}
+                                                </motion.a>
+                                            </Fragment>
                                         );
                                     })}
                                 </div>

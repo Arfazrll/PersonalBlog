@@ -31,7 +31,7 @@ import { Experience, Education } from '@/types';
 const ExperienceMarquee = dynamic(() => import('../../components/sections/ExperienceMarquee'), { ssr: true });
 const ExperienceStickyScroll = dynamic(() => import('../../components/sections/ExperienceStickyScroll'), { ssr: true });
 import { Timeline } from '@/components/ui/timeline';
-import { HeroHighlight, Highlight } from '@/components/ui/hero-highlight';
+import { InnovativeExperienceHero } from '@/components/sections/InnovativeExperienceHero';
 
 type TabType = 'education' | 'journey' | 'experience';
 
@@ -61,35 +61,14 @@ function ExperienceHighlightSection({ type, isLowPowerMode }: { type: TabType; i
     const content = highlightContent[type];
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: isLowPowerMode ? 0 : 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            viewport={{ once: true }}
-            className="mt-72"
-        >
-            <HeroHighlight containerClassName="h-[30rem] rounded-3xl overflow-hidden" isLowPowerMode={isLowPowerMode}>
-                <motion.h2
-                    initial={{ opacity: 0, y: isLowPowerMode ? 0 : 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug mx-auto px-4"
-                >
-                    {content.title}{" "}
-                    <Highlight className="text-black dark:text-white">
-                        {content.highlight}
-                    </Highlight>
-                </motion.h2>
-                <motion.p
-                    initial={{ opacity: 0, y: isLowPowerMode ? 0 : 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                    className="text-center text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto mt-6 px-4 text-lg"
-                >
-                    {content.description}
-                </motion.p>
-            </HeroHighlight>
-        </motion.div>
+        <div className="mt-6">
+            <InnovativeExperienceHero 
+                type={type}
+                title={content.title}
+                highlight={content.highlight}
+                description={content.description}
+            />
+        </div>
     );
 }
 
