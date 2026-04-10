@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
+import { Spotlight } from '@/components/ui/spotlight-new';
 import {
     ChevronUp,
     Github,
@@ -23,6 +25,7 @@ import {
     Focus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { portfolioData } from '@/data/portfolio';
 
 type SocialIconComponent = typeof Github;
@@ -41,7 +44,7 @@ const marqueeKeys = ['0', '1', '2', '3', '4', '5'];
 function Marquee() {
     const t = useTranslations('footer.marquee') as (key: string) => string;
     return (
-        <div className="relative flex overflow-hidden py-4 bg-muted/40 border-y border-foreground/10 dark:border-border backdrop-blur-sm">
+        <div className="relative flex overflow-hidden py-4 bg-zinc-50 dark:bg-black border-y border-zinc-200 dark:border-white/10 backdrop-blur-sm">
             <motion.div
                 className="flex gap-12 whitespace-nowrap"
                 animate={{ x: [0, -1000] }}
@@ -55,8 +58,8 @@ function Marquee() {
                 ))}
             </motion.div>
 
-            <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
-            <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent z-10" />
+            <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent z-10" />
+            <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white dark:from-black to-transparent z-10" />
         </div>
     );
 }
@@ -83,12 +86,35 @@ function SocialCard({ social }: { social: SocialLink }) {
 }
 
 export function Footer() {
+    const { theme } = useTheme();
     const tNav = useTranslations('navigation');
     const t = useTranslations('footer');
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isAboutExpanded, setIsAboutExpanded] = useState(false);
+    const [isEmailHovered, setIsEmailHovered] = useState(false);
     const [copied, setCopied] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [copyrightIndex, setCopyrightIndex] = useState(0);
+    const [localTime, setLocalTime] = useState<string>('');
+
+    useEffect(() => {
+        const updateTime = () => {
+            const now = new Date();
+            const options: Intl.DateTimeFormatOptions = {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+                timeZone: 'Asia/Jakarta'
+            };
+            const timeString = new Intl.DateTimeFormat('en-US', options).format(now);
+            // Jakarta is UTC+7
+            setLocalTime(`${timeString} UTC+7`);
+        };
+
+        updateTime();
+        const interval = setInterval(updateTime, 60000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         setMounted(true);
@@ -258,142 +284,235 @@ export function Footer() {
                                 animate="open"
                                 exit="closed"
                                 transition={{ duration: 0.3 }}
-                                className="fixed inset-0 z-[10000] bg-background/95 backdrop-blur-xl flex flex-col"
+                                className="fixed inset-0 z-[10000] bg-white dark:bg-black flex flex-col overflow-hidden pt-6 md:pt-12"
                             >
-                                {/* Fixed Close Button - Outside the scroll area */}
-                                <motion.button
-                                    onClick={closeExpanded}
-                                    className="fixed top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full glass-card z-[10001] hover:bg-muted transition-colors text-foreground"
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.8 }}
-                                    transition={{ delay: 0.2 }}
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <X className="w-5 h-5 md:w-6 md:h-6" />
-                                </motion.button>
-
-                                {/* Scrollable Content Container */}
-                                <div
-                                    className="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar"
-                                    data-lenis-prevent
-                                >
-                                    <div className="min-h-screen flex flex-col pt-20">
-                                        <Marquee />
-
-                                        <div className="flex-1 max-w-[1700px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col justify-center py-12 md:py-24">
-                                            <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-16 lg:gap-32 h-full">
-                                                {/* Left Column - Contact Details & Socials */}
-                                                <div className="flex flex-col justify-center gap-6">
-                                                    <div>
-                                                        <motion.h2
-                                                            initial={{ opacity: 0, y: 20 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            transition={{ delay: 0.2 }}
-                                                            className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.9] text-foreground"
-                                                        >
-                                                            {t('cta.title')} <br />
-                                                            <span className="text-gradient">{t('cta.titleHighlight')}</span>
-                                                        </motion.h2>
-
-                                                        <motion.p
-                                                            initial={{ opacity: 0, y: 20 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            transition={{ delay: 0.3 }}
-                                                            className="text-xl text-muted-foreground dark:text-muted-foreground/80 max-w-lg mb-10"
-                                                        >
-                                                            {t('cta.subtitle')}
-                                                        </motion.p>
-
-                                                        <motion.div
-                                                            initial={{ opacity: 0, y: 20 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            transition={{ delay: 0.4 }}
-                                                            className="flex flex-wrap gap-4"
-                                                        >
-                                                            <button
-                                                                onClick={handleCopyEmail}
-                                                                className="group flex items-center gap-4 px-8 py-5 rounded-full bg-secondary/50 border border-white/5 hover:bg-secondary transition-all hover:scale-105 active:scale-95 text-foreground backdrop-blur-sm"
-                                                            >
-                                                                <Mail className="w-5 h-5 text-primary" />
-                                                                <span className="font-mono text-lg">{portfolioData.personal.email}</span>
-                                                                {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />}
-                                                            </button>
-                                                        </motion.div>
-                                                    </div>
-
-                                                    {/* Social Links Icons Only */}
-                                                    <div className="flex flex-wrap gap-3 justify-start">
-                                                        {expandedSocials.map((social: SocialLink, i: number) => (
-                                                            <motion.div
-                                                                key={social.platform}
-                                                                initial={{ opacity: 0, scale: 0.9 }}
-                                                                animate={{ opacity: 1, scale: 1 }}
-                                                                transition={{ delay: 0.5 + (0.1 * i) }}
-                                                            >
-                                                                <SocialCard social={social} />
-                                                            </motion.div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-
-                                                {/* Right Column - Wide Square Map Hero (Merges with background) */}
-                                                <div className="flex flex-col justify-center h-full">
-                                                    <motion.div
-                                                        initial={{ opacity: 0, scale: 1 }}
-                                                        animate={{ opacity: 1, scale: 1 }}
-                                                        transition={{ delay: 0.5, duration: 0.8 }}
-                                                        className="w-full h-full min-h-[500px] lg:min-h-[750px] relative transition-all duration-700 overflow-hidden"
-                                                    >
-                                                        <iframe
-                                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126920.24131584285!2d106.77412401666497!3d-6.229746450625624!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e3fa73%3A0x7601136971510100!2sJakarta%2C%20Indonesia!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
-                                                            width="100%"
-                                                            height="100%"
-                                                            style={{ border: 0 }}
-                                                            allowFullScreen
-                                                            loading="lazy"
-                                                            referrerPolicy="no-referrer-when-downgrade"
-                                                            className="contrast-[1.2] brightness-[1.0] grayscale-[0.3] dark:invert-[0.95] dark:brightness-[0.8] dark:contrast-[1.2] opacity-100 transition-all duration-1000"
-                                                        />
-
-                                                        {/* Edge Blending Gradients for the Map */}
-                                                        <div className="absolute inset-0 pointer-events-none z-10">
-                                                            {/* Top Edge */}
-                                                            <div className="absolute inset-x-0 top-0 h-16 md:h-24 bg-gradient-to-b from-background to-transparent" />
-                                                            {/* Bottom Edge */}
-                                                            <div className="absolute inset-x-0 bottom-0 h-16 md:h-24 bg-gradient-to-t from-background to-transparent" />
-                                                            {/* Left Edge */}
-                                                            <div className="absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-background to-transparent" />
-                                                            {/* Right Edge */}
-                                                            <div className="absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-background to-transparent" />
-                                                        </div>
-                                                    </motion.div>
-                                                </div>
-                                            </div>
+                                <Spotlight 
+                                    gradientFirst={theme === 'dark' 
+                                        ? "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(210, 100%, 85%, .08) 0, hsla(210, 100%, 55%, .02) 50%, hsla(210, 100%, 45%, 0) 80%)"
+                                        : "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(0, 0%, 20%, .03) 0, hsla(0, 0%, 15%, .01) 50%, hsla(0, 0%, 10%, 0) 80%)"
+                                    } 
+                                    gradientSecond={theme === 'dark'
+                                        ? "radial-gradient(50% 50% at 50% 50%, hsla(210, 100%, 85%, .06) 0, hsla(210, 100%, 55%, .02) 80%, transparent 100%)"
+                                        : "radial-gradient(50% 50% at 50% 50%, hsla(0, 0%, 20%, .02) 0, hsla(0, 0%, 15%, .01) 80%, transparent 100%)"
+                                    }
+                                    gradientThird={theme === 'dark'
+                                        ? "radial-gradient(50% 50% at 50% 50%, hsla(210, 100%, 85%, .04) 0, hsla(210, 100%, 45%, .02) 80%, transparent 100%)"
+                                        : "radial-gradient(50% 50% at 50% 50%, hsla(0, 0%, 20%, .01) 0, hsla(0, 0%, 15%, .01) 80%, transparent 100%)"
+                                    }
+                                />
+                                <Marquee />
+                                <div className="flex-1 flex flex-col px-12 md:px-24 lg:px-40 py-12 md:py-24">
+                                    <div className="flex-1 flex flex-col max-w-[1500px] w-full ml-auto">
+                                        {/* Header with Close */}
+                                        <div className="flex justify-end items-start mb-24 md:mb-32">
+                                            <motion.button
+                                                onClick={closeExpanded}
+                                                className="relative group p-4 -mr-4 -mt-4 flex items-center justify-center transition-all duration-300"
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ delay: 0.4 }}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.9 }}
+                                            >
+                                                {/* Hidden larger hit area for reliability */}
+                                                <div className="absolute inset-0 rounded-full cursor-pointer z-0" />
+                                                
+                                                {/* Solid background circle with inverted colors */}
+                                                <div className="absolute inset-2 rounded-full bg-black dark:bg-white shadow-xl transition-all duration-300" />
+                                                
+                                                <motion.div
+                                                    className="relative z-10 flex items-center justify-center"
+                                                    whileHover={{ rotate: 90 }}
+                                                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                                                >
+                                                    <X className="w-8 h-8 text-white dark:text-black" strokeWidth={2} />
+                                                </motion.div>
+                                            </motion.button>
                                         </div>
 
-                                        {/* Bottom Bar in Overlay */}
-                                        <div className="w-full relative mt-auto pt-8 pb-8">
-                                            {/* Fading Edge Border Line */}
-                                            <div
-                                                className="absolute top-0 inset-x-0 h-[1px] bg-border"
-                                                style={{ maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)" }}
-                                            />
-                                            <div className="max-w-[1700px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col items-center justify-center text-center gap-4">
-                                                <p className="text-sm text-muted-foreground font-mono">
-                                                    © {currentYear} {portfolioData.personal.name}. {t('copyright')}
-                                                </p>
-                                            </div>
+                                        {/* Main Columns - Perfectly balanced vertical position */}
+                                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-16 mt-auto mb-auto transform -translate-y-20 md:-translate-y-32 lg:-translate-y-40">
+                                            <FooterColumn title={t('links')}>
+                                                <FooterLink href="/">{tNav('home')}</FooterLink>
+                                                <FooterLink href="/resume">{tNav('resume')}</FooterLink>
+                                                <FooterLink href="/contact">{tNav('contact')}</FooterLink>
+                                                <AboutHoverMenu tNav={tNav} onExpandChange={setIsAboutExpanded} />
+                                            </FooterColumn>
+
+                                            <FooterColumn title={t('socials')}>
+                                                <div
+                                                    className="relative flex items-center gap-2 group w-fit"
+                                                    onMouseEnter={() => setIsEmailHovered(true)}
+                                                    onMouseLeave={() => setIsEmailHovered(false)}
+                                                >
+                                                    <FooterLink href={`mailto:${portfolioData.personal.email}`}>Email</FooterLink>
+
+                                                    <AnimatePresence>
+                                                        {isEmailHovered && (
+                                                            <motion.div
+                                                                initial={{ opacity: 0, x: 5 }}
+                                                                animate={{ opacity: 1, x: 0 }}
+                                                                exit={{ opacity: 0, x: 5 }}
+                                                                className="absolute left-full ml-4 whitespace-nowrap flex items-center gap-2.5 z-[10001]"
+                                                            >
+                                                                <span className="text-base font-medium text-zinc-400 dark:text-zinc-500 select-all">
+                                                                    {portfolioData.personal.email}
+                                                                </span>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        handleCopyEmail();
+                                                                    }}
+                                                                    className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                                                                    title="Copy Email"
+                                                                >
+                                                                    {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                                                </button>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
+                                                <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'LinkedIn')?.url || '#'} target="_blank">LinkedIn</FooterLink>
+                                                <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'Instagram')?.url || '#'} target="_blank">Instagram</FooterLink>
+                                                <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'GitHub')?.url || '#'} target="_blank">GitHub</FooterLink>
+                                            </FooterColumn>
+
+                                            <FooterColumn title={t('localTime')}>
+                                                <p className="text-zinc-900 dark:text-white text-lg font-medium tracking-tight">{localTime}</p>
+                                                <a
+                                                    href="https://www.google.com/maps/place/Jakarta,+Indonesia"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-zinc-900 dark:text-white text-lg font-medium tracking-tight hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors inline-block"
+                                                >
+                                                    Jakarta, Indonesia
+                                                </a>
+                                            </FooterColumn>
+
+                                            <FooterColumn title={t('version')}>
+                                                <p className="text-zinc-900 dark:text-white text-lg font-medium tracking-tight">{t('versionEdition')}</p>
+                                            </FooterColumn>
+                                        </div>
+
+                                        {/* Large Brand Name */}
+                                        <div className="relative">
+                                            <motion.h2
+                                                initial={{ opacity: 0, y: 100 }}
+                                                animate={isAboutExpanded
+                                                    ? { opacity: 0, y: 80 }
+                                                    : { opacity: 1, y: 0 }
+                                                }
+                                                transition={{
+                                                    duration: isAboutExpanded ? 0.4 : 0.8,
+                                                    ease: [0.16, 1, 0.3, 1]
+                                                }}
+                                                className="text-[18vw] font-black leading-none text-zinc-900 dark:text-white tracking-tighter select-none"
+                                            >
+                                                ARFAZRLL
+                                            </motion.h2>
                                         </div>
                                     </div>
                                 </div>
                             </motion.div>
+
                         )}
                     </AnimatePresence>,
                     document.body
                 )}
         </>
+    );
+}
+
+function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+        <div className="flex flex-col gap-6">
+            <h3 className="text-zinc-500 text-xs font-bold tracking-widest uppercase">{title}</h3>
+            <div className="flex flex-col gap-3">
+                {children}
+            </div>
+        </div>
+    );
+}
+
+function FooterLink({ href, children, target }: { href: string; children: React.ReactNode; target?: string }) {
+    return (
+        <Link
+            href={href}
+            target={target}
+            rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+            className="text-zinc-900 dark:text-white text-lg font-medium hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors w-fit"
+        >
+            {children}
+        </Link>
+    );
+}
+
+function AboutHoverMenu({ tNav, onExpandChange }: { tNav: (key: string) => string; onExpandChange: (expanded: boolean) => void }) {
+    const [isHovered, setIsHovered] = useState(false);
+    const isMobile = useIsMobile();
+    const [isOpen, setIsOpen] = useState(false);
+
+    const subLinks = [
+        { href: '/achievements', label: tNav('achievements') },
+        { href: '/skills', label: tNav('skills') },
+        { href: '/experience', label: tNav('experience') },
+        { href: '/projects', label: tNav('projects') },
+        { href: '/blog', label: tNav('blog') },
+        { href: '/gallery', label: tNav('gallery') },
+    ];
+
+    const active = isMobile ? isOpen : isHovered;
+
+    useEffect(() => {
+        onExpandChange(active);
+    }, [active, onExpandChange]);
+
+    return (
+        <div
+            className="flex flex-col gap-2"
+            onMouseEnter={() => !isMobile && setIsHovered(true)}
+            onMouseLeave={() => !isMobile && setIsHovered(false)}
+        >
+            <div
+                className="flex items-center gap-2 cursor-pointer group w-fit"
+                onClick={() => isMobile && setIsOpen(!isOpen)}
+            >
+                <Link
+                    href="#about"
+                    className="text-zinc-900 dark:text-white text-lg font-medium group-hover:text-zinc-500 dark:group-hover:text-zinc-400 transition-colors"
+                >
+                    {tNav('about')}
+                </Link>
+                <motion.div
+                    animate={{ rotate: active ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <ChevronUp className="w-4 h-4 text-zinc-500 transform rotate-180" />
+                </motion.div>
+            </div>
+
+            <AnimatePresence>
+                {active && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden flex flex-col gap-2 pl-4 border-l border-zinc-200 dark:border-white/10 ml-2"
+                    >
+                        {subLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="text-zinc-500 dark:text-zinc-400 text-base font-medium hover:text-zinc-900 dark:hover:text-white transition-colors"
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     );
 }
 
