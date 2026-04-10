@@ -7,32 +7,29 @@ import { BackToTop } from '@/components/ui/BackToTop';
 
 export function ConditionalNavigation({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const [isMounted, setIsMounted] = useState(false);
+    // During hydration, we must match the server-side render perfectly.
+    // The server-side render (and initial client render) always displays the layout
+    // to prevent HTML mismatch errors.
+    const [useFullLayout, setUseFullLayout] = useState(true);
 
     useEffect(() => {
-        setIsMounted(true);
-    }, []);
+        // After mount, we check the actual pathname to decide if we should hide the layout
+        const segments = pathname?.split('/').filter(Boolean) || [];
+        const projectsIndex = segments.indexOf('projects');
+        const isProjectDetail = projectsIndex !== -1 && segments.length > projectsIndex + 1;
+        const blogIndex = segments.indexOf('blog');
+        const isBlogDetail = blogIndex !== -1 && segments.length > blogIndex + 1;
 
-    // Hide navbar and footer on project and blog detail pages
-    // A detail page usually has more than 2 segments (e.g., /projects/slug, /blog/slug)
-    const segments = pathname?.split('/').filter(Boolean) || [];
-
-    // Handle both /path/... and /en/path/... or /id/path/...
-    const projectsIndex = segments.indexOf('projects');
-    const isProjectDetail = projectsIndex !== -1 && segments.length > projectsIndex + 1;
-
-    const blogIndex = segments.indexOf('blog');
-    const isBlogDetail = blogIndex !== -1 && segments.length > blogIndex + 1;
-
-    // During hydration, we must match the server-side render.
-    // The server-side render (and initial client render) always displays the layout
-    // because it cannot know the pathname during build/SSR.
-    const useFullLayout = (!isProjectDetail && !isBlogDetail) || !isMounted;
+        if (isProjectDetail || isBlogDetail) {
+            setUseFullLayout(false);
+        } else {
+            setUseFullLayout(true);
+        }
+    }, [pathname]);
 
     return (
         <div
             className={useFullLayout ? "relative min-h-screen flex flex-col" : "contents"}
-            suppressHydrationWarning
         >
             {useFullLayout && <Navbar />}
             <div className={useFullLayout ? "flex-1 relative" : "contents"}>

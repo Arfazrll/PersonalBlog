@@ -1,6 +1,7 @@
 {
     "navigation": {
         "home": "Beranda",
+        "about": "Tentang",
         "projects": "Proyek",
         "experience": "Pengalaman",
         "skills": "Keahlian",
@@ -392,7 +393,12 @@
             "title": "Mari Bekerja",
             "titleHighlight": "Bersama",
             "subtitle": "Punya proyek? Mari bangun sesuatu yang luar biasa yang memecahkan masalah nyata."
-        }
+        },
+        "links": "TAUTAN",
+        "socials": "SOSIAL",
+        "localTime": "WAKTU LOKAL",
+        "version": "VERSI",
+        "versionEdition": "2026 © Edition"
     },
     "ctaSection": {
         "title": "Mari Membangun Sesuatu yang",

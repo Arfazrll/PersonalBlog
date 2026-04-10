@@ -1,6 +1,7 @@
 {
     "navigation": {
         "home": "Home",
+        "about": "About",
         "projects": "Projects",
         "experience": "Experience",
         "skills": "Skills",
@@ -383,7 +384,12 @@
             "title": "Let's Work",
             "titleHighlight": "Together",
             "subtitle": "Have a project in mind? Let's build something extraordinary that solves real problems."
-        }
+        },
+        "links": "LINKS",
+        "socials": "SOCIALS",
+        "localTime": "LOCAL TIME",
+        "version": "VERSION",
+        "versionEdition": "2026 © Edition"
     },
     "ctaSection": {
         "title": "Let's Build Something",
