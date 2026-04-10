@@ -102,7 +102,7 @@ export default function ManifestoHero({ isLowPowerMode }: { isLowPowerMode?: boo
                     style={{ opacity }}
                     className="absolute bottom-12 flex flex-col items-center gap-4 z-10"
                 >
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">To Begin</span>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">See More</span>
                     <ArrowDown className="w-5 h-5 text-foreground animate-bounce" />
                 </motion.div>
 

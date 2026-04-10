@@ -148,39 +148,39 @@ function BlogContent() {
                 )}
 
                 <div className="container mx-auto relative z-10">
-                    {/* Header Section - Modern Editorial */}
-                    <header className="mb-24 relative pt-20">
-                        <div className="relative z-10 max-w-5xl">
+                    {/* Header Section - Modern Editorial Centered */}
+                    <header className="mb-48 relative pt-20">
+                        <div className="relative z-10 max-w-5xl mx-auto text-center">
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5 }}
-                                className="flex items-center gap-3 mb-10"
+                                className="flex items-center justify-center gap-4 mb-10"
                             >
-                                <div className="w-8 h-px bg-primary/60" />
-                                <span className="text-primary text-[10px] font-black uppercase tracking-[0.5em] mb-0">The Digital Garden</span>
+                                <div className="w-12 h-px bg-primary/40" />
+                                <span className="text-primary text-[10px] font-black uppercase tracking-[0.5em] mb-0 whitespace-nowrap">The Digital Archive</span>
+                                <div className="w-12 h-px bg-primary/40" />
                             </motion.div>
 
                             <motion.h1
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
-                                transition={{ duration: 0.7, delay: 0.1 }}
-                                className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-10 text-foreground leading-[0.85]"
+                                transition={{ duration: 0.8, ease: 'easeOut' }}
+                                className="text-5xl md:text-7xl lg:text-[8rem] font-black tracking-tighter mb-12 text-foreground leading-tight"
                             >
-                                THOUGHTS & <br />
-                                <span className="italic font-serif font-light opacity-30 text-foreground">Explorations</span>
+                                DOCS & <span className="italic font-serif font-light opacity-30">Blueprints</span>
                             </motion.h1>
 
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ duration: 0.7, delay: 0.2 }}
-                                className="text-muted-foreground text-lg md:text-2xl leading-relaxed max-w-3xl font-medium"
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                className="text-muted-foreground text-lg md:text-2xl leading-relaxed max-w-3xl mx-auto font-medium"
                             >
-                                Bridging technical complexity with practical implementation. A curated stream of insights on <span className="text-foreground/80">AI Agents</span>, <span className="text-foreground/80">Web3 Systems</span>, and <span className="text-foreground/80">Architecture</span>.
+                                A dedicated space for documenting <span className="text-foreground/80 font-bold">technical blueprints</span>, <span className="text-foreground/80 font-bold">architectural patterns</span>, and <span className="text-foreground/80 font-bold">engineering reflections</span>. This archive serves as a living knowledge base where innovation meets practical execution.
                             </motion.p>
                         </div>
                     </header>
@@ -319,12 +319,12 @@ function BlogContent() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                             <AnimatePresence mode="popLayout">
                                 {paginatedPosts.map((post, idx) => (
-                                    <BlogCard 
-                                        key={post.id} 
-                                        post={post} 
-                                        index={idx} 
+                                    <BlogCard
+                                        key={post.id}
+                                        post={post}
+                                        index={idx}
                                         isHovered={hoveredCardId === post.id}
-                                        isLowPowerMode={isLowPowerMode} 
+                                        isLowPowerMode={isLowPowerMode}
                                     />
                                 ))}
                             </AnimatePresence>
