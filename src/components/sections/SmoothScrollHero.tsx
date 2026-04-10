@@ -99,35 +99,35 @@ const CenterImage = ({ scrollY }: { scrollY: MotionValue<number> }) => {
                 <div className="absolute inset-0 bg-black/40" />
             </motion.div>
 
-            {/* Title Overlay */}
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-                className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4"
-            >
-                <motion.h1
+            {/* Title Overlay - 'READ DETAIL' Style Glassmorphism */}
+            <div className="absolute inset-0 flex items-center justify-center z-10 px-4">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
                     style={{
                         opacity: textOpacity,
                         scale: textScale,
                         y: textY,
+                        maskImage: 'radial-gradient(ellipse 90% 85% at center, black 65%, transparent 100%)',
+                        WebkitMaskImage: 'radial-gradient(ellipse 90% 85% at center, black 65%, transparent 100%)',
                     }}
-                    className="text-5xl md:text-9xl font-black text-black dark:text-white tracking-tighter text-center mb-6"
+                    className="relative group bg-white/50 dark:bg-black/40 backdrop-blur-[80px] px-14 py-40 md:px-32 md:py-60 rounded-[4rem] flex flex-col items-center justify-center w-[90vw] max-w-[1600px]"
                 >
-                    EXPERIENCE
-                </motion.h1>
-                <motion.p
-                    style={{
-                        opacity: subtitleOpacity,
-                        y: subtitleY,
-                    }}
-                    className="w-full max-w-[90vw] md:max-w-6xl text-center text-lg md:text-2xl text-cyan-500 dark:text-white font-bold tracking-wide leading-relaxed"
-                >
-                    Merging technical precision with creative vision.
-                    <br />
-                    A curated timeline of my professional journey, from foundational code to AI solutions.
-                </motion.p>
-            </motion.div>
+                    {/* Ambient Glow */}
+                    <div className="absolute inset-0 bg-primary/2 rounded-[4rem] pointer-events-none" />
+
+                    <h1 className="text-6xl md:text-[12rem] lg:text-[15rem] font-black text-foreground dark:text-white tracking-[-0.06em] leading-[0.8] uppercase text-center mb-12 -ml-2">
+                        EXPERIENCE
+                    </h1>
+
+                    <p className="w-full max-w-4xl text-center text-xs md:text-sm font-bold text-foreground/50 dark:text-white/50 tracking-[0.4em] leading-[2.2] uppercase">
+                        Merging technical precision with creative vision.
+                        <br />
+                        A curated timeline of my professional journey, from foundational code to AI solutions.
+                    </p>
+                </motion.div>
+            </div>
         </div>
     );
 };
