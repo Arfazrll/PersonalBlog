@@ -145,15 +145,15 @@ const GalleryItem = ({ exp }: { exp: Experience }) => {
     const logoSrc = exp.logo ? `${exp.logo}?v=1` : "/assets/placeholder.png";
 
     return (
-        <div className="relative shrink-0 w-[200px] h-[120px] md:w-[280px] md:h-[160px] flex items-center justify-center group cursor-pointer">
+        <div className="relative shrink-0 w-[clamp(140px,30vw,200px)] h-[clamp(80px,15vw,120px)] md:w-[280px] md:h-[160px] flex items-center justify-center group cursor-pointer">
             <Image
                 src={logoSrc}
                 alt={exp.company}
                 fill
-                sizes="280px"
+                sizes="(max-width: 768px) 160px, 280px"
                 priority
                 unoptimized
-                className="object-contain grayscale hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300"
+                className="object-contain grayscale hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300 scale-90 md:scale-100"
             />
         </div>
     );
@@ -182,10 +182,10 @@ export default function ExperienceMarquee() {
     };
 
     return (
-        <section className="py-4 md:py-8 bg-background relative z-10 overflow-hidden">
+        <section className="py-2 md:py-8 bg-background relative z-10 overflow-hidden">
             {/* Fog/Blur Blending */}
-            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background via-background/80 to-transparent z-20 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background via-background/80 to-transparent z-20 pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-16 md:h-32 bg-gradient-to-b from-background via-background/80 to-transparent z-20 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-full h-16 md:h-32 bg-gradient-to-t from-background via-background/80 to-transparent z-20 pointer-events-none" />
 
             <div className="flex flex-col gap-2">
                 {/* Row 1: LEFT → RIGHT */}

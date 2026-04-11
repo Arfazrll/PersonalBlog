@@ -112,18 +112,18 @@ const CenterImage = ({ scrollY }: { scrollY: MotionValue<number> }) => {
                         maskImage: 'radial-gradient(ellipse 90% 85% at center, black 65%, transparent 100%)',
                         WebkitMaskImage: 'radial-gradient(ellipse 90% 85% at center, black 65%, transparent 100%)',
                     }}
-                    className="relative group bg-white/50 dark:bg-black/40 backdrop-blur-[80px] px-14 py-40 md:px-32 md:py-60 rounded-[4rem] flex flex-col items-center justify-center w-[90vw] max-w-[1600px]"
+                    className="relative group bg-white/50 dark:bg-black/40 backdrop-blur-[80px] px-[clamp(24px,8vw,128px)] py-[clamp(60px,15vh,240px)] rounded-[clamp(2rem,6vw,4rem)] flex flex-col items-center justify-center w-[92vw] max-w-[1600px]"
                 >
                     {/* Ambient Glow */}
-                    <div className="absolute inset-0 bg-primary/2 rounded-[4rem] pointer-events-none" />
+                    <div className="absolute inset-0 bg-primary/2 rounded-[clamp(2rem,6vw,4rem)] pointer-events-none" />
 
-                    <h1 className="text-6xl md:text-[12rem] lg:text-[15rem] font-black text-foreground dark:text-white tracking-[-0.06em] leading-[0.8] uppercase text-center mb-12 -ml-2">
+                    <h1 className="text-[clamp(3.5rem,15vw,15rem)] font-black text-foreground dark:text-white tracking-[-0.06em] leading-[0.8] uppercase text-center mb-[clamp(24px,4vh,48px)] -ml-2">
                         EXPERIENCE
                     </h1>
 
-                    <p className="w-full max-w-4xl text-center text-xs md:text-sm font-bold text-foreground/50 dark:text-white/50 tracking-[0.4em] leading-[2.2] uppercase">
+                    <p className="w-full max-w-4xl text-center text-[clamp(10px,1.2vw,14px)] font-bold text-foreground/50 dark:text-white/50 tracking-[clamp(0.1em,0.4em,0.4em)] leading-relaxed md:leading-[2.2] uppercase">
                         Merging technical precision with creative vision.
-                        <br />
+                        <br className="hidden md:block" />
                         A curated timeline of my professional journey, from foundational code to AI solutions.
                     </p>
                 </motion.div>

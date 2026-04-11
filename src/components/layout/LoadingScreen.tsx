@@ -48,12 +48,12 @@ export function LoadingScreen({ onComplete, onExitStart, duration = 2500 }: Load
                 <motion.div
                     initial={{ opacity: 1, scale: 1 }}
                     exit={{
-                        scale: 6, // Reduced from 40 for hardware smoothness
+                        scale: 6, 
                         opacity: 0,
-                        filter: "blur(10px)", // Reduced for performance
+                        filter: "blur(10px)", 
                         transition: { 
-                            duration: 1.5, // Slightly longer for cinematic look
-                            ease: [0.22, 1, 0.36, 1] // Buttery-smooth quintic ease
+                            duration: 1.5, 
+                            ease: [0.22, 1, 0.36, 1] 
                         }
                     }}
                     className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background overflow-hidden"

@@ -70,7 +70,7 @@ export function InnovativeExperienceHero({ type, title, highlight, description }
                         viewport={{ once: true }}
                         className="space-y-6"
                     >
-                        <h2 className="text-5xl md:text-6xl font-bold text-black dark:text-white tracking-tight leading-[1.1]">
+                        <h2 className="text-[clamp(2.5rem,8vw,4rem)] font-bold text-black dark:text-white tracking-tight leading-[1.1]">
                             {title}<br />{highlight}
                         </h2>
 

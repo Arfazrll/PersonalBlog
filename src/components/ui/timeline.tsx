@@ -61,7 +61,7 @@ export const Timeline = ({ data, isLowPowerMode }: { data: TimelineEntry[]; isLo
           viewport={{ once: true }}
         >
           <motion.h2
-            className="text-4xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-900 to-neutral-500 dark:from-white dark:to-neutral-500 tracking-tight pb-2"
+            className="text-[clamp(2rem,10vw,4.5rem)] font-black mb-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-900 to-neutral-500 dark:from-white dark:to-neutral-500 tracking-tight pb-2 leading-[1.1]"
             whileHover={{ scale: 1.02, originX: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 10 }}
           >
