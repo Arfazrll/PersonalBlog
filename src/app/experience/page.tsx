@@ -174,8 +174,8 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                     </div>
                 </div>
 
-                {/* Tab Buttons */}
-                <div className="-m-1 flex flex-wrap justify-center gap-1 sm:gap-1.5">
+                {/* Tab Buttons - Horizontal Scroll on Mobile, Centered on Tablet+ */}
+                <div className="flex flex-nowrap sm:flex-wrap justify-start sm:justify-center gap-2 overflow-x-auto pb-4 sm:pb-0 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
@@ -210,7 +210,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                             transition={{ duration: 0.4 }}
                         >
                             <ExperienceStickyScroll />
-                            <div className="pb-32" />
+                            <div className="pb-[clamp(40px,10vh,120px)]" />
                             <ExperienceHighlightSection type="education" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}
@@ -225,7 +225,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                             transition={{ duration: 0.4 }}
                         >
                             <ExperienceTimeline isLowPowerMode={isLowPowerMode} />
-                            <div className="pb-32" />
+                            <div className="pb-[clamp(40px,10vh,120px)]" />
                             <ExperienceHighlightSection type="journey" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}
@@ -377,7 +377,7 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                                     </motion.div>
                                 )}
                             </AnimatePresence>
-                            <div className="pb-32" />
+                            <div className="pb-[clamp(40px,10vh,120px)]" />
                             <ExperienceHighlightSection type="experience" isLowPowerMode={isLowPowerMode} />
                         </motion.div>
                     )}
@@ -406,12 +406,12 @@ export default function ExperiencePage() {
             <SmoothScrollHero />
 
             <FloatingShape
-                className="w-[500px] h-[500px] -top-20 -right-40"
+                className="w-[min(500px,80vw)] h-[min(500px,80vw)] -top-20 -right-40"
                 gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)"
                 isLowPowerMode={isLowPowerMode}
             />
             <FloatingShape
-                className="w-[400px] h-[400px] bottom-40 -left-20"
+                className="w-[min(400px,70vw)] h-[min(400px,70vw)] bottom-40 -left-20"
                 gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)"
                 delay={3}
                 isLowPowerMode={isLowPowerMode}

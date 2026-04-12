@@ -274,160 +274,156 @@ export function Footer() {
             </footer>
 
             {/* Expanded Footer Overlay */}
-            {
-                mounted && createPortal(
-                    <AnimatePresence>
-                        {isExpanded && (
-                            <motion.div
-                                variants={overlayVariants}
-                                initial="closed"
-                                animate="open"
-                                exit="closed"
-                                transition={{ duration: 0.3 }}
-                                className="fixed inset-0 z-[10000] bg-white dark:bg-black flex flex-col overflow-hidden pt-6 md:pt-12"
-                            >
-                                <Spotlight 
-                                    gradientFirst={theme === 'dark' 
-                                        ? "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(210, 100%, 85%, .08) 0, hsla(210, 100%, 55%, .02) 50%, hsla(210, 100%, 45%, 0) 80%)"
-                                        : "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(0, 0%, 20%, .03) 0, hsla(0, 0%, 15%, .01) 50%, hsla(0, 0%, 10%, 0) 80%)"
-                                    } 
-                                    gradientSecond={theme === 'dark'
-                                        ? "radial-gradient(50% 50% at 50% 50%, hsla(210, 100%, 85%, .06) 0, hsla(210, 100%, 55%, .02) 80%, transparent 100%)"
-                                        : "radial-gradient(50% 50% at 50% 50%, hsla(0, 0%, 20%, .02) 0, hsla(0, 0%, 15%, .01) 80%, transparent 100%)"
-                                    }
-                                    gradientThird={theme === 'dark'
-                                        ? "radial-gradient(50% 50% at 50% 50%, hsla(210, 100%, 85%, .04) 0, hsla(210, 100%, 45%, .02) 80%, transparent 100%)"
-                                        : "radial-gradient(50% 50% at 50% 50%, hsla(0, 0%, 20%, .01) 0, hsla(0, 0%, 15%, .01) 80%, transparent 100%)"
-                                    }
-                                />
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {isExpanded && (
+                        <motion.div
+                            variants={overlayVariants}
+                            initial="closed"
+                            animate="open"
+                            exit="closed"
+                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                            className="fixed inset-0 z-[10000] bg-white dark:bg-black flex flex-col pt-0 overflow-hidden"
+                        >
+                            <Spotlight
+                                gradientFirst={theme === 'dark'
+                                    ? "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(210, 100%, 85%, .08) 0, hsla(210, 100%, 55%, .02) 50%, hsla(210, 100%, 45%, 0) 80%)"
+                                    : "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(0, 0%, 20%, .03) 0, hsla(0, 0%, 15%, .01) 50%, hsla(0, 0%, 10%, 0) 80%)"
+                                }
+                                gradientSecond={theme === 'dark'
+                                    ? "radial-gradient(50% 50% at 50% 50%, hsla(210, 100%, 85%, .06) 0, hsla(210, 100%, 55%, .02) 80%, transparent 100%)"
+                                    : "radial-gradient(50% 50% at 50% 50%, hsla(0, 0%, 20%, .02) 0, hsla(0, 0%, 15%, .01) 80%, transparent 100%)"
+                                }
+                                gradientThird={theme === 'dark'
+                                    ? "radial-gradient(50% 50% at 50% 50%, hsla(210, 100%, 85%, .04) 0, hsla(210, 100%, 45%, .02) 80%, transparent 100%)"
+                                    : "radial-gradient(50% 50% at 50% 50%, hsla(0, 0%, 20%, .01) 0, hsla(0, 0%, 15%, .01) 80%, transparent 100%)"
+                                }
+                            />
+
+                            {/* Top Marquee */}
+                            <div className="flex-shrink-0 pt-[5vh]">
                                 <Marquee />
-                                <div className="flex-1 flex flex-col px-12 md:px-24 lg:px-40 py-12 md:py-24">
-                                    <div className="flex-1 flex flex-col max-w-[1500px] w-full ml-auto">
-                                        {/* Header with Close */}
-                                        <div className="flex justify-end items-start mb-24 md:mb-32">
-                                            <motion.button
-                                                onClick={closeExpanded}
-                                                className="relative group p-4 -mr-4 -mt-4 flex items-center justify-center transition-all duration-300"
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ delay: 0.4 }}
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.9 }}
+                            </div>
+
+                            <div className="flex-1 flex flex-col px-[8vw] pt-[4vh] pb-0 justify-between relative">
+                                <div className="flex-1 flex flex-col justify-center max-w-[1600px] w-full mx-auto relative">
+
+                                    {/* Close Button - Size-Locked with clamp */}
+                                    <div className="absolute top-0 right-[-2vw] z-[10001]">
+                                        <motion.button
+                                            onClick={closeExpanded}
+                                            className="relative p-[clamp(12px,1.2vw,20px)] flex items-center justify-center"
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: 0.3 }}
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                        >
+                                            <div className="absolute inset-0 rounded-full bg-black dark:bg-white shadow-2xl" />
+                                            <motion.div
+                                                className="relative z-10 flex items-center justify-center"
+                                                whileHover={{ rotate: 90 }}
+                                                transition={{ type: "spring", stiffness: 260, damping: 20 }}
                                             >
-                                                {/* Hidden larger hit area for reliability */}
-                                                <div className="absolute inset-0 rounded-full cursor-pointer z-0" />
-                                                
-                                                {/* Solid background circle with inverted colors */}
-                                                <div className="absolute inset-2 rounded-full bg-black dark:bg-white shadow-xl transition-all duration-300" />
-                                                
-                                                <motion.div
-                                                    className="relative z-10 flex items-center justify-center"
-                                                    whileHover={{ rotate: 90 }}
-                                                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                                                >
-                                                    <X className="w-8 h-8 text-white dark:text-black" strokeWidth={2} />
-                                                </motion.div>
-                                            </motion.button>
-                                        </div>
+                                                <X className="w-[clamp(24px,2vw,32px)] h-[clamp(24px,2vw,32px)] text-white dark:text-black" strokeWidth={2.5} />
+                                            </motion.div>
+                                        </motion.button>
+                                    </div>
 
-                                        {/* Main Columns - Perfectly balanced vertical position */}
-                                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-16 mt-auto mb-auto transform -translate-y-20 md:-translate-y-32 lg:-translate-y-40">
-                                            <FooterColumn title={t('links')}>
-                                                <FooterLink href="/">{tNav('home')}</FooterLink>
-                                                <FooterLink href="/resume">{tNav('resume')}</FooterLink>
-                                                <FooterLink href="/contact">{tNav('contact')}</FooterLink>
-                                                <AboutHoverMenu tNav={tNav} onExpandChange={setIsAboutExpanded} />
-                                            </FooterColumn>
+                                    {/* Main Grid - Forced 4-column layout regardless of zoom/screen */}
+                                    <div className="w-full grid grid-cols-4 gap-x-[5vw] gap-y-[4vh]">
+                                        <FooterColumn title={t('links')}>
+                                            <FooterLink href="/">{tNav('home')}</FooterLink>
+                                            <FooterLink href="/resume">{tNav('resume')}</FooterLink>
+                                            <FooterLink href="/contact">{tNav('contact')}</FooterLink>
+                                            <AboutHoverMenu tNav={tNav} onExpandChange={setIsAboutExpanded} />
+                                        </FooterColumn>
 
-                                            <FooterColumn title={t('socials')}>
-                                                <div
-                                                    className="relative flex items-center gap-2 group w-fit"
-                                                    onMouseEnter={() => setIsEmailHovered(true)}
-                                                    onMouseLeave={() => setIsEmailHovered(false)}
-                                                >
-                                                    <FooterLink href={`mailto:${portfolioData.personal.email}`}>Email</FooterLink>
-
-                                                    <AnimatePresence>
-                                                        {isEmailHovered && (
-                                                            <motion.div
-                                                                initial={{ opacity: 0, x: 5 }}
-                                                                animate={{ opacity: 1, x: 0 }}
-                                                                exit={{ opacity: 0, x: 5 }}
-                                                                className="absolute left-full ml-4 whitespace-nowrap flex items-center gap-2.5 z-[10001]"
+                                        <FooterColumn title={t('socials')}>
+                                            <div
+                                                className="relative flex items-center gap-2 group w-fit"
+                                                onMouseEnter={() => setIsEmailHovered(true)}
+                                                onMouseLeave={() => setIsEmailHovered(false)}
+                                            >
+                                                <FooterLink href={`mailto:${portfolioData.personal.email}`}>Email</FooterLink>
+                                                <AnimatePresence>
+                                                    {isEmailHovered && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, x: 5 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            exit={{ opacity: 0, x: 5 }}
+                                                            className="absolute left-full ml-[clamp(8px,1vw,16px)] whitespace-nowrap flex items-center gap-[clamp(4px,0.5vw,8px)] z-50"
+                                                        >
+                                                            <span className="text-[clamp(12px,1.1vw,18px)] font-medium text-zinc-400 dark:text-zinc-500 select-all">
+                                                                {portfolioData.personal.email}
+                                                            </span>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    handleCopyEmail();
+                                                                }}
+                                                                className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                                                                title="Copy Email"
                                                             >
-                                                                <span className="text-base font-medium text-zinc-400 dark:text-zinc-500 select-all">
-                                                                    {portfolioData.personal.email}
-                                                                </span>
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.preventDefault();
-                                                                        handleCopyEmail();
-                                                                    }}
-                                                                    className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
-                                                                    title="Copy Email"
-                                                                >
-                                                                    {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
-                                                                </button>
-                                                            </motion.div>
-                                                        )}
-                                                    </AnimatePresence>
-                                                </div>
-                                                <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'LinkedIn')?.url || '#'} target="_blank">LinkedIn</FooterLink>
-                                                <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'Instagram')?.url || '#'} target="_blank">Instagram</FooterLink>
-                                                <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'GitHub')?.url || '#'} target="_blank">GitHub</FooterLink>
-                                            </FooterColumn>
+                                                                {copied ? <Check className="w-[clamp(14px,1vw,20px)] h-[clamp(14px,1vw,20px)] text-green-500" /> : <Copy className="w-[clamp(14px,1vw,20px)] h-[clamp(14px,1vw,20px)]" />}
+                                                            </button>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
+                                            <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'LinkedIn')?.url || '#'} target="_blank">LinkedIn</FooterLink>
+                                            <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'Instagram')?.url || '#'} target="_blank">Instagram</FooterLink>
+                                            <FooterLink href={portfolioData.personal.socialLinks.find(s => s.platform === 'GitHub')?.url || '#'} target="_blank">GitHub</FooterLink>
+                                        </FooterColumn>
 
-                                            <FooterColumn title={t('localTime')}>
-                                                <p className="text-zinc-900 dark:text-white text-lg font-medium tracking-tight">{localTime}</p>
-                                                <a
-                                                    href="https://www.google.com/maps/place/Jakarta,+Indonesia"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-zinc-900 dark:text-white text-lg font-medium tracking-tight hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors inline-block"
-                                                >
-                                                    Jakarta, Indonesia
-                                                </a>
-                                            </FooterColumn>
-
-                                            <FooterColumn title={t('version')}>
-                                                <p className="text-zinc-900 dark:text-white text-lg font-medium tracking-tight">{t('versionEdition')}</p>
-                                            </FooterColumn>
-                                        </div>
-
-                                        {/* Large Brand Name */}
-                                        <div className="relative">
-                                            <motion.h2
-                                                initial={{ opacity: 0, y: 100 }}
-                                                animate={isAboutExpanded
-                                                    ? { opacity: 0, y: 80 }
-                                                    : { opacity: 1, y: 0 }
-                                                }
-                                                transition={{
-                                                    duration: isAboutExpanded ? 0.4 : 0.8,
-                                                    ease: [0.16, 1, 0.3, 1]
-                                                }}
-                                                className="text-[18vw] font-black leading-none text-zinc-900 dark:text-white tracking-tighter select-none"
+                                        <FooterColumn title={t('localTime')}>
+                                            <p className="text-zinc-900 dark:text-white text-[1.2vw] min-text-[14px] font-medium tracking-tight">
+                                                {localTime}
+                                            </p>
+                                            <a
+                                                href="https://www.google.com/maps/place/Jakarta,+Indonesia"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-zinc-900 dark:text-white text-[1.2vw] min-text-[14px] font-medium tracking-tight hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors inline-block"
                                             >
-                                                ARFAZRLL
-                                            </motion.h2>
-                                        </div>
+                                                Jakarta, Indonesia
+                                            </a>
+                                        </FooterColumn>
+
+                                        <FooterColumn title={t('version')}>
+                                            <p className="text-zinc-900 dark:text-white text-[1.2vw] min-text-[14px] font-medium tracking-tight">
+                                                {t('versionEdition')}
+                                            </p>
+                                        </FooterColumn>
                                     </div>
                                 </div>
-                            </motion.div>
 
-                        )}
-                    </AnimatePresence>,
-                    document.body
-                )}
+                                {/* Bottom Brand Name - Scaled and Clipped (Top-half visible) */}
+                                <div className="mt-auto overflow-hidden flex-shrink-0 relative">
+                                    <motion.h2
+                                        initial={{ opacity: 0, y: "100%" }}
+                                        animate={isAboutExpanded ? { opacity: 0, y: "120%" } : { opacity: 1, y: "38%" }}
+                                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                                        className="text-[18vw] font-black leading-none text-zinc-900 dark:text-white tracking-tighter select-none text-center"
+                                    >
+                                        ARFAZRLL
+                                    </motion.h2>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </>
     );
 }
 
 function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
     return (
-        <div className="flex flex-col gap-6">
-            <h3 className="text-zinc-500 text-xs font-bold tracking-widest uppercase">{title}</h3>
-            <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-[1.5vw]">
+            <h3 className="text-zinc-500 text-[clamp(10px,0.8vw,14px)] font-bold tracking-widest uppercase">{title}</h3>
+            <div className="flex flex-col gap-[0.8vw]">
                 {children}
             </div>
         </div>
@@ -436,14 +432,19 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
 
 function FooterLink({ href, children, target }: { href: string; children: React.ReactNode; target?: string }) {
     return (
-        <Link
-            href={href}
-            target={target}
-            rel={target === '_blank' ? 'noopener noreferrer' : undefined}
-            className="text-zinc-900 dark:text-white text-lg font-medium hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors w-fit"
+        <motion.div
+            whileHover={{ x: 5 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
-            {children}
-        </Link>
+            <Link
+                href={href}
+                target={target}
+                rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+                className="text-zinc-900 dark:text-white text-[clamp(14px,1.2vw,22px)] font-medium hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors w-fit whitespace-nowrap block"
+            >
+                {children}
+            </Link>
+        </motion.div>
     );
 }
 
@@ -467,6 +468,34 @@ function AboutHoverMenu({ tNav, onExpandChange }: { tNav: (key: string) => strin
         onExpandChange(active);
     }, [active, onExpandChange]);
 
+    const containerVariants = {
+        open: {
+            height: 'auto',
+            opacity: 1,
+            transition: {
+                height: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                opacity: { duration: 0.4, ease: "linear" },
+                staggerChildren: 0.05,
+                delayChildren: 0.1
+            }
+        },
+        closed: {
+            height: 0,
+            opacity: 0,
+            transition: {
+                height: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                opacity: { duration: 0.2, ease: "linear" },
+                staggerChildren: 0.03,
+                staggerDirection: -1
+            }
+        }
+    };
+
+    const itemVariants = {
+        open: { y: 0, opacity: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+        closed: { y: 10, opacity: 0, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } }
+    };
+
     return (
         <div
             className="flex flex-col gap-2"
@@ -479,7 +508,7 @@ function AboutHoverMenu({ tNav, onExpandChange }: { tNav: (key: string) => strin
             >
                 <Link
                     href="#about"
-                    className="text-zinc-900 dark:text-white text-lg font-medium group-hover:text-zinc-500 dark:group-hover:text-zinc-400 transition-colors"
+                    className="text-zinc-900 dark:text-white text-[clamp(14px,1.2vw,22px)] font-medium group-hover:text-zinc-500 dark:group-hover:text-zinc-400 transition-colors"
                 >
                     {tNav('about')}
                 </Link>
@@ -494,20 +523,21 @@ function AboutHoverMenu({ tNav, onExpandChange }: { tNav: (key: string) => strin
             <AnimatePresence>
                 {active && (
                     <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        variants={containerVariants}
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
                         className="overflow-hidden flex flex-col gap-2 pl-4 border-l border-zinc-200 dark:border-white/10 ml-2"
                     >
                         {subLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className="text-zinc-500 dark:text-zinc-400 text-base font-medium hover:text-zinc-900 dark:hover:text-white transition-colors"
-                            >
-                                {link.label}
-                            </Link>
+                            <motion.div key={link.href} variants={itemVariants}>
+                                <Link
+                                    href={link.href}
+                                    className="text-zinc-500 dark:text-zinc-400 text-[clamp(12px,1vw,18px)] font-medium hover:text-zinc-900 dark:hover:text-white transition-colors"
+                                >
+                                    {link.label}
+                                </Link>
+                            </motion.div>
                         ))}
                     </motion.div>
                 )}
