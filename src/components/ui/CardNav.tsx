@@ -1,16 +1,18 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, MotionValue } from 'framer-motion';
 import Link from 'next/link';
-import { ChevronDown, ArrowUpRight, Trophy, Navigation, Briefcase, Rocket, BookOpen } from 'lucide-react';
+import { ChevronDown, Trophy, Navigation, Briefcase, Rocket, BookOpen, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NavLink {
     label: string;
     href: string;
     description?: string;
-    icon?: any;
+    tagline?: string;
+    color?: string;
+    iconColor?: string;
 }
 
 interface NavItem {
@@ -24,6 +26,92 @@ interface CardNavProps {
     pathname?: string;
 }
 
+// Logic for Fisheye Icon
+function DockIcon({
+    link,
+    mouseX,
+    index,
+    iconMap,
+    setIsExpanded,
+    theme
+}: {
+    link: NavLink,
+    mouseX: MotionValue,
+    index: number,
+    iconMap: Record<string, any>,
+    setIsExpanded: (v: boolean) => void,
+    theme: 'light' | 'dark'
+}) {
+    const ref = useRef<HTMLDivElement>(null);
+    const Icon = iconMap[link.href] || Sparkles;
+
+    // Calculate distance between mouse and icon center
+    const distance = useTransform(mouseX, (val) => {
+        const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+        return val - bounds.x - bounds.width / 2;
+    });
+
+    // Interpolate scale based on distance (Fisheye effect)
+    // Scale from 1 to 1.8 within 150px range
+    const widthTransform = useTransform(distance, [-150, 0, 150], [60, 100, 60]);
+    const width = useSpring(widthTransform, { stiffness: 350, damping: 25, mass: 0.1 });
+
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <Link
+            href={link.href}
+            onClick={() => setIsExpanded(false)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="flex flex-col items-center justify-end h-full group relative px-2"
+        >
+            {/* Tooltip Label */}
+            <AnimatePresence>
+                {isHovered && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                        animate={{ opacity: 1, y: -10, scale: 1 }}
+                        exit={{ opacity: 0, y: 5, scale: 0.8 }}
+                        className="absolute -top-12 px-3 py-1.5 rounded-lg bg-foreground text-background text-[10px] font-black uppercase tracking-widest whitespace-nowrap z-50 pointer-events-none"
+                    >
+                        {link.label}
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 bg-foreground" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Magnified Icon Container */}
+            <motion.div
+                ref={ref}
+                style={{ width }}
+                className={cn(
+                    "relative aspect-square rounded-2xl flex items-center justify-center transition-colors overflow-hidden border",
+                    theme === 'dark'
+                        ? "bg-white/5 border-white/10 group-hover:bg-white/10 group-hover:border-white/20"
+                        : "bg-black/5 border-black/10 group-hover:bg-black/10 group-hover:border-black/20"
+                )}
+            >
+                {/* Background Glow */}
+                <motion.div
+                    animate={{ opacity: isHovered ? 0.3 : 0 }}
+                    className={cn(
+                        "absolute inset-0 blur-xl bg-gradient-to-br",
+                        link.color || "from-primary/50 to-transparent"
+                    )}
+                />
+
+                <Icon className={cn(
+                    "w-[40%] h-[40%] transition-transform duration-300",
+                    isHovered
+                        ? "scale-110 " + (link.iconColor || "text-primary")
+                        : (theme === 'dark' ? "text-white/40" : "text-black/30")
+                )} />
+            </motion.div>
+        </Link>
+    );
+}
+
 export default function CardNav({
     items,
     theme = "dark",
@@ -31,6 +119,7 @@ export default function CardNav({
 }: CardNavProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const mouseX = useMotionValue(Infinity);
 
     // Close on click outside
     useEffect(() => {
@@ -43,8 +132,15 @@ export default function CardNav({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // About is the only item now as requested
     const aboutItem = items.find(i => i.label === "About") || items[0];
+
+    const iconMap: Record<string, any> = {
+        "/achievements": Trophy,
+        "/skills": Navigation,
+        "/experience": Briefcase,
+        "/projects": Rocket,
+        "/blog": BookOpen
+    };
 
     return (
         <div ref={containerRef} className="relative">
@@ -52,127 +148,60 @@ export default function CardNav({
                 onMouseEnter={() => setIsExpanded(true)}
                 onClick={() => setIsExpanded(!isExpanded)}
                 className={cn(
-                    "relative px-6 py-2.5 text-sm font-bold transition-all duration-300 rounded-full flex items-center gap-2 group overflow-hidden",
+                    "relative px-6 py-2.5 text-sm font-bold transition-all duration-300 rounded-full flex items-center gap-2 group",
                     theme === 'dark'
                         ? "text-white/70 hover:text-white"
                         : "text-black/70 hover:text-black"
                 )}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
             >
-                <div className="absolute inset-0 bg-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
                 <span className="relative z-10">{aboutItem.label}</span>
                 <motion.div
                     animate={{ rotate: isExpanded ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
                     className="relative z-10"
                 >
-                    <ChevronDown className="w-4 h-4" />
+                    <ChevronDown className="w-4 h-4 opacity-50" />
                 </motion.div>
             </motion.button>
 
-            {/* Mega Menu Dropdown */}
+            {/* Elastic Glass Ribbon (Dock Style) */}
             <AnimatePresence>
                 {isExpanded && (
                     <motion.div
-                        onMouseLeave={() => setIsExpanded(false)}
-                        initial={{ opacity: 0, y: 15, scale: 0.98, rotateX: -5, x: "-50%" }}
-                        animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0, x: "-50%" }}
-                        exit={{ opacity: 0, y: 10, scale: 0.98, x: "-50%" }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 30,
+                        onMouseMove={(e) => mouseX.set(e.clientX)}
+                        onMouseLeave={() => {
+                            mouseX.set(Infinity);
+                            setIsExpanded(false);
                         }}
-                        style={{ perspective: "1200px" }}
-                        className="fixed top-28 left-1/2 z-[100] w-full max-w-5xl px-4"
+                        initial={{ opacity: 0, y: -20, scale: 0.95, x: "-50%" }}
+                        animate={{ opacity: 1, y: 15, scale: 1, x: "-50%" }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95, x: "-50%" }}
+                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                        className="absolute top-full left-1/2 mt-2 z-[100] pointer-events-auto"
                     >
-                        <div className={cn(
-                            "relative p-1.5 rounded-[2rem] border shadow-2xl overflow-hidden backdrop-blur-3xl transition-colors duration-500",
-                            theme === 'dark'
-                                ? "bg-[#18181b]/95 border-white/10 shadow-black/80"
-                                : "bg-white/95 border-black/5 shadow-black/20"
-                        )}>
-                            {/* Inner Content Grid - Balanced Horizontal Row */}
-                            <div className="grid grid-cols-2 md:grid-cols-5 gap-1.5">
-                                {aboutItem.links.map((link, idx) => {
-                                    // Use href for stable icon mapping regardless of locale
-                                    const iconMap: Record<string, any> = {
-                                        "/achievements": Trophy,
-                                        "/skills": Navigation,
-                                        "/experience": Briefcase,
-                                        "/projects": Rocket,
-                                        "/blog": BookOpen
-                                    };
-                                    const Icon = iconMap[link.href] || Rocket;
+                        <motion.div
+                            className={cn(
+                                "relative px-4 py-3 rounded-[2.5rem] border shadow-2xl flex items-end gap-1 backdrop-blur-3xl transition-all duration-500 min-h-[100px]",
+                                theme === 'dark'
+                                    ? "bg-[#0a0a0a]/60 border-white/10 shadow-black/80"
+                                    : "bg-white/80 border-black/10 shadow-black/5"
+                            )}
+                        >
+                            {/* Visual Noise/Grain effect could go here */}
 
-                                    return (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            onClick={() => setIsExpanded(false)}
-                                            className={cn(
-                                                "group/card flex flex-col h-[180px] md:h-[200px] relative p-5 rounded-[1.5rem] overflow-hidden transition-all duration-500 hover:scale-[1.02] active:scale-[0.98]",
-                                                pathname === link.href
-                                                    ? (theme === 'dark' ? "bg-white/10 ring-1 ring-white/20" : "bg-black/5 ring-1 ring-black/10")
-                                                    : (theme === 'dark' ? "bg-white/[0.03] hover:bg-white/5" : "bg-black/[0.02] hover:bg-black/[0.05]")
-                                            )}
-                                        >
-                                            {/* Glow Effect */}
-                                            <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-700 pointer-events-none">
-                                                <div className={cn(
-                                                    "absolute -top-1/4 -right-1/4 w-full h-full blur-[40px] rounded-full",
-                                                    theme === 'dark' ? "bg-primary/10" : "bg-primary/5"
-                                                )} />
-                                            </div>
-
-                                            <div className="relative h-full flex flex-col z-10">
-                                                {/* Header Icons */}
-                                                <div className="flex items-start justify-between mb-auto">
-                                                    <div className={cn(
-                                                        "p-2.5 rounded-xl border transition-colors",
-                                                        theme === 'dark'
-                                                            ? "bg-white/[0.05] group-hover/card:bg-white/10 border-white/5"
-                                                            : "bg-black/[0.03] group-hover/card:bg-black/[0.06] border-black/5"
-                                                    )}>
-                                                        <Icon className={cn(
-                                                            "w-4 h-4 transition-colors",
-                                                            theme === 'dark'
-                                                                ? "text-white/80 group-hover/card:text-white"
-                                                                : "text-black/70 group-hover/card:text-black"
-                                                        )} />
-                                                    </div>
-                                                    <ArrowUpRight className={cn(
-                                                        "w-4 h-4 opacity-20 group-hover/card:opacity-100 group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5 transition-all duration-500 ease-out",
-                                                        theme === 'dark' ? "text-white/60" : "text-black/40"
-                                                    )} />
-                                                </div>
-
-                                                {/* Content */}
-                                                <div>
-                                                    <h4 className={cn(
-                                                        "text-xl md:text-2xl font-black tracking-tighter mb-1 transition-colors",
-                                                        theme === 'dark'
-                                                            ? "text-white/90 group-hover/card:text-white"
-                                                            : "text-black/80 group-hover/card:text-black"
-                                                    )}>
-                                                        {link.label}
-                                                    </h4>
-                                                    <p className={cn(
-                                                        "text-[11px] md:text-xs leading-tight font-medium line-clamp-2 transition-colors",
-                                                        theme === 'dark'
-                                                            ? "text-white/40 group-hover/card:text-white/60"
-                                                            : "text-black/40 group-hover/card:text-black/60"
-                                                    )}>
-                                                        {link.description}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                            {aboutItem.links.map((link, idx) => (
+                                <DockIcon
+                                    key={link.href}
+                                    link={link}
+                                    mouseX={mouseX}
+                                    index={idx}
+                                    iconMap={iconMap}
+                                    setIsExpanded={setIsExpanded}
+                                    theme={theme}
+                                />
+                            ))}
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

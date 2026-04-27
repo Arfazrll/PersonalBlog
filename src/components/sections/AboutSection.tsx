@@ -114,7 +114,7 @@ const AboutLeadIn = () => {
 
     return (
         <div className="w-full max-w-[1500px] mr-auto px-4 lg:px-6 pt-4 pb-8 md:pb-12 text-left">
-            
+
             {/* Top header navigation style (Habito/Guangxi) */}
             <div className="flex justify-between items-center border-b border-foreground/10 pb-6 mb-12 md:mb-16">
                 <span className="text-base md:text-lg font-bold tracking-tight text-foreground flex items-center gap-3">
@@ -127,7 +127,7 @@ const AboutLeadIn = () => {
             </div>
 
             {/* Massive Heading (Guangxi Cai Style) */}
-            <motion.h2 
+            <motion.h2
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -140,20 +140,20 @@ const AboutLeadIn = () => {
             {/* Footer blocks / Details (Guangxi Cai bottom columns) */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-10">
                 {/* Thesis left side */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
                     className="md:col-span-5"
                 >
-                    <p 
+                    <p
                         className="text-lg md:text-[22px] font-medium text-foreground leading-[1.4] tracking-[-0.02em]"
                         dangerouslySetInnerHTML={{ __html: t.raw('leadIn.thesis') }}
                     />
                 </motion.div>
 
                 {/* Scope & Integration right side */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -174,7 +174,7 @@ const AboutLeadIn = () => {
                             {t('leadIn.integration')}
                         </p>
                         <div className="mt-8 md:mt-auto pt-6 flex-grow flex items-end">
-                             <span className="text-4xl lg:text-5xl font-signature text-foreground block">{t('leadIn.signature')}</span>
+                            <span className="text-4xl lg:text-5xl font-signature text-foreground block">{t('leadIn.signature')}</span>
                         </div>
                     </div>
                 </motion.div>
