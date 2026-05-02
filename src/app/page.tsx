@@ -287,7 +287,7 @@ export default function HomePage() {
         const resizeObserver = new ResizeObserver(() => { refreshLayout(); });
         resizeObserver.observe(document.body);
         window.addEventListener('load', refreshLayout);
-        const ctx = gsap.context(() => {});
+        const ctx = gsap.context(() => { });
         return () => {
             resizeObserver.disconnect();
             window.removeEventListener('load', refreshLayout);

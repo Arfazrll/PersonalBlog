@@ -30,28 +30,28 @@ const CATEGORIES = [
   }
 ];
 
-const AUTO_PLAY_DURATION = 8000; // 8 seconds as requested
+const AUTO_PLAY_DURATION = 8000;
 
 const ProgressBar = ({ duration, activeIndex }: { duration: number, activeIndex: number }) => {
   const lineRef = React.useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    if (lineRef.current) {
-      // Kill any existing animations on this element
-      gsap.killTweensOf(lineRef.current);
-      
-      // Animate from 0 to 1
-      gsap.fromTo(lineRef.current, 
-        { scaleY: 0, opacity: 0 }, 
-        { 
-          scaleY: 1, 
-          opacity: 1, 
-          duration: duration / 1000, 
-          ease: "none",
-          force3D: true 
-        }
-      );
-    }
+    const ctx = gsap.context(() => {
+      if (lineRef.current) {
+        gsap.fromTo(lineRef.current, 
+          { scaleY: 0, opacity: 0 }, 
+          { 
+            scaleY: 1, 
+            opacity: 1, 
+            duration: duration / 1000, 
+            ease: "none",
+            force3D: true 
+          }
+        );
+      }
+    });
+
+    return () => ctx.revert();
   }, [duration, activeIndex]);
 
   return (
@@ -63,10 +63,14 @@ const ProgressBar = ({ duration, activeIndex }: { duration: number, activeIndex:
 };
 
 export const HardSkills = () => {
+  const [mounted, setMounted] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
-  // Grouping the skills
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const categorizedSkills = useMemo(() => {
     const groups: Record<string, typeof portfolioData.hardSkills> = {
       '01': [],
@@ -74,8 +78,10 @@ export const HardSkills = () => {
       '03': []
     };
 
+    if (!portfolioData?.hardSkills) return groups;
+
     portfolioData.hardSkills.forEach(skill => {
-      const cat = skill.category.toLowerCase();
+      const cat = skill.category?.toLowerCase() || '';
       if (CATEGORIES[0].filterCategories.includes(cat)) {
         groups['01'].push(skill);
       } else if (CATEGORIES[1].filterCategories.includes(cat)) {
@@ -92,23 +98,13 @@ export const HardSkills = () => {
     setActiveIndex((prev) => (prev + 1) % CATEGORIES.length);
   }, []);
 
-  const handlePrev = useCallback(() => {
-    setDirection(-1);
-    setActiveIndex((prev) => (prev - 1 + CATEGORIES.length) % CATEGORIES.length);
-  }, []);
-
-  const handleTabClick = (index: number) => {
-    if (index === activeIndex) return;
-    setDirection(index > activeIndex ? 1 : -1);
-    setActiveIndex(index);
-  };
-
   useEffect(() => {
+    if (!mounted) return;
     const interval = setInterval(() => {
       handleNext();
     }, AUTO_PLAY_DURATION);
     return () => clearInterval(interval);
-  }, [activeIndex, handleNext]);
+  }, [mounted, handleNext]);
 
   const variants = {
     enter: (direction: number) => ({
@@ -136,12 +132,12 @@ export const HardSkills = () => {
     }),
   };
 
+  if (!mounted) return <div className="min-h-[850px]" />;
+
   return (
     <section id="hard-skills" className="w-full bg-background py-16 md:py-20 relative overflow-hidden min-h-[850px] lg:min-h-[950px]">
       <div className="w-full max-w-[2000px] px-6 md:px-12 lg:px-16 mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-
-          {/* LEFT COLUMN: The Sub-Skills Grid (Replaces the Gallery/Image) */}
           <div className="lg:col-span-7 flex flex-col justify-start order-1">
             <div className="relative group/gallery w-full">
               <div 
@@ -149,15 +145,9 @@ export const HardSkills = () => {
                 data-lenis-prevent
                 style={{ overflowAnchor: 'none' }}
               >
-
-                {/* Background Glow */}
                 <div className="absolute inset-0 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-                <AnimatePresence
-                  initial={false}
-                  custom={direction}
-                  mode="wait"
-                >
+                <AnimatePresence initial={false} custom={direction} mode="wait">
                   <motion.div
                     key={activeIndex}
                     custom={direction}
@@ -173,17 +163,8 @@ export const HardSkills = () => {
                         activeIndex === 2 ? "h-[550px] lg:h-[650px] overflow-y-auto overscroll-contain block" : "h-auto overflow-hidden"
                       )}
                       onWheel={(e) => {
-                        // Secara eksplisit menghentikan event scroll agar tidak tembus ke halaman web utama
                         if (activeIndex === 2) {
-                          const target = e.currentTarget;
-                          const isAtTop = target.scrollTop === 0;
-                          const isAtBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 1;
-
-                          if ((e.deltaY < 0 && !isAtTop) || (e.deltaY > 0 && !isAtBottom)) {
-                            e.stopPropagation();
-                          } else {
-                            e.stopPropagation();
-                          }
+                          e.stopPropagation();
                         }
                       }}
                     >
@@ -191,7 +172,7 @@ export const HardSkills = () => {
                         "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 pt-2",
                         activeIndex === 2 ? "pb-12" : "pb-2"
                       )}>
-                        {categorizedSkills[CATEGORIES[activeIndex].id].map((skill, idx) => (
+                        {categorizedSkills[CATEGORIES[activeIndex].id]?.map((skill, idx) => (
                           <motion.div
                             key={skill.name}
                             initial={{ opacity: 0, scale: 0.98 }}
@@ -231,25 +212,10 @@ export const HardSkills = () => {
                     </div>
                   </motion.div>
                 </AnimatePresence>
-
-                <AnimatePresence>
-                  {activeIndex === 2 && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="absolute inset-0 pointer-events-none z-10"
-                    >
-                      <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none" />
-                      <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: The Core Categories List (Vertical Tabs) */}
           <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:pl-12">
             <div className="space-y-1 mb-10">
               <h2 className="tracking-tighter text-balance text-3xl font-medium md:text-4xl lg:text-5xl text-foreground">
@@ -266,21 +232,19 @@ export const HardSkills = () => {
                 return (
                   <button
                     key={category.id}
-                    onClick={() => handleTabClick(index)}
+                    onClick={() => {
+                      if (index === activeIndex) return;
+                      setDirection(index > activeIndex ? 1 : -1);
+                      setActiveIndex(index);
+                    }}
                     className={cn(
                       "group relative flex items-start gap-4 py-6 md:py-8 text-left transition-all duration-500 border-t border-border/50 first:border-0",
-                      isActive
-                        ? "text-foreground"
-                        : "text-muted-foreground/60 hover:text-foreground"
+                      isActive ? "text-foreground" : "text-muted-foreground/60 hover:text-foreground"
                     )}
                   >
-                    {/* Active Line Indicator with Progress */}
                     <div className="absolute left-0 top-0 bottom-0 w-px bg-border/20">
-                      {isActive && (
-                        <ProgressBar duration={AUTO_PLAY_DURATION} activeIndex={activeIndex} />
-                      )}
+                      {isActive && <ProgressBar duration={AUTO_PLAY_DURATION} activeIndex={activeIndex} />}
                     </div>
-
                     <div className="flex-1 pl-4 md:pl-6">
                       <div className="flex items-center gap-3 mb-2">
                         <span className={cn(
@@ -296,7 +260,6 @@ export const HardSkills = () => {
                           {category.title.toUpperCase()}
                         </h3>
                       </div>
-
                       <AnimatePresence mode="wait">
                         {isActive && (
                           <motion.p
