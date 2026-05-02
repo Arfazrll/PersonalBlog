@@ -476,20 +476,19 @@ const MetricCTAHijack = () => {
     });
 
     return (
-        <section ref={containerRef} className="relative z-50 bg-background dark:bg-black">
+        <section ref={containerRef} className="relative bg-black">
             {/* Sticky Stats Section */}
-            <div className="sticky top-0 h-screen w-full z-50 bg-background dark:bg-black overflow-hidden">
+            <div className="sticky top-0 h-screen w-full z-10 bg-black overflow-hidden">
                 <StatsSection scrollYProgress={scrollYProgress} />
             </div>
 
-            {/* Spacer to create scroll depth for the sticky animation */}
-            <div className="h-[300vh] pointer-events-none" />
-
             {/* Content that "hijacks" or overlaps the sticky view */}
-            <div className="relative z-50 bg-background dark:bg-black shadow-xl dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)] pb-12" style={{ transform: 'translate3d(0,0,0)' }}>
-                <div className="h-[25vh]" />
-                <CTASection />
-                <div className="h-20" />
+            <div className="relative z-20 bg-background dark:bg-black shadow-[0_-20px_50px_rgba(0,0,0,0.5)] dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)] -mt-[50vh]" style={{ transform: 'translate3d(0,0,0)' }}>
+                <div className="h-[80vh] pointer-events-none" /> {/* Dynamic spacer to allow stats to show */}
+                <div className="relative z-30 bg-background dark:bg-black">
+                    <CTASection />
+                    <div className="h-10" />
+                </div>
             </div>
         </section>
     );
