@@ -10,10 +10,10 @@ import dynamic from 'next/dynamic';
 
 const KineticTechGrid = dynamic(() => import('@/components/ui/KineticTechGrid').then(mod => mod.KineticTechGrid), { ssr: true });
 const ArchedTechIconsInteractive = dynamic(() => import('@/components/ui/ArchedTechIcons').then(mod => mod.ArchedTechIconsInteractive), { ssr: true });
-const SoftSkills = dynamic(() => import('@/components/sections/skills/SoftSkills').then(mod => mod.SoftSkills), { ssr: true });
+const HorizontalScrollCarousel = dynamic(() => import('@/components/ui/horizontal-scroll-carousel').then(mod => mod.HorizontalScrollCarousel), { ssr: true });
 const HardSkills = dynamic(() => import('@/components/sections/skills/HardSkills').then(mod => mod.HardSkills), { ssr: true });
 const ToolsSection = dynamic(() => import('@/components/sections/skills/ToolsSection').then(mod => mod.ToolsSection), { ssr: true });
-const SkillsClosing = dynamic(() => import('@/components/sections/skills/SkillsClosing').then(mod => mod.SkillsClosing), { ssr: true });
+import FeatureSection from '@/components/ui/stack-feature-section';
 import { cn } from '@/lib/utils';
 
 const techLogos: Record<string, string> = {
@@ -287,7 +287,7 @@ export default function SkillsPage() {
                 <VaporFog className="opacity-30" />
             </div>
 
-            <SoftSkills />
+            <HorizontalScrollCarousel />
             <HardSkills />
             <section className="py-48 px-8 relative overflow-hidden bg-background">
                 <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
@@ -343,7 +343,7 @@ export default function SkillsPage() {
             </section>
 
             <ToolsSection />
-            <SkillsClosing />
+            <FeatureSection />
 
         </div>
     );
