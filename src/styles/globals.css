@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -534,4 +534,18 @@ html, body, * {
 }
 .animate-arc-spin-reverse {
   animation: arc-spin-reverse 60s linear infinite;
+}
+
+/* Layout Shield: Prevent browser extensions (like crxjs) from adding extra space/height to the layout */
+#crxjs-app, [id*='crxjs-'], [id^='crxjs-'], .crxjs-app {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    width: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
