@@ -505,13 +505,57 @@ export default function HomePage() {
             setIsLoading(false);
             setIsExiting(true);
         }
+
+        // ULTIMATE FIX: Listen to body size changes to prevent floating footer
+        if (typeof window === 'undefined' || !('ResizeObserver' in window)) return;
+
+        const refreshLayout = () => {
+            window.dispatchEvent(new Event('resize'));
+            ScrollTrigger.refresh();
+        };
+
+        const resizeObserver = new ResizeObserver(() => {
+            refreshLayout();
+        });
+
+        // 1. Observe body for any height changes (late hydration, images, etc)
+        resizeObserver.observe(document.body);
+
+        // 2. Refresh on window load (everything finished)
+        window.addEventListener('load', refreshLayout);
+
+        // 3. GSAP Context for total cleanup
+        const ctx = gsap.context(() => {});
+
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener('load', refreshLayout);
+            ctx.revert();
+            ScrollTrigger.getAll().forEach(t => t.kill());
+        };
     }, []);
+
+    useEffect(() => {
+        if (isExiting) {
+            // Aggressive multi-stage refresh as a secondary safety
+            const refreshStages = [100, 500, 1000, 2000, 5000];
+            refreshStages.forEach(delay => {
+                setTimeout(() => {
+                    ScrollTrigger.refresh();
+                }, delay);
+            });
+        }
+    }, [isExiting]);
 
     const handleLoadingComplete = () => {
         setIsLoading(false);
         // FORCE SCROLL RESET: Fixes the bug where browser restores scroll to About section
         window.scrollTo({ top: 0, behavior: 'instant' });
         sessionStorage.setItem('portfolioLoaded', 'true');
+        
+        setTimeout(() => {
+            ScrollTrigger.refresh();
+        }, 100);
     };
 
     const handleExitStart = () => {
