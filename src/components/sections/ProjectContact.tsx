@@ -2,7 +2,8 @@
 
 import React, { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { SiGithub, SiLinkedin, SiX, SiInstagram, SiSpotify, SiDiscord } from 'react-icons/si';
+import { SiGithub, SiX, SiInstagram, SiSpotify, SiDiscord } from 'react-icons/si';
+import { FaLinkedin } from 'react-icons/fa6';
 import { MessageCircle, Mail, ArrowUpRight } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import { portfolioData } from '@/data/portfolio';
@@ -44,7 +45,7 @@ export const ProjectContact = ({ isLowPowerMode }: { isLowPowerMode?: boolean })
                         </LogoItem>,
                         // LinkedIn - Blue
                         <LogoItem key={2} className="bg-blue-600 text-white">
-                            <SiLinkedin />
+                            <FaLinkedin />
                         </LogoItem>,
                         // Twitter/X - Black/White
                         <LogoItem key={3} className="bg-black text-white">
