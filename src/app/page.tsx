@@ -506,11 +506,26 @@ export default function HomePage() {
         }
     }, []);
 
+    useEffect(() => {
+        if (isExiting) {
+            const timer = setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+                ScrollTrigger.refresh();
+            }, 800);
+            return () => clearTimeout(timer);
+        }
+    }, [isExiting]);
+
     const handleLoadingComplete = () => {
         setIsLoading(false);
         // FORCE SCROLL RESET: Fixes the bug where browser restores scroll to About section
         window.scrollTo({ top: 0, behavior: 'instant' });
         sessionStorage.setItem('portfolioLoaded', 'true');
+        
+        // Final fallback refresh
+        setTimeout(() => {
+            ScrollTrigger.refresh();
+        }, 2000);
     };
 
     const handleExitStart = () => {
