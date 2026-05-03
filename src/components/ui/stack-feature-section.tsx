@@ -43,35 +43,35 @@ export default function FeatureSection() {
   const iconsPerOrbit = Math.ceil(iconConfigs.length / orbitCount);
 
   return (
-    <section className="relative w-full max-w-[1500px] mx-auto px-4 sm:px-6 my-32 z-10">
-      <div className="flex flex-col md:flex-row items-center justify-between min-h-[30rem] md:min-h-[35rem] border border-gray-200 dark:border-white/10 bg-white dark:bg-black overflow-hidden rounded-[2.5rem] shadow-sm relative">
+    <section className="relative w-full max-w-[1500px] mx-auto px-4 sm:px-6 my-16 md:my-32 z-10">
+      <div className="flex flex-col md:flex-row items-center justify-between min-h-[auto] md:min-h-[35rem] border border-gray-200 dark:border-white/10 bg-white dark:bg-black overflow-hidden rounded-[2.5rem] shadow-sm relative">
         {/* Left side: Heading and Text */}
-        <div className="w-full md:w-[55%] z-10 p-8 md:p-14 lg:p-20">
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-white tracking-tight leading-[1.1]">
+        <div className="w-full md:w-[55%] z-10 p-6 sm:p-8 md:p-14 lg:p-20">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 text-gray-900 dark:text-white tracking-tight leading-[1.1]">
             Engineering <br className="hidden md:block" /> the Future
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mb-10 max-w-xl text-base md:text-lg leading-relaxed">
             {portfolioData.personal.subtitle}
           </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Button variant="default" asChild className="rounded-full px-8 py-6 font-semibold text-base bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
+          <div className="flex flex-wrap items-center gap-3 md:gap-4">
+            <Button variant="default" asChild className="rounded-full px-6 md:px-8 py-5 md:py-6 font-semibold text-sm md:text-base bg-primary text-primary-foreground hover:bg-primary/90 transition-all w-full sm:w-auto text-center justify-center">
               <Link href="/projects">View Projects</Link>
             </Button>
-            <Button variant="outline" asChild className="rounded-full px-8 py-6 font-semibold text-base dark:border-white/20 dark:hover:bg-white/10 text-foreground transition-all">
+            <Button variant="outline" asChild className="rounded-full px-6 md:px-8 py-5 md:py-6 font-semibold text-sm md:text-base dark:border-white/20 dark:hover:bg-white/10 text-foreground transition-all w-full sm:w-auto text-center justify-center">
               <Link href="/resume">My Resume</Link>
             </Button>
           </div>
         </div>
 
         {/* Right side: Orbit animation cropped to 1/2 */}
-        <div className="relative w-full md:w-[45%] h-[20rem] md:h-full min-h-[35rem] flex items-center justify-end overflow-hidden pointer-events-none mt-4 md:mt-0">
-          {/* Positioning the center of orbits exactly on the right edge */}
-          <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] md:w-[60rem] md:h-[60rem] flex items-center justify-center">
+        <div className="relative w-full md:w-[45%] h-[25rem] sm:h-[30rem] md:h-full md:min-h-[35rem] flex items-center justify-center md:justify-end overflow-hidden pointer-events-none mt-4 md:mt-0">
+          {/* Positioning the center of orbits exactly on the right edge on desktop, centered bottom on mobile */}
+          <div className="absolute left-1/2 md:left-auto md:right-0 top-1/2 md:top-1/2 -translate-x-1/2 md:translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] md:w-[60rem] md:h-[60rem] flex items-center justify-center">
             
             {/* Center Circle */}
-            <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-white/10 shadow-lg flex items-center justify-center z-10 relative">
+            <div className="w-16 h-16 md:w-28 md:h-28 rounded-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-white/10 shadow-lg flex items-center justify-center z-10 relative">
               <div className="center-spin">
-                <FaReact className="w-10 h-10 md:w-14 md:h-14 text-[#61DAFB]" />
+                <FaReact className="w-8 h-8 md:w-14 md:h-14 text-[#61DAFB]" />
               </div>
             </div>
 

@@ -135,10 +135,10 @@ export const HardSkills = () => {
   if (!mounted) return <div className="min-h-[850px]" />;
 
   return (
-    <section id="hard-skills" className="w-full bg-background py-16 md:py-20 relative overflow-hidden min-h-[850px] lg:min-h-[950px]">
+    <section id="hard-skills" className="w-full bg-background pt-32 md:pt-52 lg:pt-64 pb-8 md:pb-0 relative overflow-hidden min-h-screen md:min-h-[850px] lg:min-h-[950px]">
       <div className="w-full max-w-[2000px] px-6 md:px-12 lg:px-16 mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          <div className="lg:col-span-7 flex flex-col justify-start order-1">
+          <div className="lg:col-span-7 flex flex-col justify-start order-2 lg:order-1">
             <div className="relative group/gallery w-full">
               <div 
                 className="relative w-full rounded-3xl md:rounded-[2.5rem] overflow-hidden bg-card/5 border border-border/40 shadow-2xl"
@@ -216,8 +216,8 @@ export const HardSkills = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:pl-12">
-            <div className="space-y-1 mb-10">
+          <div className="lg:col-span-5 flex flex-col justify-center order-1 lg:order-2 lg:pl-12 mb-8 lg:mb-0">
+            <div className="space-y-1 mb-6 md:mb-10">
               <h2 className="tracking-tighter text-balance text-3xl font-medium md:text-4xl lg:text-5xl text-foreground">
                 Core Focus
               </h2>
