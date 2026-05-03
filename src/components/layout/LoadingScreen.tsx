@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AppleHelloEnglishEffect } from '@/components/ui/apple-hello-effect';
 
 interface LoadingScreenProps {
     onComplete?: () => void;
@@ -9,104 +10,52 @@ interface LoadingScreenProps {
     duration?: number;
 }
 
-export function LoadingScreen({ onComplete, onExitStart, duration = 2500 }: LoadingScreenProps) {
+export function LoadingScreen({ onComplete, onExitStart, duration }: LoadingScreenProps) {
     const [isLoading, setIsLoading] = useState(true);
-    const [progress, setProgress] = useState(0);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setProgress((prev) => {
-                if (prev >= 100) {
-                    clearInterval(interval);
-                    return 100;
-                }
-                // Varying speed for a more organic feel
-                const diff = Math.random() < 0.3 ? 1 : 2;
-                return Math.min(prev + diff, 100);
-            });
-        }, duration / 80);
-
-        return () => clearInterval(interval);
-    }, [duration]);
-
-    useEffect(() => {
-        if (progress === 100) {
-            const timer = setTimeout(() => {
-                setIsLoading(false);
-                onExitStart?.();
-                setTimeout(() => {
-                    onComplete?.();
-                }, 1500); // Matched with exit transition duration
-            }, 500); // Small pause at 100% for impact
-            return () => clearTimeout(timer);
-        }
-    }, [progress, onComplete]);
+    const handleAnimationComplete = () => {
+        // Small pause at the end for impact before exiting
+        setTimeout(() => {
+            setIsLoading(false);
+            onExitStart?.();
+            setTimeout(() => {
+                onComplete?.();
+            }, 1200); // Increased slightly for smoother overlap
+        }, 300);
+    };
 
     return (
         <AnimatePresence mode="wait">
             {isLoading && (
                 <motion.div
-                    initial={{ opacity: 1, scale: 1 }}
+                    initial={{ y: 0 }}
                     exit={{
-                        scale: 6, 
-                        opacity: 0,
-                        filter: "blur(10px)", 
-                        transition: { 
-                            duration: 1.5, 
-                            ease: [0.22, 1, 0.36, 1] 
+                        y: "-100%",
+                        transition: {
+                            duration: 1.2,
+                            ease: [0.7, 0, 0.3, 1]
                         }
                     }}
-                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background overflow-hidden"
+                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background overflow-hidden will-change-transform"
                 >
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
                         exit={{
-                            scale: 0.8,
                             opacity: 0,
-                            transition: { duration: 0.8, ease: "easeIn" }
+                            y: -40,
+                            transition: { duration: 0.6, ease: [0.33, 1, 0.68, 1] }
                         }}
-                        className="relative flex flex-col items-center w-full max-w-[280px]"
+                        className="relative flex flex-col items-center justify-center w-full max-w-[400px] will-change-transform"
                     >
-                        {/* Counter */}
-                        <div className="flex items-baseline mb-8">
-                            <motion.span
-                                key={progress}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="text-6xl md:text-8xl font-inter font-extralight text-foreground tracking-tighter"
-                            >
-                                {progress.toString().padStart(2, '0')}
-                            </motion.span>
-                            <span className="text-lg md:text-xl font-inter font-light text-muted-foreground ml-2">%</span>
-                        </div>
-
-                        {/* Minimalist Progress Line */}
-                        <div className="w-full h-[1px] bg-muted relative mb-4">
-                            <motion.div
-                                className="absolute top-0 left-0 h-full bg-foreground"
-                                initial={{ width: 0 }}
-                                animate={{ width: `${progress}%` }}
-                                transition={{ duration: 0.1 }}
-                            />
-                        </div>
-
-                        {/* Status Label */}
-                        <div className="flex justify-between w-full">
-                            <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-inter">
-                                SYAHRIL ARFIAN ALMAZRIL
-                            </span>
-                            <span className="text-[10px] uppercase tracking-[0.3em] text-foreground/60 font-inter">
-                                {progress < 100 ? 'Loading' : 'Ready'}
-                            </span>
-                        </div>
+                        <AppleHelloEnglishEffect speed={1.2} onAnimationComplete={handleAnimationComplete} className="text-foreground h-16 sm:h-20 md:h-24 will-change-transform" />
                     </motion.div>
 
                     {/* Subtle aesthetic dot */}
                     <motion.div
                         animate={{ opacity: [0.2, 0.5, 0.2] }}
                         transition={{ duration: 2, repeat: Infinity }}
+                        exit={{ opacity: 0, transition: { duration: 0.3 } }}
                         className="absolute bottom-12 w-1.5 h-1.5 rounded-full bg-foreground/10"
                     />
                 </motion.div>

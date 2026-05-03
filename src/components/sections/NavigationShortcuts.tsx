@@ -29,31 +29,41 @@ const GALLERY_IMAGES = [
 ];
 
 export const NavigationShortcuts = () => {
+    return null; // Component disabled per user request
+    
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [isOpen, setIsOpen] = useState(false);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [hoveredImage, setHoveredImage] = useState<string | null>(null);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [itemImageMap, setItemImageMap] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement>(null);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const isInView = useInView(containerRef, { amount: 0.05 });
 
     // INNOVATIVE: Scroll-linked opacity to physically block leaks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start end", "end start"]
     });
 
     // WIDENED RANGE: Background is visible for much longer (10% to 90% of viewport presence)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const backgroundOpacity = useTransform(
         scrollYProgress,
         [0, 0.1, 0.9, 1],
         [0, 0.15, 0.15, 0]
     );
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const backgroundScale = useTransform(
         scrollYProgress,
         [0, 0.5, 1],
         [1.05, 1, 1.05]
     );
     // Randomize images on mount
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         const shuffled = [...GALLERY_IMAGES].sort(() => Math.random() - 0.5);
         const map: Record<string, string> = {};
@@ -67,8 +77,10 @@ export const NavigationShortcuts = () => {
         setItemImageMap(map);
     }, []);
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const t = useTranslations('navigation');
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const categories = useMemo(() => [
         {
             title: t('shortcuts.volume1'),
@@ -144,7 +156,7 @@ export const NavigationShortcuts = () => {
                                     className="absolute inset-0 w-full h-full"
                                 >
                                     <Image
-                                        src={hoveredImage}
+                                        src={hoveredImage || ''}
                                         alt="Section Preview"
                                         fill
                                         className="object-cover grayscale contrast-125 brightness-75 scale-110"
@@ -160,8 +172,8 @@ export const NavigationShortcuts = () => {
 
                                     {/* Preview Metadata */}
                                     <div className="absolute bottom-12 right-12 text-right hidden md:block">
-                                        <div className="text-[10px] font-mono tracking-[0.2em] text-primary/60 uppercase mb-1">{t('shortcuts.preview')}</div>
-                                        <div className="text-[10px] font-mono tracking-[0.1em] text-primary/40">{t('shortcuts.idRef')}: {hoveredImage.split('/').pop()}</div>
+                                        <div className="text-[10px] font-mono tracking-[0.2em] text-primary/60 uppercase mb-1">PREVIEW</div>
+                                        <div className="text-[10px] font-mono tracking-[0.1em] text-primary/40">ID_REF: {hoveredImage?.split('/').pop()}</div>
                                     </div>
                                 </motion.div>
                             </motion.div>

@@ -289,7 +289,7 @@ export default function SkillsPage() {
 
             <HorizontalScrollCarousel />
             <HardSkills />
-            <section className="py-48 px-8 relative overflow-hidden bg-background">
+            <section className="pt-12 pb-48 px-8 relative overflow-hidden bg-background">
                 <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
                 </div>
 

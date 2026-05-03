@@ -12,6 +12,7 @@ interface SocialCornerProps {
 }
 
 export const SocialCorner = ({ className, delay = 0.5 }: SocialCornerProps) => {
+    return null; // Component disabled per user request
     const linkedinLink = portfolioData.personal.socialLinks.find(s => s.platform === 'LinkedIn')?.url;
     const instagramLink = portfolioData.personal.socialLinks.find(s => s.platform === 'Instagram')?.url;
     const githubLink = portfolioData.personal.socialLinks.find(s => s.platform === 'GitHub')?.url;
