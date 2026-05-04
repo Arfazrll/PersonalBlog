@@ -19,9 +19,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 import { SocialCorner } from "@/components/layout/SocialCorner";
 import { cn } from "@/lib/utils";
 
-const World = dynamic(() => import("@/components/ui/globe").then((m) => m.World), {
-    ssr: false,
-});
+import Testimonial1 from "@/components/ui/testimonial-1";
 
 const GALLERY_IMAGES = [
     "/gallery/Foto Utama.jpeg",
@@ -208,199 +206,23 @@ const TECH_LOGOS = [
 
 // --- Component 2: Core Engineering Panel ---
 const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => {
-    // STABILIZED: Keeps opacity at 1.0 until the slide is nearly finished to prevent "ghosting"
     const contentOpacity = useTransform(scrollYProgress, [0.75, 0.9], [1, 0]);
     const contentScale = useTransform(scrollYProgress, [0.75, 0.9], [1, 0.9]);
     const contentY = useTransform(scrollYProgress, [0.75, 0.9], [0, -50]);
 
-    // INTERNAL TIMING: Globe and Tech Stack reveal [0.0 -> 0.35]
-    const globeOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-    const logoOpacity = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]);
-
-    // MOUNT GUARD: Unmount Globe when fully faded to save resources
-    const [isGlobeMounted, setIsGlobeMounted] = useState(true);
-    useMotionValueEvent(globeOpacity, "change", (v: any) => {
-        if (v <= 0 && isGlobeMounted) setIsGlobeMounted(false);
-        else if (v > 0 && !isGlobeMounted) setIsGlobeMounted(true);
-    });
-
-    // SLIDE OFFSET: Shift text column to make room for logos
-    const textSlideX = useTransform(scrollYProgress, [0.15, 0.35], ["0%", "-92%"]);
-
-    // Text alignment: right-aligned -> left-aligned after slide
-    const [textIsLeft, setTextIsLeft] = useState(false);
-    useMotionValueEvent(scrollYProgress, "change", (v: any) => {
-        setTextIsLeft(v > 0.25);
-    });
-    const t = useTranslations('about');
-
-    const gpaValue = useCountUp(3.8, 2000, 1);
-    const projectsValue = useCountUp(19, 2000, 0);
-    const expValue = useCountUp(2, 1500, 0);
-
-    // Jakarta, Indonesia as default (fallback)
-    const [userLat, setUserLat] = React.useState(-6.2088);
-    const [userLng, setUserLng] = React.useState(106.8456);
-
-    React.useEffect(() => {
-        if (typeof window !== "undefined" && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    setUserLat(pos.coords.latitude);
-                    setUserLng(pos.coords.longitude);
-                },
-                () => { /* keep Jakarta fallback */ }
-            );
-        }
-    }, []);
-
-    const { resolvedTheme } = useTheme();
-    const isDark = resolvedTheme === "dark";
-
-    const globeConfig = {
-        pointSize: 4,
-        globeColor: "#062056",
-        showAtmosphere: true,
-        atmosphereColor: isDark ? "#FFFFFF" : "#60a5fa",
-        atmosphereAltitude: 0.1,
-        emissive: "#062056",
-        emissiveIntensity: 0.1,
-        shininess: 0.9,
-        polygonColor: "rgba(255, 255, 255, 0.7)",
-        ambientLight: isDark ? "#38bdf8" : "#3b82f6",
-        directionalLeftLight: isDark ? "#ffffff" : "#3b82f6",
-        directionalTopLight: isDark ? "#ffffff" : "#ffffff",
-        pointLight: isDark ? "#ffffff" : "#3b82f6",
-        arcTime: 1000,
-        arcLength: 0.9,
-        rings: 1,
-        maxRings: 3,
-        initialPosition: { lat: -6.2088, lng: 106.8456 },
-        autoRotate: true,
-        autoRotateSpeed: 0.5,
-    };
-
-    const colors = isDark ? ["#06b6d4", "#3b82f6", "#6366f1"] : ["#3b82f6", "#2563eb", "#1d4ed8"];
-    const sampleArcs = [
-        { order: 1, startLat: userLat, startLng: userLng, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.3, color: colors[0] },
-        { order: 2, startLat: userLat, startLng: userLng, endLat: 37.7749, endLng: -122.4194, arcAlt: 0.5, color: colors[1] },
-        { order: 3, startLat: userLat, startLng: userLng, endLat: 52.3676, endLng: 4.9041, arcAlt: 0.4, color: colors[2] },
-    ];
-
     return (
         <div className="w-screen h-full flex items-center bg-background transition-colors duration-500 overflow-hidden">
-            <div className="max-w-[1500px] w-full mx-auto px-[3%] h-full relative">
-
-                {/* ─── GLOBE: absolute left-half, fades out ─── */}
-                <motion.div
-                    style={{ opacity: globeOpacity }}
-                    className="hidden lg:block absolute left-0 top-0 w-1/2 h-full z-10 pointer-events-none"
-                >
-                    <div className="relative w-full h-full">
-                        {isGlobeMounted && <World data={sampleArcs} globeConfig={globeConfig} />}
-                    </div>
-                </motion.div>
-
-                {/* ─── TEXT: starts at right-half, slides into left-half ─── */}
-                <motion.div
-                    style={{
-                        opacity: contentOpacity,
-                        scale: contentScale,
-                        x: textSlideX,
-                        y: contentY,
-                        willChange: "transform, opacity",
-                        transform: 'translate3d(0,0,0)'
-                    }}
-                    className={`absolute right-0 top-0 w-full lg:w-1/2 h-full flex flex-col justify-center z-20 space-y-10 transition-[text-align,align-items] duration-500 ${textIsLeft ? "items-start text-left" : "items-center lg:items-end text-right"
-                        }`}
-                >
-                    <div className="space-y-4">
-                        <motion.span
-                            initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                            transition={{ duration: 0.5 }}
-                            className="text-[12px] md:text-[13px] font-mono uppercase tracking-[0.2em] text-muted-foreground block"
-                        >
-                            {t('coreEngineering.label')}
-                        </motion.span>
-                        <motion.h3
-                            initial={{ clipPath: "inset(0 100% 0 0)" }} whileInView={{ clipPath: "inset(0 0% 0 0)" }}
-                            viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-[40px] md:text-[54px] font-bold text-foreground leading-[1.1] tracking-tight"
-                            dangerouslySetInnerHTML={{ __html: t.raw('coreEngineering.title') }}
-                        />
-                    </div>
-
-                    <div className="space-y-5 max-w-[620px]">
-                        {[
-                            { text: t('coreEngineering.p1'), delay: 0.5 },
-                            { text: t('coreEngineering.p2'), delay: 0.6 },
-                            { text: t('coreEngineering.p3'), delay: 0.7 },
-                        ].map((p, i) => (
-                            <motion.p key={i}
-                                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                                transition={{ duration: 0.6, delay: p.delay }}
-                                className="text-[13px] md:text-sm lg:text-[15px] text-muted-foreground leading-relaxed"
-                            >
-                                {p.text}
-                            </motion.p>
-                        ))}
-                    </div>
-
-                    <div className="flex flex-row gap-10 md:gap-16 pt-2">
-                        {[
-                            { val: gpaValue, label: t('coreEngineering.gpa'), suffix: "", delay: 0.8 },
-                            { val: projectsValue, label: t('coreEngineering.projects'), suffix: "+", delay: 0.9 },
-                            { val: expValue, label: t('coreEngineering.years'), suffix: "+", delay: 1.0 },
-                        ].map((stat, i) => (
-                            <motion.div key={i}
-                                initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: stat.delay }}
-                                className="flex flex-col gap-2"
-                            >
-                                <span className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground">
-                                    {i === 0 ? stat.val : Math.floor(Number(stat.val))}{stat.suffix}
-                                </span>
-                                <span className="text-[11px] md:text-[12px] uppercase tracking-[0.15em] text-muted-foreground">
-                                    {stat.label}
-                                </span>
-                            </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
-
-                {/* ─── LOGO GRID: right-half, fades in AFTER globe disappears ─── */}
-                <motion.div
-                    style={{ opacity: logoOpacity }}
-                    className="hidden lg:flex absolute right-0 top-0 w-1/2 h-full items-center justify-center z-10 pointer-events-none"
-                >
-                    <div className="flex flex-col justify-center px-10 lg:px-20 w-full">
-
-                        <div className="grid grid-cols-4 md:grid-cols-5 gap-x-10 gap-y-14">
-                            {TECH_LOGOS.map((tech) => (
-                                <div key={tech.slug} className="flex flex-col items-center gap-3 group/tech pointer-events-auto cursor-pointer">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center brightness-0 dark:brightness-100 opacity-70 dark:opacity-40 grayscale group-hover/tech:opacity-100 group-hover/tech:grayscale-0 group-hover/tech:brightness-100 transition-all duration-500 scale-90 group-hover/tech:scale-110">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src={`https://cdn.simpleicons.org/${tech.slug}`}
-                                            alt={tech.name}
-                                            width={48} height={48}
-                                            className={cn(
-                                                "w-full h-full object-contain",
-                                                ["nextdotjs", "langchain", "flask", "solidity", "prisma"].includes(tech.slug) && "dark:invert"
-                                            )}
-                                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                                        />
-                                    </div>
-                                    <span className="text-[10px] font-mono uppercase tracking-[0.08em] text-foreground/40 dark:text-muted-foreground/40 group-hover/tech:text-primary dark:group-hover/tech:text-primary transition-colors duration-500 text-center leading-tight">
-                                        {tech.name}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </motion.div>
-
-            </div>
+            <motion.div
+                style={{
+                    opacity: contentOpacity,
+                    scale: contentScale,
+                    y: contentY,
+                    willChange: "transform, opacity",
+                }}
+                className="w-full h-full flex items-center justify-center"
+            >
+                <Testimonial1 />
+            </motion.div>
         </div>
     );
 };
@@ -984,19 +806,19 @@ const ScrollHijackSection = () => {
 
     const x = useTransform(
         smoothProgress,
-        [0, 0.5, 0.85, 1],
+        [0, 0.1, 0.5, 1],
         ["0vw", "0vw", "-100vw", "-100vw"]
     );
 
     const [isComp2Visible, setIsComp2Visible] = React.useState(false);
     useMotionValueEvent(smoothProgress, "change", (v: any) => {
         // Trigger precisely as the second panel begins to enter the viewport
-        if (v >= 0.55 && !isComp2Visible) setIsComp2Visible(true);
-        if (v < 0.50 && isComp2Visible) setIsComp2Visible(false);
+        if (v >= 0.15 && !isComp2Visible) setIsComp2Visible(true);
+        if (v < 0.10 && isComp2Visible) setIsComp2Visible(false);
     });
 
     return (
-        <div ref={sectionRef} className="relative h-[300vh]">
+        <div ref={sectionRef} className="relative h-[250vh]">
             <div className="sticky top-0 h-screen w-full overflow-hidden z-50">
                 <motion.div
                     className="flex h-full"
@@ -1045,12 +867,16 @@ export default function AboutSection() {
                 </motion.div>
             </div>
 
-
-
             {/* 2. OVERLAY LAYER - Hijack Zone & Footer */}
             <div className="relative pointer-events-none mt-[80vh] md:mt-[100vh]">
                 {/* Content wrapper with background and border - now arrives later */}
-                <div className="bg-background dark:bg-black border-t border-foreground/10 dark:border-white/5 transition-colors duration-500 pointer-events-auto">
+                <div className="bg-background dark:bg-black rounded-t-[50px] md:rounded-t-[80px] transition-colors duration-500 pointer-events-auto relative">
+                    {/* Decorative curved edges with fade-out mask for natural transition */}
+                    <div 
+                        className="absolute top-0 left-0 right-0 h-48 border-t-2 border-x-2 border-neutral-200 dark:border-zinc-800 rounded-t-[50px] md:rounded-t-[80px] pointer-events-none z-[100]" 
+                        style={{ maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)' }}
+                    />
+                    
                     <ScrollHijackSection />
                     <div className="max-w-[1600px] mx-auto">
                         <ProfileIntersection />
