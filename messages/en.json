@@ -66,12 +66,12 @@
             "intelligence": "intelligence.",
             "production": "Production",
             "engineering": "engineering.",
-            "thesis": "I build AI systems and the <span class='text-primary italic font-serif-elegant font-normal'>infrastructure</span> that makes them reliable at scale.",
-            "scope": "Focusing on predictive models, LLM powered applications, and RAG pipelines designed for production environments and measurable performance.",
+            "thesis": "I build intelligent systems and the <span class='text-primary italic font-serif-elegant font-normal'>data infrastructure</span> that makes them reliable at scale.",
+            "scope": "Focusing on predictive models, optimized data processing, and RAG pipelines designed for production environments and measurable performance.",
             "bridging": "Bridging labs and live systems.",
-            "integration": "Beyond models, I architect full-stack solutions: secure backends, modern interfaces, and scalable pipelines.",
+            "integration": "Beyond models, I architect full-stack ecosystems: secure backends, robust data architectures, and scalable pipelines.",
             "signature": "Azril",
-            "role": "AI & Software Engineer"
+            "role": "AI, Data & Software Engineer"
         },
         "coreEngineering": {
             "label": "Core Engineering",

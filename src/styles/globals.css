@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -139,6 +139,34 @@
 
   .dark .text-gradient {
     background-image: linear-gradient(135deg, #fafafa, #d4d4d4, #a3a3a3);
+  }
+
+  .text-shiny {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      120deg,
+      #171717 30%,
+      #888 50%,
+      #171717 70%
+    );
+    background-size: 200% auto;
+    animation: text-shiny 4s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .dark .text-shiny {
+    background-image: linear-gradient(
+      120deg,
+      #ffffff 30%,
+      #666 50%,
+      #ffffff 70%
+    );
+  }
+
+  @keyframes text-shiny {
+    from { background-position: 200% center; }
+    to { background-position: -200% center; }
   }
 
   .glow {
