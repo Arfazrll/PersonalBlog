@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import Link from 'next/link';
 import gsap from "gsap";
 import { ProfileCard } from "@/components/ui/profile-card";
+import { Spotlight } from "@/components/ui/spotlight-new";
 
 export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
   const { personal } = portfolioData;
@@ -128,6 +129,18 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
       {/* Background Pattern */}
       <div className="w-full absolute h-full z-0 bg-[radial-gradient(circle,_#888_0.5px,_transparent_0.5px)] dark:bg-[radial-gradient(circle,_#444_0.5px,_transparent_0.5px)] opacity-20 [background-size:24px_24px]" />
 
+      {/* Spotlight Effect - Dramatic lighting */}
+      <div className="absolute inset-0 z-[5] pointer-events-none overflow-hidden">
+        <Spotlight
+          duration={10}
+          xOffset={120}
+          translateY={-300}
+          gradientFirst="radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(0, 0%, 100%, .15) 0, hsla(0, 0%, 100%, .05) 50%, transparent 80%)"
+          gradientSecond="radial-gradient(50% 50% at 50% 50%, hsla(0, 0%, 100%, .1) 0, hsla(0, 0%, 100%, .02) 80%, transparent 100%)"
+          gradientThird="radial-gradient(50% 50% at 50% 50%, hsla(0, 0%, 100%, .08) 0, hsla(0, 0%, 100%, 0) 80%, transparent 100%)"
+        />
+      </div>
+
       <main className="relative flex-1 flex flex-col justify-center pt-40 pb-20 z-10">
         <div className="flex relative gap-4 px-6 md:items-center w-full flex-col justify-center">
 
@@ -155,7 +168,7 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[clamp(3rem,11vw,13rem)] font-black leading-[0.85] tracking-tighter text-foreground will-change-transform"
+                className="text-[clamp(3rem,11vw,13rem)] font-black leading-[0.85] tracking-tighter text-shiny will-change-transform px-4"
               >
                 AI & DATA
               </motion.h1>
@@ -178,16 +191,16 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                 transition={{ duration: 1.2, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[clamp(3rem,11vw,13rem)] md:flex items-center font-black leading-[0.85] tracking-tighter will-change-transform"
+                className="text-[clamp(3rem,11vw,13rem)] md:flex items-center font-black leading-[0.85] tracking-tighter text-shiny will-change-transform px-4"
               >
-                <span className="text-foreground/90">SOFT</span>
+                <span className="">SOFT</span>
                 <div ref={zapRef} className="hidden lg:block mx-[0.05em]">
                   <Zap className="w-[0.8em] h-[0.8em] text-sky-400" strokeWidth={1.5} />
                 </div>
                 <div ref={zapSmallRef} className="block lg:hidden mx-[0.02em]">
                   <Zap className="w-[0.8em] h-[0.8em] text-sky-400" strokeWidth={2} />
                 </div>
-                <span className="text-foreground">WARE</span>
+                <span className="">WARE</span>
 
                 <div ref={instagramRef} className="absolute -bottom-12 right-20 md:right-32 text-primary/60 hover:text-primary z-20 opacity-0">
                   <a
@@ -204,18 +217,18 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
 
           {/* Line 3: EN [ICON] GINEER */}
           <div className="md:flex gap-8 items-center relative">
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={isExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[clamp(3rem,11vw,13rem)] md:flex items-center font-black leading-[0.85] tracking-tighter will-change-transform"
-              >
-                <span className="text-foreground">EN</span>
-                <div ref={botRef} className="mx-[0.05em] relative">
-                  <Bot className="w-[0.85em] h-[0.85em] text-yellow-500 fill-yellow-500/10" />
-                </div>
-                <span className="text-foreground">GINEER</span>
-              </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={isExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-[clamp(3rem,11vw,13rem)] md:flex items-center font-black leading-[0.85] tracking-tighter text-shiny will-change-transform px-4"
+            >
+              <span className="">EN</span>
+              <div ref={botRef} className="mx-[0.05em] relative">
+                <Bot className="w-[0.85em] h-[0.85em] text-yellow-500 fill-yellow-500/10" />
+              </div>
+              <span className="">GINEER</span>
+            </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, x: 20 }}

@@ -113,71 +113,75 @@ const AboutLeadIn = () => {
     const t = useTranslations('about');
 
     return (
-        <div className="w-full max-w-[1500px] mr-auto px-4 lg:px-6 pt-4 pb-8 md:pb-12 text-left">
+        <div className="w-full max-w-[1650px] mx-auto px-6 py-6 flex justify-center items-center">
+            {/* The Reference Card Container (Gambar 1 Style with Dark/Light Support) */}
+            <div className="relative w-full bg-white dark:bg-black border border-red-600/20 dark:border-red-600/40 p-6 md:p-12 lg:p-16 overflow-hidden group shadow-xl dark:shadow-2xl transition-colors duration-500">
 
-            {/* Top header navigation style (Habito/Guangxi) */}
-            <div className="flex justify-between items-center border-b border-foreground/10 pb-6 mb-12 md:mb-16">
-                <span className="text-base md:text-lg font-bold tracking-tight text-foreground flex items-center gap-3">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
-                    {t('leadIn.label')}
-                </span>
-                <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-muted-foreground">
-                    {t('leadIn.role')}
-                </span>
-            </div>
+                {/* 1. Grid Background Overlay (Dynamic Colors) */}
+                <div className="absolute inset-0 z-0 bg-[radial-gradient(circle,_#00000008_1px,_transparent_1px)] dark:bg-[radial-gradient(circle,_#ffffff08_1px,_transparent_1px)] bg-[size:20px_20px] pointer-events-none transition-opacity" />
 
-            {/* Massive Heading (Guangxi Cai Style) */}
-            <motion.h2
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[42px] sm:text-[56px] md:text-[76px] lg:text-[96px] xl:text-[110px] font-semibold tracking-[-0.04em] leading-[1.03] text-foreground max-w-[1400px] mb-12 md:mb-20"
-            >
-                <span className="uppercase tracking-[-0.05em]">{t('leadIn.applied')} <span className="text-muted-foreground">{t('leadIn.intelligence')}</span></span> <br className="hidden md:block" />
-                <span className="uppercase tracking-[-0.05em]">{t('leadIn.production')}</span> <span className="font-serif-elegant italic font-normal text-primary tracking-normal capitalize">{t('leadIn.engineering')}</span>.
-            </motion.h2>
+                {/* 2. Red Corner Tabs */}
+                <div className="absolute top-0 left-0 w-2.5 h-2.5 bg-red-600 -translate-x-1 translate-y-[-50%] z-10" />
+                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-600 translate-x-1 translate-y-[-50%] z-10" />
+                <div className="absolute bottom-0 left-0 w-2.5 h-2.5 bg-red-600 -translate-x-1 translate-y-[50%] z-10" />
+                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-red-600 translate-x-1 translate-y-[50%] z-10" />
 
-            {/* Footer blocks / Details (Guangxi Cai bottom columns) */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-10">
-                {/* Thesis left side */}
-                <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                    className="md:col-span-5"
-                >
-                    <p
-                        className="text-lg md:text-[22px] font-medium text-foreground leading-[1.4] tracking-[-0.02em]"
-                        dangerouslySetInnerHTML={{ __html: t.raw('leadIn.thesis') }}
-                    />
-                </motion.div>
-
-                {/* Scope & Integration right side */}
-                <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                    className="md:col-span-6 md:col-start-7 flex flex-col sm:flex-row gap-10 sm:gap-12 lg:gap-16 text-sm"
-                >
-                    <div className="flex-1 space-y-4">
-                        <span className="text-foreground/90 font-semibold block border-b border-foreground/10 pb-3">Scope & Platform</span>
-                        <p className="text-muted-foreground leading-relaxed">
-                            {t('leadIn.scope')}
-                        </p>
-                        <p className="text-primary italic leading-relaxed">
-                            {t('leadIn.bridging')}
-                        </p>
+                {/* 3. Content Layer */}
+                <div className="relative z-10">
+                    {/* Top Tagline */}
+                    <div className="flex justify-between items-start mb-6 md:mb-10">
+                        <span className="text-red-600 dark:text-red-500 text-[10px] md:text-xs font-bold uppercase tracking-[0.3em]">I BELIEVE</span>
+                        <span className="text-zinc-400 dark:text-zinc-600 text-[9px] font-mono tracking-widest uppercase hidden md:block">{t('leadIn.role')}</span>
                     </div>
-                    <div className="flex-1 space-y-4 flex flex-col">
-                        <span className="text-foreground/90 font-semibold block border-b border-foreground/10 pb-3">Integration</span>
-                        <p className="text-muted-foreground leading-relaxed">
-                            {t('leadIn.integration')}
-                        </p>
-                        <div className="mt-8 md:mt-auto pt-6 flex-grow flex items-end">
-                            <span className="text-4xl lg:text-5xl font-signature text-foreground block">{t('leadIn.signature')}</span>
+
+                    {/* Massive Typography - Quote Style */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                        className="mb-8 md:mb-14"
+                    >
+                        <h2 className="text-[32px] sm:text-[48px] md:text-[64px] lg:text-[76px] xl:text-[88px] font-bold tracking-tight leading-[0.92] text-zinc-900 dark:text-white transition-colors">
+                            <span className="text-zinc-300 dark:text-zinc-700 mr-2">"</span>
+                            {t('leadIn.applied')} <span className="text-zinc-400 dark:text-zinc-500 font-medium">{t('leadIn.intelligence')}</span>. <br className="hidden md:block" />
+                            <span className="text-zinc-900 dark:text-white">because</span> production <span className="font-serif italic font-normal text-zinc-900 dark:text-white lowercase opacity-90">{t('leadIn.engineering')}</span>
+                            <span className="text-zinc-300 dark:text-zinc-700 ml-1">.."</span>
+                        </h2>
+                    </motion.div>
+
+                    {/* Detail Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 border-t border-zinc-100 dark:border-zinc-900 pt-8 md:pt-12">
+                        {/* Left narrative */}
+                        <div className="md:col-span-5">
+                            <p
+                                className="text-base md:text-lg lg:text-xl font-medium text-zinc-600 dark:text-zinc-400 leading-relaxed tracking-tight"
+                                dangerouslySetInnerHTML={{ __html: t.raw('leadIn.thesis') }}
+                            />
+                        </div>
+
+                        {/* Right columns */}
+                        <div className="md:col-span-7 flex flex-col sm:flex-row gap-8 text-[13px]">
+                            <div className="flex-1 space-y-3">
+                                <span className="text-zinc-800 dark:text-zinc-200 font-bold uppercase tracking-widest block border-b border-zinc-100 dark:border-zinc-900 pb-3">Scope & Platform</span>
+                                <p className="text-zinc-500 leading-relaxed">
+                                    {t('leadIn.scope')}
+                                </p>
+                                <p className="text-red-600/80 dark:text-red-500/70 font-medium italic">
+                                    {t('leadIn.bridging')}
+                                </p>
+                            </div>
+                            <div className="flex-1 space-y-3 flex flex-col">
+                                <span className="text-zinc-800 dark:text-zinc-200 font-bold uppercase tracking-widest block border-b border-zinc-100 dark:border-zinc-900 pb-3">Integration</span>
+                                <p className="text-zinc-500 leading-relaxed">
+                                    {t('leadIn.integration')}
+                                </p>
+                                <div className="mt-6 md:mt-auto pt-4">
+                                    <span className="text-3xl lg:text-4xl font-signature text-zinc-900 dark:text-white/90">{t('leadIn.signature')}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </motion.div>
+                </div>
             </div>
         </div>
     );
@@ -1031,10 +1035,10 @@ export default function AboutSection() {
             className="relative bg-background text-foreground dark:bg-black dark:text-white transition-colors duration-500"
         >
             {/* 1. STICKY PLANE - Lead-in */}
-            <div className="sticky top-0 h-screen w-full flex items-start justify-center z-0 overflow-hidden pointer-events-none pt-[5vh] sm:pt-[10vh]">
+            <div className="sticky top-0 h-screen w-full flex items-center justify-center z-0 overflow-hidden pointer-events-none">
                 <motion.div
                     style={{ scale, opacity, y: yLeadIn }}
-                    className="relative pb-10 px-4 md:px-6 w-full max-w-[1600px] mx-auto"
+                    className="relative px-4 md:px-6 w-full max-w-[1700px] mx-auto"
                     ref={leadInTriggerRef}
                 >
                     <AboutLeadIn />
