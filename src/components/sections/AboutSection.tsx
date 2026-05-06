@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils";
 
 import Testimonial1 from "@/components/ui/testimonial-1";
 import { IdentitySequence } from "./IdentitySequence";
+import { ParallaxScrollFeatureSection } from "@/components/ui/parallax-scroll-feature-section";
+import { ArgentLoopInfiniteSlider } from "@/components/ui/argent-loop-infinite-slider";
 
 const GALLERY_IMAGES = [
     "/gallery/Foto Utama.jpeg",
@@ -318,187 +320,7 @@ const GhostedHeader = ({ label, part1, part2, direction = "left" }: { label: str
     </motion.div>
 );
 
-const AboutClosing = () => {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const leftTrackRef = useRef<HTMLDivElement>(null);
-    const rightTrackRef = useRef<HTMLDivElement>(null);
 
-    const t = useTranslations('about');
-
-    const [bounds, setBounds] = React.useState({ leftStart: 0, leftEnd: 0, rightStart: 0, rightEnd: 0 });
-
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start start", "end end"]
-    });
-
-    // Calculate exact translation distances based on absolute DOM boxes
-    React.useLayoutEffect(() => {
-        const updateBounds = () => {
-            if (leftTrackRef.current && rightTrackRef.current) {
-                // Expand container area
-                const containerH = leftTrackRef.current.parentElement?.clientHeight || window.innerHeight * 0.82;
-
-                const leftH = leftTrackRef.current.scrollHeight;
-                const rightH = rightTrackRef.current.scrollHeight;
-
-                // Make the start and end fully offscreen for the "blank" entrance/exit
-                // Left moves UP (positive to negative)
-                const leftStart = containerH;
-                const leftEnd = -leftH;
-
-                // Right moves DOWN (negative to positive)
-                const rightStart = -rightH;
-                const rightEnd = containerH;
-
-                setBounds({ leftStart, leftEnd, rightStart, rightEnd });
-            }
-        };
-
-        const timer = setTimeout(updateBounds, 100); // give DOM time to render fonts
-        window.addEventListener("resize", updateBounds);
-        return () => {
-            clearTimeout(timer);
-            window.removeEventListener("resize", updateBounds);
-        };
-    }, [t]);
-
-    const leftY = useTransform(scrollYProgress, [0, 1], [bounds.leftStart, bounds.leftEnd]);
-    const rightY = useTransform(scrollYProgress, [0, 1], [bounds.rightStart, bounds.rightEnd]);
-
-    // Section Visibility: Smoother fade in/out that respects the focus area
-    const sectionOpacity = useTransform(
-        scrollYProgress,
-        [0, 0.05, 0.95, 1],
-        [0, 1, 1, 0]
-    );
-
-    const smoothLeftY = useSpring(leftY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.1 });
-    const smoothRightY = useSpring(rightY, { stiffness: 40, damping: 20, mass: 0.1, restDelta: 0.1 });
-
-    const experiences = t.raw('closing.experiencesList') || [];
-    const projects = t.raw('closing.projectsList') || [];
-
-    // Equal length arrays to ensure perfect 1:1 row alignment
-    const maxLength = Math.max(experiences.length, projects.length);
-    const paddedExperiences = Array.from({ length: maxLength }).map((_, i) => experiences[i] || null);
-    const paddedProjects = Array.from({ length: maxLength }).map((_, i) => projects[i] || null);
-
-    return (
-        <section ref={sectionRef} className="relative h-[500vh] hidden md:block z-50 bg-background">
-            <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
-
-                {/* Visual Anchors: Fade Masks */}
-                <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-background to-transparent z-20 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
-
-                <motion.div
-                    style={{ opacity: sectionOpacity }}
-                    className="max-w-[1600px] mx-auto w-full px-12 md:px-20"
-                >
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 h-[82vh] max-h-[900px] mb-8 pb-12">
-
-                        {/* LEFT: KEY EXPERIENCE (Scrolls UP) */}
-                        <div className="flex flex-col h-full overflow-hidden">
-                            <GhostedHeader label={t('closing.experience.label')} part1={t('closing.experience.title1')} part2={t('closing.experience.title2')} />
-                            <div className="flex-1 relative overflow-hidden">
-                                <motion.div
-                                    ref={leftTrackRef}
-                                    style={{ y: smoothLeftY }}
-                                    className="flex flex-col"
-                                >
-                                    {paddedExperiences.map((exp: any, i: number) => (
-                                        exp ? (
-                                            <ClosingCard key={i} title={exp.company} subtitle={exp.role} desc={exp.desc} index={i} direction="left" />
-                                        ) : (
-                                            <div key={`empty-exp-${i}`} className="h-[50vh]" />
-                                        )
-                                    ))}
-                                    <ViewMoreCard href="/experience" title={t('closing.experience.viewMore')} />
-                                </motion.div>
-                            </div>
-                        </div>
-
-                        {/* RIGHT: FLAGSHIP PROJECTS (Scrolls DOWN) */}
-                        <div className="flex flex-col h-full overflow-hidden items-end">
-                            <GhostedHeader direction="right" label={t('closing.projects.label')} part1={t('closing.projects.title1')} part2={t('closing.projects.title2')} />
-                            <div className="flex-1 relative overflow-hidden">
-                                <motion.div
-                                    ref={rightTrackRef}
-                                    style={{ y: smoothRightY }}
-                                    className="flex flex-col"
-                                >
-                                    <ViewMoreCard href="/projects" title={t('closing.projects.viewMore')} />
-                                    {paddedProjects.map((proj: any, i: number) => (
-                                        proj ? (
-                                            <ClosingCard key={i} title={proj.title} subtitle="Featured Project" desc={proj.desc} index={i} direction="right" />
-                                        ) : (
-                                            <div key={`empty-proj-${i}`} className="h-[50vh]" />
-                                        )
-                                    ))}
-                                </motion.div>
-                            </div>
-                        </div>
-
-                    </div>
-                </motion.div>
-            </div>
-        </section>
-    );
-};
-
-// --- Mobile Version of AboutClosing ---
-const AboutClosingMobile = () => {
-    const t = useTranslations('about');
-    const experiences = t.raw('closing.experiencesList');
-    const projects = t.raw('closing.projectsList');
-
-    return (
-        <div className="md:hidden px-6 py-20 space-y-24 border-t border-white/5">
-            <div className="space-y-12">
-                <GhostedHeader label={t('closing.experience.label')} part1={t('closing.experience.title1')} part2={t('closing.experience.title2')} />
-                <div className="space-y-12 pl-4">
-                    {experiences.map((exp: any, i: number) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="pl-6 border-l border-primary/30"
-                        >
-                            <h4 className="text-xl font-bold">{exp.company}</h4>
-                            <p className="text-xs uppercase font-mono tracking-widest text-muted-foreground mt-1">
-                                {exp.role}
-                            </p>
-                        </motion.div>
-                    ))}
-                </div>
-                <ViewMoreCard href="/experience" title={t('closing.experience.viewMore')} />
-            </div>
-
-            <div className="space-y-12">
-                <GhostedHeader label={t('closing.projects.label')} part1={t('closing.projects.title1')} part2={t('closing.projects.title2')} />
-                <div className="space-y-12 pl-4">
-                    {projects.map((proj: any, i: number) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="space-y-3"
-                        >
-                            <div className="w-10 h-0.5 bg-primary/40" />
-                            <h4 className="text-xl font-bold">{proj.title}</h4>
-                        </motion.div>
-                    ))}
-                </div>
-                <ViewMoreCard href="/projects" title={t('closing.projects.viewMore')} />
-            </div>
-        </div>
-    );
-};
 
 
 // --- Component 5: Audit Funnel ---
@@ -541,7 +363,7 @@ const AuditFunnel = () => {
     }, []);
 
     return (
-        <div ref={sectionRef} className="relative overflow-hidden group min-h-[80vh] md:min-h-[120vh] flex items-center justify-center bg-background z-50 pb-20 md:pb-60">
+        <div ref={sectionRef} className="relative overflow-hidden group min-h-[80vh] md:min-h-[120vh] flex items-center justify-center bg-background z-30 pb-20 md:pb-60">
             <motion.div
                 className="flex flex-col items-center text-center py-20 md:py-40 space-y-12 md:space-y-16 relative z-10 pointer-events-none"
                 initial={{ opacity: 0 }}
@@ -624,7 +446,7 @@ const ScrollHijackSection = () => {
 
     return (
         <div ref={sectionRef} className="relative h-[600vh]">
-            <div className="sticky top-0 h-screen w-full overflow-hidden z-50">
+            <div className="sticky top-0 h-screen w-full overflow-hidden z-10">
                 {/* Decorative curved edges with hard unmount for guaranteed removal */}
                 <AnimatePresence>
                     {showBorder && (
@@ -694,9 +516,10 @@ export default function AboutSection() {
             <div className="relative pointer-events-none mt-[80vh] md:mt-[100vh]">
                 {/* Content wrapper with background - rounded corners removed to allow animated border to control the shape */}
                 <div className="bg-background dark:bg-black transition-colors duration-500 pointer-events-auto relative">
+
                     <ScrollHijackSection />
-                    <AboutClosing />
-                    <AboutClosingMobile />
+                    <ParallaxScrollFeatureSection />
+                    <ArgentLoopInfiniteSlider />
                     <AuditFunnel />
                 </div>
             </div>
