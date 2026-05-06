@@ -37,7 +37,7 @@
         "meshline": "^3.3.1",
         "mini-svg-data-uri": "^1.4.4",
         "motion": "^12.34.3",
-        "next": "16.1.6",
+        "next": "16.1.7",
         "next-intl": "^4.8.0",
         "next-themes": "^0.2.1",
         "nodemailer": "^8.0.1",
