@@ -169,7 +169,7 @@ export function QuantumError({ type = '404', reset }: QuantumErrorProps) {
             </div>
 
             {/* Subtle Noise / Grain */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+            <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('/noise.svg')]" />
         </div >
     );
 }

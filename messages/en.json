@@ -71,7 +71,10 @@
             "bridging": "Bridging labs and live systems.",
             "integration": "Beyond models, I architect full-stack ecosystems: secure backends, robust data architectures, and scalable pipelines.",
             "signature": "Azril",
-            "role": "AI, Data & Software Engineer"
+            "role": "AI, Data & Software Engineer",
+            "aboutMe": "About Me",
+            "scroll": "Scroll to Explore",
+            "shortStory": "My Short Story"
         },
         "coreEngineering": {
             "label": "Core Engineering",
@@ -96,7 +99,7 @@
             }
         },
         "profile": {
-            "title": "Architecting <br class='hidden lg:block' /> Scalable Systems <br /> Where <span class='text-primary italic font-serif font-light lowercase'>Intelligence</span> <br /> Meets Engineering.",
+            "title": "Architecting Scalable Systems <br /> Where Intelligence Meets Engineering.",
             "narrativeLabel": "Core Narrative",
             "narrative": "As an Information Technology student specializing in Artificial Intelligence and Software Engineering, I focus on building systems that bridge research foundations with production-ready implementation.",
             "narrative2": "My work combines algorithmic thinking, backend engineering, and scalable architecture to deliver solutions that are intelligent, reliable, and built for real-world impact.",
