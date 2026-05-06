@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { WarpBackground } from "@/components/ui/warp-background";
-import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import ImageTrail from "@/components/ImageTrail";
 import Image from "next/image";
@@ -205,19 +205,21 @@ const TECH_LOGOS = [
 ];
 
 // --- Component 2: Core Engineering Panel ---
+// --- Component 1: Core Engineering Panel (Stats) ---
 const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => {
-    const contentOpacity = useTransform(scrollYProgress, [0.75, 0.9], [1, 0]);
-    const contentScale = useTransform(scrollYProgress, [0.75, 0.9], [1, 0.9]);
-    const contentY = useTransform(scrollYProgress, [0.75, 0.9], [0, -50]);
+    // Panel 1 exits between 0.45 and 0.65
+    const opacity = useTransform(scrollYProgress, [0.45, 0.6], [1, 0]);
+    const scale = useTransform(scrollYProgress, [0.45, 0.6], [1, 0.9]);
+    const blur = useTransform(scrollYProgress, [0.45, 0.6], [0, 10]);
 
     return (
-        <div className="w-screen h-full flex items-center bg-background transition-colors duration-500 overflow-hidden">
+        <div className="w-screen h-full flex items-center justify-center bg-background transition-colors duration-500 overflow-hidden">
             <motion.div
                 style={{
-                    opacity: contentOpacity,
-                    scale: contentScale,
-                    y: contentY,
-                    willChange: "transform, opacity",
+                    opacity,
+                    scale,
+                    filter: `blur(${blur}px)`,
+                    willChange: "transform, opacity, filter",
                 }}
                 className="w-full h-full flex items-center justify-center"
             >
@@ -227,121 +229,37 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
     );
 };
 
-const EmergingResearchPanel = ({ isVisible: isParentVisible }: { isVisible: boolean }) => {
-    const isMobile = useIsMobile();
-    const t = useTranslations('about');
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [isCurrentlyVisible, setIsCurrentlyVisible] = useState(false);
+// EmergingResearchPanel removed as per user request
 
-    useEffect(() => {
-        if (!containerRef.current) return;
-        const observer = new IntersectionObserver(([entry]) => {
-            setIsCurrentlyVisible(entry.isIntersecting);
-        }, { threshold: 0.1 });
-        observer.observe(containerRef.current);
-        return () => observer.disconnect();
-    }, []);
-
-    // Active if parent thinks it's visible AND it's physically in the viewport
-    const active = isParentVisible && isCurrentlyVisible;
-
-    return (
-        <div ref={containerRef} className="w-screen h-full flex items-center bg-background overflow-hidden transition-colors duration-500">
-            <WarpBackground
-                perspective={1200}
-                gridColor="transparent"
-                beamsPerSide={isMobile ? 2 : 6}
-                beamDuration={2.5}
-                beamDelayMax={1}
-                paused={!active}
-                className="border-none p-0 bg-transparent rounded-none h-full w-full flex items-center justify-center"
-            >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full h-full px-[8%] md:px-[10%]">
-                    {/* Left Side: Content */}
-                    <div className="lg:col-span-12 space-y-12 z-10 flex flex-col items-center text-center">
-                        <div className="space-y-4 max-w-2xl">
-                            <motion.span
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={isParentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                                transition={{ duration: 0.5 }}
-                                className="text-[12px] md:text-[13px] font-mono uppercase tracking-[0.2em] text-gray-400 block"
-                            >
-                                {t('emergingResearch.label')}
-                            </motion.span>
-                            <motion.h3
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={isParentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-                                transition={{ duration: 0.6, delay: 0.15 }}
-                                className="text-[36px] md:text-[50px] font-bold text-foreground uppercase leading-tight tracking-tight"
-                                dangerouslySetInnerHTML={{ __html: t.raw('emergingResearch.title') }}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={isParentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                                transition={{ duration: 0.5, delay: 0.3 }}
-                                className="space-y-3"
-                            >
-                                <h4 className="text-[13px] font-bold uppercase tracking-[0.1em] text-foreground">{t('emergingResearch.agentic.title')}</h4>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {t('emergingResearch.agentic.desc')}
-                                </p>
-                            </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={isParentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                                transition={{ duration: 0.5, delay: 0.42 }}
-                                className="space-y-3"
-                            >
-                                <h4 className="text-[13px] font-bold uppercase tracking-[0.1em] text-foreground">{t('emergingResearch.web3.title')}</h4>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {t('emergingResearch.web3.desc')}
-                                </p>
-                            </motion.div>
-                        </div>
-                    </div>
-                </div>
-            </WarpBackground>
-        </div>
-    );
-};
 
 // --- Component 3: Profile Intersection ---
-const ProfileIntersection = () => {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start start", "end start"]
-    });
+// Optimized ProfilePanel (Restored to Original Design with Cinematic Transitions)
+const ProfilePanel = ({ isVisible, scrollYProgress }: { isVisible: boolean, scrollYProgress: any }) => {
     const t = useTranslations('about');
 
-    // Ultra-Tight Fade Out (Only at the very end of its exit)
-    const contentOpacity = useTransform(scrollYProgress, [0.98, 1.0], [1, 0]);
+    // Panel 2 enters between 0.55 and 0.75
+    const opacity = useTransform(scrollYProgress, [0.55, 0.7], [0, 1]);
+    const scale = useTransform(scrollYProgress, [0.55, 0.7], [0.92, 1]);
+    const xOffset = useTransform(scrollYProgress, [0.55, 0.75], [50, 0]);
 
     return (
         <motion.div
-            ref={sectionRef}
-            style={{ opacity: contentOpacity }}
-            className="relative z-10 pt-24 lg:pt-32 pb-0 px-6 md:px-10 lg:px-12 max-w-[1600px] mx-auto"
+            style={{ opacity, scale }}
+            className="w-screen h-full flex items-center bg-background dark:bg-black overflow-hidden px-[5%] md:px-[8%] lg:px-[10%]"
         >
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-12 gap-x-0 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center w-full max-w-[1700px] mx-auto">
                 {/* Left: Optimized Image Column (5/12) */}
-                <div className="lg:col-span-5 relative group flex flex-col items-stretch overflow-hidden">
+                <motion.div
+                    style={{ x: xOffset }}
+                    className="lg:col-span-5 relative group flex flex-col items-stretch overflow-hidden rounded-[40px] shadow-2xl"
+                >
                     <motion.div
                         initial={{ clipPath: "circle(0% at 50% 50%)" }}
-                        whileInView={{ clipPath: "circle(75% at 50% 50%)" }}
-                        viewport={{ once: true }}
+                        animate={isVisible ? { clipPath: "circle(100% at 50% 50%)" } : { clipPath: "circle(0% at 50% 50%)" }}
                         transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative w-full h-full min-h-[600px] lg:min-h-[800px] shadow-2xl shadow-black/20 dark:shadow-white/5 bg-background dark:bg-black"
+                        className="relative w-full h-[60vh] lg:h-[80vh] bg-background dark:bg-black"
                     >
-                        <motion.div
-                            initial={{ scale: 1.15 }}
-                            whileInView={{ scale: 1 }}
-                            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                            className="w-full h-full relative grayscale group-hover:grayscale-0 transition-all duration-1000"
-                        >
+                        <div className="w-full h-full relative grayscale group-hover:grayscale-0 transition-all duration-1000">
                             <Image
                                 src={portfolioData.personal.avatar}
                                 alt="Azril Profile"
@@ -350,89 +268,65 @@ const ProfileIntersection = () => {
                                 sizes="(max-width: 768px) 100vw, 40vw"
                                 priority
                             />
-                        </motion.div>
+                        </div>
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-1000 pointer-events-none" />
 
-                        {/* Edge Blending Gradients (Slight Awan / Blur effect into background) */}
+                        {/* Edge Blending Gradients */}
                         <div className="absolute inset-0 pointer-events-none z-10 transition-opacity duration-1000 opacity-90 group-hover:opacity-40">
-                            {/* Top Edge */}
-                            <div className="absolute inset-x-0 top-0 h-10 md:h-12 bg-gradient-to-b from-background dark:from-black to-transparent" />
-                            {/* Bottom Edge */}
-                            <div className="absolute inset-x-0 bottom-0 h-10 md:h-12 bg-gradient-to-t from-background dark:from-black to-transparent" />
-                            {/* Left Edge */}
-                            <div className="absolute inset-y-0 left-0 w-8 md:w-10 bg-gradient-to-r from-background dark:from-black to-transparent" />
-                            {/* Right Edge */}
-                            <div className="absolute inset-y-0 right-0 w-8 md:w-10 bg-gradient-to-l from-background dark:from-black to-transparent" />
+                            <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background dark:from-black to-transparent" />
+                            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background dark:from-black to-transparent" />
+                            <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-background dark:from-black to-transparent" />
+                            <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-background dark:from-black to-transparent" />
                         </div>
                     </motion.div>
-                </div>
+                </motion.div>
 
-                {/* Right: Text Block (7/12) - Highlighted */}
-                <div className="lg:col-span-7 flex flex-col justify-center space-y-12 p-8 lg:py-16 lg:pr-16 lg:pl-20 relative">
-                    <SlideReveal delay={0.2} y={60}>
-                        <h3
-                            className="text-3xl md:text-5xl lg:text-6xl font-bold leading-[0.9] text-foreground dark:text-white tracking-tighter uppercase"
-                            dangerouslySetInnerHTML={{ __html: t.raw('profile.title') }}
-                        />
-                    </SlideReveal>
+                {/* Right: Text Block (7/12) */}
+                <motion.div
+                    style={{ x: useTransform(scrollYProgress, [0.6, 0.8], [30, 0]) }}
+                    className="lg:col-span-7 flex flex-col justify-center space-y-10 lg:pl-10"
+                >
+                    <motion.h3
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[0.9] text-foreground dark:text-white tracking-tighter uppercase"
+                        dangerouslySetInnerHTML={{ __html: t.raw('profile.title') }}
+                    />
 
-                    <SlideReveal delay={0.4} y={40}>
-                        <div className="space-y-12">
-                            <div className="space-y-6 border-l-2 border-primary/20 pl-8">
-                                <ScrollReveal
-                                    baseOpacity={0.4}
-                                    enableBlur={false}
-                                    blurStrength={2}
-                                    textClassName="text-base md:text-lg text-foreground/90 leading-relaxed font-medium"
-                                    containerClassName="!my-0"
-                                >
-                                    {t('profile.narrative')}
-                                </ScrollReveal>
-                                <ScrollReveal
-                                    baseOpacity={0.4}
-                                    enableBlur={false}
-                                    blurStrength={2}
-                                    textClassName="text-base md:text-lg text-foreground/90 leading-relaxed font-medium"
-                                    containerClassName="!mt-5 !mb-0"
-                                >
-                                    {t('profile.narrative2')}
-                                </ScrollReveal>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {[
-                                    { title: t('profile.pillars.reliable.title'), desc: t('profile.pillars.reliable.desc') },
-                                    { title: t('profile.pillars.optimized.title'), desc: t('profile.pillars.optimized.desc') },
-                                    { title: t('profile.pillars.maintainable.title'), desc: t('profile.pillars.maintainable.desc') },
-                                    { title: t('profile.pillars.evolvable.title'), desc: t('profile.pillars.evolvable.desc') }
-                                ].map((item, idx) => (
-                                    <motion.div
-                                        key={idx}
-                                        initial={{ opacity: 0, y: 25 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.5, delay: idx * 0.12 }}
-                                        className="space-y-2 group"
-                                    >
-                                        <h5 className="text-lg font-bold text-foreground flex items-center gap-2">
-                                            <motion.span
-                                                initial={{ scale: 0 }}
-                                                whileInView={{ scale: 1 }}
-                                                className="w-1.5 h-1.5 rounded-full bg-primary"
-                                            />
-                                            {item.title}
-                                        </h5>
-                                        <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                                    </motion.div>
-                                ))}
-                            </div>
+                    <div className="space-y-10">
+                        <div className="space-y-6 border-l-2 border-primary/20 pl-8">
+                            <p className="text-base md:text-lg lg:text-xl text-foreground/90 leading-relaxed font-medium">
+                                {t('profile.narrative')}
+                            </p>
+                            <p className="text-base md:text-lg lg:text-xl text-foreground/90 leading-relaxed font-medium">
+                                {t('profile.narrative2')}
+                            </p>
                         </div>
-                    </SlideReveal>
-                </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                            {[
+                                { title: t('profile.pillars.reliable.title'), desc: t('profile.pillars.reliable.desc') },
+                                { title: t('profile.pillars.optimized.title'), desc: t('profile.pillars.optimized.desc') },
+                                { title: t('profile.pillars.maintainable.title'), desc: t('profile.pillars.maintainable.desc') },
+                                { title: t('profile.pillars.evolvable.title'), desc: t('profile.pillars.evolvable.desc') }
+                            ].map((item, idx) => (
+                                <div key={idx} className="space-y-2 group">
+                                    <h5 className="text-lg font-bold text-foreground flex items-center gap-2 uppercase tracking-tight">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                        {item.title}
+                                    </h5>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </motion.div>
             </div>
         </motion.div>
     );
 };
+
 
 // --- Unified Typography-Focused Card for Bitwise Symmetry ---
 const ClosingCard = ({ title, subtitle, desc, index, direction }: { title: string, subtitle: string, desc: string, index: number, direction: 'left' | 'right' }) => (
@@ -800,35 +694,54 @@ const AuditFunnel = () => {
 const ScrollHijackSection = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: sectionRef });
-
-    // SLIGHTLY WEIGHTIER PHYSICS: Better inertia for "card" movement
     const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, mass: 0.5 });
-
-    const x = useTransform(
-        smoothProgress,
-        [0, 0.1, 0.5, 1],
-        ["0vw", "0vw", "-100vw", "-100vw"]
-    );
-
     const [isComp2Visible, setIsComp2Visible] = React.useState(false);
+    const [showBorder, setShowBorder] = React.useState(true);
+
+    // Hooks moved to top level to avoid React Hook Rules violations
+    const borderOpacity = useTransform(smoothProgress, [0.1, 0.2], [1, 0]);
+    const xShift = useTransform(smoothProgress, [0, 0.3, 0.8, 1], ["0vw", "0vw", "-100vw", "-100vw"]);
+
     useMotionValueEvent(smoothProgress, "change", (v: any) => {
+        // Hard toggle for the decorative border to ensure it's GONE
+        if (v >= 0.25 && showBorder) setShowBorder(false);
+        if (v < 0.20 && !showBorder) setShowBorder(true);
+
         // Trigger precisely as the second panel begins to enter the viewport
-        if (v >= 0.15 && !isComp2Visible) setIsComp2Visible(true);
-        if (v < 0.10 && isComp2Visible) setIsComp2Visible(false);
+        if (v >= 0.50 && !isComp2Visible) setIsComp2Visible(true);
+        if (v < 0.45 && isComp2Visible) setIsComp2Visible(false);
     });
 
     return (
-        <div ref={sectionRef} className="relative h-[250vh]">
+        <div ref={sectionRef} className="relative h-[280vh]">
             <div className="sticky top-0 h-screen w-full overflow-hidden z-50">
+                {/* Decorative curved edges with hard unmount for guaranteed removal */}
+                <AnimatePresence>
+                    {showBorder && (
+                        <motion.div
+                            initial={{ opacity: 1 }}
+                            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+                            style={{
+                                opacity: borderOpacity,
+                                maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+                                WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)'
+                            }}
+                            className="absolute top-0 left-0 right-0 h-48 border-t-2 border-x-2 border-neutral-200 dark:border-zinc-800 rounded-t-[50px] md:rounded-t-[80px] pointer-events-none z-[100]"
+                        />
+                    )}
+                </AnimatePresence>
                 <motion.div
                     className="flex h-full"
-                    style={{ width: "200vw", x }}
+                    style={{
+                        width: "200vw",
+                        x: xShift
+                    }}
                 >
                     <div className="h-full w-screen flex-shrink-0">
                         <CoreEngineeringPanel scrollYProgress={smoothProgress} />
                     </div>
                     <div className="h-full w-screen flex-shrink-0">
-                        <EmergingResearchPanel isVisible={isComp2Visible} />
+                        <ProfilePanel isVisible={isComp2Visible} scrollYProgress={smoothProgress} />
                     </div>
                 </motion.div>
             </div>
@@ -869,18 +782,9 @@ export default function AboutSection() {
 
             {/* 2. OVERLAY LAYER - Hijack Zone & Footer */}
             <div className="relative pointer-events-none mt-[80vh] md:mt-[100vh]">
-                {/* Content wrapper with background and border - now arrives later */}
-                <div className="bg-background dark:bg-black rounded-t-[50px] md:rounded-t-[80px] transition-colors duration-500 pointer-events-auto relative">
-                    {/* Decorative curved edges with fade-out mask for natural transition */}
-                    <div 
-                        className="absolute top-0 left-0 right-0 h-48 border-t-2 border-x-2 border-neutral-200 dark:border-zinc-800 rounded-t-[50px] md:rounded-t-[80px] pointer-events-none z-[100]" 
-                        style={{ maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)' }}
-                    />
-                    
+                {/* Content wrapper with background - rounded corners removed to allow animated border to control the shape */}
+                <div className="bg-background dark:bg-black transition-colors duration-500 pointer-events-auto relative">
                     <ScrollHijackSection />
-                    <div className="max-w-[1600px] mx-auto">
-                        <ProfileIntersection />
-                    </div>
                     <AboutClosing />
                     <AboutClosingMobile />
                     <AuditFunnel />

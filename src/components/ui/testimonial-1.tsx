@@ -74,9 +74,20 @@ export default function Testimonial1() {
         {/* Community Badge */}
         <div className="flex justify-center mb-6">
           <div className="bg-[#f1efec] dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 text-black dark:text-white px-5 py-1.5 rounded-full text-xs uppercase tracking-wider font-semibold flex items-center gap-2.5 shadow-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            <span className="relative flex h-2.5 w-2.5">
+              <motion.span
+                animate={{
+                  scale: [1, 2, 1],
+                  opacity: [0.6, 0, 0.6],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute inline-flex h-full w-full rounded-full bg-green-400/60"
+              />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
             </span>
             Professional Statistics
           </div>
@@ -91,32 +102,33 @@ export default function Testimonial1() {
             { text: "and the numbers behind the work.", color: "#ef4444", delay: 0.45 }
           ].map((line, i) => (
             <div key={i} className="relative block overflow-hidden py-1.5">
-              <motion.h1 
+              <motion.h1
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-20px" }}
-                transition={{ 
-                  delay: line.delay + 0.35, 
-                  duration: 0.01 
+                transition={{
+                  delay: line.delay + 0.35,
+                  duration: 0.01
                 }}
                 className="text-3xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tighter"
               >
                 {line.text}
               </motion.h1>
-              
+
               {/* The Refined Revealer Block */}
               <motion.div
-                initial={{ scaleX: 0, transformOrigin: "left" }}
-                whileInView={{ 
-                  scaleX: [0, 1, 1, 0],
-                  transformOrigin: ["left", "left", "right", "right"]
+                initial={{ clipPath: i % 2 === 0 ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)" }}
+                whileInView={{
+                  clipPath: i % 2 === 0 
+                    ? ["inset(0 100% 0 0)", "inset(0 0% 0 0)", "inset(0 0% 0 0)", "inset(0 0 0 100%)"]
+                    : ["inset(0 0 0 100%)", "inset(0 0% 0 0)", "inset(0 0% 0 0)", "inset(0 100% 0 0)"]
                 }}
                 viewport={{ once: true, margin: "-20px" }}
-                transition={{ 
-                  duration: 0.75, 
+                transition={{
+                  duration: 0.75,
                   times: [0, 0.45, 0.55, 1],
                   delay: line.delay,
-                  ease: [0.85, 0, 0.15, 1] 
+                  ease: [0.85, 0, 0.15, 1]
                 }}
                 className="absolute inset-0 z-10"
                 style={{ backgroundColor: line.color }}
