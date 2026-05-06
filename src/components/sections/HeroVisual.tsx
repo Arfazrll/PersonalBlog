@@ -187,6 +187,15 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
                   <Linkedin size={32} />
                 </a>
               </div>
+              <div ref={instagramRef} className="absolute -bottom-12 right-24 md:right-36 text-primary/60 hover:text-primary z-20 opacity-0">
+                <a
+                  href={personal.socialLinks.find(s => s.platform === 'Instagram')?.url}
+                  target="_blank"
+                  className="block"
+                >
+                  <Instagram size={32} />
+                </a>
+              </div>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={isExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
@@ -201,16 +210,6 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
                   <Zap className="w-[0.8em] h-[0.8em] text-sky-400" strokeWidth={2} />
                 </div>
                 <span className="">WARE</span>
-
-                <div ref={instagramRef} className="absolute -bottom-12 right-20 md:right-32 text-primary/60 hover:text-primary z-20 opacity-0">
-                  <a
-                    href={personal.socialLinks.find(s => s.platform === 'Instagram')?.url}
-                    target="_blank"
-                    className="block"
-                  >
-                    <Instagram size={32} />
-                  </a>
-                </div>
               </motion.h1>
             </div>
           </div>
