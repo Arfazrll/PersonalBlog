@@ -20,6 +20,7 @@ import { SocialCorner } from "@/components/layout/SocialCorner";
 import { cn } from "@/lib/utils";
 
 import Testimonial1 from "@/components/ui/testimonial-1";
+import { IdentitySequence } from "./IdentitySequence";
 
 const GALLERY_IMAGES = [
     "/gallery/Foto Utama.jpeg",
@@ -234,98 +235,7 @@ const CoreEngineeringPanel = ({ scrollYProgress }: { scrollYProgress: any }) => 
 
 // --- Component 3: Profile Intersection ---
 // Optimized ProfilePanel (Restored to Original Design with Cinematic Transitions)
-const ProfilePanel = ({ isVisible, scrollYProgress }: { isVisible: boolean, scrollYProgress: any }) => {
-    const t = useTranslations('about');
-
-    // Panel 2 enters between 0.55 and 0.75
-    const opacity = useTransform(scrollYProgress, [0.55, 0.7], [0, 1]);
-    const scale = useTransform(scrollYProgress, [0.55, 0.7], [0.92, 1]);
-    const xOffset = useTransform(scrollYProgress, [0.55, 0.75], [50, 0]);
-
-    return (
-        <motion.div
-            style={{ opacity, scale }}
-            className="w-screen h-full flex items-center bg-background dark:bg-black overflow-hidden px-[5%] md:px-[8%] lg:px-[10%]"
-        >
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center w-full max-w-[1700px] mx-auto">
-                {/* Left: Optimized Image Column (5/12) */}
-                <motion.div
-                    style={{ x: xOffset }}
-                    className="lg:col-span-5 relative group flex flex-col items-stretch overflow-hidden rounded-[40px] shadow-2xl"
-                >
-                    <motion.div
-                        initial={{ clipPath: "circle(0% at 50% 50%)" }}
-                        animate={isVisible ? { clipPath: "circle(100% at 50% 50%)" } : { clipPath: "circle(0% at 50% 50%)" }}
-                        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative w-full h-[60vh] lg:h-[80vh] bg-background dark:bg-black"
-                    >
-                        <div className="w-full h-full relative grayscale group-hover:grayscale-0 transition-all duration-1000">
-                            <Image
-                                src={portfolioData.personal.avatar}
-                                alt="Azril Profile"
-                                fill
-                                className="object-cover block object-center"
-                                sizes="(max-width: 768px) 100vw, 40vw"
-                                priority
-                            />
-                        </div>
-                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-1000 pointer-events-none" />
-
-                        {/* Edge Blending Gradients */}
-                        <div className="absolute inset-0 pointer-events-none z-10 transition-opacity duration-1000 opacity-90 group-hover:opacity-40">
-                            <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background dark:from-black to-transparent" />
-                            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background dark:from-black to-transparent" />
-                            <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-background dark:from-black to-transparent" />
-                            <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-background dark:from-black to-transparent" />
-                        </div>
-                    </motion.div>
-                </motion.div>
-
-                {/* Right: Text Block (7/12) */}
-                <motion.div
-                    style={{ x: useTransform(scrollYProgress, [0.6, 0.8], [30, 0]) }}
-                    className="lg:col-span-7 flex flex-col justify-center space-y-10 lg:pl-10"
-                >
-                    <motion.h3
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[0.9] text-foreground dark:text-white tracking-tighter uppercase"
-                        dangerouslySetInnerHTML={{ __html: t.raw('profile.title') }}
-                    />
-
-                    <div className="space-y-10">
-                        <div className="space-y-6 border-l-2 border-primary/20 pl-8">
-                            <p className="text-base md:text-lg lg:text-xl text-foreground/90 leading-relaxed font-medium">
-                                {t('profile.narrative')}
-                            </p>
-                            <p className="text-base md:text-lg lg:text-xl text-foreground/90 leading-relaxed font-medium">
-                                {t('profile.narrative2')}
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                            {[
-                                { title: t('profile.pillars.reliable.title'), desc: t('profile.pillars.reliable.desc') },
-                                { title: t('profile.pillars.optimized.title'), desc: t('profile.pillars.optimized.desc') },
-                                { title: t('profile.pillars.maintainable.title'), desc: t('profile.pillars.maintainable.desc') },
-                                { title: t('profile.pillars.evolvable.title'), desc: t('profile.pillars.evolvable.desc') }
-                            ].map((item, idx) => (
-                                <div key={idx} className="space-y-2 group">
-                                    <h5 className="text-lg font-bold text-foreground flex items-center gap-2 uppercase tracking-tight">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                        {item.title}
-                                    </h5>
-                                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-        </motion.div>
-    );
-};
+// ProfilePanel removed and replaced by IdentitySequence component
 
 
 // --- Unified Typography-Focused Card for Bitwise Symmetry ---
@@ -683,7 +593,7 @@ const AuditFunnel = () => {
 
             {/* Subtle Grain Texture Overlay */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay">
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+                <div className="absolute inset-0 bg-[url('/noise.svg')]" />
             </div>
         </div>
     );
@@ -699,21 +609,21 @@ const ScrollHijackSection = () => {
     const [showBorder, setShowBorder] = React.useState(true);
 
     // Hooks moved to top level to avoid React Hook Rules violations
-    const borderOpacity = useTransform(smoothProgress, [0.1, 0.2], [1, 0]);
-    const xShift = useTransform(smoothProgress, [0, 0.3, 0.8, 1], ["0vw", "0vw", "-100vw", "-100vw"]);
+    const borderOpacity = useTransform(smoothProgress, [0.1, 0.15], [1, 0]);
+    const xShift = useTransform(smoothProgress, [0, 0.1, 0.4, 1], ["0vw", "0vw", "-100vw", "-100vw"]);
 
     useMotionValueEvent(smoothProgress, "change", (v: any) => {
         // Hard toggle for the decorative border to ensure it's GONE
-        if (v >= 0.25 && showBorder) setShowBorder(false);
-        if (v < 0.20 && !showBorder) setShowBorder(true);
+        if (v >= 0.20 && showBorder) setShowBorder(false);
+        if (v < 0.15 && !showBorder) setShowBorder(true);
 
         // Trigger precisely as the second panel begins to enter the viewport
-        if (v >= 0.50 && !isComp2Visible) setIsComp2Visible(true);
-        if (v < 0.45 && isComp2Visible) setIsComp2Visible(false);
+        if (v >= 0.30 && !isComp2Visible) setIsComp2Visible(true);
+        if (v < 0.25 && isComp2Visible) setIsComp2Visible(false);
     });
 
     return (
-        <div ref={sectionRef} className="relative h-[280vh]">
+        <div ref={sectionRef} className="relative h-[600vh]">
             <div className="sticky top-0 h-screen w-full overflow-hidden z-50">
                 {/* Decorative curved edges with hard unmount for guaranteed removal */}
                 <AnimatePresence>
@@ -741,7 +651,7 @@ const ScrollHijackSection = () => {
                         <CoreEngineeringPanel scrollYProgress={smoothProgress} />
                     </div>
                     <div className="h-full w-screen flex-shrink-0">
-                        <ProfilePanel isVisible={isComp2Visible} scrollYProgress={smoothProgress} />
+                        <IdentitySequence isVisible={isComp2Visible} scrollYProgress={smoothProgress} />
                     </div>
                 </motion.div>
             </div>

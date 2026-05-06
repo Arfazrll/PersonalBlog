@@ -71,7 +71,10 @@
             "bridging": "Menghubungkan lab dan sistem langsung.",
             "integration": "Selain model, saya merancang ekosistem full-stack: backend yang aman, arsitektur data yang kuat, dan pipeline yang skalabel.",
             "signature": "Azril",
-            "role": "AI, Data & Software Engineer"
+            "role": "AI, Data & Software Engineer",
+            "aboutMe": "Tentang Saya",
+            "scroll": "Scroll untuk Jelajah",
+            "shortStory": "Cerita Singkat Saya"
         },
         "coreEngineering": {
             "label": "Rekayasa Inti",
