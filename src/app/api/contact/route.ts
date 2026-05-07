@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+function escapeHtml(str: string) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 export async function POST(req: Request) {
     try {
         const { name, email, subject, message } = await req.json();
@@ -20,18 +30,25 @@ export async function POST(req: Request) {
             },
         });
 
+        const safeName = escapeHtml(name);
+        const safeEmail = escapeHtml(email);
+        const safeSubject = escapeHtml(subject || 'No Subject');
+        const safeMessage = escapeHtml(message).replace(/\n/g, '<br />');
+
         // Email options
         const mailOptions = {
             from: process.env.EMAIL_USER || '',
             to: process.env.EMAIL_USER || '', // Where you want to receive the messages
-            subject: `New Message: ${subject || 'No Subject'}`,
+            subject: `New Message: ${safeSubject}`,
             html: `
-                <h3>You have a new message from your website!</h3>
-                <p><strong>Name: </strong> ${name}</p>
-                <p><strong>Email: </strong> ${email}</p>
-                <br />
-                <p><strong>Message:</strong></p>
-                <p>${message}</p>
+                <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+                    <h3 style="color: #333;">You have a new message from your website!</h3>
+                    <p><strong>Name: </strong> ${safeName}</p>
+                    <p><strong>Email: </strong> ${safeEmail}</p>
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+                    <p><strong>Message:</strong></p>
+                    <p style="white-space: pre-wrap; color: #555;">${safeMessage}</p>
+                </div>
             `,
         };
 
