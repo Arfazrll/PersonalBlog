@@ -46,13 +46,13 @@ export const IdentitySequence = ({ scrollYProgress, isVisible }: IdentitySequenc
 
     // 4. Background Color Transition (Smoothing the exit)
     const cardBg = useTransform(
-        smoothLocalProgress, 
-        [0.8, 1], 
+        smoothLocalProgress,
+        [0.8, 1],
         ["#EBEBEB", "#FFFFFF"]
     );
     const cardBgDark = useTransform(
-        smoothLocalProgress, 
-        [0.8, 1], 
+        smoothLocalProgress,
+        [0.8, 1],
         ["#18181b", "#000000"]
     );
 
@@ -94,7 +94,7 @@ export const IdentitySequence = ({ scrollYProgress, isVisible }: IdentitySequenc
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div className="relative w-16 h-16 rounded-full bg-[#D1FF4D] overflow-hidden flex items-center justify-center transition-all duration-500">
                                 <div className="absolute inset-0 bg-black dark:bg-white -translate-x-[101%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
                                 <div className="relative z-10 h-8 overflow-hidden">
@@ -231,7 +231,7 @@ export const IdentitySequence = ({ scrollYProgress, isVisible }: IdentitySequenc
                     </motion.div>
 
                     {/* Phase 4: Tech Stack & Tools Scrollers */}
-                    <motion.div 
+                    <motion.div
                         style={{ opacity: textOpacity }}
                         className="w-full max-w-[1700px] mx-auto py-20 flex flex-col gap-8 flex-shrink-0"
                     >
