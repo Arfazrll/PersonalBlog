@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 import Testimonial1 from "@/components/ui/testimonial-1";
 import { IdentitySequence } from "./IdentitySequence";
-import { ParallaxScrollFeatureSection } from "@/components/ui/parallax-scroll-feature-section";
+import ScrollAdventure from "@/components/ui/animated-scroll";
 import { ArgentLoopInfiniteSlider } from "@/components/ui/argent-loop-infinite-slider";
 
 const GALLERY_IMAGES = [
@@ -518,7 +518,7 @@ export default function AboutSection() {
                 <div className="bg-background dark:bg-black transition-colors duration-500 pointer-events-auto relative">
 
                     <ScrollHijackSection />
-                    <ParallaxScrollFeatureSection />
+                    <ScrollAdventure />
                     <ArgentLoopInfiniteSlider />
                     <AuditFunnel />
                 </div>
