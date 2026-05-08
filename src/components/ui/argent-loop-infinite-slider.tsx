@@ -10,6 +10,7 @@ interface ProjectData {
   category: string;
   year: string;
   description: string;
+  slug: string;
 }
 
 const PROJECT_DATA: ProjectData[] = [
@@ -19,6 +20,7 @@ const PROJECT_DATA: ProjectData[] = [
     category: "AI & Automation",
     year: "2026",
     description: "AI-driven browser interaction & testing engine.",
+    slug: "browser-automation-agent"
   },
   {
     title: "Swarm AI Blog Writer",
@@ -26,6 +28,7 @@ const PROJECT_DATA: ProjectData[] = [
     category: "AI & Content",
     year: "2025",
     description: "Multi-agent orchestration for research-backed content.",
+    slug: "swarm-ai-blog-writer"
   },
   {
     title: "Creative Portfolio Website",
@@ -33,6 +36,7 @@ const PROJECT_DATA: ProjectData[] = [
     category: "Creative Tech",
     year: "2025",
     description: "Immersive 3D portfolio with WebGL shaders.",
+    slug: "creative-portfolio-website"
   },
   {
     title: "SNBTIn Platform",
@@ -40,6 +44,7 @@ const PROJECT_DATA: ProjectData[] = [
     category: "EdTech",
     year: "2025",
     description: "Leading e-learning platform for SNBT preparation.",
+    slug: "snbtin-platform"
   },
   {
     title: "Terraflow Platform",
@@ -47,55 +52,51 @@ const PROJECT_DATA: ProjectData[] = [
     category: "IoT & Embedded",
     year: "2025",
     description: "Enterprise IoT solution for precision agriculture.",
+    slug: "terraflow-platform"
   },
 ];
 
 export function ArgentLoopInfiniteSlider() {
   const containerRef = React.useRef<HTMLDivElement>(null);
   
-  // 700vh Narrative Sequence: 1 Intro -> 5 Projects -> 1 Outro
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 90, damping: 35, mass: 0.5 });
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 30, mass: 1 });
 
-  // --- MATHEMATICAL STAGE MAPPING ---
-  // Define precise scroll boundaries for consistency
-  const introEnd = 0.15;
-  const projectStart = 0.20;
-  const projectEnd = 0.90;
-  const outroStart = 0.92;
+  const projectArea = 0.8;
+  const projectStep = projectArea / PROJECT_DATA.length; 
+  const transWindow = 0.05; 
 
-  // Stage indicator (0 to 6)
-  const stage = useTransform(smoothProgress, [0, 1], [0, 6]);
-  
-  // Opacity: Intro fades out, Projects fade in, then fade out for Outro
-  const headerOpacity = useTransform(smoothProgress, [0, introEnd - 0.05, introEnd], [1, 1, 0]);
-  const bgOpacity = useTransform(smoothProgress, [0, introEnd, projectStart, projectEnd, outroStart, 1], [0, 0, 1, 1, 0, 0]);
-  const mainUIOpacity = useTransform(smoothProgress, [0, introEnd, projectStart, projectEnd, outroStart, 1], [0, 0, 1, 1, 0, 0]);
-  const buttonOpacity = useTransform(smoothProgress, [projectEnd, outroStart], [0, 1]);
+  const scrollMap = [0];
+  const yMap = ["0vh"];
+  const internalYMap = ["0px"];
 
-  // Background Parallax & Plateaus
-  const currentY = useTransform(smoothProgress,
-    [0, introEnd, projectStart, 0.30, 0.35, 0.45, 0.50, 0.60, 0.65, 0.75, 0.80, projectEnd],
-    ["0vh", "0vh", "-100vh", "-100vh", "-200vh", "-200vh", "-300vh", "-300vh", "-400vh", "-400vh", "-500vh", "-500vh"]
-  );
+  PROJECT_DATA.forEach((_, i) => {
+    if (i === 0) return;
+    const boundary = i * projectStep;
+    scrollMap.push(boundary - transWindow / 2, boundary + transWindow / 2);
+    yMap.push(`-${(i-1)*100}vh`, `-${i*100}vh`);
+    internalYMap.push(`-${(i-1)*250}px`, `-${i*250}px`);
+  });
 
-  // Card Content Internal Scrolling
-  const contentInternalY = useTransform(smoothProgress,
-    [0, introEnd, projectStart, 0.30, 0.35, 0.45, 0.50, 0.60, 0.65, 0.75, 0.80, projectEnd],
-    ["0px", "0px", "0px", "0px", "-250px", "-250px", "-500px", "-500px", "-750px", "-750px", "-1000px", "-1000px"]
-  );
+  scrollMap.push(projectArea, 1);
+  yMap.push(`-${(PROJECT_DATA.length-1)*100}vh`, `-${(PROJECT_DATA.length-1)*100}vh`);
+  internalYMap.push(`-${(PROJECT_DATA.length-1)*250}px`, `-${(PROJECT_DATA.length-1)*250}px`);
 
-  // Final Slide-Up Transition (Seamless Integration)
-  const finalContainerY = useTransform(smoothProgress, [projectEnd, outroStart, 1], ["0px", "-320px", "-320px"]);
+  const currentY = useTransform(smoothProgress, scrollMap, yMap);
+  const contentInternalY = useTransform(smoothProgress, scrollMap, internalYMap);
 
+  const bgOpacity = useTransform(smoothProgress, [0, 0.05, projectArea, 1], [0, 1, 1, 0]);
+  const mainUIOpacity = useTransform(smoothProgress, [0, 0.05, projectArea, 1], [0, 1, 1, 0]);
+  const buttonOpacity = useTransform(smoothProgress, [projectArea, projectArea + 0.1], [0, 1]);
+  const finalContainerY = useTransform(smoothProgress, [projectArea, projectArea + 0.1], ["0px", "-320px"]);
   const imageY = useTransform(smoothProgress, [0, 1], ["-12%", "12%"]);
 
   return (
-    <div ref={containerRef} className="relative h-[700vh]">
+    <div ref={containerRef} className="relative h-[600vh]">
       <style>{`
         .argent-slider-wrapper {
             position: sticky;
@@ -152,23 +153,24 @@ export function ArgentLoopInfiniteSlider() {
             left: 50%;
             top: 0;
             transform: translateX(-50%);
-            width: 320px;
+            width: 440px;
             height: 100%;
             overflow: hidden;
             z-index: 10;
-            border-left: 1px solid rgba(0,0,0,0.06);
-            border-right: 1px solid rgba(0,0,0,0.06);
         }
         .minimap-img-item {
             position: absolute;
             width: 100%;
             height: 100%;
+            padding: 0.8rem 0;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .minimap-img-item img {
-            width: 100%;
-            height: 120%;
-            object-fit: cover;
+            display: block;
+            margin: 0;
             will-change: transform;
         }
         .minimap-info-list {
@@ -186,7 +188,7 @@ export function ArgentLoopInfiniteSlider() {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 3.5rem 6%;
+            padding: 2.25rem 3.5%;
             font-family: 'Inter', sans-serif;
             color: black !important;
             text-transform: uppercase;
@@ -194,7 +196,7 @@ export function ArgentLoopInfiniteSlider() {
         .minimap-item-info-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             width: 100%;
         }
         .minimap-item-info-row p {
@@ -256,50 +258,29 @@ export function ArgentLoopInfiniteSlider() {
       `}</style>
       
       <div className="argent-slider-wrapper">
-        
-        {/* --- STAGE 0: INTRO (Clean, Centered, Solid Black) --- */}
-        <motion.div 
-          style={{ opacity: headerOpacity }}
-          className="absolute inset-0 z-[60] flex flex-col justify-center px-[7.5%] pointer-events-none"
-        >
-          <motion.h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white leading-tight max-w-[1200px]">
-            Discover my latest work and creative <br />
-            solutions that bring ideas to life
-          </motion.h2>
-          <div className="flex items-center gap-6 mt-16 opacity-30">
-            <span className="text-[11px] font-mono uppercase tracking-[0.5em] text-white">Scroll Sequence</span>
-            <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}>
-              <ChevronDown className="w-5 h-5 text-white" />
-            </motion.div>
-          </div>
-        </motion.div>
-
-        {/* --- STAGES 1-5: PROJECT BACKDROPS --- */}
         <motion.div style={{ opacity: bgOpacity }}>
           <div className="mist-overlay" />
           <motion.div className="project-list" style={{ y: currentY }}>
             {PROJECT_DATA.map((data, i) => (
-              <div key={i} className="project" style={{ top: `${(i + 1) * 100}vh` }}>
+              <div key={i} className="project" style={{ top: `${i * 100}vh` }}>
                 <motion.img src={data.image} alt={data.title} style={{ y: imageY }} />
               </div>
             ))}
           </motion.div>
         </motion.div>
 
-        {/* --- CORE INTERFACE LAYER --- */}
         <div className="absolute inset-0 z-[100] flex items-center justify-center pointer-events-none">
           <motion.div 
             style={{ y: finalContainerY, willChange: "transform" }}
             className="flex flex-col items-center"
           >
-            {/* The White Card assembly */}
             <motion.div style={{ opacity: mainUIOpacity }} className="minimap-bar-outer">
               <div className="minimap-content-viewport">
                 <div className="minimap-img-preview">
                   <motion.div style={{ y: contentInternalY }} className="w-full h-full relative">
                     {PROJECT_DATA.map((data, i) => (
                       <div key={i} className="minimap-img-item" style={{ top: `${i * 250}px` }}>
-                        <motion.img src={data.image} alt={data.title} style={{ y: imageY }} />
+                        <img src={data.image} alt={data.title} className="block w-full h-full object-cover" />
                       </div>
                     ))}
                   </motion.div>
@@ -311,15 +292,25 @@ export function ArgentLoopInfiniteSlider() {
                       return (
                         <div key={i} className="minimap-item-info" style={{ top: `${i * 250}px` }}>
                           <div className="minimap-item-info-row">
-                            <p className="font-extrabold">{num}</p>
-                            <h4 className="text-xl md:text-2xl font-black tracking-tighter uppercase">{data.title}</h4>
+                            <p className="font-medium opacity-100">{num}</p>
+                            <h4 className="text-xl md:text-2xl font-medium tracking-tight uppercase text-right max-w-[45%] leading-tight">
+                              {data.title}
+                            </h4>
                           </div>
                           <div className="minimap-item-info-row">
-                            <p>{data.category}</p>
-                            <p className="font-extrabold tabular-nums">{data.year}</p>
+                            <p className="text-neutral-600 font-medium">{data.category}</p>
+                            <p className="font-medium tabular-nums text-neutral-600">{data.year}</p>
                           </div>
                           <div className="minimap-item-info-row">
-                            <p className="lowercase opacity-80 leading-relaxed max-w-[70%]">{data.description}</p>
+                            <p className="lowercase opacity-80 font-medium leading-relaxed max-w-[35%] text-[10px]">
+                              {data.description}
+                            </p>
+                            <Link 
+                                href={`/projects/${data.slug}`} 
+                                className="pointer-events-auto font-medium text-[10px] opacity-60 hover:opacity-100 hover:text-black transition-all duration-300 text-right group/link"
+                            >
+                              <span className="border-b border-black/10 group-hover/link:border-black pb-1">View More</span>
+                            </Link>
                           </div>
                         </div>
                       );
@@ -329,12 +320,11 @@ export function ArgentLoopInfiniteSlider() {
               </div>
             </motion.div>
 
-            {/* The View More Button assembly (Integrated Below) */}
             <div className="h-[200px] w-full flex items-center justify-center pt-10">
               <motion.div 
                 style={{ 
                   opacity: buttonOpacity,
-                  pointerEvents: useTransform(smoothProgress, (v) => v > outroStart ? "auto" : "none")
+                  pointerEvents: useTransform(smoothProgress, (v) => v > projectArea ? "auto" : "none")
                 }}
               >
                 <Link href="/projects" className="group flex items-center gap-4">
@@ -350,26 +340,24 @@ export function ArgentLoopInfiniteSlider() {
           </motion.div>
         </div>
 
-        {/* --- SYSTEM PROGRESS OVERLAY --- */}
         <motion.div 
-          style={{ opacity: useTransform(smoothProgress, [introEnd, projectStart, projectEnd, outroStart], [0, 1, 1, 0]) }}
+          style={{ opacity: useTransform(smoothProgress, [0, 0.05, projectArea, projectArea + 0.05], [0, 1, 1, 0]) }}
           className="slide-overlay"
         >
            <span className="text-white/40 font-mono text-[10px] tracking-[0.5em] uppercase">Sequence</span>
            <div className="slide-line bg-white/10">
               <motion.div 
                 className="slide-progress bg-white" 
-                style={{ width: useTransform(smoothProgress, [projectStart, projectEnd], ["0%", "100%"]) }} 
+                style={{ width: useTransform(smoothProgress, [0, projectArea], ["0%", "100%"]) }} 
               />
            </div>
            <motion.span className="text-white font-mono text-[11px] tabular-nums font-bold">
-             {useTransform(smoothProgress, 
-               [0, 0.18, 0.32, 0.33, 0.47, 0.48, 0.62, 0.63, 0.77, 0.78, 1],
-               ["0 / 5", "1 / 5", "1 / 5", "2 / 5", "2 / 5", "3 / 5", "3 / 5", "4 / 5", "4 / 5", "5 / 5", "5 / 5"]
-             )}
+              {useTransform(smoothProgress, (v) => {
+               const idx = Math.min(Math.floor(v / projectStep), PROJECT_DATA.length - 1);
+               return `${idx + 1} / ${PROJECT_DATA.length}`;
+             })}
            </motion.span>
         </motion.div>
-
       </div>
     </div>
   );
