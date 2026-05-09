@@ -1,6 +1,6 @@
 import * as React from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown, Github } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -66,7 +66,7 @@ export function ArgentLoopInfiniteSlider() {
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 30, mass: 1 });
 
-  const projectArea = 0.8;
+  const projectArea = 0.85;
   const projectStep = projectArea / PROJECT_DATA.length; 
   const transWindow = 0.05; 
 
@@ -91,12 +91,12 @@ export function ArgentLoopInfiniteSlider() {
 
   const bgOpacity = useTransform(smoothProgress, [0, 0.05, projectArea, 1], [0, 1, 1, 0]);
   const mainUIOpacity = useTransform(smoothProgress, [0, 0.05, projectArea, 1], [0, 1, 1, 0]);
-  const buttonOpacity = useTransform(smoothProgress, [projectArea, projectArea + 0.1], [0, 1]);
-  const finalContainerY = useTransform(smoothProgress, [projectArea, projectArea + 0.1], ["0px", "-320px"]);
+  const buttonOpacity = useTransform(smoothProgress, [projectArea, projectArea + 0.05], [0, 1]);
+  const finalContainerY = useTransform(smoothProgress, [projectArea, projectArea + 0.05], ["0px", "-250px"]);
   const imageY = useTransform(smoothProgress, [0, 1], ["-12%", "12%"]);
 
   return (
-    <div ref={containerRef} className="relative h-[600vh]">
+    <div ref={containerRef} className="relative h-[500vh]">
       <style>{`
         .argent-slider-wrapper {
             position: sticky;
@@ -104,7 +104,7 @@ export function ArgentLoopInfiniteSlider() {
             width: 100%;
             height: 100vh;
             overflow: hidden;
-            background: #000;
+            background: hsl(var(--background));
             z-index: 20;
         }
         .project-list {
@@ -130,7 +130,7 @@ export function ArgentLoopInfiniteSlider() {
         .mist-overlay {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.6) 100%);
+            background: radial-gradient(circle at center, transparent 20%, hsl(var(--background) / 0.8) 100%);
             z-index: 5;
             pointer-events: none;
         }
@@ -222,7 +222,8 @@ export function ArgentLoopInfiniteSlider() {
             gap: 0.6rem;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .custom-btn-arrow {
+        .custom-btn-arrow,
+        .custom-btn-github {
             background: #c1e44a;
             color: black;
             width: 58px;
@@ -232,6 +233,26 @@ export function ArgentLoopInfiniteSlider() {
             align-items: center;
             justify-content: center;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Independent GitHub hover */
+        .dark .custom-btn-github:hover {
+            background: white !important;
+            color: black !important;
+        }
+        .dark .custom-btn-github:hover svg {
+            color: black !important;
+        }
+
+        /* Synchronized View More + Arrow hover */
+        .dark .group-projects:hover .custom-btn,
+        .dark .group-projects:hover .custom-btn-arrow {
+            background: white !important;
+            color: black !important;
+        }
+
+        .dark .group-projects:hover .custom-btn-arrow svg {
+            color: black !important;
         }
 
         .slide-overlay {
@@ -327,14 +348,26 @@ export function ArgentLoopInfiniteSlider() {
                   pointerEvents: useTransform(smoothProgress, (v) => v > projectArea ? "auto" : "none")
                 }}
               >
-                <Link href="/projects" className="group flex items-center gap-4">
-                  <div className="custom-btn group-hover:scale-105 active:scale-95 group-hover:shadow-[0_0_30px_rgba(193,228,74,0.3)]">
-                    View More
+                <div className="flex items-center gap-4 pointer-events-auto">
+                  <a 
+                    href="https://github.com/Arfazrll" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="custom-btn-github hover:scale-110 active:scale-95 transition-transform shadow-xl"
+                    title="GitHub Profile"
+                  >
+                    <Github className="w-6 h-6" />
+                  </a>
+                  
+                  <div className="group-projects flex items-center gap-2">
+                    <Link href="/projects" className="custom-btn group-hover:scale-105 active:scale-95 group-hover:shadow-[0_0_30px_rgba(193,228,74,0.3)]">
+                      View More
+                    </Link>
+                    <Link href="/projects" className="custom-btn-arrow group-hover:scale-110 active:scale-95 group-hover:rotate-45 transition-transform shadow-xl">
+                      <ArrowRight className="w-6 h-6" />
+                    </Link>
                   </div>
-                  <div className="custom-btn-arrow group-hover:scale-110 active:scale-95 group-hover:rotate-45 transition-transform shadow-xl">
-                    <ArrowRight className="w-6 h-6" />
-                  </div>
-                </Link>
+                </div>
               </motion.div>
             </div>
           </motion.div>
@@ -344,14 +377,14 @@ export function ArgentLoopInfiniteSlider() {
           style={{ opacity: useTransform(smoothProgress, [0, 0.05, projectArea, projectArea + 0.05], [0, 1, 1, 0]) }}
           className="slide-overlay"
         >
-           <span className="text-white/40 font-mono text-[10px] tracking-[0.5em] uppercase">Sequence</span>
-           <div className="slide-line bg-white/10">
+           <span className="text-foreground/40 font-mono text-[10px] tracking-[0.5em] uppercase">Page</span>
+           <div className="slide-line bg-foreground/10">
               <motion.div 
-                className="slide-progress bg-white" 
+                className="slide-progress bg-foreground" 
                 style={{ width: useTransform(smoothProgress, [0, projectArea], ["0%", "100%"]) }} 
               />
            </div>
-           <motion.span className="text-white font-mono text-[11px] tabular-nums font-bold">
+           <motion.span className="text-foreground font-mono text-[11px] tabular-nums font-bold">
               {useTransform(smoothProgress, (v) => {
                const idx = Math.min(Math.floor(v / projectStep), PROJECT_DATA.length - 1);
                return `${idx + 1} / ${PROJECT_DATA.length}`;

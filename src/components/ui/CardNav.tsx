@@ -134,6 +134,10 @@ export default function CardNav({
 
     const aboutItem = items.find(i => i.label === "About") || items[0];
 
+    const isActive = useMemo(() => {
+        return aboutItem.links.some(link => pathname === link.href || pathname.startsWith(`${link.href}/`));
+    }, [pathname, aboutItem.links]);
+
     const iconMap: Record<string, any> = {
         "/achievements": Trophy,
         "/skills": Navigation,
@@ -149,13 +153,28 @@ export default function CardNav({
                 onClick={() => setIsExpanded(!isExpanded)}
                 className={cn(
                     "relative px-6 py-2.5 text-sm font-bold transition-all duration-300 rounded-full flex items-center gap-2 group",
-                    theme === 'dark'
-                        ? "text-white/70 hover:text-white"
-                        : "text-black/70 hover:text-black"
+                    isActive
+                        ? (theme === 'dark' ? "text-white bg-white/10" : "text-black bg-black/5")
+                        : (theme === 'dark' ? "text-white/70 hover:text-white" : "text-black/70 hover:text-black")
                 )}
             >
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
-                <span className="relative z-10">{aboutItem.label}</span>
+                <span className="relative z-10 flex items-center gap-2">
+                    {isActive && (
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="flex items-center justify-center"
+                        >
+                            <motion.span 
+                                animate={{ opacity: [1, 0.4, 1], scale: [1, 1.3, 1] }}
+                                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                                className="w-1.5 h-1.5 rounded-full bg-[#D1FF4D] shadow-[0_0_8px_rgba(209,255,77,0.6)]"
+                            />
+                        </motion.div>
+                    )}
+                    {aboutItem.label}
+                </span>
                 <motion.div
                     animate={{ rotate: isExpanded ? 180 : 0 }}
                     transition={{ duration: 0.3 }}

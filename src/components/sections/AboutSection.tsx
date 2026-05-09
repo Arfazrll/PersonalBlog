@@ -23,6 +23,68 @@ import Testimonial1 from "@/components/ui/testimonial-1";
 import { IdentitySequence } from "./IdentitySequence";
 import ScrollAdventure from "@/components/ui/animated-scroll";
 import { ArgentLoopInfiniteSlider } from "@/components/ui/argent-loop-infinite-slider";
+import TeamShowcase from "@/components/ui/team-showcase";
+
+const showcaseMembers = [
+    // 1. Cyber Physical Systems Laboratory
+    ...portfolioData.experiences.filter(exp => exp.id === 'prof-7').map(exp => ({
+        id: exp.id,
+        name: "Cyber Physical Systems Laboratory",
+        role: exp.position.replace(' (Contract-Based)', ''),
+        description: exp.description,
+        period: "August 2025 - Present",
+        image: "/journey/researchassistant2.jpg",
+        social: exp.externalLink ? { website: exp.externalLink } : undefined
+    })),
+    // 2. HUMIC Engineering
+    ...portfolioData.experiences.filter(exp => exp.id === 'prof-3').map(exp => ({
+        id: exp.id,
+        name: "HUMIC Engineering",
+        role: exp.position,
+        description: exp.description,
+        period: "September 2025 - December 2025",
+        image: "/journey/aideveloperintern1.jpg",
+        social: exp.externalLink ? { website: exp.externalLink } : undefined
+    })),
+    // 3. Informatics Laboratory, Telkom University
+    ...portfolioData.experiences.filter(exp => exp.id === 'prof-6').map(exp => ({
+        id: exp.id,
+        name: exp.company,
+        role: exp.position.replace(' (Contract-Based)', ''),
+        description: exp.description,
+        period: "September 2025 - January 2026",
+        image: "/journey/computernetworkpracticumassistant2.jpg",
+        social: exp.externalLink ? { website: exp.externalLink } : undefined
+    })),
+    // 4. Digistar Club by Telkom Indonesia
+    ...portfolioData.experiences.filter(exp => exp.id === 'lead-2').map(exp => ({
+        id: exp.id,
+        name: exp.company,
+        role: exp.position,
+        description: exp.description,
+        period: "October 2025 - December 2025",
+        image: "/journey/chiefcommittee1.jpg",
+        social: exp.externalLink ? { website: exp.externalLink } : undefined
+    })),
+    // 5. Food and Agriculture Office of Bandung City
+    ...portfolioData.experiences.filter(exp => exp.id === 'prof-8').map(exp => ({
+        id: exp.id,
+        name: "Food and Agriculture Office of Bandung City",
+        role: exp.position,
+        description: exp.description,
+        period: "July - September 2025",
+        image: "/journey/dataentryassistant1.jpg",
+        social: exp.externalLink ? { website: exp.externalLink } : undefined
+    })),
+    // 6. View more
+    {
+        id: 'view-more',
+        name: 'View more',
+        role: 'Explore all experiences',
+        image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop',
+        social: { website: '/experience' }
+    }
+];
 
 const GALLERY_IMAGES = [
     "/gallery/Foto Utama.jpeg",
@@ -444,37 +506,56 @@ const ScrollHijackSection = () => {
         if (v < 0.25 && isComp2Visible) setIsComp2Visible(false);
     });
 
+    const { scrollYProgress: exitProgressRaw } = useScroll({
+        target: sectionRef,
+        offset: ["end end", "end start"]
+    });
+
+    // Apply a spring physics wrapper to make the scale/fade exit incredibly buttery smooth
+    const exitProgress = useSpring(exitProgressRaw, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+
+
+    const exitScale = useTransform(exitProgress, [0, 1], [1, 0.85]);
+    const exitOpacity = useTransform(exitProgress, [0, 1], [1, 0]); // Changed to 1 to ensure full fade out
+    const exitBorderRadius = useTransform(exitProgress, [0, 1], ["0px", "40px"]);
+
     return (
         <div ref={sectionRef} className="relative h-[600vh]">
             <div className="sticky top-0 h-screen w-full overflow-hidden z-10">
-                {/* Decorative curved edges with hard unmount for guaranteed removal */}
-                <AnimatePresence>
-                    {showBorder && (
-                        <motion.div
-                            initial={{ opacity: 1 }}
-                            exit={{ opacity: 0, transition: { duration: 0.3 } }}
-                            style={{
-                                opacity: borderOpacity,
-                                maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
-                                WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)'
-                            }}
-                            className="absolute top-0 left-0 right-0 h-48 border-t-2 border-x-2 border-neutral-200 dark:border-zinc-800 rounded-t-[50px] md:rounded-t-[80px] pointer-events-none z-[100]"
-                        />
-                    )}
-                </AnimatePresence>
                 <motion.div
-                    className="flex h-full"
-                    style={{
-                        width: "200vw",
-                        x: xShift
-                    }}
+                    style={{ scale: exitScale, opacity: exitOpacity, borderRadius: exitBorderRadius }}
+                    className="w-full h-full relative origin-center"
                 >
-                    <div className="h-full w-screen flex-shrink-0">
-                        <CoreEngineeringPanel scrollYProgress={smoothProgress} />
-                    </div>
-                    <div className="h-full w-screen flex-shrink-0">
-                        <IdentitySequence isVisible={isComp2Visible} scrollYProgress={smoothProgress} />
-                    </div>
+                    {/* Decorative curved edges with hard unmount for guaranteed removal */}
+                    <AnimatePresence>
+                        {showBorder && (
+                            <motion.div
+                                initial={{ opacity: 1 }}
+                                exit={{ opacity: 0, transition: { duration: 0.3 } }}
+                                style={{
+                                    opacity: borderOpacity,
+                                    maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+                                    WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)'
+                                }}
+                                className="absolute top-0 left-0 right-0 h-48 border-t-2 border-x-2 border-neutral-200 dark:border-zinc-800 rounded-t-[50px] md:rounded-t-[80px] pointer-events-none z-[100]"
+                            />
+                        )}
+                    </AnimatePresence>
+                    <motion.div
+                        className="flex h-full"
+                        style={{
+                            width: "200vw",
+                            x: xShift
+                        }}
+                    >
+                        <div className="h-full w-screen flex-shrink-0">
+                            <CoreEngineeringPanel scrollYProgress={smoothProgress} />
+                        </div>
+                        <div className="h-full w-screen flex-shrink-0">
+                            <IdentitySequence isVisible={isComp2Visible} scrollYProgress={smoothProgress} />
+                        </div>
+                    </motion.div>
                 </motion.div>
             </div>
         </div>
@@ -520,9 +601,32 @@ export default function AboutSection() {
                     <ScrollHijackSection />
                     <ScrollAdventure />
                     <ArgentLoopInfiniteSlider />
+                    {/* Seamless solid background section overlapping the slider's dead space */}
+                    <div className="-mt-[50vh] flex flex-col items-center w-full bg-background relative z-20 pt-32 pb-32">
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
+                                whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+                                className="w-full flex flex-col items-center max-w-[1700px] px-4 md:px-6"
+                            >
+                                <div className="mb-6 md:mb-10 text-center space-y-4">
+                                    <h3 className="text-foreground text-3xl md:text-5xl font-black tracking-tighter">
+                                        View My Related Experience
+                                    </h3>
+                                    <p className="text-muted-foreground text-[10px] md:text-xs font-mono uppercase tracking-[0.4em]">
+                                        Professional Background
+                                    </p>
+                                </div>
+                                <div className="w-full">
+                                    <TeamShowcase members={showcaseMembers} />
+                                </div>
+                            </motion.div>
+                    </div>
                     <AuditFunnel />
                 </div>
             </div>
         </section >
     );
-}
+};
+
