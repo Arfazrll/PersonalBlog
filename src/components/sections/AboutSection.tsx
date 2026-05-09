@@ -24,6 +24,7 @@ import { IdentitySequence } from "./IdentitySequence";
 import ScrollAdventure from "@/components/ui/animated-scroll";
 import { ArgentLoopInfiniteSlider } from "@/components/ui/argent-loop-infinite-slider";
 import TeamShowcase from "@/components/ui/team-showcase";
+import { CertificateShowcase } from "@/components/ui/certificate-marquee";
 
 const showcaseMembers = [
     // 1. Cyber Physical Systems Laboratory
@@ -622,6 +623,11 @@ export default function AboutSection() {
                                     <TeamShowcase members={showcaseMembers} />
                                 </div>
                             </motion.div>
+
+                            {/* Certificate Showcase Section */}
+                            <div className="w-full mt-0">
+                                <CertificateShowcase />
+                            </div>
                     </div>
                     <AuditFunnel />
                 </div>
