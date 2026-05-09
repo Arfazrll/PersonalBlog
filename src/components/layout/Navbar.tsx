@@ -127,6 +127,14 @@ export function Navbar() {
         setIsMenuOpen(false);
     }, []);
 
+    const handleHomeClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (pathname === '/') {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        closeMenu();
+    }, [pathname, closeMenu]);
+
     // Animation variants
     const navVariants = {
         visible: { y: 0, opacity: 1 },
@@ -156,7 +164,7 @@ export function Navbar() {
                         layout
                     >
                         {/* Make the Clock a Link to Home */}
-                        <Link href="/" className="relative group min-w-[120px]" onClick={closeMenu}>
+                        <Link href="/" className="relative group min-w-[120px]" onClick={handleHomeClick}>
                             <Clock />
                         </Link>
 
@@ -165,6 +173,7 @@ export function Navbar() {
                             {/* HOME */}
                             <Link
                                 href="/"
+                                onClick={handleHomeClick}
                                 className={cn(
                                     'relative px-5 py-2 text-sm font-bold transition-all duration-300 rounded-full group',
                                     pathname === '/' ? 'text-foreground bg-muted' : 'text-muted-foreground hover:text-foreground'
@@ -266,7 +275,7 @@ export function Navbar() {
                                     {/* Mobile Home */}
                                     <Link
                                         href="/"
-                                        onClick={closeMenu}
+                                        onClick={handleHomeClick}
                                         className="text-3xl font-black text-muted-foreground hover:text-foreground transition-colors"
                                     >
                                         {t('home')}

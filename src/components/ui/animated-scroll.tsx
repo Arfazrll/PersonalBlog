@@ -68,10 +68,24 @@ export default function ScrollAdventure() {
         const index = Math.min(Math.floor(latest / step) + 1, totalPages);
         if (currentPage !== index) setCurrentPage(index);
     });
+    const { scrollYProgress: enterProgressRaw } = useScroll({
+        target: containerRef,
+        offset: ["start end", "start start"]
+    });
+    
+    // Spring physics wrapper for the entrance to mirror the buttery smooth exit
+    const enterProgress = useSpring(enterProgressRaw, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+    const enterScale = useTransform(enterProgress, [0, 1], [0.85, 1]);
+    const enterOpacity = useTransform(enterProgress, [0, 1], [0, 1]);
+    const enterBorderRadius = useTransform(enterProgress, [0, 1], ["40px", "0px"]);
 
     return (
-        <div ref={containerRef} className="relative h-[800vh] w-full bg-background dark:bg-black">
-            <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <div ref={containerRef} className="relative h-[800vh] w-full pointer-events-none">
+            <motion.div 
+                style={{ scale: enterScale, opacity: enterOpacity, borderRadius: enterBorderRadius }}
+                className="sticky top-0 h-screen w-full overflow-hidden bg-background dark:bg-black pointer-events-auto origin-center"
+            >
                 {pages.map((page, i) => {
                     if ('isBridge' in page) {
                         return (
@@ -96,7 +110,7 @@ export default function ScrollAdventure() {
                 })}
 
                 {/* Global Progress Line Removed */}
-            </div>
+            </motion.div>
         </div>
     );
 }
@@ -149,7 +163,7 @@ function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isAct
                 <div className="absolute top-0 -right-[2px] w-[2px] h-full bg-background dark:bg-black z-50 pointer-events-none" />
                 <div className="absolute -top-[10vh] left-0 w-full h-[10vh] bg-gradient-to-t from-background dark:from-black to-transparent z-50 pointer-events-none" />
                 <div className="absolute -bottom-[10vh] left-0 w-full h-[10vh] bg-gradient-to-b from-background dark:from-black to-transparent z-50 pointer-events-none" />
-                
+
                 <div className="w-full h-full relative overflow-hidden">
                     {page.leftBgImage ? (
                         <BlendedVisual src={page.leftBgImage} side="left" />
