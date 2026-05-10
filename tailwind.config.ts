@@ -54,6 +54,30 @@ const config: Config = {
 					'3': 'hsl(var(--chart-3))',
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
+				},
+				bento: {
+					highlight: {
+						light: '#DADBF8',
+						DEFAULT: '#454ADE',
+					},
+					accent: {
+						light: '#D9EAE3',
+						DEFAULT: '#439775',
+					},
+					primary: {
+						light: '#FFCFE1',
+						DEFAULT: '#FF0F67',
+					},
+					secondary: {
+						light: '#FFFCE5',
+						DEFAULT: '#FFF07C',
+					},
+					base: {
+						100: '#f0f0f0',
+						200: '#ffffff',
+						300: '#F2F2F2',
+						content: '#0A0A0A',
+					}
 				}
 			},
 			fontFamily: {
