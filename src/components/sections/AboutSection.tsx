@@ -25,6 +25,10 @@ import ScrollAdventure from "@/components/ui/animated-scroll";
 import { ArgentLoopInfiniteSlider } from "@/components/ui/argent-loop-infinite-slider";
 import TeamShowcase from "@/components/ui/team-showcase";
 import { CertificateShowcase } from "@/components/ui/certificate-marquee";
+import { GitHubShowcase } from "@/components/ui/github-showcase";
+import KaggleShowcase from "@/components/ui/kaggle-showcase";
+import { WakaTimeShowcase } from "@/components/ui/wakatime-showcase";
+import { ShowcaseStack } from "@/components/ui/showcase-stack";
 
 const showcaseMembers = [
     // 1. Cyber Physical Systems Laboratory
@@ -604,30 +608,43 @@ export default function AboutSection() {
                     <ArgentLoopInfiniteSlider />
                     {/* Seamless solid background section overlapping the slider's dead space */}
                     <div className="-mt-[50vh] flex flex-col items-center w-full bg-background relative z-20 pt-32 pb-32">
-                            <motion.div 
-                                initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
-                                whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                                viewport={{ once: true, margin: "-100px" }}
-                                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                                className="w-full flex flex-col items-center max-w-[1700px] px-4 md:px-6"
-                            >
-                                <div className="mb-6 md:mb-10 text-center space-y-4">
-                                    <h3 className="text-foreground text-3xl md:text-5xl font-black tracking-tighter">
-                                        View My Related Experience
-                                    </h3>
-                                    <p className="text-muted-foreground text-[10px] md:text-xs font-mono uppercase tracking-[0.4em]">
-                                        Professional Background
-                                    </p>
-                                </div>
-                                <div className="w-full">
-                                    <TeamShowcase members={showcaseMembers} />
-                                </div>
-                            </motion.div>
-
-                            {/* Certificate Showcase Section */}
-                            <div className="w-full mt-0">
-                                <CertificateShowcase />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
+                            whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                            viewport={{ once: true, margin: "-100px" }}
+                            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+                            className="w-full flex flex-col items-center max-w-[1700px] px-4 md:px-6"
+                        >
+                            <div className="mb-6 md:mb-10 text-center space-y-4">
+                                <h3 className="text-foreground text-3xl md:text-5xl font-black tracking-tighter">
+                                    View My Related Experience
+                                </h3>
+                                <p className="text-muted-foreground text-[10px] md:text-xs font-mono uppercase tracking-[0.4em]">
+                                    Professional Background
+                                </p>
                             </div>
+                            <div className="w-full">
+                                <TeamShowcase members={showcaseMembers} />
+                            </div>
+                        </motion.div>
+
+                        {/* Certificate Showcase Section */}
+                        <div className="w-full mt-0">
+                            <CertificateShowcase />
+                        </div>
+
+                        {/* Stacking Card Showcases */}
+                        <ShowcaseStack>
+                            <div className="w-full">
+                                <GitHubShowcase />
+                            </div>
+                            <div className="w-full">
+                                <KaggleShowcase />
+                            </div>
+                            <div className="w-full">
+                                <WakaTimeShowcase />
+                            </div>
+                        </ShowcaseStack>
                     </div>
                     <AuditFunnel />
                 </div>
