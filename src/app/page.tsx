@@ -51,14 +51,22 @@ const HeroVisual = dynamic(() => import("@/components/sections/HeroVisual").then
 
 const MetricCTAHijack = () => {
     return (
-        <section className="relative bg-background dark:bg-black">
-            <StatsSection />
-            <div className="relative z-50 bg-background dark:bg-black shadow-[0_-20px_50px_rgba(0,0,0,0.5)] dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)]">
-                <div className="h-[15vh]" />
-                <CTASection />
-                <div className="h-10" />
-            </div>
-        </section>
+        <>
+            <StatsSection showOnly="top" />
+            <section className="relative">
+                {/* Layer 1: The Blog/Book Slider (Sticky) */}
+                <div className="sticky top-0 z-0 overflow-hidden">
+                    <StatsSection showOnly="bottom" />
+                </div>
+                
+                {/* Layer 2: The CTA Section (Slides Over) */}
+                <div className="relative z-20 bg-background dark:bg-black shadow-[0_-50px_150px_rgba(0,0,0,0.8)]">
+                    <div className="h-[10vh]" />
+                    <CTASection />
+                    <div className="h-20" />
+                </div>
+            </section>
+        </>
     );
 };
 

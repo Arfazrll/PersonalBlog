@@ -15,7 +15,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 
-export default function StatsSection({ scrollYProgress }: { scrollYProgress?: any }) {
+export default function StatsSection({ scrollYProgress, showOnly }: { scrollYProgress?: any, showOnly?: 'top' | 'bottom' }) {
     const [images, setImages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -66,40 +66,44 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
     return (
         <section className="relative bg-background overflow-visible flex flex-col items-center transition-colors duration-500">
             {/* Header for the Gallery Section */}
-            <div className="max-w-4xl mx-auto px-6 w-full pt-32 pb-16 text-center space-y-4">
-                <motion.h2
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-tight"
-                >
-                    The Digital Library
-                </motion.h2>
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                    className="text-muted-foreground/80 text-lg md:text-xl font-medium max-w-2xl mx-auto"
-                >
-                    A collection of technical manifestos and engineering blueprints exploring the frontiers of intelligent systems.
-                </motion.p>
-            </div>
+            {(showOnly === 'top' || !showOnly) && (
+                <>
+                    <div className="max-w-6xl mx-auto px-6 w-full pt-32 pb-16 text-center space-y-4">
+                        <motion.h2
+                            initial={{ opacity: 0, y: 15 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-tight"
+                        >
+                            Journal & Insights
+                        </motion.h2>
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2 }}
+                            className="text-muted-foreground/80 text-lg md:text-xl font-medium max-w-2xl mx-auto"
+                        >
+                            A curated collection of technical articles, engineering blueprints, and reflections on building intelligent systems.
+                        </motion.p>
+                    </div>
 
-            {/* Immersive Zoom Parallax Component */}
-            <div className="w-full">
-                <ZoomParallax images={images} />
-            </div>
+                    {/* Immersive Zoom Parallax Component */}
+                    <div className="w-full">
+                        <ZoomParallax images={images} />
+                    </div>
+                </>
+            )}
 
             {/* Book Showcase Integration */}
-            <div className="w-full max-w-7xl mx-auto px-6 py-32 space-y-20 relative">
+            {(showOnly === 'bottom' || !showOnly) && (
+            <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-16 pb-32 space-y-16 relative">
                 <div className="flex items-center justify-between border-b border-border/50 pb-8">
                     <div className="space-y-1">
                         <h3 className="text-2xl font-bold text-foreground flex items-center gap-3">
-                            <BookOpen className="w-6 h-6 text-[#FED954]" />
-                            Latest Manifestos
+                            Latest Stories
                         </h3>
-                        <p className="text-muted-foreground/60 font-medium uppercase tracking-widest text-xs">Knowledge Transfer • Architectural Insights</p>
+                        <p className="text-muted-foreground/60 font-medium uppercase tracking-widest text-xs">Articles • Insights • Technical Deep Dives</p>
                     </div>
                     <Link href="/blog" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/40 hover:text-foreground transition-colors group">
                         Browse Full Archive
@@ -109,7 +113,7 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
 
                 <div className="relative group/slider flex items-center justify-center">
                     {/* Navigation Buttons - Positioned relatively to the container */}
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 z-30 hidden lg:block">
+                    <div className="absolute left-0 top-[42%] -translate-y-1/2 z-30 hidden lg:block">
                         <button 
                             onClick={prevSlide}
                             className="p-4 rounded-full bg-muted/10 border border-border/50 text-foreground transition-all hover:bg-muted/20 hover:scale-110 active:scale-95"
@@ -118,7 +122,7 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                         </button>
                     </div>
                     
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 z-30 hidden lg:block">
+                    <div className="absolute right-0 top-[42%] -translate-y-1/2 z-30 hidden lg:block">
                         <button 
                             onClick={nextSlide}
                             className="p-4 rounded-full bg-muted/10 border border-border/50 text-foreground transition-all hover:bg-muted/20 hover:scale-110 active:scale-95"
@@ -128,7 +132,7 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                     </div>
 
                     {/* Mobile Navigation */}
-                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-30 flex justify-between px-2 lg:hidden">
+                    <div className="absolute inset-x-0 top-[42%] -translate-y-1/2 z-30 flex justify-between px-2 lg:hidden">
                         <button 
                             onClick={prevSlide}
                             className="p-3 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 text-foreground"
@@ -143,8 +147,8 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                         </button>
                     </div>
 
-                    <div className="overflow-visible w-full lg:max-w-5xl mx-auto px-4 md:px-12">
-                        <div className="flex gap-8 md:gap-16 justify-center py-20 min-h-[550px] items-start relative">
+                    <div className="overflow-visible w-full lg:max-w-[1400px] mx-auto px-4 md:px-12">
+                        <div className="flex gap-8 md:gap-24 justify-center py-20 min-h-[600px] items-center relative">
                             <AnimatePresence mode="popLayout" initial={false}>
                                 {getVisibleBlogs().map((blog, index) => (
                                     <motion.div
@@ -158,7 +162,7 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                                             stiffness: 260,
                                             damping: 26,
                                         }}
-                                        className="group relative w-[240px] md:w-[280px] flex-shrink-0"
+                                        className="group relative w-[240px] md:w-[320px] flex-shrink-0"
                                     >
                                         <Link href={`/blog/${blog.slug}`} className="block relative z-10 group/book">
                                             {/* Glow Effect - Inside Link for better hover detection */}
@@ -179,7 +183,7 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                                                 }
                                                 variant={index % 2 === 0 ? 'stripe' : 'simple'}
                                                 textured
-                                                width={{ sm: 200, md: 240, lg: 280 }}
+                                                width={{ sm: 200, md: 280, lg: 320 }}
                                             />
                                             
                                             <div className="mt-8 space-y-3 opacity-0 group-hover/book:opacity-100 transition-all duration-500 translate-y-4 group-hover/book:translate-y-0">
@@ -210,6 +214,7 @@ export default function StatsSection({ scrollYProgress }: { scrollYProgress?: an
                     </Link>
                 </div>
             </div>
-        </section>
+        )}
+    </section>
     );
 }
