@@ -430,7 +430,7 @@ const AuditFunnel = () => {
     }, []);
 
     return (
-        <div ref={sectionRef} className="relative overflow-hidden group min-h-[80vh] md:min-h-[120vh] flex items-center justify-center bg-background z-30 pb-20 md:pb-60">
+        <div ref={sectionRef} className="relative overflow-hidden group min-h-[80vh] md:min-h-[120vh] flex items-center justify-center bg-background z-30 pb-10 md:pb-32">
             <motion.div
                 className="flex flex-col items-center text-center py-20 md:py-40 space-y-12 md:space-y-16 relative z-10 pointer-events-none"
                 initial={{ opacity: 0 }}
@@ -599,7 +599,7 @@ export default function AboutSection() {
             </div>
 
             {/* 2. OVERLAY LAYER - Hijack Zone & Footer */}
-            <div className="relative pointer-events-none mt-[80vh] md:mt-[100vh]">
+            <div className="relative pointer-events-none mt-[20vh] md:mt-[20vh]">
                 {/* Content wrapper with background - rounded corners removed to allow animated border to control the shape */}
                 <div className="bg-background dark:bg-black transition-colors duration-500 pointer-events-auto relative">
 

@@ -577,3 +577,31 @@ html, body, * {
     margin: 0 !important;
     padding: 0 !important;
 }
+
+/* Book Component Tokens & Utilities */
+:root {
+  --ds-amber-600: #f6b14d;
+  --ds-gray-200: #ebebeb;
+  --ds-gray-1000: #171717;
+  --ds-gray-alpha-400: rgba(0, 0, 0, 0.08);
+  --ds-background-200: #fafafa;
+  --ds-book-bind: linear-gradient(90deg, rgba(0,0,0,0.05), transparent 50%, rgba(0,0,0,0.05));
+  --ds-shadow-book: 0 1px 1px 0 rgba(0, 0, 0, .02), 0 4px 8px -4px rgba(0, 0, 0, .1), 0 16px 24px -8px rgba(0, 0, 0, .03);
+  --ds-shadow-book-border: inset 0 1px 2px 0 rgba(255, 255, 255, .3);
+  --ds-book-gradient: linear-gradient(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1));
+}
+
+.dark {
+  --ds-amber-600: #e69d31;
+  --ds-gray-200: #1f1f1f;
+  --ds-gray-1000: #ededed;
+  --ds-gray-alpha-400: rgba(255, 255, 255, 0.14);
+  --ds-background-200: #000000;
+}
+
+.bg-background-200 { background: var(--ds-background-200); }
+.shadow-book { box-shadow: var(--ds-shadow-book); }
+.shadow-book-border { box-shadow: var(--ds-shadow-book-border); }
+.bg-book-gradient { background-image: var(--ds-book-gradient); }
+.book-rotate { transition: transform 0.5s ease-out; transform: rotateY(0deg); transform-style: preserve-3d; }
+.book-rotate:hover { transform: rotateY(-25deg); }

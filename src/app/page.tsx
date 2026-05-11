@@ -50,15 +50,10 @@ const HeroVisual = dynamic(() => import("@/components/sections/HeroVisual").then
 
 
 const MetricCTAHijack = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
     return (
-        <section ref={containerRef} className="relative bg-background dark:bg-black">
-            <div className="sticky top-0 h-screen w-full z-10 bg-background dark:bg-black overflow-hidden">
-                <StatsSection scrollYProgress={scrollYProgress} />
-            </div>
-            <div className="h-[150vh] pointer-events-none" />
-            <div className="relative z-50 bg-background dark:bg-black shadow-[0_-20px_50px_rgba(0,0,0,0.5)] dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)]" style={{ transform: 'translate3d(0,0,0)' }}>
+        <section className="relative bg-background dark:bg-black">
+            <StatsSection />
+            <div className="relative z-50 bg-background dark:bg-black shadow-[0_-20px_50px_rgba(0,0,0,0.5)] dark:shadow-[0_-50px_120px_rgba(0,0,0,0.9)]">
                 <div className="h-[15vh]" />
                 <CTASection />
                 <div className="h-10" />
