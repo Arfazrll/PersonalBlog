@@ -25,16 +25,26 @@ export default function StatsSection({ scrollYProgress, showOnly }: { scrollYPro
     const visibleCount = 3;
 
     useEffect(() => {
-        const internetImages = [
-            { src: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1280&q=80', alt: 'Architecture' },
-            { src: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1280&q=80', alt: 'Cityscape' },
-            { src: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=1280&q=80', alt: 'Abstract' },
-            { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1280&q=80', alt: 'Mountains' },
-            { src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1280&q=80', alt: 'Design' },
-            { src: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1280&q=80', alt: 'Ocean' },
-            { src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1280&q=80', alt: 'Forest' },
+        const galleryImages = [
+            { src: '/gallery/Foto Utama.jpeg', alt: 'Foto Utama' },
+            { src: '/gallery/FotoSC1.jpeg', alt: 'Foto SC1' },
+            { src: '/gallery/FotoSC2.jpeg', alt: 'Foto SC2' },
+            { src: '/gallery/FotoSC3.jpeg', alt: 'Foto SC3' },
+            { src: '/gallery/FotoSC4.jpeg', alt: 'Foto SC4' },
+            { src: '/gallery/FotoSC5.jpeg', alt: 'Foto SC5' },
+            { src: '/gallery/academicaffairsdivision1.jpg', alt: 'Academic Affairs' },
+            { src: '/gallery/computernetworkpracticumassistant2.jpg', alt: 'Computer Network' },
+            { src: '/gallery/dataentryassistant1.jpg', alt: 'Data Entry' },
+            { src: '/gallery/delegateaiesecfutureleaders20241.jpg', alt: 'AIESEC' },
+            { src: '/gallery/environmentalhygieneteam1.jpg', alt: 'Hygiene Team 1' },
+            { src: '/gallery/environmentalhygieneteam2.jpg', alt: 'Hygiene Team 2' },
+            { src: '/gallery/logisticsoperatorcampusexpo20242.jpg', alt: 'Logistics' },
+            { src: '/gallery/researchassistant1.jpg', alt: 'Research Assistant 1' },
+            { src: '/gallery/researchassistant2.jpg', alt: 'Research Assistant 2' },
         ];
-        setImages(internetImages);
+        // Shuffle images randomly
+        const shuffledImages = [...galleryImages].sort(() => 0.5 - Math.random());
+        setImages(shuffledImages);
         setLoading(false);
     }, []);
 
@@ -90,131 +100,139 @@ export default function StatsSection({ scrollYProgress, showOnly }: { scrollYPro
 
                     {/* Immersive Zoom Parallax Component */}
                     <div className="w-full">
-                        <ZoomParallax images={images} />
+                        <ZoomParallax images={images}>
+                            <Link 
+                                href="/gallery" 
+                                className="group flex items-center gap-3 px-6 py-3.5 bg-foreground text-background rounded-full font-bold uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-xl border border-border/10"
+                            >
+                                View Gallery
+                                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            </Link>
+                        </ZoomParallax>
                     </div>
                 </>
             )}
 
             {/* Book Showcase Integration */}
             {(showOnly === 'bottom' || !showOnly) && (
-            <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-16 pb-32 space-y-16 relative">
-                <div className="flex items-center justify-between border-b border-border/50 pb-8">
-                    <div className="space-y-1">
-                        <h3 className="text-2xl font-bold text-foreground flex items-center gap-3">
-                            Latest Stories
-                        </h3>
-                        <p className="text-muted-foreground/60 font-medium uppercase tracking-widest text-xs">Articles • Insights • Technical Deep Dives</p>
-                    </div>
-                    <Link href="/blog" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/40 hover:text-foreground transition-colors group">
-                        Browse Full Archive
-                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </Link>
-                </div>
-
-                <div className="relative group/slider flex items-center justify-center">
-                    {/* Navigation Buttons - Positioned relatively to the container */}
-                    <div className="absolute left-0 top-[42%] -translate-y-1/2 z-30 hidden lg:block">
-                        <button 
-                            onClick={prevSlide}
-                            className="p-4 rounded-full bg-muted/10 border border-border/50 text-foreground transition-all hover:bg-muted/20 hover:scale-110 active:scale-95"
-                        >
-                            <ChevronLeft className="w-6 h-6" />
-                        </button>
-                    </div>
-                    
-                    <div className="absolute right-0 top-[42%] -translate-y-1/2 z-30 hidden lg:block">
-                        <button 
-                            onClick={nextSlide}
-                            className="p-4 rounded-full bg-muted/10 border border-border/50 text-foreground transition-all hover:bg-muted/20 hover:scale-110 active:scale-95"
-                        >
-                            <ChevronRight className="w-6 h-6" />
-                        </button>
+                <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-16 pb-32 space-y-16 relative">
+                    <div className="flex items-center justify-between border-b border-border/50 pb-8">
+                        <div className="space-y-1">
+                            <h3 className="text-2xl font-bold text-foreground flex items-center gap-3">
+                                Latest Stories
+                            </h3>
+                            <p className="text-muted-foreground/60 font-medium uppercase tracking-widest text-xs">Articles • Insights • Technical Deep Dives</p>
+                        </div>
+                        <Link href="/blog" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/40 hover:text-foreground transition-colors group">
+                            Browse Full Archive
+                            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        </Link>
                     </div>
 
-                    {/* Mobile Navigation */}
-                    <div className="absolute inset-x-0 top-[42%] -translate-y-1/2 z-30 flex justify-between px-2 lg:hidden">
-                        <button 
-                            onClick={prevSlide}
-                            className="p-3 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 text-foreground"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button 
-                            onClick={nextSlide}
-                            className="p-3 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 text-foreground"
-                        >
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
-                    </div>
+                    <div className="relative group/slider flex items-center justify-center">
+                        {/* Navigation Buttons - Positioned relatively to the container */}
+                        <div className="absolute left-0 top-[35%] -translate-y-1/2 z-30 hidden lg:block">
+                            <button
+                                onClick={prevSlide}
+                                className="p-4 rounded-full bg-muted/10 border border-border/50 text-foreground transition-all hover:bg-muted/20 hover:scale-110 active:scale-95"
+                            >
+                                <ChevronLeft className="w-6 h-6" />
+                            </button>
+                        </div>
 
-                    <div className="overflow-visible w-full lg:max-w-[1400px] mx-auto px-4 md:px-12">
-                        <div className="flex gap-8 md:gap-24 justify-center py-20 min-h-[600px] items-center relative">
-                            <AnimatePresence mode="popLayout" initial={false}>
-                                {getVisibleBlogs().map((blog, index) => (
-                                    <motion.div
-                                        key={blog.id}
-                                        layout
-                                        initial={{ opacity: 0, x: direction * 50, scale: 0.9, filter: "blur(10px)" }}
-                                        animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
-                                        exit={{ opacity: 0, x: direction * -50, scale: 0.9, filter: "blur(10px)" }}
-                                        transition={{ 
-                                            type: "spring",
-                                            stiffness: 260,
-                                            damping: 26,
-                                        }}
-                                        className="group relative w-[240px] md:w-[320px] flex-shrink-0"
-                                    >
-                                        <Link href={`/blog/${blog.slug}`} className="block relative z-10 group/book">
-                                            {/* Glow Effect - Inside Link for better hover detection */}
-                                            <div 
-                                                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] aspect-square -z-10 blur-[80px] opacity-0 group-hover/book:opacity-70 group-hover/book:scale-110 transition-all duration-700 rounded-full pointer-events-none"
-                                                style={{ 
-                                                    background: `radial-gradient(circle, ${CATEGORY_COLORS[blog.category]} 0%, transparent 70%)`,
-                                                }}
-                                            />
-                                            
-                                            <Book 
-                                                title={blog.title}
-                                                color={CATEGORY_COLORS[blog.category] || '#222222'}
-                                                textColor={
-                                                    (index % 2 !== 0 && blog.category === 'applied-ai') 
-                                                    ? '#FFFFFF' 
-                                                    : 'var(--ds-gray-1000)'
-                                                }
-                                                variant={index % 2 === 0 ? 'stripe' : 'simple'}
-                                                textured
-                                                width={{ sm: 200, md: 280, lg: 320 }}
-                                            />
-                                            
-                                            <div className="mt-8 space-y-3 opacity-0 group-hover/book:opacity-100 transition-all duration-500 translate-y-4 group-hover/book:translate-y-0">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-muted/20 border border-border/50 text-foreground/60">
-                                                        {blog.category.replace(/-/g, ' ')}
-                                                    </span>
-                                                    <span className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest">
-                                                        {new Date(blog.date).getFullYear()}
-                                                    </span>
+                        <div className="absolute right-0 top-[35%] -translate-y-1/2 z-30 hidden lg:block">
+                            <button
+                                onClick={nextSlide}
+                                className="p-4 rounded-full bg-muted/10 border border-border/50 text-foreground transition-all hover:bg-muted/20 hover:scale-110 active:scale-95"
+                            >
+                                <ChevronRight className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        {/* Mobile Navigation */}
+                        <div className="absolute inset-x-0 top-[35%] -translate-y-1/2 z-30 flex justify-between px-2 lg:hidden">
+                            <button
+                                onClick={prevSlide}
+                                className="p-3 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 text-foreground"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={nextSlide}
+                                className="p-3 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 text-foreground"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="overflow-visible w-full lg:max-w-[1400px] mx-auto px-4 md:px-12">
+                            <div className="flex gap-8 md:gap-24 justify-center pt-12 pb-32 min-h-[600px] items-start relative">
+                                <AnimatePresence mode="popLayout" initial={false}>
+                                    {getVisibleBlogs().map((blog, index) => (
+                                        <motion.div
+                                            key={blog.id}
+                                            layout
+                                            initial={{ opacity: 0, x: direction * 50, scale: 0.9, filter: "blur(10px)" }}
+                                            animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+                                            exit={{ opacity: 0, x: direction * -50, scale: 0.9, filter: "blur(10px)" }}
+                                            transition={{
+                                                type: "spring",
+                                                stiffness: 260,
+                                                damping: 26,
+                                            }}
+                                            className="group relative w-[200px] md:w-[260px] flex-shrink-0"
+                                        >
+                                            <Link href={`/blog/${blog.slug}`} className="block relative z-10 group/book">
+                                                {/* Glow Effect - Inside Link for better hover detection */}
+                                                <div
+                                                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] aspect-square -z-10 blur-[80px] opacity-0 group-hover/book:opacity-70 group-hover/book:scale-110 transition-all duration-700 rounded-full pointer-events-none"
+                                                    style={{
+                                                        background: `radial-gradient(circle, ${CATEGORY_COLORS[blog.category]} 0%, transparent 70%)`,
+                                                    }}
+                                                />
+
+                                                <Book
+                                                    title={blog.title}
+                                                    color={CATEGORY_COLORS[blog.category] || '#222222'}
+                                                    textColor={
+                                                        (index % 2 !== 0 && blog.category === 'applied-ai')
+                                                            ? '#FFFFFF'
+                                                            : 'var(--ds-gray-1000)'
+                                                    }
+                                                    variant={index % 2 === 0 ? 'stripe' : 'simple'}
+                                                    textured
+                                                    width={{ sm: 160, md: 220, lg: 260 }}
+                                                />
+
+                                                <div className="mt-8 space-y-3 opacity-0 group-hover/book:opacity-100 transition-all duration-500 translate-y-4 group-hover/book:translate-y-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-muted/20 border border-border/50 text-foreground/60">
+                                                            {blog.category.replace(/-/g, ' ')}
+                                                        </span>
+                                                        <span className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest">
+                                                            {new Date(blog.date).getFullYear()}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-muted-foreground line-clamp-2 font-medium leading-relaxed">
+                                                        {blog.excerpt}
+                                                    </p>
                                                 </div>
-                                                <p className="text-sm text-muted-foreground line-clamp-2 font-medium leading-relaxed">
-                                                    {blog.excerpt}
-                                                </p>
-                                            </div>
-                                        </Link>
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
+                                            </Link>
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            </div>
                         </div>
                     </div>
+
+                    <div className="flex justify-center md:hidden pt-8">
+                        <Link href="/blog" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/40 hover:text-foreground transition-colors group">
+                            Browse Full Archive
+                            <ArrowUpRight className="w-4 h-4" />
+                        </Link>
+                    </div>
                 </div>
-                
-                <div className="flex justify-center md:hidden pt-8">
-                    <Link href="/blog" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/40 hover:text-foreground transition-colors group">
-                        Browse Full Archive
-                        <ArrowUpRight className="w-4 h-4" />
-                    </Link>
-                </div>
-            </div>
-        )}
-    </section>
+            )}
+        </section>
     );
 }

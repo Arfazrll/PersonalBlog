@@ -629,7 +629,7 @@ export default function AboutSection() {
                         </motion.div>
 
                         {/* Certificate Showcase Section */}
-                        <div className="w-full mt-0">
+                        <div className="w-full mt-32 md:mt-48">
                             <CertificateShowcase />
                         </div>
 
