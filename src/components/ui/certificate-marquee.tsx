@@ -26,16 +26,16 @@ function Marquee({
   return (
     <div
       className={cn(
-        "flex overflow-hidden [--gap:2rem] [gap:var(--gap)] w-full py-4 relative",
+        "flex overflow-hidden [--gap:2rem] w-full py-4 relative",
         className
       )}
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
       <motion.div
-        className="flex shrink-0 items-center gap-[var(--gap)] min-w-full"
+        className="flex shrink-0 w-max"
         animate={{
-          x: reverse ? [ "-100%", "0%"] : ["0%", "-100%"],
+          x: reverse ? ["-50%", "0%"] : ["0%", "-50%"],
         }}
         transition={{
           duration: speed,
@@ -46,26 +46,19 @@ function Marquee({
             animationPlayState: isPaused ? "paused" : "running"
         }}
       >
-        {children}
-        {children} {/* Clone for seamless loop */}
-      </motion.div>
-      <motion.div
-        className="flex shrink-0 items-center gap-[var(--gap)] min-w-full"
-        animate={{
-          x: reverse ? [ "-100%", "0%"] : ["0%", "-100%"],
-        }}
-        transition={{
-          duration: speed,
-          ease: "linear",
-          repeat: Infinity,
-        }}
-        style={{
-            animationPlayState: isPaused ? "paused" : "running"
-        }}
-        aria-hidden="true"
-      >
-        {children}
-        {children} {/* Clone for seamless loop */}
+        {/* Render 4 copies so even on ultrawide screens it never runs out of content, moving by -50% shifts exactly 2 copies seamlessly */}
+        <div className="flex shrink-0 items-center gap-[var(--gap)] pr-[var(--gap)]">
+          {children}
+        </div>
+        <div className="flex shrink-0 items-center gap-[var(--gap)] pr-[var(--gap)]" aria-hidden="true">
+          {children}
+        </div>
+        <div className="flex shrink-0 items-center gap-[var(--gap)] pr-[var(--gap)]" aria-hidden="true">
+          {children}
+        </div>
+        <div className="flex shrink-0 items-center gap-[var(--gap)] pr-[var(--gap)]" aria-hidden="true">
+          {children}
+        </div>
       </motion.div>
     </div>
   );
@@ -142,80 +135,80 @@ export function CertificateShowcase() {
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10" />
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] -z-10" />
 
-      <div className="container mx-auto px-6 lg:px-12 relative z-10 max-w-[1750px]">
-        <div className="flex flex-col lg:flex-row items-stretch justify-between gap-12 lg:gap-20">
-          {/* Left Content - Now height-matched to marquee */}
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="flex flex-col justify-center gap-12 py-4 w-full lg:w-[450px] xl:w-[550px] min-h-[450px] md:min-h-[550px]"
-          >
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h2 className="text-sm font-bold tracking-[0.2em] text-primary/60 uppercase">
-                  Certifications & Achievements
-                </h2>
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight">
-                  Validating <span className="text-shiny">Excellence</span> through Global Standards.
-                </h3>
-                <p className="text-lg text-muted-foreground max-w-md leading-relaxed">
-                  A collection of my professional certifications in AI, Web Development, and Cloud Engineering from industry leaders.
-                </p>
-              </div>
+      {/* Main Container */}
+      <div className="container mx-auto px-4 md:px-12 lg:px-24 relative z-10 max-w-[1750px]">
+        {/* Top Text Content */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col items-center text-center justify-center gap-8 py-4 w-full mb-16"
+        >
+          <div className="space-y-6 w-full">
+            <div className="space-y-4">
+              <h2 className="text-sm font-bold tracking-[0.2em] text-primary/60 uppercase">
+                Certifications & Achievements
+              </h2>
+              <h3 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] tracking-tight max-w-none">
+                Validating <span className="text-shiny">Excellence</span> through Global Standards.
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-none leading-relaxed lg:whitespace-nowrap">
+                A collection of my professional certifications in AI, Web Development, and Cloud Engineering from industry leaders.
+              </p>
             </div>
-            
-            <div className="flex flex-wrap gap-4">
-              <ScrambleButton href="http://localhost:3000/achievements" />
-            </div>
-          </motion.div>
+          </div>
+          
+          <div className="flex justify-center">
+            <ScrambleButton href="/achievements" />
+          </div>
+        </motion.div>
 
-          {/* Right Marquee Grid */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="space-y-6 overflow-hidden w-full lg:w-[750px] xl:w-[950px] perspective-1000"
-          >
-            <div className="relative group/marquee">
-                {/* Fade Overlays */}
-                <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-20 pointer-events-none" />
-                <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-20 pointer-events-none" />
-                
-                <Marquee speed={35} pauseOnHover className="[--gap:2rem]">
-                  {certificatesRow1.map((src, idx) => (
-                    <div
-                      key={idx}
-                      className="relative w-72 h-52 md:w-96 md:h-64 rounded-2xl overflow-hidden flex-shrink-0 glass-card border-primary/10 group-hover:scale-[0.98] transition-transform duration-500"
-                    >
-                      <img
-                        src={src}
-                        alt={`Certificate ${idx + 1}`}
-                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110 hover:scale-100"
-                      />
-                    </div>
-                  ))}
-                </Marquee>
+        {/* Bottom Marquee Grid - Inside Container */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="w-full relative overflow-hidden perspective-1000"
+          style={{
+            maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+            WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+          }}
+        >
+          <div className="relative group/marquee flex flex-col gap-6">
+              
+              <Marquee speed={35} pauseOnHover className="[--gap:2rem]">
+                {certificatesRow1.map((src, idx) => (
+                  <div
+                    key={idx}
+                    className="relative w-72 h-52 md:w-[450px] md:h-[300px] rounded-2xl overflow-hidden flex-shrink-0 glass-card border-primary/10 group-hover:scale-[0.98] transition-transform duration-500"
+                  >
+                    <img
+                      src={src}
+                      alt={`Certificate ${idx + 1}`}
+                      className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110 hover:scale-100"
+                    />
+                  </div>
+                ))}
+              </Marquee>
 
-                <Marquee speed={40} reverse pauseOnHover className="[--gap:2rem]">
-                  {certificatesRow2.map((src, idx) => (
-                    <div
-                      key={idx}
-                      className="relative w-72 h-52 md:w-96 md:h-64 rounded-2xl overflow-hidden flex-shrink-0 glass-card border-primary/10 group-hover:scale-[0.98] transition-transform duration-500"
-                    >
-                      <img
-                        src={src}
-                        alt={`Certificate ${idx + 6}`}
-                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110 hover:scale-100"
-                      />
-                    </div>
-                  ))}
-                </Marquee>
-            </div>
-          </motion.div>
-        </div>
+              <Marquee speed={40} reverse pauseOnHover className="[--gap:2rem]">
+                {certificatesRow2.map((src, idx) => (
+                  <div
+                    key={idx}
+                    className="relative w-72 h-52 md:w-[450px] md:h-[300px] rounded-2xl overflow-hidden flex-shrink-0 glass-card border-primary/10 group-hover:scale-[0.98] transition-transform duration-500"
+                  >
+                    <img
+                      src={src}
+                      alt={`Certificate ${idx + 6}`}
+                      className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110 hover:scale-100"
+                    />
+                  </div>
+                ))}
+              </Marquee>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
