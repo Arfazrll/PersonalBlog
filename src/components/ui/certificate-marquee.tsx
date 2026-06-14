@@ -102,10 +102,12 @@ export function CertificateShowcase() {
     offset: ["start end", "end start"],
   });
 
+  // Extremely soft spring to act as a low-pass filter. 
+  // This absorbs ALL micro-vibrations and judders from Framer Motion's scroll calculations.
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    mass: 0.5,
+    stiffness: 20,
+    damping: 15,
+    mass: 0.2,
     restDelta: 0.001
   });
 
