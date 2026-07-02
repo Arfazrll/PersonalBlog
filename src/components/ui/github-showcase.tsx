@@ -19,7 +19,7 @@ import {
   GitFork
 } from 'lucide-react';
 import Link from 'next/link';
-import { GitHubCalendar } from 'react-github-calendar';
+import { GithubCalendar } from './retro-space-shooter-git-hub-calendar';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, animate } from 'framer-motion';
 import { useIsInStack } from './showcase-stack';
@@ -204,7 +204,7 @@ export const GitHubShowcase = () => {
         const validEvents = Array.isArray(eventsData) ? eventsData : [];
         const parsedActivity = validEvents
           .filter((e: any) => e.type === "PushEvent" || e.type === "PullRequestEvent" || e.type === "CreateEvent")
-          .slice(0, 8)
+          .slice(0, 15)
           .map((e: any) => {
             const typeMap: Record<string, "Commit" | "Repo" | "PR" | "Other"> = {
               "PushEvent": "Commit",
@@ -287,6 +287,12 @@ export const GitHubShowcase = () => {
         .github-calendar-wrapper legend { display: none !important; }
         .achievements-grid { overflow: hidden !important; scrollbar-width: none !important; }
         .achievements-grid::-webkit-scrollbar { display: none !important; }
+
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(150, 150, 150, 0.2) transparent; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.2); border-radius: 4px; }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.4); }
       `}} />
 
       <motion.div
@@ -407,53 +413,66 @@ export const GitHubShowcase = () => {
                     <div className="relative z-10 flex flex-col h-full justify-between gap-8">
                       <div className="flex flex-col items-start gap-2">
                         <p className="text-black/30 dark:text-white/20 text-[10px] font-black uppercase tracking-widest ml-4">Yearly Contributions</p>
-                        <h3 className="bg-[#39d353] text-black px-8 py-3 rounded-full text-xl font-black -rotate-1 shadow-lg w-fit">Activity Heatmap</h3>
+                        <motion.h3 
+                          whileHover={{ scale: 1.1, rotate: 0 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="bg-[#39d353] text-black px-8 py-3 rounded-full text-xl font-black -rotate-1 shadow-lg hover:shadow-[#39d353]/50 hover:shadow-2xl transition-all w-fit cursor-pointer"
+                        >
+                          Activity Heatmap
+                        </motion.h3>
                       </div>
                       <div className="w-full overflow-x-auto py-4 scrollbar-hide relative github-calendar-wrapper">
-                        <GitHubCalendar username={GITHUB_USER} blockSize={14} blockMargin={6} fontSize={14} theme={githubTheme} />
+                        <GithubCalendar username={GITHUB_USER} cellSize={15} cellGap={4} />
                       </div>
-                      <div className="flex justify-between items-center opacity-60 text-[10px] font-bold uppercase tracking-[0.2em] border-t border-white/5 pt-4">
-                        <span className="text-black/50 dark:text-white/50">Verified contributions across the network</span>
-                        <div className="flex gap-1.5 items-center">
-                          <span className="text-black/30 dark:text-white/30">Less</span>
-                          <div className="flex gap-1">
-                            {[0, 1, 2, 3, 4].map(i => (
-                              <div 
-                                key={i} 
-                                className="w-3.5 h-3.5 rounded-sm border border-black/5 dark:border-white/5" 
-                                style={{ 
-                                  backgroundColor: typeof window !== 'undefined' && document.documentElement.classList.contains('dark') 
-                                    ? githubTheme.dark[i] 
-                                    : githubTheme.light[i] 
-                                }} 
-                              />
-                            ))}
-                          </div>
-                          <span className="text-black/30 dark:text-white/30">More</span>
-                        </div>
-                      </div>
+
                     </div>
                   </div>
 
-                  {/* 2. Stack Mastery */}
-                  <div className="relative bg-[#F8F8F8] dark:bg-[#111111] rounded-[2rem] p-8 border border-border/10">
-                    <div className="relative z-10 flex flex-col h-full justify-between gap-6">
-                      <div className="flex flex-col items-center gap-2">
-                        <p className="text-black/30 dark:text-white/20 text-[10px] font-black uppercase tracking-widest">Technical Proficiency</p>
-                        <h3 className="bg-white text-black px-10 py-3 rounded-full text-xl font-black rotate-2 shadow-xl">Stack Mastery</h3>
-                      </div>
-                      <div className="space-y-3 pt-4">
-                        {data.topLanguages.slice(0, 5).map((lang, idx) => (
-                          <div key={idx} className="space-y-1">
-                            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-tight">
-                              <span>{lang.name}</span>
-                              <span className="opacity-50">{Math.round(lang.percent)}%</span>
-                            </div>
-                            <div className="h-1.5 w-full bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
-                              <motion.div initial={{ width: 0 }} animate={{ width: `${lang.percent}%` }} transition={{ duration: 1, delay: idx * 0.1 }} className="h-full rounded-full" style={{ backgroundColor: lang.color || '#39d353' }} />
-                            </div>
+                  {/* 2. Highlight Features (Badges + Stack Mastery) */}
+                  <div className="relative bg-[#F8F8F8] dark:bg-[#111111] rounded-[2rem] p-6 lg:p-8 border border-border/10 flex flex-col h-full">
+                    <div className="flex flex-col items-center gap-2 shrink-0 mb-6">
+                      <motion.h3 
+                        whileHover={{ scale: 1.1, rotate: 0 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="bg-white text-black px-10 py-3 rounded-full text-xl font-black rotate-2 shadow-xl hover:shadow-white/50 hover:shadow-2xl transition-all cursor-pointer"
+                      >
+                        Highlight Feature
+                      </motion.h3>
+                    </div>
+
+                    <div className="relative flex-1 min-h-[200px]">
+                      <div className="absolute inset-0 flex flex-col gap-8 overflow-y-auto pr-2 custom-scrollbar">
+                        {/* Achievements Badges */}
+                        <div className="flex flex-col items-center shrink-0 pt-2 w-full">
+                          <div className="grid grid-cols-3 gap-x-8 gap-y-6 w-full px-6">
+                            {[
+                              { id: "starstruck", x: 3 }, { id: "pull-shark", x: 2 },
+                              { id: "arctic-code-vault-contributor", x: 1 }, { id: "pair-extraordinaire", x: 1 },
+                              { id: "quickdraw", x: 1 }, { id: "yolo", x: 1 }
+                            ].map((badge, i) => (
+                              <motion.div key={i} whileHover={{ scale: 1.3, rotate: -10 }} className="relative flex justify-center w-full">
+                                <img src={`https://github.githubassets.com/images/modules/profile/achievements/${badge.id}-default.png`} alt={badge.id} className="w-16 h-16" />
+                              </motion.div>
+                            ))}
                           </div>
-                        ))}
+                        </div>
+
+                        {/* Stack Mastery (no title) */}
+                        <div className="flex flex-col gap-4 shrink-0 pb-4">
+                          <div className="space-y-3">
+                            {data.topLanguages.slice(0, 5).map((lang, idx) => (
+                              <div key={idx} className="space-y-1">
+                                <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-tight">
+                                  <span>{lang.name}</span>
+                                  <span className="opacity-50">{Math.round(lang.percent)}%</span>
+                                </div>
+                                <div className="h-1.5 w-full bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
+                                  <motion.div initial={{ width: 0 }} animate={{ width: `${lang.percent}%` }} transition={{ duration: 1, delay: idx * 0.1 }} className="h-full rounded-full" style={{ backgroundColor: lang.color || '#39d353' }} />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -462,7 +481,13 @@ export const GitHubShowcase = () => {
                   <div className="lg:col-span-2 relative bg-[#F8F8F8] dark:bg-[#111111] rounded-[2rem] p-8 border border-border/10">
                     <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                       <div className="flex flex-col items-start gap-2">
-                        <h3 className="bg-white text-black px-10 py-3 rounded-full text-xl font-black -rotate-1 shadow-xl">Pinned Repositories</h3>
+                        <motion.h3 
+                          whileHover={{ scale: 1.1, rotate: 0 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="bg-white text-black px-10 py-3 rounded-full text-xl font-black -rotate-1 shadow-xl hover:shadow-white/50 hover:shadow-2xl transition-all cursor-pointer"
+                        >
+                          Pinned Repositories
+                        </motion.h3>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {PINNED_REPOS.map((repo, idx) => (
@@ -483,22 +508,45 @@ export const GitHubShowcase = () => {
                     </div>
                   </div>
 
-                  {/* 4. Achievements */}
-                  <div className="relative bg-[#F8F8F8] dark:bg-[#111111] rounded-[2rem] p-8 border border-border/10">
-                    <div className="relative z-10 flex flex-col h-full items-center justify-center gap-8">
-                      <h3 className="bg-black dark:bg-white text-white dark:text-black px-10 py-3 rounded-full text-xl font-black shadow-xl">Achievements</h3>
-                      <div className="flex flex-wrap justify-center gap-4">
-                        {[
-                          { id: "starstruck", x: 3 }, { id: "pull-shark", x: 2 },
-                          { id: "arctic-code-vault-contributor", x: 1 }, { id: "pair-extraordinaire", x: 1 },
-                          { id: "quickdraw", x: 1 }, { id: "yolo", x: 1 }
-                        ].map((badge, i) => (
-                          <motion.div key={i} whileHover={{ scale: 1.3, rotate: -10 }} className="relative">
-                            <img src={`https://github.githubassets.com/images/modules/profile/achievements/${badge.id}-default.png`} alt={badge.id} className="w-14 h-14" />
-                          </motion.div>
+                  {/* 4. Commit History */}
+                  <div className="relative bg-[#F8F8F8] dark:bg-[#111111] rounded-[2rem] p-6 lg:p-8 border border-border/10 flex flex-col h-full">
+                    <div className="flex flex-col items-start gap-2 mb-6 shrink-0">
+                      <p className="text-black/30 dark:text-white/20 text-[10px] font-black uppercase tracking-widest ml-2">Realtime Activity</p>
+                      <motion.h3 
+                        whileHover={{ scale: 1.1, rotate: 0 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="bg-[#39d353] text-black px-8 py-3 rounded-full text-xl font-black rotate-1 shadow-lg hover:shadow-[#39d353]/50 hover:shadow-2xl transition-all w-fit cursor-pointer"
+                      >
+                        Commit History
+                      </motion.h3>
+                    </div>
+                    
+                    <div className="relative flex-1 min-h-[200px]">
+                      <div className="absolute inset-0 flex flex-col gap-3 overflow-y-auto pr-2 custom-scrollbar">
+                        {data.activity.length === 0 ? (
+                           <div className="text-sm opacity-50 text-center py-4">No recent activity</div>
+                        ) : data.activity.map((act, i) => (
+                          <div key={i} className="flex flex-col gap-1.5 p-4 rounded-xl bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 hover:border-[#39d353]/50 transition-colors shrink-0">
+                            <div className="flex items-center justify-between text-xs font-bold">
+                              <span className="flex items-center gap-1.5 text-[#39d353]">
+                                {act.type === 'Commit' && <GitCommit size={14} />}
+                                {act.type === 'PR' && <GitPullRequest size={14} />}
+                                {act.type === 'Repo' && <BookOpen size={14} />}
+                                {act.type === 'Other' && <PlusCircle size={14} />}
+                                {act.repo}
+                              </span>
+                              <span className="opacity-40 text-[10px] whitespace-nowrap">{act.time}</span>
+                            </div>
+                            <p className="text-xs font-medium opacity-70 line-clamp-2 leading-relaxed">{act.msg}</p>
+                            {act.stats && (
+                              <div className="flex items-center gap-3 text-[10px] font-bold mt-1">
+                                <span className="text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded">+{act.stats.add}</span>
+                                <span className="text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded">-{act.stats.del}</span>
+                              </div>
+                            )}
+                          </div>
                         ))}
                       </div>
-                      <p className="text-[10px] font-black uppercase text-center opacity-20 tracking-widest">Verified Milestones</p>
                     </div>
                   </div>
                 </div>

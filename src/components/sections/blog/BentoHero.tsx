@@ -131,6 +131,7 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
                                     src={currentPost.image}
                                     alt={currentPost.title}
                                     fill
+                                    sizes="(max-width: 1024px) 100vw, 800px"
                                     className="object-cover opacity-60 grayscale-[30%] group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />

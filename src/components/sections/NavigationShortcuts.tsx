@@ -159,6 +159,7 @@ export const NavigationShortcuts = () => {
                                         src={hoveredImage || ''}
                                         alt="Section Preview"
                                         fill
+                                        sizes="100vw"
                                         className="object-cover grayscale contrast-125 brightness-75 scale-110"
                                         priority
                                     />

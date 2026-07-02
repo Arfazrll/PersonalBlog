@@ -110,6 +110,7 @@ export default function FocusGrid() {
                                         src={selectedItem.url}
                                         alt={selectedItem.title}
                                         fill
+                                        sizes="(max-width: 1024px) 100vw, 66vw"
                                         className="object-contain"
                                         priority
                                     />

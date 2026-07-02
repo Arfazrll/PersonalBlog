@@ -93,6 +93,7 @@ export const GalleryStack = ({ images }: GalleryStackProps) => {
                                     src={img}
                                     alt={`Archive ${index}`}
                                     fill
+                                    sizes="150px"
                                     className={cn(
                                         "object-cover transition-all duration-700",
                                         isHovered ? "grayscale-0 scale-110 blur-0" : "grayscale-[0.8] scale-100 blur-[1px]"

@@ -172,7 +172,7 @@ function OrbitalNode({ node, isHovered, onHover, onLeave }: {
                                     {/* Image Visualization Area */}
                                     <div className="aspect-video relative rounded-xl bg-neutral-900/50 dark:bg-neutral-200/50 overflow-hidden border border-white/5 dark:border-black/5">
                                         {node.imageUrl ? (
-                                            <Image src={node.imageUrl} alt={node.label} fill className="object-cover" />
+                                            <Image src={node.imageUrl} alt={node.label} fill sizes="(max-width: 768px) 50px, 100px" className="object-cover" />
                                         ) : (
                                             <div className="absolute inset-0 flex items-center justify-center text-[10px] uppercase tracking-widest text-white/20 dark:text-black/20 font-mono">
                                                 Visualization Area

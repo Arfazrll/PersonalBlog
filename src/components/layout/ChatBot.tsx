@@ -12,6 +12,8 @@ import {
     AlertCircle,
     RotateCcw,
     ChevronDown,
+    Maximize2,
+    Minimize2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { portfolioData } from "@/data/portfolio";
@@ -269,22 +271,45 @@ function TypingIndicator() {
 }
 
 // ─── ChatWindow ───────────────────────────────────────────────────────────────
-function ChatWindow({ onClose }: { onClose: () => void }) {
+function ChatWindow({ onClose, origin }: { onClose: () => void, origin?: {x: number, y: number} | null }) {
     const t = useTranslations("chatbot");
     const locale = useLocale();
 
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: generateId(),
-            role: "assistant",
-            content: t("greeting", { name: portfolioData.personal.name }),
-            timestamp: new Date(),
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>(() => {
+        if (typeof window !== "undefined") {
+            try {
+                const saved = sessionStorage.getItem("portfolio-chat-messages");
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    return parsed.map((m: any) => ({
+                        ...m,
+                        timestamp: new Date(m.timestamp)
+                    }));
+                }
+            } catch (e) {
+                // ignore parsing errors
+            }
+        }
+        return [
+            {
+                id: generateId(),
+                role: "assistant",
+                content: t("greeting", { name: portfolioData.personal.name }),
+                timestamp: new Date(),
+            },
+        ];
+    });
+
+    useEffect(() => {
+        if (messages.length > 0) {
+            sessionStorage.setItem("portfolio-chat-messages", JSON.stringify(messages));
+        }
+    }, [messages]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showScrollBtn, setShowScrollBtn] = useState(false);
     const [lastUserMessage, setLastUserMessage] = useState<string | null>(null);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -445,22 +470,32 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
     const showSuggestions = messages.length <= 1;
 
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 16 }}
-            transition={{ type: "spring", damping: 24, stiffness: 320 }}
-            className={cn(
-                "fixed z-50 flex flex-col",
-                "bottom-24 right-4 md:right-16",
-                "w-[calc(100vw-2rem)] sm:w-[380px]",
-                "h-[520px] max-h-[80vh]",
-                "rounded-2xl shadow-2xl overflow-hidden",
-                "bg-background border border-foreground/10",
-                "backdrop-blur-xl"
-            )}
-            style={{ maxWidth: "420px" }}
-        >
+        <>
+            {/* Invisible backdrop for click-outside to close */}
+            <div 
+                className="fixed inset-0 z-40" 
+                onClick={onClose}
+                aria-hidden="true"
+            />
+            <motion.div
+                initial={origin ? { opacity: 0, scale: 0, x: "-50%", y: "-50%" } : { opacity: 0, scale: 0.92, y: 16 }}
+                animate={origin ? { opacity: 1, scale: 1, x: "-50%", y: "-50%" } : { opacity: 1, scale: 1, y: 0 }}
+                exit={origin ? { opacity: 0, scale: 0, x: "-50%", y: "-50%" } : { opacity: 0, scale: 0.92, y: 16 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className={cn(
+                    "fixed z-50 flex flex-col",
+                    origin 
+                        ? "top-1/2 left-1/2"
+                        : (isExpanded ? "bottom-4 sm:bottom-12 right-4 sm:right-12" : "bottom-24 right-4 md:right-16"),
+                    isExpanded 
+                        ? "w-[calc(100vw-2rem)] sm:w-[600px] md:w-[700px] lg:w-[800px] h-[calc(100vh-2rem)] sm:h-[80vh] max-h-[800px]"
+                        : "w-[calc(100vw-2rem)] sm:w-[420px] h-[600px] max-h-[85vh]",
+                    "rounded-2xl shadow-2xl overflow-hidden",
+                    "bg-background border border-foreground/10",
+                    "backdrop-blur-xl transition-all duration-300 ease-in-out"
+                )}
+                style={origin ? { transformOrigin: "center" } : { maxWidth: isExpanded ? "800px" : "420px", transformOrigin: "bottom right" }}
+            >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-foreground/8 bg-foreground/3 flex-shrink-0">
                 <div className="flex items-center gap-2.5">
@@ -477,13 +512,22 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
                         </p>
                     </div>
                 </div>
-                <button
-                    onClick={onClose}
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-foreground/50 hover:text-foreground hover:bg-foreground/8 transition-colors"
-                    aria-label={t("close")}
-                >
-                    <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1">
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-foreground/50 hover:text-foreground hover:bg-foreground/8 transition-colors"
+                        aria-label={isExpanded ? "Collapse" : "Expand"}
+                    >
+                        {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                    </button>
+                    <button
+                        onClick={onClose}
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-foreground/50 hover:text-foreground hover:bg-foreground/8 transition-colors"
+                        aria-label={t("close")}
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
 
             {/* Messages area */}
@@ -599,6 +643,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
                 </p>
             </div>
         </motion.div>
+        </>
     );
 }
 
@@ -606,8 +651,10 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
 export function ChatBot({ headless = false }: { headless?: boolean }) {
     const [isOpen, setIsOpen] = useState(false);
     const [hasNewMsg, setHasNewMsg] = useState(false);
+    const [origin, setOrigin] = useState<{x: number, y: number} | null>(null);
 
     const toggle = useCallback(() => {
+        setOrigin(null);
         setIsOpen((prev) => !prev);
         setHasNewMsg(false);
     }, []);
@@ -625,7 +672,15 @@ export function ChatBot({ headless = false }: { headless?: boolean }) {
 
     // Listen for external toggle events (e.g. from Footer)
     useEffect(() => {
-        const handleToggle = () => setIsOpen(true);
+        const handleToggle = (e: Event) => {
+            const customEvent = e as CustomEvent;
+            if (customEvent.detail && typeof customEvent.detail.x === 'number') {
+                setOrigin({ x: customEvent.detail.x, y: customEvent.detail.y });
+            } else {
+                setOrigin(null);
+            }
+            setIsOpen(true);
+        };
         window.addEventListener("portfolio:toggle-chatbot", handleToggle);
         return () => window.removeEventListener("portfolio:toggle-chatbot", handleToggle);
     }, []);
@@ -633,7 +688,7 @@ export function ChatBot({ headless = false }: { headless?: boolean }) {
     return (
         <>
             {/* Chat window */}
-            <AnimatePresence>{isOpen && <ChatWindow onClose={close} />}</AnimatePresence>
+            <AnimatePresence>{isOpen && <ChatWindow onClose={close} origin={origin} />}</AnimatePresence>
 
             {/* Trigger button — globally fixed corner button */}
             {!headless && (
