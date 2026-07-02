@@ -39,8 +39,8 @@ export async function GET() {
         dailyAverage: s.human_readable_daily_average,
         totalThisWeek: s.human_readable_total,
         bestDay: {
-            date: new Date(s.best_day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            text: s.best_day.text
+            date: s.best_day?.date ? new Date(s.best_day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "N/A",
+            text: s.best_day?.text || "0 mins"
         },
         allTimeCoding: allTime,
         languages: s.languages.slice(0, 5).map((l: any) => ({

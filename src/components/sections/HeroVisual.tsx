@@ -1,14 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
-import {
-  Instagram,
-  Github,
-  Linkedin,
-  ArrowDownRight,
-  Zap,
-  Bot
-} from "lucide-react";
+import { Github, Linkedin, Instagram, ArrowDown, ArrowDownRight, Bot, Zap, ExternalLink, MessageSquare } from 'lucide-react';
 import { portfolioData } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
 import Link from 'next/link';
@@ -16,9 +9,17 @@ import gsap from "gsap";
 import { ProfileCard } from "@/components/ui/profile-card";
 import { Spotlight } from "@/components/ui/spotlight-new";
 
-export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
+export function HeroVisual({ isExiting = false }: { isExiting?: boolean }) {
   const { personal } = portfolioData;
   const [showProfile, setShowProfile] = useState(false);
+  const [tooltip, setTooltip] = useState<{ show: boolean; text: string; x: number; y: number; icon: 'zap' | 'bot' | null }>({
+    show: false,
+    text: '',
+    x: 0,
+    y: 0,
+    icon: null
+  });
+
   const githubRef = useRef(null);
   const linkedinRef = useRef(null);
   const instagramRef = useRef(null);
@@ -144,6 +145,29 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
       <main className="relative flex-1 flex flex-col justify-center pt-40 pb-20 z-10">
         <div className="flex relative gap-4 px-6 md:items-center w-full flex-col justify-center">
 
+          {/* Follow-Cursor Tooltip */}
+          <AnimatePresence>
+            {tooltip.show && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                className="fixed pointer-events-none z-[100] flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-black font-bold px-4 py-2.5 rounded-full shadow-2xl"
+                style={{
+                  left: tooltip.x,
+                  top: tooltip.y,
+                  x: "-50%",
+                  y: "-150%", // offset slightly above the cursor
+                }}
+              >
+                {tooltip.icon === 'zap' && <ExternalLink className="w-4 h-4" />}
+                {tooltip.icon === 'bot' && <MessageSquare className="w-4 h-4" />}
+                <span className="text-sm">{tooltip.text}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Line 1: AI & DATA */}
           <div className="md:flex gap-8 items-center relative">
             <motion.p
@@ -203,11 +227,25 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
                 className="text-[clamp(3rem,11vw,13rem)] md:flex items-center font-black leading-[0.85] tracking-tighter text-shiny will-change-transform px-4"
               >
                 <span className="">SOFT</span>
-                <div ref={zapRef} className="hidden lg:block mx-[0.05em]">
-                  <Zap className="w-[0.8em] h-[0.8em] text-sky-400" strokeWidth={1.5} />
+                <div 
+                  ref={zapRef} 
+                  className="hidden lg:block mx-[0.05em] relative cursor-pointer group"
+                  onClick={() => window.open('https://arfazrllworkspace.vercel.app/', '_blank')}
+                  onMouseEnter={(e) => setTooltip({ show: true, text: "Go to Workspace", icon: 'zap', x: e.clientX, y: e.clientY })}
+                  onMouseMove={(e) => setTooltip(prev => ({ ...prev, x: e.clientX, y: e.clientY }))}
+                  onMouseLeave={() => setTooltip(prev => ({ ...prev, show: false }))}
+                >
+                  <Zap className="w-[0.8em] h-[0.8em] text-sky-400 group-hover:text-sky-300 transition-colors" strokeWidth={1.5} />
                 </div>
-                <div ref={zapSmallRef} className="block lg:hidden mx-[0.02em]">
-                  <Zap className="w-[0.8em] h-[0.8em] text-sky-400" strokeWidth={2} />
+                <div 
+                  ref={zapSmallRef} 
+                  className="block lg:hidden mx-[0.02em] relative cursor-pointer group"
+                  onClick={() => window.open('https://arfazrllworkspace.vercel.app/', '_blank')}
+                  onMouseEnter={(e) => setTooltip({ show: true, text: "Go to Workspace", icon: 'zap', x: e.clientX, y: e.clientY })}
+                  onMouseMove={(e) => setTooltip(prev => ({ ...prev, x: e.clientX, y: e.clientY }))}
+                  onMouseLeave={() => setTooltip(prev => ({ ...prev, show: false }))}
+                >
+                  <Zap className="w-[0.8em] h-[0.8em] text-sky-400 group-hover:text-sky-300 transition-colors" strokeWidth={2} />
                 </div>
                 <span className="">WARE</span>
               </motion.h1>
@@ -223,8 +261,20 @@ export function HeroVisual({ isExiting }: { isExiting?: boolean }) {
               className="text-[clamp(3rem,11vw,13rem)] md:flex items-center font-black leading-[0.85] tracking-tighter text-shiny will-change-transform px-4"
             >
               <span className="">EN</span>
-              <div ref={botRef} className="mx-[0.05em] relative">
-                <Bot className="w-[0.85em] h-[0.85em] text-yellow-500 fill-yellow-500/10" />
+              <div 
+                ref={botRef} 
+                className="mx-[0.05em] relative cursor-pointer group"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  window.dispatchEvent(new CustomEvent('portfolio:toggle-chatbot', {
+                    detail: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+                  }));
+                }}
+                onMouseEnter={(e) => setTooltip({ show: true, text: "Talk to my AI Assistant", icon: 'bot', x: e.clientX, y: e.clientY })}
+                onMouseMove={(e) => setTooltip(prev => ({ ...prev, x: e.clientX, y: e.clientY }))}
+                onMouseLeave={() => setTooltip(prev => ({ ...prev, show: false }))}
+              >
+                <Bot className="w-[0.85em] h-[0.85em] text-yellow-500 fill-yellow-500/10 group-hover:text-yellow-400 group-hover:fill-yellow-400/20 transition-colors" />
               </div>
               <span className="">GINEER</span>
             </motion.h1>

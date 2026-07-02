@@ -305,6 +305,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                                     src={item.thumbnail || item.url}
                                                     alt={item.title}
                                                     fill
+                                                    sizes="(max-width: 768px) 85vw, 400px"
                                                     loading="lazy"
                                                     className={cn(
                                                         "object-cover transition-transform duration-700",
@@ -531,6 +532,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                             src={flattenedFilteredItems[currentIndex].url}
                                             alt={flattenedFilteredItems[currentIndex].title}
                                             fill
+                                            sizes="100vw"
                                             className="object-contain"
                                             priority
                                         />

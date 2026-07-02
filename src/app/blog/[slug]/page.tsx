@@ -83,6 +83,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                         src={post.image}
                         alt={post.title}
                         fill
+                        sizes="100vw"
                         className="object-cover"
                         priority
                     />
@@ -160,9 +161,10 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
 
                                     <div className="my-12 relative w-full aspect-video rounded-2xl overflow-hidden border border-border/40 bg-secondary/5">
                                         <Image
-                                            src="/images/gallery/1.png"
+                                            src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop"
                                             alt="AI Agents Architecture"
                                             fill
+                                            sizes="(max-width: 768px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -182,7 +184,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                                         "The future of software is not humans telling computers what to do, but computers asking humans what they want to achieve."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -216,6 +218,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                                             src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2000&auto=format&fit=crop"
                                             alt="Web3 UX"
                                             fill
+                                            sizes="(max-width: 1024px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -235,7 +238,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                                         "The next billion users won't know they're using the blockchain. They'll just know they're using a better, fairer internet."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -269,6 +272,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                                             src="https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=2000&auto=format&fit=crop"
                                             alt="Next.js Performance"
                                             fill
+                                            sizes="(max-width: 1024px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -288,7 +292,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                                         "Performance is not just a metric; it's a user experience feature. A fast site builds trust."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -327,6 +331,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                                             src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop"
                                             alt="Cybersecurity"
                                             fill
+                                            sizes="(max-width: 1024px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -346,7 +351,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                                         "Defenders have to be right every time. Attackers only have to be right once. AI helps level the playing field."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -380,6 +385,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                                             src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop"
                                             alt="LLM Fine-Tuning"
                                             fill
+                                            sizes="(max-width: 1024px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -418,7 +424,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                         "Fine-tuning is the bridge between a generic reasoning engine and a specialized expert system."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -444,6 +450,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                             src="https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop"
                                             alt="Smart Contract Security"
                                             fill
+                                            sizes="(max-width: 1024px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -463,7 +470,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                         "A secure smart contract is one that assumes every user is a potential attacker and every external call is a potential exploit."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -489,6 +496,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                             src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2000&auto=format&fit=crop"
                                             alt="State Management"
                                             fill
+                                            sizes="(max-width: 1024px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -508,7 +516,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                         "The best state management is the one you don't notice. It should be as invisible as possible, only revealing itself when needed."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -534,6 +542,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                             src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop"
                                             alt="Edge Computing"
                                             fill
+                                            sizes="(max-width: 1024px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -553,7 +562,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                         "The cloud is for reflection; the edge is for action."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -579,6 +588,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                             src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop"
                                             alt="Healthcare AI"
                                             fill
+                                            sizes="(max-width: 1024px) 100vw, 800px"
                                             loading="lazy"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
@@ -598,7 +608,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                         "AI in healthcare is not about replacing the human touch, but about providing the superhuman insight that saves lives."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -624,7 +634,8 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                             src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2000&auto=format&fit=crop"
                                             alt="Manifesto"
                                             fill
-                                            loading="lazy"
+                                            priority
+                                            sizes="100vw"
                                             className="object-cover hover:scale-105 transition-transform duration-700"
                                         />
                                     </div>
@@ -643,7 +654,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                         "We don't just build tools; we build the future. Let us build it with wisdom and craft."
                                         <footer className="mt-4 text-sm font-bold not-italic text-primary flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-secondary overflow-hidden relative">
-                                                <Image src={post.author.avatar} alt="Author" fill loading="lazy" className="object-cover" />
+                                                <Image src={post.author.avatar} alt="Author" fill sizes="32px" loading="lazy" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="text-foreground">{post.author.name}</div>
@@ -997,21 +1008,21 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                             {
                                                 title: "AutoGPT & BabyAGI: The Beginning",
                                                 time: "Video",
-                                                image: "/images/gallery/1.png",
+                                                image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop",
                                                 category: "History",
                                                 url: "https://www.youtube.com/results?search_query=AutoGPT+BabyAGI"
                                             },
                                             {
                                                 title: "Vector Databases Explained",
                                                 time: "Article",
-                                                image: "/images/gallery/2.png",
+                                                image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop",
                                                 category: "Technical",
                                                 url: "https://www.pinecone.io/learn/vector-database/"
                                             },
                                             {
                                                 title: "LLM Orchestration with LangChain",
                                                 time: "Docs",
-                                                image: "/images/gallery/3.png",
+                                                image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop",
                                                 category: "Tutorial",
                                                 url: "https://python.langchain.com/docs/get_started/introduction"
                                             }
@@ -1023,6 +1034,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                                                             src={resource.image}
                                                             alt={resource.title}
                                                             fill
+                                                            sizes="96px"
                                                             loading="lazy"
                                                             className="object-cover group-hover:scale-110 transition-transform duration-500"
                                                         />
@@ -1103,7 +1115,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                     {portfolioData.blogs.filter(b => b.slug !== slug).slice(0, 2).map((b) => (
                         <div key={b.slug} className="group">
                             <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden mb-6 bg-secondary/5 border border-border/40">
-                                <Image src={b.image} alt={b.title} fill loading="lazy" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                                <Image src={b.image} alt={b.title} fill sizes="(max-width: 768px) 100vw, 300px" loading="lazy" className="object-cover group-hover:scale-105 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
                                 <div className="absolute bottom-4 left-4">
                                     <span className="px-3 py-1 bg-black/50 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">
@@ -1117,7 +1129,7 @@ model.save_pretrained_gguf("model_name", tokenizer, quantization_method = "q4_k_
                             <p className="text-muted-foreground line-clamp-2 mb-4">{b.excerpt}</p>
                             <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                                 <div className="w-6 h-6 rounded-full bg-secondary/20 relative overflow-hidden">
-                                    <Image src={b.author.avatar} alt={b.author.name} loading="lazy" fill className="object-cover" />
+                                    <Image src={b.author.avatar} alt={b.author.name} loading="lazy" fill sizes="32px" className="object-cover" />
                                 </div>
                                 {b.author.name} · {b.date}
                             </div>

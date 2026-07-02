@@ -130,6 +130,7 @@ export default function BlogPortalFooter({ isLowPowerMode }: { isLowPowerMode?: 
                                 src={hoveredBlog}
                                 alt="Blog Preview"
                                 fill
+                                sizes="100vw"
                                 loading="lazy"
                                 className="object-cover grayscale"
                             />
