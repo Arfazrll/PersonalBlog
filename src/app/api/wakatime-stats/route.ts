@@ -11,44 +11,54 @@ export async function GET() {
     const auth = Buffer.from(apiKey).toString('base64');
     const headers = { 'Authorization': `Basic ${auth}` };
 
-    // 1. Fetch Last 7 Days Stats
-    const statsRes = await fetch('https://wakatime.com/api/v1/users/current/stats/last_7_days', { 
+    // 1. Fetch Last 7 Days Summaries (More reliable than stats endpoint which can return 0)
+    const statsRes = await fetch('https://wakatime.com/api/v1/users/current/summaries?range=last_7_days', { 
         headers,
         next: { revalidate: 3600 } 
     });
     
     if (!statsRes.ok) throw new Error("Stats API failed");
     const statsData = await statsRes.json();
-    const s = statsData.data;
+    
+    let bestDay = { total: 0, text: '0 mins', date: 'N/A' };
+    statsData.data.forEach((day: any) => {
+        if (day.grand_total.total_seconds > bestDay.total) {
+            bestDay = {
+                total: day.grand_total.total_seconds,
+                text: day.grand_total.text,
+                date: day.range.date
+            };
+        }
+    });
 
     // 2. Fetch All Time Stats (Optional, use fallback if fails)
-    let allTime = "1,131 hrs 50 mins"; // Default fallback/mock as per screenshot
+    let allTime = "1131 hrs"; // Default fallback/mock (formatted for frontend counter)
     try {
         const allTimeRes = await fetch('https://wakatime.com/api/v1/users/current/all_time_stats', { headers });
         if (allTimeRes.ok) {
             const atData = await allTimeRes.json();
-            allTime = atData.data.text;
+            if (atData.data && atData.data.text) {
+                // Ensure it doesn't break the frontend counter (e.g. "1,200 hrs 30 mins" -> "1200 hrs")
+                const match = atData.data.text.match(/([\d,]+)\s*hrs/);
+                allTime = match ? `${match[1]} hrs` : atData.data.text;
+            }
         }
     } catch (e) {
         console.warn("All-time stats fetch failed, using fallback");
     }
 
     return NextResponse.json({
-        startDate: new Date(s.start).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        endDate: new Date(s.end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        dailyAverage: s.human_readable_daily_average,
-        totalThisWeek: s.human_readable_total,
+        startDate: new Date(statsData.start).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        endDate: new Date(statsData.end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        dailyAverage: statsData.daily_average.text,
+        totalThisWeek: statsData.cumulative_total.text,
         bestDay: {
-            date: s.best_day?.date ? new Date(s.best_day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "N/A",
-            text: s.best_day?.text || "0 mins"
+            date: bestDay.date !== 'N/A' ? new Date(bestDay.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "N/A",
+            text: bestDay.text
         },
         allTimeCoding: allTime,
-        languages: s.languages.slice(0, 5).map((l: any) => ({
-            name: l.name,
-            percent: l.percent,
-            text: l.text
-        })),
-        lastUpdate: "12 hours ago" // Mocked for UI polish
+        languages: [], // we don't need languages for this UI
+        lastUpdate: "Just now"
     });
   } catch (error) {
     console.error("WakaTime API Error:", error);
@@ -59,11 +69,8 @@ export async function GET() {
         dailyAverage: "2 hrs 33 mins",
         totalThisWeek: "17 hrs 57 mins",
         bestDay: { date: "May 09, 2026", text: "8 hrs 49 mins" },
-        allTimeCoding: "1,131 hrs 50 mins",
-        languages: [
-            { name: "TypeScript", percent: 45, text: "11h 10m" },
-            { name: "JavaScript", percent: 25, text: "6h 12m" }
-        ],
+        allTimeCoding: "1131 hrs",
+        languages: [],
         lastUpdate: "12 hours ago"
     });
   }

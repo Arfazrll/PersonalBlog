@@ -6,7 +6,7 @@ import { ChevronDown, TrendingUp, Sparkles, Calendar, ArrowUpRight, Library, Cod
 import { portfolioData } from '@/data/portfolio';
 import Link from 'next/link';
 import Image from 'next/image';
-import { GalleryButton } from '@/components/ui/GalleryStack';
+import { AnimatedFolder } from '@/components/ui/3d-folder';
 import type { Project } from '@/types';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -186,7 +186,7 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
                     </motion.div>
 
                     {/* Side Info Cards */}
-                    <div className="lg:col-span-4 grid grid-cols-1 gap-2">
+                    <div className="lg:col-span-4 grid grid-cols-1 gap-6">
 
                         {/* Gallery Quick Access - Relocated */}
                         <motion.div
@@ -194,13 +194,20 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
                             transition={{ duration: 0.3 }}
                             className="h-full min-h-[300px]"
                         >
-                            <GalleryButton
-                                galleryImages={randomGalleryImages.length > 0
+                            <AnimatedFolder
+                                title="The Gallery"
+                                className="w-full h-full min-h-[300px] border-2 border-foreground/15 dark:border-white/5 hover:border-primary/40 rounded-[2.5rem]"
+                                projects={(randomGalleryImages.length > 0
                                     ? randomGalleryImages
                                     : portfolioData.gallery
                                         .map(item => item.type === 'video' ? item.thumbnail : item.url)
                                         .filter((url): url is string => !!url)
-                                        .slice(0, 5)}
+                                        .slice(0, 5)
+                                ).map((url, i) => ({ 
+                                    id: `gallery-img-${i}`, 
+                                    image: url, 
+                                    title: `Archive 0${i + 1}` 
+                                }))}
                             />
                         </motion.div>
 

@@ -142,6 +142,8 @@ function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isAct
         [leftIsImage ? "-120%" : "120%", "0%", "0%", leftIsImage ? "-120%" : "120%"]
     );
 
+
+
     const rightY = useTransform(
         scrollProgress,
         [enterStart, enterEnd, exitStart, exitEnd],
@@ -156,13 +158,18 @@ function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isAct
 
     return (
         <motion.div style={{ zIndex }} className="absolute inset-0 flex items-center justify-center pointer-events-none p-4 md:p-8 lg:p-12">
-            {/* Unified Card Container with equal spacing on all sides */}
-            <div className="relative w-full h-full max-w-[1600px] flex pointer-events-auto drop-shadow-2xl">
+            {/* Unified Card Container */}
+            <div className="relative w-full h-full max-w-[1600px] flex pointer-events-auto">
 
                 {/* LEFT HALF OF THE SPLIT CARD */}
                 <motion.div
-                    style={{ y: leftY, willChange: "transform" }}
-                    className="relative w-1/2 h-full overflow-hidden bg-background dark:bg-black rounded-l-3xl md:rounded-l-[2rem] border border-r-0 border-border dark:border-white/10 z-10"
+                    style={{
+                        y: leftY,
+                        willChange: "transform",
+                        clipPath: 'inset(0px round 1.5rem 0 0 1.5rem)',
+                        WebkitClipPath: 'inset(0px round 1.5rem 0 0 1.5rem)',
+                    }}
+                    className="relative w-1/2 h-full bg-background dark:bg-black z-10"
                 >
                     <div className="w-full h-full relative overflow-hidden">
                         {page.leftBgImage ? (
@@ -183,8 +190,13 @@ function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isAct
 
                 {/* RIGHT HALF OF THE SPLIT CARD */}
                 <motion.div
-                    style={{ y: rightY, willChange: "transform" }}
-                    className="relative w-1/2 h-full overflow-hidden bg-background dark:bg-black rounded-r-3xl md:rounded-r-[2rem] border border-l-0 border-border dark:border-white/10 z-10"
+                    style={{
+                        y: rightY,
+                        willChange: "transform",
+                        clipPath: 'inset(0px round 0 1.5rem 1.5rem 0)',
+                        WebkitClipPath: 'inset(0px round 0 1.5rem 1.5rem 0)',
+                    }}
+                    className="relative w-1/2 h-full bg-background dark:bg-black z-10"
                 >
                     <div className="w-full h-full relative overflow-hidden">
                         {page.rightBgImage ? (
@@ -251,16 +263,29 @@ function BlendedVisual({ src, side }: { src: string, side: 'left' | 'right' }) {
                 initial={{ scale: 1 }}
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute -inset-1 bg-cover bg-center bg-no-repeat will-change-transform grayscale hover:grayscale-0 transition-[filter] duration-1000"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform grayscale hover:grayscale-0 transition-[filter] duration-1000"
                 style={{ backgroundImage: `url(${src})` }}
             />
-            <div className={cn(
-                "absolute inset-0 pointer-events-none z-10",
-                side === 'left'
-                    ? "bg-gradient-to-r from-transparent via-transparent to-background dark:to-black"
-                    : "bg-gradient-to-l from-transparent via-transparent to-background dark:to-black",
-            )} />
-            <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background dark:from-black dark:via-transparent dark:to-black opacity-40 pointer-events-none z-10" />
+            {/* Horizontal Blend (Masked to avoid WebKit transparent color interpolation bug) */}
+            <div 
+                className="absolute inset-0 pointer-events-none z-10 bg-background dark:bg-black"
+                style={{
+                    WebkitMaskImage: side === 'left' 
+                        ? 'linear-gradient(to right, transparent, black)' 
+                        : 'linear-gradient(to left, transparent, black)',
+                    maskImage: side === 'left' 
+                        ? 'linear-gradient(to right, transparent, black)' 
+                        : 'linear-gradient(to left, transparent, black)'
+                }}
+            />
+            {/* Vertical Blend (Masked to avoid WebKit transparent color interpolation bug) */}
+            <div 
+                className="absolute inset-0 pointer-events-none z-10 bg-background dark:bg-black opacity-40"
+                style={{
+                    WebkitMaskImage: 'linear-gradient(to bottom, black, transparent, black)',
+                    maskImage: 'linear-gradient(to bottom, black, transparent, black)'
+                }}
+            />
         </div>
     );
 }
@@ -338,3 +363,4 @@ function MagneticTag({ text, index }: { text: string, index: number }) {
         </div>
     );
 }
+

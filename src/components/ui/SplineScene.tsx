@@ -32,7 +32,7 @@ export const SplineScene: FC<SplineSceneProps> = ({ scene, className }) => {
             ([entry]) => {
                 const isIntersecting = entry.isIntersecting;
                 setIsVisible(isIntersecting);
-                
+
                 if (splineApp.current) {
                     try {
                         if (isIntersecting) {
@@ -78,9 +78,10 @@ export const SplineScene: FC<SplineSceneProps> = ({ scene, className }) => {
 
     return (
         <div ref={containerRef} className={`relative w-full h-full overflow-hidden ${className || ''}`}>
-            
+
             {/* Global style to hide the react-spline watermark (not in shadow DOM) */}
-            <style dangerouslySetInnerHTML={{ __html: `
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 .spline-watermark,
                 div[style*="bottom: 16px"],
                 div[style*="bottom: 10px"],
@@ -93,26 +94,18 @@ export const SplineScene: FC<SplineSceneProps> = ({ scene, className }) => {
             `}} />
 
             <div className="w-full h-full pt-20 relative">
-                
+
                 {/* Custom Cinematic Loading State */}
                 {!isSceneLoaded && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-transparent">
-                        <div className="relative flex items-center justify-center">
-                            <div className="absolute w-24 h-24 border border-foreground/10 rounded-full animate-[spin_3s_linear_infinite]" />
-                            <div className="absolute w-16 h-16 border-t-2 border-r-2 border-foreground/40 rounded-full animate-[spin_2s_linear_infinite_reverse]" />
-                            <div className="w-8 h-8 bg-foreground/20 rounded-full animate-pulse blur-sm" />
-                        </div>
-                        <p className="mt-8 text-xs font-mono text-foreground/50 tracking-[0.3em] uppercase animate-pulse">
-                            Initializing 3D Engine
-                        </p>
                     </div>
                 )}
 
-                <div 
+                <div
                     className="w-full h-full transition-opacity duration-1000"
-                    style={{ 
+                    style={{
                         opacity: isSceneLoaded ? 1 : 0,
-                        visibility: isVisible ? 'visible' : 'hidden' 
+                        visibility: isVisible ? 'visible' : 'hidden'
                     }}
                 >
                     <Spline
