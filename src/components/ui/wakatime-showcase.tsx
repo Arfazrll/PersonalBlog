@@ -70,9 +70,9 @@ export const WakaTimeShowcase = () => {
             </div>
 
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[0.9em] text-black dark:text-white">
-              Coding{" "}
+              Code Runtime{" "}
               <span className="flex items-center gap-2">
-                Velocity <span className="text-[#f97316]">Analyzed.</span>
+                Activity <span className="text-[#f97316]">Analyzed.</span>
               </span>
             </h2>
 

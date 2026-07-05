@@ -30,6 +30,17 @@
     --chart-4: 0 0% 65%;
     --chart-5: 0 0% 80%;
     --radius: 0.5rem;
+    --folder-back: oklch(0.75 0.12 45);
+    --folder-front: oklch(0.8 0.14 50);
+    --folder-tab: oklch(0.7 0.1 40);
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -58,6 +69,17 @@
     --chart-3: 0 0% 50%;
     --chart-4: 0 0% 35%;
     --chart-5: 0 0% 20%;
+    --folder-back: oklch(0.65 0.12 45);
+    --folder-front: oklch(0.7 0.14 50);
+    --folder-tab: oklch(0.6 0.1 40);
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .theme {
     --animate-marquee-left: marquee-left var(--duration, 30s) linear infinite;
@@ -489,26 +511,14 @@ html, body, * {
 
 /* Scrollbar Thumb - Strictly Square */
 ::-webkit-scrollbar-thumb {
-  background-color: #000000;
+  background-color: hsl(var(--foreground));
   border-radius: 0 !important;
   border: none !important;
 }
 
-/* Dark Mode Overrides */
-.dark ::-webkit-scrollbar-thumb,
-.dark::-webkit-scrollbar-thumb {
-  background-color: #ffffff !important;
-  border-radius: 0 !important;
-}
-
 /* Hover States */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #333333 !important;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover,
-.dark::-webkit-scrollbar-thumb:hover {
-  background-color: #e5e5e5 !important;
+  background-color: hsl(var(--muted-foreground));
 }
 
 /* Hide scrollbar corner */

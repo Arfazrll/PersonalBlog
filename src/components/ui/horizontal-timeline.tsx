@@ -1,8 +1,10 @@
 "use client";
+import { cn } from "@/lib/utils";
 import {
   useScroll,
   useTransform,
   motion,
+  useMotionValueEvent,
 } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -16,6 +18,8 @@ export interface TimelineEntry {
 export const HorizontalTimeline = ({ data }: { data: TimelineEntry[] }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -52,6 +56,27 @@ export const HorizontalTimeline = ({ data }: { data: TimelineEntry[] }) => {
       };
     }
   }, [data]);
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const blueLineTip = latest * window.innerWidth;
+    
+    let current = -1;
+    for (let i = 0; i < data.length; i++) {
+      const el = itemRefs.current[i];
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const start = rect.left;
+        const nextEl = itemRefs.current[i + 1];
+        const end = nextEl ? nextEl.getBoundingClientRect().left : rect.left + rect.width;
+        
+        if (blueLineTip >= start && blueLineTip < end) {
+          current = i;
+          break;
+        }
+      }
+    }
+    setActiveIndex(current);
+  });
 
   // Transform scroll progress into horizontal movement
   const xTransform = useTransform(
@@ -118,12 +143,27 @@ export const HorizontalTimeline = ({ data }: { data: TimelineEntry[] }) => {
             >
                 {data.map((item, index) => {
                     const isEven = index % 2 === 0; // Alternating logic
+                    const isActive = activeIndex === index;
                     
                     return (
-                        <div key={index} className="relative w-[320px] md:w-[420px] shrink-0 h-0 group cursor-pointer">
+                        <div 
+                            key={index} 
+                            ref={(el) => {
+                                itemRefs.current[index] = el;
+                            }}
+                            className="relative w-[320px] md:w-[420px] shrink-0 h-0 group cursor-pointer"
+                        >
                             {/* Circle marker directly on the line */}
-                            <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-background flex items-center justify-center border-none z-20 transition-transform duration-500 group-hover:scale-125">
-                                <div className="h-4 w-4 rounded-full bg-neutral-300 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-700 p-2 transition-colors duration-500 group-hover:bg-primary" />
+                            <div className={cn(
+                                "absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-background flex items-center justify-center border-none z-20 transition-transform duration-500",
+                                isActive ? "scale-125" : "group-hover:scale-125"
+                            )}>
+                                <div className={cn(
+                                    "h-4 w-4 rounded-full border p-2 transition-colors duration-500",
+                                    isActive 
+                                        ? "bg-primary border-primary" 
+                                        : "bg-neutral-300 dark:bg-neutral-800 border-neutral-400 dark:border-neutral-700 group-hover:bg-primary group-hover:border-primary"
+                                )} />
                             </div>
 
                             {item.isEnd ? (
@@ -131,26 +171,39 @@ export const HorizontalTimeline = ({ data }: { data: TimelineEntry[] }) => {
                                     {/* Mask to hide the line after the end circle */}
                                     <div className="absolute top-1/2 left-5 h-[20px] w-full bg-background -translate-y-1/2 z-10" />
                                     {/* The content block for View More (small card) */}
-                                    <div className="absolute left-10 top-1/2 -translate-y-1/2 z-30 transition-transform duration-500 group-hover:scale-105 group-hover:translate-x-2">
+                                    <div className={cn(
+                                        "absolute left-10 top-1/2 -translate-y-1/2 z-30 transition-transform duration-500",
+                                        isActive ? "scale-105 translate-x-2" : "group-hover:scale-105 group-hover:translate-x-2"
+                                    )}>
                                         {item.content}
                                     </div>
                                 </>
                             ) : (
                                 <>
                                     {/* TITLE - Fades out on hover */}
-                                    <div className={`absolute left-8 w-[280px] md:w-[350px] transition-all duration-500 z-20 ${
+                                    <div className={cn(
+                                        "absolute left-8 w-[280px] md:w-[350px] transition-all duration-500 z-20",
                                         !isEven ? 'bottom-4' : 'top-4'
-                                    }`}>
-                                        <h3 className="text-xl md:text-2xl font-bold text-neutral-800 dark:text-neutral-400 tracking-tight transition-all duration-500 group-hover:opacity-0 group-hover:translate-x-2">
+                                    )}>
+                                        <h3 className={cn(
+                                            "text-xl md:text-2xl font-bold text-neutral-800 dark:text-neutral-400 tracking-tight transition-all duration-500",
+                                            isActive ? "opacity-0 translate-x-2" : "group-hover:opacity-0 group-hover:translate-x-2"
+                                        )}>
                                             {item.title}
                                         </h3>
                                     </div>
                                     
                                     {/* DATE - Fades in on hover, on the OPPOSITE side */}
                                     {item.period && (
-                                        <div className={`absolute left-8 transition-all duration-500 opacity-0 group-hover:opacity-100 z-20 pointer-events-none ${
-                                            !isEven ? 'top-4 group-hover:-translate-y-1' : 'bottom-4 group-hover:translate-y-1'
-                                        }`}>
+                                        <div className={cn(
+                                            "absolute left-8 transition-all duration-500 z-20 pointer-events-none",
+                                            !isEven ? 'top-4' : 'bottom-4',
+                                            isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                                            !isEven && isActive ? "-translate-y-1" : "",
+                                            !isEven && !isActive ? "group-hover:-translate-y-1" : "",
+                                            isEven && isActive ? "translate-y-1" : "",
+                                            isEven && !isActive ? "group-hover:translate-y-1" : ""
+                                        )}>
                                             <div className="inline-block px-3 py-1.5 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-md shadow-sm">
                                                 <span className="text-[10px] md:text-xs font-mono text-neutral-600 dark:text-neutral-400 uppercase tracking-widest">{item.period}</span>
                                             </div>
@@ -158,11 +211,13 @@ export const HorizontalTimeline = ({ data }: { data: TimelineEntry[] }) => {
                                     )}
                                     
                                     {/* CARD - Appears on the SAME side as Title, replacing it */}
-                                    <div className={`absolute left-8 w-full pr-4 opacity-0 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 z-30 ${
-                                        !isEven 
-                                            ? 'bottom-2 translate-y-4 group-hover:translate-y-0' 
-                                            : 'top-2 -translate-y-4 group-hover:translate-y-0'
-                                    }`}>
+                                    <div className={cn(
+                                        "absolute left-8 w-full pr-4 transition-all duration-500 ease-out z-30",
+                                        !isEven ? 'bottom-2' : 'top-2',
+                                        isActive ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100",
+                                        !isEven && !isActive ? "translate-y-4 group-hover:translate-y-0" : "",
+                                        isEven && !isActive ? "-translate-y-4 group-hover:translate-y-0" : ""
+                                    )}>
                                         {item.content}
                                     </div>
                                 </>

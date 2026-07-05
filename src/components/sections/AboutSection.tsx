@@ -636,21 +636,19 @@ export default function AboutSection() { console.log('SHOWCASE MEMBERS:', showca
                                     isEnd: member.id === 'view-more',
                                     period: 'period' in member ? member.period : undefined,
                                     content: member.id === 'view-more' ? (
-                                        <div className="relative flex items-center h-[140px] w-[200px]">
-                                            <div className="absolute left-6 transition-all duration-500 opacity-100 group-hover:opacity-0 group-hover:scale-50 z-20">
-                                                <div className="p-4 rounded-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm flex items-center justify-center">
-                                                    <ArrowUpRight className="w-8 h-8 text-neutral-600 dark:text-neutral-400" />
+                                        <Link
+                                            href={member.social?.website || '/experience'}
+                                            className="relative flex items-center h-[140px] w-[250px] z-30"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-4 rounded-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm flex items-center justify-center transition-all duration-500 group-hover:bg-primary group-hover:border-primary group-hover:shadow-[0_0_20px_rgba(var(--primary),0.3)]">
+                                                    <ArrowUpRight className="w-8 h-8 text-neutral-600 dark:text-neutral-400 transition-all duration-500 group-hover:text-primary-foreground group-hover:rotate-45 group-hover:scale-110" />
                                                 </div>
-                                            </div>
-                                            <Link
-                                                href={member.social?.website || '/experience'}
-                                                className="absolute left-0 flex flex-col items-center justify-center p-6 bg-white/40 dark:bg-black/30 border border-white/60 dark:border-white/10 rounded-2xl backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] w-[200px] h-[140px] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-500 z-30 group/btn hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:border-white/80 dark:hover:border-white/20 hover:bg-white/50 dark:hover:bg-black/40"
-                                            >
-                                                <span className="text-base font-bold text-center text-neutral-900 dark:text-white drop-shadow-sm">
-                                                    Explore all experiences
+                                                <span className="text-lg md:text-xl font-bold text-neutral-900 dark:text-white opacity-0 -translate-x-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0 whitespace-nowrap drop-shadow-sm">
+                                                    View more
                                                 </span>
-                                            </Link>
-                                        </div>
+                                            </div>
+                                        </Link>
                                     ) : (
                                         <div className="flex flex-col gap-4 w-[320px] md:w-[400px] border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md shadow-xl mt-4">
                                             <div className="flex flex-col gap-2">

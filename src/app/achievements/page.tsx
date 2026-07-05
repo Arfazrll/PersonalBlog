@@ -815,7 +815,7 @@ export default function AchievementsPage() {
                         }}
                         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                         className={cn(
-                            "w-full h-auto lg:h-screen lg:sticky lg:top-0 py-12 lg:py-36 flex flex-col z-40 bg-background/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none border-r border-border/10",
+                            "w-full h-auto lg:h-screen lg:sticky lg:top-0 py-12 lg:py-4 xl:py-10 flex flex-col z-40 bg-background/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none border-r border-border/10",
                             isSidebarCollapsed && "items-center"
                         )}
                         style={{ willChange: "width" }}
@@ -895,7 +895,7 @@ export default function AchievementsPage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.6 }}
-                                className="p-6 lg:p-10 hidden lg:block order-5 shrink-0 group cursor-default"
+                                className="px-6 py-4 lg:px-10 lg:py-4 hidden lg:block order-5 shrink-0 group cursor-default"
                             >
                                 <motion.div
                                     className="text-[9rem] font-black leading-none text-foreground/[0.18] dark:text-foreground/20 select-none transition-colors duration-500 group-hover:text-foreground/[0.35] dark:group-hover:text-foreground/40"
@@ -911,7 +911,7 @@ export default function AchievementsPage() {
                     </motion.div>
 
                     {/* RIGHT PANEL: Cards - Natural Flow */}
-                    <div className="flex-1 w-full flex flex-col pt-8 lg:pt-36 px-6 lg:px-10 pb-20 overflow-hidden">
+                    <div className="flex-1 w-full flex flex-col pt-8 lg:pt-4 xl:pt-10 px-6 lg:px-10 pb-20 overflow-hidden">
 
                         {/* Controls */}
                         <motion.div

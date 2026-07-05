@@ -4,6 +4,7 @@ import { ArrowLeft, Download, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { usePerformance } from '@/hooks/usePerformance';
+import { PdfViewer } from '@/components/ui/pdf-viewer';
 
 export default function ResumePage() {
     const { isLowPowerMode } = usePerformance();
@@ -49,35 +50,10 @@ export default function ResumePage() {
                 initial={isLowPowerMode ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-6 min-h-0 pb-4 relative"
+                className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-6 min-h-0 pb-4 relative"
             >
                 <div className="w-full h-full bg-muted/30 rounded-2xl border border-border/50 overflow-hidden relative group">
-                    {/* Fallback Message (Behind Iframe) */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 -z-10">
-                        <div className="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mb-4">
-                            <Download className="w-8 h-8 text-primary/40" />
-                        </div>
-                        <h3 className="text-lg font-semibold mb-2">Resume Loading...</h3>
-                        <p className="text-muted-foreground max-w-sm mb-6">
-                            If the preview doesn't appear, please check your Drive permissions or click the button below.
-                        </p>
-                        <a
-                            href={resumeUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary font-medium hover:underline flex items-center gap-2"
-                        >
-                            Open Resume Directly <ExternalLink className="w-4 h-4" />
-                        </a>
-                    </div>
-
-                    <iframe
-                        src={previewUrl}
-                        className="w-full h-full border-none relative z-10 transition-all duration-300 pointer-events-auto"
-                        allow="autoplay"
-                        title="Resume Viewer"
-                        loading="lazy"
-                    />
+                    <PdfViewer url="/resume.pdf" />
                 </div>
             </motion.div>
         </div>
