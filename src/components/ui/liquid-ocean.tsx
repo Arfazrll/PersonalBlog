@@ -87,7 +87,7 @@ function OceanMesh({
                 color: accentColor,
                 wireframe: true,
                 transparent: true,
-                opacity: 0.5,
+                opacity: 0.8,
             }),
         [accentColor]
     );
@@ -171,6 +171,7 @@ function BoatGroup({ count, spreadRange, color }: { count: number; spreadRange: 
 
 function SceneContent({
     backgroundColor,
+    gridColor,
     accentColor,
     rotationSpeed,
     showGrid,
@@ -205,7 +206,7 @@ function SceneContent({
             <pointLight args={[accentColor, 1]} position={[-5, -10, -10]} />
 
             <group ref={groupRef}>
-                {showGrid && <gridHelper args={[20, 20, 0x444444, 0x222222]} position={[0, -1, 0]} />}
+                {showGrid && <gridHelper args={[20, 20, gridColor, gridColor]} position={[0, -1, 0]} />}
                 {showBoats && <BoatGroup count={boatCount} spreadRange={boatSpread} color={accentColor} />}
                 <OceanMesh
                     geoSize={oceanSize}
@@ -245,6 +246,7 @@ export interface LiquidOceanProps {
 export function LiquidOcean({
     className,
     backgroundColor = DEFAULT_THEME.background,
+    gridColor = DEFAULT_THEME.gridColor,
     accentColor = DEFAULT_THEME.accentColor,
     fov = 20,
     rotationSpeed = 0.001,
@@ -306,6 +308,7 @@ export function LiquidOcean({
             >
                 <SceneContent
                     backgroundColor={backgroundColor}
+                    gridColor={gridColor}
                     accentColor={accentColor}
                     rotationSpeed={rotationSpeed}
                     showGrid={showGrid}

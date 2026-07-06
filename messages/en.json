@@ -406,8 +406,8 @@
             "intelligent": "Intelligent",
             "creative": "Creative"
         },
-        "ribbon1": "Next.js • TypeScript • Tailwind • React • Node.js • Three.js •",
-        "ribbon2": "Creative Developer • UI/UX Design • Full Stack Engineering • System Architecture •"
+        "ribbon1": "Next.js • React • Python • PyTorch • Pandas • TypeScript • Node.js • Scikit-Learn • TensorFlow • SQL",
+        "ribbon2": "Software Engineer • AI Engineer • Data Scientist • Data Analyst • Machine Learning Engineer • Backend Developer • Full Stack Engineer • NLP Engineer • Data Engineer • Web Developer"
     },
     "stats": {
         "systemStatus": "System Status: Analytics Active",
@@ -431,7 +431,7 @@
     },
     "projectHeader": {
         "title": "Architecting Digital Reality",
-        "subtitle": "A curated showcase of technical innovation and creative engineering. Exploring the frontiers of <span class='font-bold text-white'>Artificial Intelligence</span>, Blockchain, and Immersive Web experiences."
+        "subtitle": "A curated showcase of technical innovation and creative engineering. Exploring the frontiers of <span class='font-bold text-foreground'>Artificial Intelligence</span>, Blockchain, Data, and Immersive Web experiences."
     },
     "common": {
         "loading": "Loading...",

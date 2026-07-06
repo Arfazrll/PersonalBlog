@@ -378,7 +378,7 @@
     },
     "projectHeader": {
         "title": "Merancang Realitas Digital",
-        "subtitle": "Pameran kurasi inovasi teknis dan rekayasa kreatif. Menjelajahi batas-batas <span class='font-bold text-white'>Kecerdasan Buatan</span>, Blockchain, dan pengalaman Web Imersif."
+        "subtitle": "Pameran kurasi inovasi teknis dan rekayasa kreatif. Menjelajahi batas-batas <span class='font-bold text-foreground'>Kecerdasan Buatan</span>, Blockchain, Data, dan pengalaman Web Imersif."
     },
     "footer": {
         "copyright": "Hak cipta dilindungi.",
@@ -415,8 +415,8 @@
             "intelligent": "Cerdas",
             "creative": "Kreatif"
         },
-        "ribbon1": "Next.js • TypeScript • Tailwind • React • Node.js • Three.js •",
-        "ribbon2": "Pengembang Kreatif • Desain UI/UX • Rekayasa Full Stack • Arsitektur Sistem •"
+        "ribbon1": "Next.js • React • Python • PyTorch • Pandas • TypeScript • Node.js • Scikit-Learn • TensorFlow • SQL",
+        "ribbon2": "Software Engineer • AI Engineer • Data Scientist • Data Analyst • Machine Learning Engineer • Backend Developer • Full Stack Engineer • NLP Engineer • Data Engineer • Web Developer"
     },
     "common": {
         "loading": "Memuat...",

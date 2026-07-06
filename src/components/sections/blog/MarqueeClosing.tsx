@@ -37,9 +37,9 @@ export const MarqueeClosing = ({ isLowPowerMode: parentLowPowerMode }: { isLowPo
     } : {
         // Light Mode: White Ocean for seamless blending
         bg: 0xffffff,
-        grid: 0xe5e5e5, // Increased visibility from 0xf3f4f6
-        accent: 0x3b82f6, // Blue-500
-        opacity: 0.6
+        grid: 0x9ca3af, // Darker grid for light mode (gray-400)
+        accent: 0x2563eb, // Stronger blue (blue-600) to stand out more
+        opacity: 0.4 // Lowered from 0.6 to make wireframe lines much sharper and visible
     };
 
     if (!mounted) return null; // Prevent hydration mismatch
@@ -96,7 +96,7 @@ export const MarqueeClosing = ({ isLowPowerMode: parentLowPowerMode }: { isLowPo
                     className="flex flex-col items-center gap-8 max-w-4xl mx-auto"
                 >
                     <h2 className={cn(
-                        "text-6xl md:text-8xl font-black tracking-tighter drop-shadow-2xl",
+                        "text-6xl md:text-8xl font-black tracking-tighter drop-shadow-2xl pb-4 leading-tight",
                         isDark ? "text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" : "text-foreground"
                     )}>
                         Ready to Build?
