@@ -29,7 +29,7 @@ export function InfiniteRibbon({
     background = "bg-primary",
     textColor = "text-primary-foreground"
 }: InfiniteRibbonProps) {
-    const baseX = useMotionValue(0);
+    const baseX = useMotionValue(reverse ? -50 : 0);
     const { scrollY } = useScroll();
     const scrollVelocity = useVelocity(scrollY);
     const smoothVelocity = useSpring(scrollVelocity, {
@@ -49,17 +49,18 @@ export function InfiniteRibbon({
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const x = useTransform(baseX, (v) => `${wrap(-100, 0, v % 100)}%`);
+    const x = useTransform(baseX, (v) => `${wrap(-50, 0, v)}%`);
 
-    const directionFactor = useRef<number>(reverse ? -1 : 1);
-    const finalVelocity = reverse ? -baseVelocity : baseVelocity;
+    // Refs not needed with new moveBy logic
 
     useAnimationFrame((t, delta) => {
-        if (isMobile) return; // Optimization: Use CSS animation on mobile
+        if (isMobile) return;
 
-        let moveBy = directionFactor.current * finalVelocity * (delta / 1000);
-        moveBy += directionFactor.current * moveBy * velocityFactor.get() * 0.5;
-        baseX.set(baseX.get() + moveBy);
+        let moveBy = baseVelocity * (delta / 1000);
+        if (reverse) moveBy = -moveBy;
+        
+        moveBy += moveBy * velocityFactor.get();
+        baseX.set(baseX.get() - moveBy);
     });
 
     return (
@@ -72,15 +73,15 @@ export function InfiniteRibbon({
         >
             <motion.div
                 className={cn(
-                    "flex whitespace-nowrap gap-10 font-bold uppercase tracking-widest text-sm items-center",
+                    "flex w-max whitespace-nowrap font-bold uppercase tracking-widest text-sm items-center",
                     textColor,
                     isMobile && (reverse ? "animate-marquee-reverse" : "animate-marquee")
                 )}
                 style={isMobile ? {} : { x }}
             >
                 {Array.from({ length: 12 }).map((_, i) => (
-                    <span key={i} className="flex items-center gap-4">
-                        {children} <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50" />
+                    <span key={i} className="flex items-center pr-10">
+                        {children} <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 ml-10" />
                     </span>
                 ))}
             </motion.div>

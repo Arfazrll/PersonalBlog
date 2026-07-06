@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useTranslations } from 'next-intl';
 import { Mail, Layers } from "lucide-react";
 import { InfiniteRibbon } from "@/components/ui/infinite-ribbon";
+import { MagneticButton } from "@/components/ui/magnetic-button";
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -49,34 +50,34 @@ export default function CTASection() {
     return (
         <section ref={sectionRef} className="relative py-12 lg:py-16 overflow-hidden bg-background">
             {/* Infinite Ribbons - Moved from Stats Section */}
-            <div className="relative flex h-[300px] w-full items-center justify-center overflow-hidden pointer-events-none mb-10">
-                <InfiniteRibbon rotation={6} className="z-10 py-5 border-y border-blue-200 dark:border-white/5 shadow-xl" background="bg-white dark:bg-zinc-900" textColor="text-blue-700 dark:text-zinc-400 font-mono tracking-tighter">
+            <div className="relative flex h-[300px] w-full items-center justify-center pointer-events-none mb-10">
+                <InfiniteRibbon rotation={6} baseVelocity={1} className="z-10 py-5 border-y border-blue-200 dark:border-white/5 shadow-xl" background="bg-white dark:bg-zinc-900" textColor="text-blue-700 dark:text-zinc-400 font-mono tracking-tighter">
                     {t('ribbon1')}
                 </InfiniteRibbon>
-                <InfiniteRibbon rotation={-6} reverse={true} className="z-20 py-5 border-y border-white/40 dark:border-white/10 shadow-2xl" background="bg-blue-600 dark:bg-black" textColor="text-white font-bold tracking-widest uppercase">
+                <InfiniteRibbon rotation={-6} reverse={true} baseVelocity={1.2} className="z-20 py-5 border-y border-white/40 dark:border-white/10 shadow-2xl" background="bg-blue-600 dark:bg-black" textColor="text-white font-bold tracking-widest uppercase">
                     {t('ribbon2')}
                 </InfiniteRibbon>
             </div>
 
 
 
-            <div className="max-w-[1600px] mx-auto relative z-10 px-6 md:px-12 lg:px-24 text-center cta-content">
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-12">
+            <div className="max-w-[1600px] mx-auto relative z-10 px-6 md:px-12 lg:px-24 text-center cta-content mt-16">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-0">
                     {t('title')}
                     <br />
-                    <span className="inline-grid place-items-center">
+                    <span className="inline-grid place-items-center pb-4">
                         {/* Invisible longest word ensures the container NEVER changes width/height */}
-                        <span className="col-start-1 row-start-1 invisible pointer-events-none text-gradient mx-2">
+                        <span className="col-start-1 row-start-1 invisible pointer-events-none text-gradient mx-2 pb-2">
                             {words.reduce((a, b) => a.length > b.length ? a : b, "")}
                         </span>
-                        <AnimatePresence>
+                        <AnimatePresence mode="wait">
                             <motion.span
                                 key={words[currentWord]}
-                                initial={{ y: 50, opacity: 0, rotateX: -90 }}
-                                animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                                exit={{ y: -50, opacity: 0, rotateX: 90 }}
-                                transition={{ duration: 0.4, ease: "easeOut" }}
-                                className="col-start-1 row-start-1 inline-block text-gradient mx-2"
+                                initial={{ y: 30, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: -30, opacity: 0 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                                className="col-start-1 row-start-1 inline-block text-gradient mx-2 pb-2"
                             >
                                 {words[currentWord]}
                             </motion.span>
@@ -85,23 +86,25 @@ export default function CTASection() {
                     <span className="whitespace-nowrap">{t('together')}</span>
                 </h2>
 
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-16">
-                    {t('subtitle')}
+                <p className="text-xl text-muted-foreground max-w-4xl mx-auto mt-4 mb-10 text-center">
+                    {t('subtitle').split('. ').map((sentence, i, arr) => (
+                        <span key={i}>
+                            {sentence}{i < arr.length - 1 ? '.' : ''}
+                            {i < arr.length - 1 && <br className="hidden md:block" />}
+                            {i < arr.length - 1 && " "}
+                        </span>
+                    ))}
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link href="/contact" className="btn-creative text-lg px-10 py-5 inline-flex items-center gap-3">
-                            <Mail className="w-5 h-5" />
-                            <span>{t('start')}</span>
-                        </Link>
-                    </motion.div>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link href="/resume" className="btn-outline-creative text-lg px-10 py-5 inline-flex items-center gap-3">
-                            <Layers className="w-5 h-5" />
-                            <span>{t('work')}</span>
-                        </Link>
-                    </motion.div>
+                    <MagneticButton href="/contact" variant="primary" className="text-lg px-10 py-5">
+                        <Mail className="w-5 h-5" />
+                        <span>{t('start')}</span>
+                    </MagneticButton>
+                    <MagneticButton href="/resume" variant="outline" className="text-lg px-10 py-5">
+                        <Layers className="w-5 h-5" />
+                        <span>{t('work')}</span>
+                    </MagneticButton>
                 </div>
             </div>
         </section>
