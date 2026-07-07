@@ -436,21 +436,14 @@ const AuditFunnel = () => {
 
     useEffect(() => {
         const galleryItems = [
-            "/gallery/Foto Utama.jpeg",
-            "/gallery/FotoSC1.jpeg",
-            "/gallery/FotoSC2.jpeg",
-            "/gallery/FotoSC3.jpeg",
-            "/gallery/FotoSC4.jpeg",
-            "/gallery/FotoSC5.jpeg",
-            "/gallery/academicaffairsdivision1.jpg",
-            "/gallery/computernetworkpracticumassistant2.jpg",
-            "/gallery/dataentryassistant1.jpg",
-            "/gallery/delegateaiesecfutureleaders20241.jpg",
-            "/gallery/environmentalhygieneteam1.jpg",
-            "/gallery/environmentalhygieneteam2.jpg",
-            "/gallery/logisticsoperatorcampusexpo20242.jpg",
-            "/gallery/researchassistant1.jpg",
-            "/gallery/researchassistant2.jpg"
+            "/feature/icons/image1.png",
+            "/feature/icons/image2.png",
+            "/feature/icons/image3.png",
+            "/feature/icons/image4.png",
+            "/feature/icons/image5.png",
+            "/feature/icons/image6.png",
+            "/feature/icons/image7.png",
+            "/feature/icons/image8.png"
         ];
         // Shuffle and pick 8 random images for the trail to avoid overwhelming the DOM
         const shuffled = [...galleryItems].sort(() => 0.5 - Math.random());
