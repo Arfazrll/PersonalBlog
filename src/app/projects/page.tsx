@@ -19,7 +19,7 @@ const ProjectContact = dynamic(() => import('@/components/sections/ProjectContac
 const ProjectStats = dynamic(() => import('@/components/sections/ProjectStats').then(mod => mod.ProjectStats), { ssr: true });
 
 import { usePerformance } from '@/hooks/usePerformance';
-import { ProjectPlaceholder } from '@/components/projects/ProjectPlaceholder';
+import { ProjectPlaceholder, getPlaceholderImageUrl } from '@/components/projects/ProjectPlaceholder';
 
 import { getProjectImages } from '@/app/actions/getProjectImages';
 
@@ -66,13 +66,13 @@ function ProjectListItem({
         // Synchronously update coordinates to prevent the (0,0) render bug
         cursorX.set(e.clientX);
         cursorY.set(e.clientY);
-        
+
         if (itemRef.current) {
             const rect = itemRef.current.getBoundingClientRect();
             mouseX.set(e.clientX - rect.left);
             mouseY.set(e.clientY - rect.top);
         }
-        
+
         setIsHovered(true);
     };
 
@@ -224,8 +224,8 @@ function ProjectListItem({
                             }}
                         >
                             <div className={cn(
-                                "w-[500px] h-[300px] rounded-2xl overflow-hidden border backdrop-blur-xl flex items-center justify-center relative shadow-2xl transition-all duration-300",
-                                "border-white/10 bg-zinc-950"
+                                "w-[500px] h-[300px] rounded-none overflow-hidden backdrop-blur-xl flex items-center justify-center relative shadow-2xl transition-all duration-300",
+                                "bg-zinc-950"
                             )}>
                                 {project.image ? (
                                     <img
@@ -235,7 +235,7 @@ function ProjectListItem({
                                         className="absolute inset-0 w-full h-full object-cover opacity-90 block transition-transform duration-500 hover:scale-105"
                                     />
                                 ) : (
-                                    <ProjectPlaceholder className="pb-0" title="No Preview Image" />
+                                    <ProjectPlaceholder className="pb-0" title={project.title} />
                                 )}
 
                                 {/* Overlay Gradient */}
@@ -546,14 +546,14 @@ function ProjectCard({ project, onClick, index }: { project: Project; onClick: (
                 ) : (
                     <ProjectPlaceholder className="absolute inset-0" title={project.title} />
                 )}
-                
+
                 {/* Subtle overlay on hover */}
                 <div className="absolute inset-0 bg-foreground/5 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
 
             {/* Bottom Content Box */}
             <div className="flex flex-col flex-grow px-1 md:px-0">
-                
+
                 {/* Title & Badge Row */}
                 <div className="flex items-start justify-between gap-4 mb-3">
                     <h3 className="text-3xl sm:text-4xl font-serif-elegant text-foreground group-hover:text-primary transition-colors tracking-tight">
@@ -687,14 +687,14 @@ export default function ProjectsPage() {
 
     const products = useMemo(() => {
         const techImages = [
-            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2565&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2670&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2832&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2670&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2670&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2670&auto=format&fit=crop", // Replaced broken image
-            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2670&auto=format&fit=crop",
+            "/project/parallax/image1.png",
+            "/project/parallax/image2.png",
+            "/project/parallax/image3.png",
+            "/project/parallax/image4.png",
+            "/project/parallax/image5.png",
+            "/project/parallax/image6.png",
+            "/project/parallax/image7.png",
+            "/project/parallax/image9.png",
         ];
 
         const baseProducts = portfolioData.projects.map((p, i) => ({
@@ -752,6 +752,11 @@ export default function ProjectsPage() {
                     } catch (e) {
                         console.error("Failed to load images for", project.title, e);
                     }
+                    
+                    // Preload the placeholder image if no dynamic image is found
+                    const img = new Image();
+                    img.src = getPlaceholderImageUrl(project.title);
+
                     return project;
                 })
             );

@@ -1,36 +1,55 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ImageOff } from 'lucide-react';
 
 interface ProjectPlaceholderProps {
     className?: string;
     title?: string;
 }
 
+// Store seeds outside the component so they persist across hovers but reset on page refresh
+export const projectSeeds = new Map<string, number>();
+
+export function getPlaceholderImageUrl(title: string) {
+    if (!projectSeeds.has(title)) {
+        projectSeeds.set(title, Math.floor(Math.random() * 10000));
+    }
+    const seed = projectSeeds.get(title);
+    return `https://picsum.photos/seed/${seed}/500/300`;
+}
+
 export function ProjectPlaceholder({ className, title = "No Preview Available" }: ProjectPlaceholderProps) {
+    const [mounted, setMounted] = useState(false);
+    const [imageUrl, setImageUrl] = useState('');
+
+    useEffect(() => {
+        setMounted(true);
+        setImageUrl(getPlaceholderImageUrl(title));
+    }, [title]);
+
+    // Fallback while not mounted to avoid hydration mismatch
+    if (!mounted) {
+        return (
+            <div className={cn(
+                "relative w-full h-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5",
+                className
+            )} />
+        );
+    }
+
     return (
         <div className={cn(
-            "relative w-full h-full flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 p-6 pb-32 text-center overflow-hidden",
+            "relative w-full h-full overflow-hidden",
             className
         )}>
-            {/* Subtle Texture */}
-            <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center gap-3 opacity-60">
-                <div className="relative z-10 w-16 h-16 rounded-3xl bg-black/10 dark:bg-white/5 flex items-center justify-center mb-6 border border-black/10 dark:border-white/5">
-                    <ImageOff className="w-8 h-8 text-zinc-500 dark:text-zinc-500" /> {/* Changed to ImageOff as Box is not imported */}
-                </div>
-                <div className="relative z-10 max-w-[240px]">
-                    <h3 className="text-xl font-black text-zinc-900 dark:text-zinc-100 mb-2 leading-tight">
-                        {title}
-                    </h3>
-                    <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                        Project details available {/* Replaced {t('placeholderDescription')} with original text */}
-                    </p>
-                </div>
-            </div>
+            {imageUrl && (
+                <img 
+                    src={imageUrl} 
+                    alt={title} 
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700" 
+                />
+            )}
         </div>
     );
 }
