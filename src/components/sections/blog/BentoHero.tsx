@@ -172,7 +172,7 @@ function StatsVisual({ categoryStats }: { categoryStats: { name: string, count: 
           const isActive = i === activeIdx || hoveredIdx === i;
 
           return (
-            <div key={i} className="flex-1 h-[76px] relative select-none">
+            <div key={i} className="flex-1 h-[100px] relative select-none">
               <div
                 className="absolute inset-0 rounded-xl border border-border/40 dark:border-border/20 bg-muted/5 text-border/30 dark:text-border/20"
                 style={{
@@ -276,8 +276,61 @@ const STATUS_ICONS: Record<string, any> = {
   recent: { icon: Sparkle, color: "text-amber-400", bg: "bg-amber-400/15", gradient: "bg-gradient-to-b from-amber-400 to-amber-600", border: "border-amber-600" },
 };
 
+const getCategoryDesign = (text: string, isActive: boolean, baseGradient: string, baseBorder: string) => {
+  const t = text.toLowerCase();
+  const sizeClass = isActive ? "w-8 h-8" : "w-5 h-5";
+  const iconSize = isActive ? "w-4 h-4" : "w-2.5 h-2.5";
+
+  // AI / Agent: Glassmorphic with subtle inner glow
+  if (t.includes('ai') || t.includes('agent') || t.includes('machine learning')) {
+    return {
+      container: `shrink-0 rounded-[8px] flex items-center justify-center font-bold transition-all duration-300 dark:bg-neutral-950/80 bg-white/80 backdrop-blur-md border dark:border-white/10 border-black/10 shadow-[inset_0_0_12px_rgba(0,0,0,0.05),0_0_8px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_0_12px_rgba(255,255,255,0.05),0_0_8px_rgba(255,255,255,0.05)] relative overflow-hidden ${sizeClass}`,
+      icon: `${iconSize} dark:text-neutral-300 text-neutral-700 relative z-10 dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]`
+    };
+  }
+
+  // Software / Code: Minimalist Terminal
+  if (t.includes('software') || t.includes('code') || t.includes('dev') || t.includes('engineering')) {
+    return {
+      container: `shrink-0 rounded-[6px] flex items-center justify-center font-bold transition-all duration-300 dark:bg-neutral-900 bg-neutral-100 border dark:border-neutral-800 border-neutral-200 border-l-[3px] border-l-emerald-500/50 shadow-sm ${sizeClass}`,
+      icon: `${iconSize} dark:text-emerald-400/80 text-emerald-600`
+    };
+  }
+
+  // Architecture / Design: Blueprint Wireframe
+  if (t.includes('architecture') || t.includes('design') || t.includes('layout')) {
+    return {
+      container: `shrink-0 rounded-[8px] flex items-center justify-center font-bold transition-all duration-300 bg-transparent border border-dashed dark:border-neutral-500/40 border-neutral-400/60 shadow-sm ${sizeClass}`,
+      icon: `${iconSize} dark:text-neutral-400 text-neutral-600`
+    };
+  }
+
+  // Data: Layered / Stacked Block
+  if (t.includes('data') || t.includes('sql') || t.includes('database')) {
+    return {
+      container: `shrink-0 rounded-[8px] flex items-center justify-center font-bold transition-all duration-300 dark:bg-neutral-800 bg-neutral-200 border dark:border-neutral-700 border-neutral-300 dark:shadow-[2px_2px_0px_rgba(255,255,255,0.05)] shadow-[2px_2px_0px_rgba(0,0,0,0.1)] ${sizeClass}`,
+      icon: `${iconSize} dark:text-amber-400/80 text-amber-600`
+    };
+  }
+
+  // Web / Cloud: Grid / Dotted background look
+  if (t.includes('web') || t.includes('cloud') || t.includes('network')) {
+    return {
+      container: `shrink-0 rounded-[8px] flex items-center justify-center font-bold transition-all duration-300 dark:bg-neutral-900/50 bg-neutral-100/50 border dark:border-neutral-800/80 border-neutral-200/80 dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.1)_1px,transparent_1px)] [background-size:4px_4px] ${sizeClass}`,
+      icon: `${iconSize} dark:text-cyan-400/80 text-cyan-600`
+    };
+  }
+
+  // Default: Sleek Glass Squircle
+  return {
+    container: `shrink-0 rounded-[8px] flex items-center justify-center font-bold transition-all duration-300 dark:bg-neutral-900/40 bg-neutral-100/40 border dark:border-neutral-800/50 border-neutral-200/50 shadow-inner ${sizeClass}`,
+    icon: `${iconSize} dark:text-neutral-400 text-neutral-500`
+  };
+};
+
 function RecentPublicationsVisual({ blogs }: { blogs: any[] }) {
-  const logs = blogs.slice(0, 5).map((b, i) => ({
+  // Increase to 7 items to fill the taller card space
+  const logs = blogs.slice(0, 7).map((b, i) => ({
     category: b.category,
     title: b.title,
     status: i === 0 ? "recent" : "published",
@@ -301,7 +354,12 @@ function RecentPublicationsVisual({ blogs }: { blogs: any[] }) {
     return rel;
   };
 
-  const Y: Record<string, number> = { "-2": -58, "-1": -32, "0": 0, "1": 32, "2": 58 };
+  // Evenly distributed steps
+  const Y: Record<string, number> = {
+    "-3": -165, "-2": -110, "-1": -55,
+    "0": 0,
+    "1": 55, "2": 110, "3": 165
+  };
 
   return (
     <div className="w-full h-full relative flex items-center justify-center overflow-hidden py-4">
@@ -310,55 +368,63 @@ function RecentPublicationsVisual({ blogs }: { blogs: any[] }) {
         const si = STATUS_ICONS[l.status] || STATUS_ICONS.published;
         const abs = Math.abs(slot);
         const isActive = slot === 0;
-        const isVisible = abs <= 2;
-        const IconComp = getIconForText(l.category);
+        const isVisible = abs <= 3; // Show 7 items
 
-        const yOffset = Y[String(slot)] ?? (slot < 0 ? -120 : 120);
-        const scale = isActive ? 1 : abs === 1 ? 0.93 : 0.87;
-        const opacity = isActive ? 1 : abs === 1 ? 0.65 : 0.38;
-        const zIndex = isActive ? 30 : abs === 1 ? 20 : 10;
+        const yOffset = Y[String(slot)] ?? (slot < 0 ? -250 : 250);
+
+        // Scale down to prevent touching edges, making it neat
+        const scale = isActive ? 1 : abs === 1 ? 0.92 : abs === 2 ? 0.84 : 0.76;
+        const opacity = isActive ? 1 : abs === 1 ? 0.75 : abs === 2 ? 0.45 : 0.2;
+        const zIndex = isActive ? 40 : 30 - abs * 5;
 
         return (
           <motion.div
             key={i}
-            className="absolute left-0 right-0 mx-auto px-1.5"
+            // Increased horizontal padding so it doesn't hug the walls
+            className="absolute left-0 right-0 mx-auto px-4 md:px-8 max-w-[95%]"
             style={{ zIndex }}
             animate={{
-              y: isVisible ? yOffset : slot < 0 ? -150 : 150,
+              y: isVisible ? yOffset : slot < 0 ? -300 : 300,
               scale,
               opacity: isVisible ? opacity : 0,
             }}
             transition={{
-              y: { type: "spring", stiffness: 500, damping: 35 },
-              scale: { type: "spring", stiffness: 500, damping: 35 },
-              opacity: { duration: 0.25, ease: "easeOut" },
+              y: { type: "spring", stiffness: 400, damping: 30 },
+              scale: { type: "spring", stiffness: 400, damping: 30 },
+              opacity: { duration: 0.3, ease: "easeOut" },
             }}
           >
-            <div className={`w-full rounded-2xl border flex items-center gap-2.5 ${isActive
-              ? "px-3 py-2.5 bg-background border-border"
-              : "px-2.5 py-1.5 bg-muted/30 border-border/50"
+            <div className={`w-full rounded-2xl border flex items-center gap-3 ${isActive
+              ? "px-3.5 py-3 bg-background border-border shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)]"
+              : "px-3 py-2 bg-muted/30 border-border/40"
               }`}>
 
-              <div className={`shrink-0 rounded-[8px] flex items-center justify-center font-bold text-white transition-all duration-300 ${si.gradient} border ${si.border} shadow-[inset_0_0.5px_0_0_rgba(255,255,255,0.6),inset_0.5px_0_0_0_rgba(255,255,255,0.2),inset_0_2px_6px_0_rgba(255,255,255,0.3),inset_0_-0.5px_0_0_rgba(0,0,0,0.3),inset_-0.5px_0_0_0_rgba(0,0,0,0.1),inset_0_-2px_6px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.08),0_2px_4px_0_rgba(0,0,0,0.06),0_4px_6px_0_rgba(0,0,0,0.04)] ${isActive ? "w-8 h-8" : "w-5 h-5"}`}>
-                <IconComp weight="duotone" className={`${isActive ? "w-4 h-4" : "w-2.5 h-2.5"}`} />
-              </div>
+              {(() => {
+                const design = getCategoryDesign(l.category, isActive, "", "");
+                const IconComp = getIconForText(l.category);
+                return (
+                  <div className={design.container}>
+                    <IconComp weight="duotone" className={design.icon} />
+                  </div>
+                );
+              })()}
 
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className={`font-mono font-semibold text-foreground leading-none uppercase truncate max-w-[80px] ${isActive ? "text-[10px]" : "text-[9px]"}`}>
+                <div className="flex items-center gap-2">
+                  <span className={`font-mono font-semibold text-foreground leading-none uppercase truncate max-w-[100px] ${isActive ? "text-[11px]" : "text-[10px]"}`}>
                     {l.category.replace(/-/g, ' ')}
                   </span>
-                  <span className={`font-mono uppercase tracking-wide rounded px-1 py-0.5 ${si.bg} ${si.color} ${isActive ? "text-[7px]" : "text-[6px]"}`}>
+                  <span className={`font-mono uppercase tracking-wider rounded px-1.5 py-0.5 ${si.bg} ${si.color} ${isActive ? "text-[8px]" : "text-[7px]"}`}>
                     {l.status}
                   </span>
                 </div>
                 {isActive && (
-                  <p className="text-[9px] text-muted-foreground truncate mt-0.5 leading-tight">{l.title}</p>
+                  <p className="text-[10px] text-muted-foreground truncate mt-1 leading-tight">{l.title}</p>
                 )}
               </div>
 
               {isActive && (
-                <span className="text-[9px] font-mono text-muted-foreground shrink-0">{l.t}</span>
+                <span className="text-[10px] font-mono text-muted-foreground shrink-0">{l.t}</span>
               )}
             </div>
           </motion.div>
@@ -411,13 +477,13 @@ function ProjectsVisual() {
               layout
               animate={{
                 opacity: 1 - offset * 0.25,
-                y: offset * 18,
-                scale: 1 - offset * 0.05,
+                y: offset * 40,
+                scale: 1 - offset * 0.08,
                 zIndex: 10 - offset,
                 rotateX: offset * 4
               }}
               transition={{ duration: 0.5, type: "spring", bounce: 0.3 }}
-              className="absolute w-[85%] h-[130px] top-6 rounded-[16px] border border-white/20 dark:border-white/10 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-xl p-4 flex flex-col justify-between overflow-hidden cursor-pointer group"
+              className="absolute w-[85%] h-[180px] top-16 rounded-[16px] border border-white/20 dark:border-white/10 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-xl p-5 flex flex-col justify-between overflow-hidden cursor-pointer group"
               onClick={() => {
                 if (isTop) window.location.href = `/projects/${p.slug}`;
                 else setCurrentIndex(i);
@@ -526,32 +592,34 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
       description: "Our latest architectural blueprints and engineering reflections.",
       visual: <FeaturedVisual posts={featuredPosts} currentSlide={currentSlide} isLowPowerMode={isLowPowerMode} />,
       colSpan: "lg:col-span-2",
-      height: "h-[340px]",
+      height: "h-[480px]",
     },
     {
       title: "The Gallery",
       description: "Curated milestones of the engineering journey.",
       visual: (
-        <div className="p-2 w-full h-full pb-0 rounded-[14px] overflow-visible relative">
-          <AnimatedFolder
-            title="The Gallery"
-            className="w-full h-full"
-            projects={(randomGalleryImages.length > 0
-              ? randomGalleryImages
-              : portfolioData.gallery
-                .map(item => item.type === 'video' ? item.thumbnail : item.url)
-                .filter((url): url is string => !!url)
-                .slice(0, 5)
-            ).map((url, i) => ({
-              id: `gallery-img-${i}`,
-              image: url,
-              title: `Archive 0${i + 1}`
-            }))}
-          />
+        <div className="p-2 w-full h-full pb-0 rounded-[14px] overflow-visible relative flex items-center justify-center">
+          <div className="scale-[1.4] transform-gpu origin-center w-full h-full flex items-center justify-center">
+            <AnimatedFolder
+              title="The Gallery"
+              className="w-full h-full"
+              projects={(randomGalleryImages.length > 0
+                ? randomGalleryImages
+                : portfolioData.gallery
+                  .map(item => item.type === 'video' ? item.thumbnail : item.url)
+                  .filter((url): url is string => !!url)
+                  .slice(0, 5)
+              ).map((url, i) => ({
+                id: `gallery-img-${i}`,
+                image: url,
+                title: `Archive 0${i + 1}`
+              }))}
+            />
+          </div>
         </div>
       ),
       colSpan: "lg:col-span-1",
-      height: "h-[340px]",
+      height: "h-[480px]",
       className: "!overflow-visible hover:z-50",
       innerClassName: "!overflow-visible hover:z-50"
     },
@@ -560,21 +628,21 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
       description: "Articles published across various engineering categories.",
       visual: <StatsVisual categoryStats={categoryStats} />,
       colSpan: "lg:col-span-1",
-      height: "h-[280px]",
+      height: "h-[420px]",
     },
     {
       title: "Activity Feed",
       description: "Real-time logs of latest published articles.",
       visual: <RecentPublicationsVisual blogs={portfolioData.blogs} />,
       colSpan: "lg:col-span-1",
-      height: "h-[280px]",
+      height: "h-[420px]",
     },
     {
       title: "Featured Projects",
       description: "Explore the latest engineered solutions and applications.",
       visual: <ProjectsVisual />,
       colSpan: "lg:col-span-1",
-      height: "h-[280px]",
+      height: "h-[420px]",
     }
   ];
 
@@ -593,7 +661,7 @@ export const BentoHero = ({ isLowPowerMode }: { isLowPowerMode?: boolean }) => {
         </div>
       )}
 
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 pt-4 pb-20 flex-grow flex flex-col">
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 pt-4 pb-20 flex-grow flex flex-col">
         {/* 5-Card Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full mx-auto flex-grow relative z-10">
           {CARDS.map((card, idx) => (
