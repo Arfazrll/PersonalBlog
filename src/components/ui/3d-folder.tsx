@@ -25,18 +25,14 @@ export function AnimatedFolder({ title, projects, className }: AnimatedFolderPro
     <>
       <div
         className={cn(
-          "relative flex flex-col items-center justify-center",
-          "p-8 rounded-2xl cursor-pointer",
-          "bg-card border border-border",
+          "relative flex flex-col items-center justify-center w-full h-full",
+          "cursor-pointer",
           "transition-all duration-500 ease-out",
-          "hover:shadow-2xl hover:shadow-primary/10",
-          "hover:border-primary/30",
+          "hover:shadow-primary/10",
           "group",
           className,
         )}
         style={{
-          minWidth: "280px",
-          minHeight: "320px",
           perspective: "1000px",
         }}
         onMouseEnter={() => setIsHovered(true)}
@@ -47,14 +43,14 @@ export function AnimatedFolder({ title, projects, className }: AnimatedFolderPro
       >
         {/* Subtle background glow on hover */}
         <div
-          className="absolute inset-0 rounded-2xl transition-opacity duration-500"
+          className="absolute inset-0 rounded-[14px] transition-opacity duration-500 pointer-events-none"
           style={{
             background: "radial-gradient(circle at 50% 70%, var(--primary) 0%, transparent 70%)",
             opacity: isHovered ? 0.08 : 0,
           }}
         />
 
-        <div className="relative flex items-center justify-center mb-0 mt-8" style={{ height: "200px", width: "240px" }}>
+        <div className="relative flex items-center justify-center mb-0 mt-4" style={{ height: "140px", width: "240px" }}>
           {/* Folder back layer - z-index 10 */}
           <div
             className="absolute w-40 h-32 bg-orange-600 rounded-lg shadow-md"
@@ -126,26 +122,6 @@ export function AnimatedFolder({ title, projects, className }: AnimatedFolderPro
             }}
           />
         </div>
-
-        {/* Folder title */}
-        <h3
-          className="text-2xl font-black text-foreground mt-2 transition-all duration-300 uppercase tracking-[0.2em]"
-          style={{
-            transform: isHovered ? "translateY(4px)" : "translateY(0)",
-          }}
-        >
-          {title}
-        </h3>
-
-        {/* Project count */}
-        <p
-          className="text-xs font-bold text-muted-foreground transition-all duration-300 mt-1 tracking-widest"
-          style={{
-            opacity: isHovered ? 0.7 : 1,
-          }}
-        >
-          VIEW ARCHIVES
-        </p>
 
         {/* Hover hint */}
         <div

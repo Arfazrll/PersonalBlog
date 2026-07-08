@@ -227,8 +227,8 @@ export function HeroVisual({ isExiting = false }: { isExiting?: boolean }) {
                 className="text-[clamp(3rem,11vw,13rem)] md:flex items-center font-black leading-[0.85] tracking-tighter text-shiny will-change-transform px-4"
               >
                 <span className="">SOFT</span>
-                <div 
-                  ref={zapRef} 
+                <div
+                  ref={zapRef}
                   className="hidden lg:block mx-[0.05em] relative cursor-pointer group"
                   onClick={() => window.open('https://arfazrllworkspace.vercel.app/', '_blank')}
                   onMouseEnter={(e) => setTooltip({ show: true, text: "Go to Workspace", icon: 'zap', x: e.clientX, y: e.clientY })}
@@ -237,8 +237,8 @@ export function HeroVisual({ isExiting = false }: { isExiting?: boolean }) {
                 >
                   <Zap className="w-[0.8em] h-[0.8em] text-sky-400 group-hover:text-sky-300 transition-colors" strokeWidth={1.5} />
                 </div>
-                <div 
-                  ref={zapSmallRef} 
+                <div
+                  ref={zapSmallRef}
                   className="block lg:hidden mx-[0.02em] relative cursor-pointer group"
                   onClick={() => window.open('https://arfazrllworkspace.vercel.app/', '_blank')}
                   onMouseEnter={(e) => setTooltip({ show: true, text: "Go to Workspace", icon: 'zap', x: e.clientX, y: e.clientY })}
@@ -261,8 +261,8 @@ export function HeroVisual({ isExiting = false }: { isExiting?: boolean }) {
               className="text-[clamp(3rem,11vw,13rem)] md:flex items-center font-black leading-[0.85] tracking-tighter text-shiny will-change-transform px-4"
             >
               <span className="">EN</span>
-              <div 
-                ref={botRef} 
+              <div
+                ref={botRef}
                 className="mx-[0.05em] relative cursor-pointer group"
                 onClick={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();

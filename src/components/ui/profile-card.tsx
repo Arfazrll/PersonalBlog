@@ -43,7 +43,7 @@ export function ProfileCard(props: ProfileCardProps) {
     <div className={cn("w-full max-w-7xl mx-auto px-4 relative", className)}>
       {/* Close Button */}
       {onClose && (
-        <button 
+        <button
           onClick={onClose}
           className="absolute -top-12 right-4 md:-top-4 md:-right-4 z-50 p-2 bg-white dark:bg-zinc-900 rounded-full shadow-xl border border-border hover:scale-110 transition-transform"
         >

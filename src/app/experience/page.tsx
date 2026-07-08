@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
@@ -62,7 +63,7 @@ function ExperienceHighlightSection({ type, isLowPowerMode }: { type: TabType; i
 
     return (
         <div className="mt-6">
-            <InnovativeExperienceHero 
+            <InnovativeExperienceHero
                 type={type}
                 title={content.title}
                 highlight={content.highlight}
@@ -88,6 +89,8 @@ interface TabItem {
     label: string;
     description: string;
 }
+
+import MagneticEffect from '@/components/ui/MagneticEffect';
 
 function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
     const contentRef = useRef<HTMLDivElement>(null);
@@ -175,24 +178,25 @@ function ExperienceTabSlider({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                 </div>
 
                 {/* Tab Buttons - Horizontal Scroll on Mobile, Centered on Tablet+ */}
-                <div className="flex flex-nowrap sm:flex-wrap justify-start sm:justify-center gap-2 overflow-x-auto pb-4 sm:pb-0 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                <div className="flex flex-nowrap sm:flex-wrap justify-start sm:justify-center gap-2 overflow-x-auto py-4 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
                     {tabs.map((tab, index) => (
-                        <button
-                            key={index}
-                            className={`m-1.5 inline-flex justify-center items-center gap-2.5 rounded-full px-5 py-2.5 text-sm whitespace-nowrap shadow-sm transition-colors duration-150 focus-visible:ring focus-visible:ring-cyan-300 focus-visible:outline-none sm:px-6 sm:py-3 sm:text-base ${activeTab === index
-                                ? "bg-cyan-500 text-white shadow-cyan-950/10"
-                                : "bg-white dark:bg-neutral-800 text-cyan-900 dark:text-cyan-100 hover:bg-cyan-100 dark:hover:bg-neutral-700"
-                                }`}
-                            onClick={() => {
-                                setActiveTab(index);
-                                if (index !== 2) setSelectedCategory(null);
-                            }}
-                        >
-                            {tab.id === 'education' && <GraduationCap className="w-5 h-5" />}
-                            {tab.id === 'journey' && <Briefcase className="w-5 h-5" />}
-                            {tab.id === 'experience' && <Rocket className="w-5 h-5" />}
-                            <span>{tab.label}</span>
-                        </button>
+                        <MagneticEffect key={index}>
+                            <button
+                                className={`group m-1.5 inline-flex justify-center items-center gap-2.5 rounded-full px-5 py-2.5 text-sm whitespace-nowrap shadow-sm transition-all duration-300 ease-out focus-visible:ring focus-visible:ring-cyan-300 focus-visible:outline-none sm:px-6 sm:py-3 sm:text-base hover:-translate-y-1 hover:shadow-lg ${activeTab === index
+                                    ? "bg-cyan-500 text-white shadow-cyan-500/25"
+                                    : "bg-white dark:bg-neutral-800/80 backdrop-blur-sm text-cyan-900 dark:text-cyan-100 hover:bg-cyan-50 dark:hover:bg-neutral-700/80 border border-transparent dark:border-white/5"
+                                    }`}
+                                onClick={() => {
+                                    setActiveTab(index);
+                                    if (index !== 2) setSelectedCategory(null);
+                                }}
+                            >
+                                {tab.id === 'education' && <GraduationCap className="w-5 h-5 transition-transform group-hover:scale-110" />}
+                                {tab.id === 'journey' && <Briefcase className="w-5 h-5 transition-transform group-hover:scale-110" />}
+                                {tab.id === 'experience' && <Rocket className="w-5 h-5 transition-transform group-hover:scale-110" />}
+                                <span className="font-medium">{tab.label}</span>
+                            </button>
+                        </MagneticEffect>
                     ))}
                 </div>
             </div>
@@ -405,30 +409,36 @@ export default function ExperiencePage() {
             {/* Smooth Scroll Hero Section */}
             <SmoothScrollHero />
 
-            <FloatingShape
-                className="w-[min(500px,80vw)] h-[min(500px,80vw)] -top-20 -right-40"
-                gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)"
-                isLowPowerMode={isLowPowerMode}
-            />
-            <FloatingShape
-                className="w-[min(400px,70vw)] h-[min(400px,70vw)] bottom-40 -left-20"
-                gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)"
-                delay={3}
-                isLowPowerMode={isLowPowerMode}
-            />
+            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                <FloatingShape
+                    className="w-[min(500px,80vw)] h-[min(500px,80vw)] -top-20 -right-40"
+                    gradient="radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)"
+                    isLowPowerMode={isLowPowerMode}
+                />
+                <FloatingShape
+                    className="w-[min(400px,70vw)] h-[min(400px,70vw)] bottom-40 -left-20"
+                    gradient="radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)"
+                    delay={3}
+                    isLowPowerMode={isLowPowerMode}
+                />
+            </div>
+
+            {/* 1. Work Experience Gallery Marquee */}
+            <motion.div
+                initial={{ opacity: 0, y: isLowPowerMode ? 0 : 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                className="w-full relative z-10 pt-20 mb-20 -mt-10 md:-mt-20 overflow-hidden"
+            >
+                <ExperienceMarquee />
+            </motion.div>
 
             <motion.div
                 initial={{ opacity: 0, y: isLowPowerMode ? 0 : 60 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-                className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20"
+                className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
             >
-
-                {/* 1. Work Experience Gallery Marquee */}
-                <div className="w-screen relative left-1/2 -translate-x-1/2 mb-20 -mt-10 md:-mt-20">
-                    <ExperienceMarquee />
-                </div>
-
                 {/* 2. Tab Slider Section (Testimonial-style UI) */}
                 <ExperienceTabSlider isLowPowerMode={isLowPowerMode} />
             </motion.div>
@@ -686,6 +696,11 @@ function TimelineGallery({ images, id, title, externalLink, logo }: { images: st
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const handleImageError = (index: number) => {
         setFailedImages(prev => new Set(prev).add(index));
@@ -786,37 +801,36 @@ function TimelineGallery({ images, id, title, externalLink, logo }: { images: st
             )}
 
             {/* Lightbox Overlay */}
-            <AnimatePresence>
-                {selectedImage && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setSelectedImage(null)}
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
-                    >
+            {isMounted && createPortal(
+                <AnimatePresence>
+                    {selectedImage && (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
-                        />
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            className="relative max-w-4xl w-[90vw] md:w-auto h-fit max-h-[80vh] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={() => setSelectedImage(null)}
+                            className="fixed inset-0 z-[9999] flex items-center justify-center cursor-zoom-out"
                         >
-                            <img
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            />
+                            <motion.img
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
                                 src={selectedImage}
                                 alt="Gallery expanded"
-                                className="w-full h-full object-contain"
+                                className="relative max-w-[90vw] max-h-[85vh] w-auto h-auto object-contain rounded-2xl shadow-2xl ring-1 ring-white/10"
+                                onClick={(e) => e.stopPropagation()}
                             />
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </div>
     );
 }

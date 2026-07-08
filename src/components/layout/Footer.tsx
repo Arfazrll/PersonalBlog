@@ -161,6 +161,7 @@ export function Footer() {
     const pathname = usePathname();
     const isBlog = pathname?.includes('/blog');
     const isBlogDetail = pathname?.includes('/blog/') && pathname.split('/blog/')[1]?.length > 0;
+    const isGallery = pathname?.includes('/gallery');
 
     const previewSocials = portfolioData.personal.socialLinks
         .filter((s: SocialLink) => s.platform !== 'Discord' && s.platform !== 'Spotify')
@@ -172,13 +173,15 @@ export function Footer() {
         <>
             {/* Compact Footer - Always visible */}
             <footer className={cn(
-                isBlog ? 'absolute bottom-0 w-full border-t-0 pointer-events-none !bg-transparent z-20' : 'relative z-20 mt-auto dark:bg-black',
+                isBlog ? 'absolute bottom-0 w-full border-t-0 pointer-events-none !bg-transparent z-20' :
+                    isGallery ? 'relative z-20 mt-auto !bg-transparent' :
+                        'relative z-20 mt-auto dark:bg-black',
                 isExpanded && 'opacity-0 pointer-events-none'
             )}>
-                <div className={`max-w-[1600px] mx-auto relative z-10 px-6 md:px-12 lg:px-24 py-6 md:py-8 pointer-events-auto ${isBlog ? '!bg-transparent' : ''}`}>
+                <div className={`max-w-[1600px] mx-auto relative z-10 px-6 md:px-12 lg:px-24 py-6 md:py-8 pointer-events-auto ${isBlog || isGallery ? '!bg-transparent' : ''}`}>
                     <div className={`
                         px-6 md:px-8 py-4 md:py-6 transition-all duration-300
-                        ${isBlog
+                        ${isBlog || isGallery
                             ? 'bg-card dark:bg-black/40 dark:backdrop-blur-xl border-2 border-foreground/10 dark:border-white/5 rounded-[2rem] shadow-xl dark:shadow-black/20'
                             : 'glass-card'
                         }
@@ -233,8 +236,8 @@ export function Footer() {
                                                     href={social.platform === 'Twitter' ? undefined : social.url}
                                                     onClick={social.platform === 'Twitter' ? (e) => {
                                                         e.preventDefault();
-                                                        window.dispatchEvent(new CustomEvent('portfolio:toggle-chatbot', { 
-                                                            detail: { x: window.innerWidth / 2, y: window.innerHeight / 2 } 
+                                                        window.dispatchEvent(new CustomEvent('portfolio:toggle-chatbot', {
+                                                            detail: { x: window.innerWidth / 2, y: window.innerHeight / 2 }
                                                         }));
                                                     } : undefined}
                                                     target="_blank"

@@ -7,6 +7,7 @@ import Image from "next/image";
 import { X, Play, Maximize2, ChevronLeft, ChevronRight, Minimize2, ListFilter, ArrowDownUp, ImageIcon, Video, ArrowRight, LayoutGrid, StretchHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAllGalleryImages, GalleryImage } from "@/app/actions/getGalleryImages";
+import MagneticEffect from "@/components/ui/MagneticEffect";
 
 type FilterType = 'all' | 'image' | 'video';
 // type SortType = 'newest' | 'oldest';
@@ -141,10 +142,13 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
     }
 
     return (
-        <section className="relative py-24 px-6 md:px-16 lg:px-24 bg-background min-h-screen">
+        <section className="relative py-24 px-6 md:px-16 lg:px-24 min-h-screen">
+            {/* Smooth transition from the transparent hills background to solid background */}
+            <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent to-background pointer-events-none z-0" />
+            <div className="absolute top-96 bottom-0 left-0 right-0 bg-background pointer-events-none z-0" />
 
             {/* Header & Controls */}
-            <div className="max-w-[1920px] mx-auto mb-12 flex flex-col md:flex-row items-start md:items-end justify-between border-b border-neutral-500 dark:border-white/20 pb-6 gap-6">
+            <div className="relative z-10 max-w-[1920px] mx-auto mb-12 flex flex-col md:flex-row items-start md:items-end justify-between border-b border-neutral-500 dark:border-white/20 pb-6 gap-6">
 
                 {/* Title */}
                 <div className="flex-1">
@@ -215,7 +219,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row max-w-[1920px] mx-auto gap-8">
+            <div className="relative z-10 flex flex-col lg:flex-row max-w-[1920px] mx-auto gap-8">
 
                 {/* Quick Index (Sticky Sidebar) - Only visible in Rows mode */}
                 {viewMode === 'rows' && (
@@ -367,7 +371,7 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                     {/* Grid View */}
                     {viewMode === 'grid' && (
                         <div className="space-y-12">
-                            <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+                            <div className="columns-1 md:columns-2 lg:columns-3 gap-3 space-y-3">
                                 {visibleItems.map((item, index) => (
                                     <motion.div
                                         key={item.id}
@@ -375,10 +379,10 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true, margin: "-10%" }}
                                         transition={{ duration: 0.4, delay: isLowPowerMode ? 0 : index * 0.05 }}
-                                        className="relative group break-inside-avoid cursor-pointer p-3 rounded-xl border border-transparent bg-muted/20 dark:bg-transparent transition-all hover:shadow-md"
+                                        className="relative group break-inside-avoid cursor-pointer transition-all"
                                         onClick={() => openLightbox(item.id)}
                                     >
-                                        <div className="relative overflow-hidden bg-muted aspect-auto rounded-lg">
+                                        <div className="relative overflow-hidden bg-muted aspect-auto rounded-none group-hover:rounded-[2rem] transition-all duration-500 ease-out">
                                             <Image
                                                 src={item.thumbnail || item.url}
                                                 alt={item.title}
@@ -398,23 +402,18 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                             </div>
 
                                             {/* Hover Overlay */}
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center z-10">
-                                                <div className="bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center z-10 p-4 text-center">
+                                                <div className="bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 mb-4">
                                                     {item.type === 'video' ? (
                                                         <Play className="w-5 h-5 text-white fill-current" />
                                                     ) : (
                                                         <Maximize2 className="w-5 h-5 text-white" />
                                                     )}
                                                 </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-4 flex justify-between items-start">
-                                            <div>
-                                                <h3 className="text-sm font-medium uppercase tracking-wide text-foreground group-hover:text-primary transition-colors">
+                                                <h3 className="text-sm font-bold uppercase tracking-wide text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75 line-clamp-2">
                                                     {item.title}
                                                 </h3>
-                                                <p className="text-xs text-muted-foreground font-mono mt-1">
+                                                <p className="text-xs text-white/70 font-mono mt-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">
                                                     {item.category}
                                                 </p>
                                             </div>
@@ -425,18 +424,20 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
 
                             {/* Load More Button */}
                             {visibleCount < flattenedFilteredItems.length && (
-                                <div className="flex justify-center pt-8">
-                                    <button
-                                        onClick={() => setVisibleCount(prev => prev + 12)}
-                                        className="group flex flex-col items-center gap-2"
-                                    >
-                                        <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
-                                            Load More Archives
-                                        </span>
-                                        <div className="w-12 h-12 rounded-full border border-neutral-500 dark:border-white/20 flex items-center justify-center group-hover:bg-foreground group-hover:text-background transition-all duration-300">
-                                            <ArrowDownUp className="w-4 h-4" />
-                                        </div>
-                                    </button>
+                                <div className="flex justify-center pt-8 pb-12">
+                                    <MagneticEffect>
+                                        <button
+                                            onClick={() => setVisibleCount(prev => prev + 12)}
+                                            className="group flex flex-col items-center gap-4 py-4 px-8 relative mt-6"
+                                        >
+                                            <span className="text-[11px] font-mono uppercase tracking-[3px] font-bold text-foreground opacity-0 -translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out absolute top-[-10px] whitespace-nowrap">
+                                                Load More
+                                            </span>
+                                            <div className="w-14 h-14 rounded-full border border-neutral-500 dark:border-white/20 flex items-center justify-center group-hover:bg-foreground group-hover:text-background group-hover:scale-110 transition-all duration-500 ease-out z-10 shadow-sm group-hover:shadow-xl bg-background">
+                                                <ArrowDownUp className="w-5 h-5" />
+                                            </div>
+                                        </button>
+                                    </MagneticEffect>
                                 </div>
                             )}
                         </div>

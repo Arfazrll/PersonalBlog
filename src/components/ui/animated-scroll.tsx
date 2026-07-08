@@ -4,11 +4,13 @@ import React, { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, useSpring, useMotionValue } from 'framer-motion';
 import { cn } from "@/lib/utils";
 import { ChevronDown } from 'lucide-react';
+import Loader from './Loader';
 
 const pages = [
     {
-        leftBgImage: '/feature/feature1.jpg',
+        leftBgImage: null,
         rightBgImage: null,
+        leftComponent: <Loader type="ai" />,
         leftContent: null,
         rightContent: {
             heading: 'Intelligence Systems',
@@ -19,7 +21,9 @@ const pages = [
     },
     {
         leftBgImage: null,
-        rightBgImage: '/feature/feature2.jpg',
+        rightBgImage: null,
+        leftComponent: null,
+        rightComponent: <Loader type="software" />,
         leftContent: {
             heading: 'Scalable Systems',
             description: 'Building the foundation for resilient digital ecosystems. I engineer full-stack solutions with a focus on system architecture, modular design, and high-performance backends using Go, Next.js, and Python.',
@@ -29,8 +33,9 @@ const pages = [
         rightContent: null,
     },
     {
-        leftBgImage: '/feature/feature3.jpg',
+        leftBgImage: null,
         rightBgImage: null,
+        leftComponent: <Loader type="softskill" />,
         leftContent: null,
         rightContent: {
             heading: 'Strategic Innovation',
@@ -116,8 +121,8 @@ export default function ScrollAdventure() {
 }
 
 function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isActive: boolean, scrollProgress: any, index: number }) {
-    const leftIsImage = !!page.leftBgImage;
-    const rightIsImage = !!page.rightBgImage;
+    const leftHasVisual = !!page.leftBgImage || !!page.leftComponent;
+    const rightHasVisual = !!page.rightBgImage || !!page.rightComponent;
 
     const totalPages = pages.length;
     const step = 1 / totalPages;
@@ -139,7 +144,7 @@ function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isAct
     const leftY = useTransform(
         scrollProgress,
         [enterStart, enterEnd, exitStart, exitEnd],
-        [leftIsImage ? "-120%" : "120%", "0%", "0%", leftIsImage ? "-120%" : "120%"]
+        [leftHasVisual ? "-120%" : "120%", "0%", "0%", leftHasVisual ? "-120%" : "120%"]
     );
 
 
@@ -147,7 +152,7 @@ function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isAct
     const rightY = useTransform(
         scrollProgress,
         [enterStart, enterEnd, exitStart, exitEnd],
-        [rightIsImage ? "-120%" : "120%", "0%", "0%", rightIsImage ? "-120%" : "120%"]
+        [rightHasVisual ? "-120%" : "120%", "0%", "0%", rightHasVisual ? "-120%" : "120%"]
     );
 
     const zIndex = useTransform(
@@ -163,16 +168,13 @@ function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isAct
 
                 {/* LEFT HALF OF THE SPLIT CARD */}
                 <motion.div
-                    style={{
-                        y: leftY,
-                        willChange: "transform",
-                        clipPath: 'inset(0px round 1.5rem 0 0 1.5rem)',
-                        WebkitClipPath: 'inset(0px round 1.5rem 0 0 1.5rem)',
-                    }}
-                    className="relative w-1/2 h-full bg-background dark:bg-black z-10"
+                    style={{ y: leftY }}
+                    className="relative w-1/2 h-full bg-background dark:bg-black z-10 rounded-l-3xl overflow-hidden"
                 >
                     <div className="w-full h-full relative overflow-hidden">
-                        {page.leftBgImage ? (
+                        {page.leftComponent ? (
+                            <BlendedVisual component={page.leftComponent} side="left" />
+                        ) : page.leftBgImage ? (
                             <BlendedVisual src={page.leftBgImage} side="left" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-start p-8 md:p-16 lg:p-24 relative group">
@@ -190,16 +192,13 @@ function PageSlide({ page, isActive, scrollProgress, index }: { page: any, isAct
 
                 {/* RIGHT HALF OF THE SPLIT CARD */}
                 <motion.div
-                    style={{
-                        y: rightY,
-                        willChange: "transform",
-                        clipPath: 'inset(0px round 0 1.5rem 1.5rem 0)',
-                        WebkitClipPath: 'inset(0px round 0 1.5rem 1.5rem 0)',
-                    }}
-                    className="relative w-1/2 h-full bg-background dark:bg-black z-10"
+                    style={{ y: rightY }}
+                    className="relative w-1/2 h-full bg-background dark:bg-black z-10 rounded-r-3xl overflow-hidden"
                 >
                     <div className="w-full h-full relative overflow-hidden">
-                        {page.rightBgImage ? (
+                        {page.rightComponent ? (
+                            <BlendedVisual component={page.rightComponent} side="right" />
+                        ) : page.rightBgImage ? (
                             <BlendedVisual src={page.rightBgImage} side="right" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-start p-8 md:p-16 lg:p-24 relative group">
@@ -256,16 +255,26 @@ function BridgeSlide({ page, isActive, scrollProgress, index }: { page: any, isA
     );
 }
 
-function BlendedVisual({ src, side }: { src: string, side: 'left' | 'right' }) {
+function BlendedVisual({ src, component, side }: { src?: string, component?: React.ReactNode, side: 'left' | 'right' }) {
     return (
-        <div className="relative w-full h-full overflow-hidden bg-background dark:bg-black">
-            <motion.div
-                initial={{ scale: 1 }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform grayscale hover:grayscale-0 transition-[filter] duration-1000"
-                style={{ backgroundImage: `url(${src})` }}
-            />
+        <div className="relative w-full h-full overflow-hidden bg-background dark:bg-black flex items-center justify-center">
+            {src ? (
+                <motion.div
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform grayscale hover:grayscale-0 transition-[filter] duration-1000"
+                    style={{ backgroundImage: `url(${src})` }}
+                />
+            ) : component ? (
+                <motion.div
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                >
+                    <div className="w-full h-full transform scale-[2.0]">
+                        {component}
+                    </div>
+                </motion.div>
+            ) : null}
             {/* Horizontal Blend (Masked to avoid WebKit transparent color interpolation bug) */}
             <div 
                 className="absolute inset-0 pointer-events-none z-10 bg-background dark:bg-black"
