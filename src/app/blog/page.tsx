@@ -136,12 +136,47 @@ function BlogContent() {
     }, [hoveredCardId, cursorOpacity]);
 
     return (
-        <main className="min-h-screen bg-background overflow-hidden selection:bg-primary/30">
-            {/* SECTION 1: BentoHero */}
-            <BentoHero isLowPowerMode={isLowPowerMode} />
+        <main className="min-h-screen bg-background selection:bg-primary/30">
+            {/* STICKY PARALLAX WRAPPER */}
+            <div className="relative z-10 w-full pt-[25vh]">
+                
+                {/* 1. STICKY HEADER (Sits in background, gets covered by BentoHero, then re-emerges at the bottom to replace DOCS & Blueprints) */}
+                <header className="sticky top-[25vh] z-0 pb-12 flex flex-col items-center justify-center pointer-events-auto h-auto">
+                    <div className="relative z-10 max-w-5xl mx-auto text-center px-4">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, type: "spring", stiffness: 400, damping: 20 }}
+                            className="text-4xl md:text-6xl lg:text-[5.5rem] font-black text-foreground leading-tight tracking-[-0.04em] uppercase whitespace-nowrap cursor-pointer group"
+                        >
+                            <span className="relative inline-block">
+                                <span>FEATURE &</span>{' '}
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground to-foreground/20">
+                                    DOCS
+                                </span>
+                                {/* Animated underline on hover */}
+                                <span className="absolute -bottom-1 left-0 w-full h-[4px] bg-foreground scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
+                            </span>
+                        </motion.h1>
+                    </div>
+                </header>
+
+                {/* 2. BENTO HERO (Scrolls over the sticky header) */}
+                <div className="relative z-10 pb-32">
+                    <BentoHero isLowPowerMode={isLowPowerMode} />
+                </div>
+
+                {/* 3. TRANSPARENT SPACER 
+                    Reduced to 20vh to eliminate the huge black void.
+                    After BentoHero scrolls past, this spacer keeps the wrapper alive just enough 
+                    to reveal the title before the Filters section smoothly picks it up.
+                */}
+                <div className="relative z-10 h-[20vh] pointer-events-none" />
+            </div>
 
             {/* SECTION 2: Blog Cards Content */}
-            <div className="relative z-10 pt-12 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-background via-background/80 to-background dark:from-black dark:via-black dark:to-black">
+            <div className="relative z-20 pt-12 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-background via-background/80 to-background dark:from-black dark:via-black dark:to-black">
                 {/* Background Effects */}
                 {!isLowPowerMode && (
                     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -151,43 +186,6 @@ function BlogContent() {
                 )}
 
                 <div className="container mx-auto relative z-10">
-                    {/* Header Section - Modern Editorial Centered */}
-                    <header className="mb-48 relative pt-20">
-                        <div className="relative z-10 max-w-5xl mx-auto text-center">
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5 }}
-                                className="flex items-center justify-center gap-4 mb-10"
-                            >
-                                <div className="w-12 h-px bg-primary/40" />
-                                <span className="text-primary text-[10px] font-black uppercase tracking-[0.5em] mb-0 whitespace-nowrap">The Digital Archive</span>
-                                <div className="w-12 h-px bg-primary/40" />
-                            </motion.div>
-
-                            <motion.h1
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.8, ease: 'easeOut' }}
-                                className="text-5xl md:text-7xl lg:text-[8rem] font-black tracking-tighter mb-12 text-foreground leading-tight"
-                            >
-                                DOCS & <span className="italic font-serif font-light opacity-30">Blueprints</span>
-                            </motion.h1>
-
-                            <motion.p
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.8, delay: 0.2 }}
-                                className="text-muted-foreground text-lg md:text-2xl leading-relaxed max-w-3xl mx-auto font-medium"
-                            >
-                                A dedicated space for documenting <span className="text-foreground/80 font-bold">technical blueprints</span>, <span className="text-foreground/80 font-bold">architectural patterns</span>, and <span className="text-foreground/80 font-bold">engineering reflections</span>. This archive serves as a living knowledge base where innovation meets practical execution.
-                            </motion.p>
-                        </div>
-                    </header>
-
                     {/* Filters & Search - Modern Minimalist Editorial */}
                     <div className="flex flex-col md:flex-row gap-10 mb-16 items-end justify-between border-b border-foreground/5 pb-8">
                         <div className="flex flex-wrap gap-x-12 gap-y-6">
@@ -244,8 +242,8 @@ function BlogContent() {
                                         onClick={() => setViewMode('grid')}
                                         className={cn(
                                             "p-2 rounded-lg transition-all duration-300",
-                                            viewMode === 'grid' 
-                                                ? "bg-foreground text-background shadow-md" 
+                                            viewMode === 'grid'
+                                                ? "bg-foreground text-background shadow-md"
                                                 : "text-muted-foreground hover:text-foreground hover:bg-foreground/10"
                                         )}
                                         aria-label="Grid View"
@@ -256,8 +254,8 @@ function BlogContent() {
                                         onClick={() => setViewMode('list')}
                                         className={cn(
                                             "p-2 rounded-lg transition-all duration-300",
-                                            viewMode === 'list' 
-                                                ? "bg-foreground text-background shadow-md" 
+                                            viewMode === 'list'
+                                                ? "bg-foreground text-background shadow-md"
                                                 : "text-muted-foreground hover:text-foreground hover:bg-foreground/10"
                                         )}
                                         aria-label="List View"
@@ -265,40 +263,40 @@ function BlogContent() {
                                         <List size={18} />
                                     </button>
                                 </div>
-                                
+
                                 {/* Sort Badge */}
                                 <div className="relative group">
-                                <AnimatePresence>
-                                    {isHoveringSort && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10, x: '-50%' }}
-                                            animate={{ opacity: 1, y: 0, x: '-50%' }}
-                                            exit={{ opacity: 0, y: 5, x: '-50%' }}
-                                            className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-foreground text-background text-[10px] font-bold tracking-widest rounded shadow-xl whitespace-nowrap pointer-events-none z-50 uppercase"
-                                        >
-                                            {sortBy}
-                                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45" />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                                    <AnimatePresence>
+                                        {isHoveringSort && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, x: '-50%' }}
+                                                animate={{ opacity: 1, y: 0, x: '-50%' }}
+                                                exit={{ opacity: 0, y: 5, x: '-50%' }}
+                                                className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-foreground text-background text-[10px] font-bold tracking-widest rounded shadow-xl whitespace-nowrap pointer-events-none z-50 uppercase"
+                                            >
+                                                {sortBy}
+                                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45" />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
 
-                                <button
-                                    onClick={() => setSortBy(prev => prev === 'latest' ? 'oldest' : 'latest')}
-                                    onMouseEnter={() => setIsHoveringSort(true)}
-                                    onMouseLeave={() => setIsHoveringSort(false)}
-                                    className={cn(
-                                        "relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-500",
-                                        "bg-foreground/5 hover:bg-foreground text-muted-foreground hover:text-background",
-                                        "border border-foreground/10 hover:border-foreground shadow-sm hover:shadow-xl"
-                                    )}
-                                >
-                                    {sortBy === 'latest' ? (
-                                        <SortDesc size={20} strokeWidth={1.5} />
-                                    ) : (
-                                        <SortAsc size={20} strokeWidth={1.5} />
-                                    )}
-                                </button>
-                            </div>
+                                    <button
+                                        onClick={() => setSortBy(prev => prev === 'latest' ? 'oldest' : 'latest')}
+                                        onMouseEnter={() => setIsHoveringSort(true)}
+                                        onMouseLeave={() => setIsHoveringSort(false)}
+                                        className={cn(
+                                            "relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-500",
+                                            "bg-foreground/5 hover:bg-foreground text-muted-foreground hover:text-background",
+                                            "border border-foreground/10 hover:border-foreground shadow-sm hover:shadow-xl"
+                                        )}
+                                    >
+                                        {sortBy === 'latest' ? (
+                                            <SortDesc size={20} strokeWidth={1.5} />
+                                        ) : (
+                                            <SortAsc size={20} strokeWidth={1.5} />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="relative flex-1 md:w-80 group">
@@ -365,7 +363,7 @@ function BlogContent() {
                             </div>
                         ) : (
                             <div style={{ height: '800px', position: 'relative' }} className="w-full overflow-hidden">
-                                <FlowingMenu 
+                                <FlowingMenu
                                     items={paginatedPosts.map(post => ({
                                         link: `/blog/${post.slug}`,
                                         text: post.title,

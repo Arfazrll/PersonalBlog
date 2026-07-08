@@ -694,7 +694,9 @@ export default function ProjectsPage() {
             "/project/parallax/image5.png",
             "/project/parallax/image6.png",
             "/project/parallax/image7.png",
+            "/project/parallax/image8.png",
             "/project/parallax/image9.png",
+            "/project/parallax/image10.png",
         ];
 
         const baseProducts = portfolioData.projects.map((p, i) => ({
@@ -702,7 +704,7 @@ export default function ProjectsPage() {
             link: p.repoUrl || p.demoUrl || '#',
             thumbnail: techImages[i % techImages.length]
         }));
-        return [...baseProducts, ...baseProducts, ...baseProducts].slice(0, 8);
+        return [...baseProducts, ...baseProducts, ...baseProducts].slice(0, 10);
     }, []);
 
     // Generate Timeline Items - delay is calculated in component based on index
