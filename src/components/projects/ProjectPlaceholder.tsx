@@ -16,7 +16,7 @@ export function getPlaceholderImageUrl(title: string) {
         projectSeeds.set(title, Math.floor(Math.random() * 10000));
     }
     const seed = projectSeeds.get(title);
-    return `https://picsum.photos/seed/${seed}/500/300`;
+    return `https://picsum.photos/seed/${seed}/500/300.webp`;
 }
 
 export function ProjectPlaceholder({ className, title = "No Preview Available" }: ProjectPlaceholderProps) {

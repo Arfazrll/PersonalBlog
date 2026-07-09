@@ -25,9 +25,8 @@ export async function getProjectImages(slug: string, title?: string): Promise<st
     for (const baseName of uniqueBases) {
         if (!baseName) continue;
 
-        // Check for images 1 to 10
         for (let i = 1; i <= 10; i++) {
-            const extensions = ['png', 'jpg', 'jpeg', 'webp'];
+            const extensions = ['webp', 'png', 'jpg', 'jpeg'];
 
             for (const ext of extensions) {
                 const filename = `${baseName}${i}.${ext}`;
