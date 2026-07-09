@@ -159,6 +159,15 @@ function BlogContent() {
                                 <span className="absolute -bottom-1 left-0 w-full h-[4px] bg-foreground scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
                             </span>
                         </motion.h1>
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="mt-6 text-[11px] md:text-sm font-medium text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed tracking-wide"
+                        >
+                            A dedicated space for documenting technical blueprints, architectural patterns, and engineering reflections. This archive serves as a living knowledge base where innovation meets practical execution.
+                        </motion.p>
                     </div>
                 </header>
 

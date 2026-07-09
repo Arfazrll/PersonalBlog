@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
+import { gsap } from 'gsap';
 import { useLenis } from 'lenis/react';
 import { useTranslations } from 'next-intl';
 import { Search, X, Layers, ArrowRight, ArrowUpRight, Sparkles, Code2, Zap, Brain, Cpu, Wifi, Blocks, Globe, Database, LayoutGrid, List } from 'lucide-react';
@@ -522,71 +523,276 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
     );
 }
 
-function ProjectCard({ project, onClick, index }: { project: Project; onClick: () => void; index: number; }) {
+// Curated badge color palette — vibrant but balanced for both light & dark modes
+const BADGE_COLORS = [
+    { border: 'rgba(168, 85, 247, 0.5)',  bg: 'rgba(168, 85, 247, 0.12)',  text: 'rgb(168, 85, 247)' },   // purple
+    { border: 'rgba(59, 130, 246, 0.5)',   bg: 'rgba(59, 130, 246, 0.12)',  text: 'rgb(59, 130, 246)' },    // blue
+    { border: 'rgba(16, 185, 129, 0.5)',   bg: 'rgba(16, 185, 129, 0.12)',  text: 'rgb(16, 185, 129)' },    // emerald
+    { border: 'rgba(245, 158, 11, 0.5)',   bg: 'rgba(245, 158, 11, 0.12)',  text: 'rgb(245, 158, 11)' },    // amber
+    { border: 'rgba(236, 72, 153, 0.5)',   bg: 'rgba(236, 72, 153, 0.12)', text: 'rgb(236, 72, 153)' },    // pink
+    { border: 'rgba(6, 182, 212, 0.5)',    bg: 'rgba(6, 182, 212, 0.12)',   text: 'rgb(6, 182, 212)' },     // cyan
+    { border: 'rgba(239, 68, 68, 0.5)',    bg: 'rgba(239, 68, 68, 0.12)',   text: 'rgb(239, 68, 68)' },     // red
+    { border: 'rgba(34, 197, 94, 0.5)',    bg: 'rgba(34, 197, 94, 0.12)',   text: 'rgb(34, 197, 94)' },     // green
+    { border: 'rgba(251, 146, 60, 0.5)',   bg: 'rgba(251, 146, 60, 0.12)', text: 'rgb(251, 146, 60)' },    // orange
+    { border: 'rgba(99, 102, 241, 0.5)',   bg: 'rgba(99, 102, 241, 0.12)', text: 'rgb(99, 102, 241)' },    // indigo
+    { border: 'rgba(20, 184, 166, 0.5)',   bg: 'rgba(20, 184, 166, 0.12)', text: 'rgb(20, 184, 166)' },    // teal
+    { border: 'rgba(217, 70, 239, 0.5)',   bg: 'rgba(217, 70, 239, 0.12)', text: 'rgb(217, 70, 239)' },    // fuchsia
+];
+
+// Deterministic color from string — same string always gets same color, but varied across badges
+function getBadgeColor(label: string, cardIndex: number) {
+    let hash = 0;
+    for (let i = 0; i < label.length; i++) {
+        hash = label.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const idx = Math.abs(hash + cardIndex * 7) % BADGE_COLORS.length;
+    return BADGE_COLORS[idx];
+}
+
+function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean; }) {
     const isOngoing = project.status === 'ongoing';
+    const cardRef = useRef<HTMLElement>(null);
+    const innerRef = useRef<HTMLDivElement>(null);
+    const imageBoxRef = useRef<HTMLDivElement>(null);
+    const contentBoxRef = useRef<HTMLDivElement>(null);
+    const [isHovered, setIsHovered] = useState(false);
+    const isHoveredRef = useRef(false);
+    const isScrollingRef = useRef(false);
+    const lastClientPos = useRef<{ x: number; y: number } | null>(null);
+
+    // Use Lenis to detect scroll velocity — when scrolling, disable tilt
+    useLenis((lenis) => {
+        if (isLowPowerMode) return;
+        const velocity = Math.abs(lenis.velocity);
+        const wasScrolling = isScrollingRef.current;
+        isScrollingRef.current = velocity > 0.5;
+
+        // When scroll starts while hovered, smoothly reset tilt to neutral
+        if (isScrollingRef.current && isHoveredRef.current && !wasScrolling) {
+            gsap.to(innerRef.current, {
+                rotateX: 0,
+                rotateY: 0,
+                scale: 1.02,
+                duration: 0.4,
+                ease: 'power2.out',
+                overwrite: 'auto',
+            });
+            gsap.to(imageBoxRef.current, {
+                z: 0,
+                duration: 0.4,
+                ease: 'power2.out',
+                overwrite: 'auto',
+            });
+            gsap.to(contentBoxRef.current, {
+                z: 0,
+                duration: 0.4,
+                ease: 'power2.out',
+                overwrite: 'auto',
+            });
+        }
+
+        // When scroll stops and still hovered, recalculate tilt from last known position
+        if (!isScrollingRef.current && wasScrolling && isHoveredRef.current && lastClientPos.current) {
+            requestAnimationFrame(() => {
+                if (isHoveredRef.current && lastClientPos.current && cardRef.current) {
+                    applyTilt(lastClientPos.current.x, lastClientPos.current.y);
+                }
+            });
+        }
+    });
+
+    const applyTilt = (clientX: number, clientY: number) => {
+        if (!cardRef.current || !innerRef.current || isLowPowerMode || isScrollingRef.current) return;
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = (clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+        const y = (clientY - rect.top) / rect.height - 0.5;
+        const clampedX = Math.max(-0.5, Math.min(0.5, x));
+        const clampedY = Math.max(-0.5, Math.min(0.5, y));
+
+        gsap.to(innerRef.current, {
+            rotateX: -clampedY * 24, // 12 deg max each direction
+            rotateY: clampedX * 24,
+            scale: 1.02,
+            duration: 0.5,
+            ease: 'power2.out',
+            overwrite: 'auto',
+        });
+        gsap.to(imageBoxRef.current, {
+            z: 30,
+            duration: 0.5,
+            ease: 'power2.out',
+            overwrite: 'auto',
+        });
+        gsap.to(contentBoxRef.current, {
+            z: 15,
+            duration: 0.5,
+            ease: 'power2.out',
+            overwrite: 'auto',
+        });
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+        if (isLowPowerMode) return;
+        lastClientPos.current = { x: e.clientX, y: e.clientY };
+        if (!isScrollingRef.current) {
+            applyTilt(e.clientX, e.clientY);
+        }
+    };
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
+        isHoveredRef.current = true;
+        lastClientPos.current = { x: e.clientX, y: e.clientY };
+        setIsHovered(true);
+        if (!isLowPowerMode && !isScrollingRef.current) {
+            applyTilt(e.clientX, e.clientY);
+        }
+    };
+
+    const handleMouseLeave = () => {
+        isHoveredRef.current = false;
+        lastClientPos.current = null;
+        setIsHovered(false);
+        if (!isLowPowerMode) {
+            gsap.to(innerRef.current, {
+                rotateX: 0,
+                rotateY: 0,
+                scale: 1,
+                duration: 0.6,
+                ease: 'power3.out',
+                overwrite: 'auto',
+            });
+            gsap.to(imageBoxRef.current, {
+                z: 0,
+                duration: 0.6,
+                ease: 'power3.out',
+                overwrite: 'auto',
+            });
+            gsap.to(contentBoxRef.current, {
+                z: 0,
+                duration: 0.6,
+                ease: 'power3.out',
+                overwrite: 'auto',
+            });
+        }
+    };
+
+    // Set initial GSAP transforms
+    useEffect(() => {
+        if (isLowPowerMode) return;
+        if (innerRef.current) {
+            gsap.set(innerRef.current, { transformStyle: 'preserve-3d', transformPerspective: 1000 });
+        }
+        if (imageBoxRef.current) {
+            gsap.set(imageBoxRef.current, { z: 0 });
+        }
+        if (contentBoxRef.current) {
+            gsap.set(contentBoxRef.current, { z: 0 });
+        }
+    }, [isLowPowerMode]);
 
     return (
         <motion.article
+            ref={cardRef}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-30px" }}
             transition={{ duration: 0.6, delay: 0.1 * (index % 2) }}
-            className="group cursor-pointer flex flex-col gap-6"
+            className="group cursor-pointer"
+            style={{ perspective: 1000 }}
             onClick={onClick}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
         >
-            {/* Top Image Box */}
-            <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden bg-secondary/10 border border-foreground/5 dark:border-white/10 shadow-sm transition-all duration-500 group-hover:shadow-2xl dark:shadow-none shadow-black/5 group-hover:-translate-y-1">
-                {project.image ? (
-                    <img
-                        src={project.image}
-                        alt={project.title}
-                        loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                ) : (
-                    <ProjectPlaceholder className="absolute inset-0" title={project.title} />
-                )}
+            <div
+                ref={innerRef}
+                className="flex flex-col gap-6 h-full"
+                style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
+            >
+                {/* Top Image Box */}
+                <div
+                    ref={imageBoxRef}
+                    className="relative w-full aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden bg-secondary/10 border border-foreground/5 dark:border-white/10 shadow-sm group-hover:shadow-2xl dark:shadow-none shadow-black/5"
+                    style={{ willChange: 'transform' }}
+                >
+                    {project.image ? (
+                        <img
+                            src={project.image}
+                            alt={project.title}
+                            loading="lazy"
+                            className="w-full h-full object-cover"
+                            draggable={false}
+                        />
+                    ) : (
+                        <ProjectPlaceholder className="absolute inset-0" title={project.title} />
+                    )}
 
-                {/* Subtle overlay on hover */}
-                <div className="absolute inset-0 bg-foreground/5 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            </div>
-
-            {/* Bottom Content Box */}
-            <div className="flex flex-col flex-grow px-1 md:px-0">
-
-                {/* Title & Badge Row */}
-                <div className="flex items-start justify-between gap-4 mb-3">
-                    <h3 className="text-3xl sm:text-4xl font-serif-elegant text-foreground group-hover:text-primary transition-colors tracking-tight">
-                        {project.title}
-                    </h3>
-                    <div className="shrink-0 mt-1 sm:mt-2">
-                        <span className="px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-mono tracking-wide border border-foreground/15 dark:border-white/20 text-muted-foreground bg-transparent transition-colors group-hover:border-primary/30 group-hover:bg-primary/5 uppercase">
-                            {project.category || (isOngoing ? 'In Development' : 'Completed')}
-                        </span>
-                    </div>
+                    {/* Subtle overlay on hover */}
+                    <div className="absolute inset-0 bg-foreground/5 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
 
-                {/* Description */}
-                <p className="text-muted-foreground/80 md:text-lg leading-relaxed mb-6 line-clamp-3">
-                    {project.description}
-                </p>
+                {/* Bottom Content Box */}
+                <div
+                    ref={contentBoxRef}
+                    className="flex flex-col flex-grow px-1 md:px-0"
+                    style={{ willChange: 'transform' }}
+                >
+                    {/* Title & Badge Row */}
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                        <h3 className="text-3xl sm:text-4xl font-serif-elegant text-foreground group-hover:text-primary transition-colors tracking-tight">
+                            {project.title}
+                        </h3>
+                        <div className="shrink-0 mt-1 sm:mt-2">
+                            {(() => {
+                                const categoryText = project.category || (isOngoing ? 'In Development' : 'Completed');
+                                const color = getBadgeColor(categoryText, index);
+                                return (
+                                    <span
+                                        className="px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-mono tracking-wide border transition-all duration-300 uppercase"
+                                        style={{
+                                            borderColor: isHovered ? color.border : undefined,
+                                            backgroundColor: isHovered ? color.bg : 'transparent',
+                                            color: isHovered ? color.text : undefined,
+                                        }}
+                                    >
+                                        {categoryText}
+                                    </span>
+                                );
+                            })()}
+                        </div>
+                    </div>
 
-                {/* Footer Tech Badges */}
-                <div className="mt-auto flex flex-wrap gap-2 sm:gap-2.5 items-center">
-                    {project.techStack.slice(0, 4).map((tech) => {
-                        const Icon = Icons[getIconKey(tech)];
-                        return (
-                            <div key={tech} className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-foreground/10 dark:border-white/10 text-[11px] sm:text-xs font-medium text-foreground/70 bg-transparent transition-colors group-hover:border-foreground/20 dark:group-hover:border-white/20 hover:!bg-secondary/10">
-                                {Icon ? <Icon className="w-3.5 h-3.5" /> : <div className="w-1.5 h-1.5 rounded-full bg-foreground/30" />}
-                                {tech}
-                            </div>
-                        );
-                    })}
-                    {project.techStack.length > 4 && (
-                        <span className="text-xs font-mono text-muted-foreground opacity-60 ml-1">
-                            +{project.techStack.length - 4}
-                        </span>
-                    )}
+                    {/* Description */}
+                    <p className="text-muted-foreground/80 md:text-lg leading-relaxed mb-6 line-clamp-3">
+                        {project.description}
+                    </p>
+
+                    {/* Footer Tech Badges */}
+                    <div className="mt-auto flex flex-wrap gap-2 sm:gap-2.5 items-center">
+                        {project.techStack.slice(0, 4).map((tech, techIdx) => {
+                            const Icon = Icons[getIconKey(tech)];
+                            const color = getBadgeColor(tech, index + techIdx);
+                            return (
+                                <div
+                                    key={tech}
+                                    className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border text-[11px] sm:text-xs font-medium transition-all duration-300"
+                                    style={{
+                                        borderColor: isHovered ? color.border : undefined,
+                                        backgroundColor: isHovered ? color.bg : 'transparent',
+                                        color: isHovered ? color.text : undefined,
+                                    }}
+                                >
+                                    {Icon ? <Icon className="w-3.5 h-3.5" /> : <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: isHovered ? color.text : undefined }} />}
+                                    {tech}
+                                </div>
+                            );
+                        })}
+                        {project.techStack.length > 4 && (
+                            <span className="text-xs font-mono text-muted-foreground opacity-60 ml-1">
+                                +{project.techStack.length - 4}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
         </motion.article>
@@ -754,7 +960,7 @@ export default function ProjectsPage() {
                     } catch (e) {
                         console.error("Failed to load images for", project.title, e);
                     }
-                    
+
                     // Preload the placeholder image if no dynamic image is found
                     const img = new Image();
                     img.src = getPlaceholderImageUrl(project.title);
