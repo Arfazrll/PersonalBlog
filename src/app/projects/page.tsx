@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
 import { gsap } from 'gsap';
@@ -25,6 +25,87 @@ import { ProjectPlaceholder, getPlaceholderImageUrl } from '@/components/project
 import { getProjectImages } from '@/app/actions/getProjectImages';
 
 type FilterType = 'all' | 'ongoing' | 'completed';
+
+// ─── Magnetic Fill-Invert Button ─────────────────────────────────────────────
+function MagneticFillButton({
+    children,
+    onClick,
+    showArrowFlip = false,
+}: {
+    children: React.ReactNode;
+    onClick: () => void;
+    showArrowFlip?: boolean;
+}) {
+    const btnRef = useRef<HTMLButtonElement>(null);
+    const [isHovered, setIsHovered] = useState(false);
+    const [fillProgress, setFillProgress] = useState(0); // 0→1 fill left-to-right
+
+    // Magnetic tracking
+    const magnetX = useMotionValue(0);
+    const magnetY = useMotionValue(0);
+    const springX = useSpring(magnetX, { stiffness: 300, damping: 22 });
+    const springY = useSpring(magnetY, { stiffness: 300, damping: 22 });
+
+    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+        if (!btnRef.current) return;
+        const rect = btnRef.current.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        // Magnetic pull: max 14px offset
+        magnetX.set((e.clientX - cx) * 0.35);
+        magnetY.set((e.clientY - cy) * 0.35);
+    }, [magnetX, magnetY]);
+
+    const handleMouseEnter = () => {
+        setIsHovered(true);
+        setFillProgress(1);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+        setFillProgress(0);
+        magnetX.set(0);
+        magnetY.set(0);
+    };
+
+    return (
+        <motion.button
+            ref={btnRef}
+            onClick={onClick}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            style={{ x: springX, y: springY }}
+            className={cn(
+                "relative overflow-hidden px-8 py-3 rounded-full font-semibold text-sm",
+                "outline-none focus-visible:ring-2 focus-visible:ring-foreground/50",
+                // Light mode: black bg, white text  |  Dark: white bg, black text
+                "bg-foreground text-background",
+                "border border-foreground",
+                "transition-colors duration-0"
+            )}
+        >
+            {/* Fill layer: slides in from left on hover */}
+            {/* Light mode fill = white; Dark mode fill = black  (using `bg-background`) */}
+            <motion.span
+                aria-hidden
+                className="absolute inset-0 bg-background rounded-full pointer-events-none"
+                initial={{ scaleX: 0, originX: 0 }}
+                animate={{ scaleX: fillProgress, originX: 0 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            {/* Label */}
+            <span className={cn(
+                "relative z-10 flex items-center gap-2 transition-colors duration-300",
+                isHovered ? "text-foreground" : "text-background"
+            )}>
+                {children}
+                <ArrowRight className={cn("w-4 h-4 transition-transform duration-300", showArrowFlip && "rotate-180")} />
+            </span>
+        </motion.button>
+    );
+}
 
 function ProjectListItem({
     project,
@@ -893,16 +974,16 @@ export default function ProjectsPage() {
 
     const products = useMemo(() => {
         const techImages = [
-            "/project/parallax/image1.png",
-            "/project/parallax/image2.png",
-            "/project/parallax/image3.png",
-            "/project/parallax/image4.png",
-            "/project/parallax/image5.png",
-            "/project/parallax/image6.png",
-            "/project/parallax/image7.png",
-            "/project/parallax/image8.png",
-            "/project/parallax/image9.png",
-            "/project/parallax/image10.png",
+            "/project/parallax/image1.webp",
+            "/project/parallax/image2.webp",
+            "/project/parallax/image3.webp",
+            "/project/parallax/image4.webp",
+            "/project/parallax/image5.webp",
+            "/project/parallax/image6.webp",
+            "/project/parallax/image7.webp",
+            "/project/parallax/image8.webp",
+            "/project/parallax/image9.webp",
+            "/project/parallax/image10.webp",
         ];
 
         const baseProducts = portfolioData.projects.map((p, i) => ({
@@ -1139,7 +1220,7 @@ export default function ProjectsPage() {
                             {/* Filters & View Toggle */}
                             <div className="flex items-center gap-3 px-2 self-end xl:self-auto">
                                 {/* Status Filters */}
-                                <div className="flex items-center p-1 bg-transparent rounded-xl">
+                                <div className="flex items-center p-1 bg-foreground/5 dark:bg-white/5 rounded-xl border border-foreground/10 dark:border-white/10">
                                     {filters.map((f) => (
                                         <button
                                             key={f.key}
@@ -1147,8 +1228,8 @@ export default function ProjectsPage() {
                                             className={cn(
                                                 'relative px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-all duration-300',
                                                 filter === f.key
-                                                    ? 'bg-zinc-800 text-white shadow-sm'
-                                                    : 'text-muted-foreground hover:text-white'
+                                                    ? 'bg-foreground text-background shadow-sm'
+                                                    : 'text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10'
                                             )}
                                         >
                                             {f.label}
@@ -1156,17 +1237,15 @@ export default function ProjectsPage() {
                                     ))}
                                 </div>
 
-                                {/* Vertical Divider REMOVED */}
-
                                 {/* View Switcher */}
-                                <div className="flex items-center p-1 bg-transparent rounded-xl gap-0.5">
+                                <div className="flex items-center p-1 bg-foreground/5 dark:bg-white/5 rounded-xl border border-foreground/10 dark:border-white/10 gap-0.5">
                                     <button
                                         onClick={() => setViewMode('list')}
                                         className={cn(
                                             "p-1.5 rounded-lg transition-all duration-200",
                                             viewMode === 'list'
-                                                ? "bg-zinc-800 text-white shadow-sm"
-                                                : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                                ? "bg-foreground text-background shadow-sm"
+                                                : "text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10"
                                         )}
                                         title="List View"
                                     >
@@ -1177,8 +1256,8 @@ export default function ProjectsPage() {
                                         className={cn(
                                             "p-1.5 rounded-lg transition-all duration-200",
                                             viewMode === 'grid'
-                                                ? "bg-zinc-800 text-white shadow-sm"
-                                                : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                                ? "bg-foreground text-background shadow-sm"
+                                                : "text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10"
                                         )}
                                         title="Grid View"
                                     >
@@ -1234,7 +1313,7 @@ export default function ProjectsPage() {
                     )}
                 </div>
 
-                {/* View All Button */}
+                {/* View All Button — Magnetic Fill-Invert */}
                 {
                     filteredProjects.length > 10 && (
                         <motion.div
@@ -1243,16 +1322,12 @@ export default function ProjectsPage() {
                             viewport={{ once: true }}
                             className="flex justify-center mt-12 sm:mt-16 pb-12"
                         >
-                            <button
+                            <MagneticFillButton
                                 onClick={() => setVisibleCount(visibleCount < filteredProjects.length ? filteredProjects.length : 10)}
-                                className="group relative px-8 py-3 rounded-full bg-zinc-900 border border-white/10 text-white font-semibold hover:bg-white/5 transition-all outline-none focus:ring-2 focus:ring-primary/50"
+                                showArrowFlip={visibleCount >= filteredProjects.length}
                             >
-                                <span className="relative z-10 flex items-center gap-2">
-                                    {visibleCount < filteredProjects.length ? 'View All Projects' : 'View Less'}
-                                    <ArrowRight className={cn("w-4 h-4 transition-transform", visibleCount >= filteredProjects.length && "rotate-180")} />
-                                </span>
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity blur-lg" />
-                            </button>
+                                {visibleCount < filteredProjects.length ? 'View All Projects' : 'View Less'}
+                            </MagneticFillButton>
                         </motion.div>
                     )
                 }

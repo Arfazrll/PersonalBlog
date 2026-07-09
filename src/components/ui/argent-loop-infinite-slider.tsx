@@ -25,7 +25,7 @@ const PROJECT_DATA: ProjectData[] = [
   },
   {
     title: "Swarm AI Blog Writer",
-    image: "/project/swarmaiblogwriter1.png",
+    image: "/project/swarmaiblogwriter1.webp",
     category: "AI & Content",
     year: "2025",
     description: "Multi-agent orchestration for research-backed content.",
@@ -33,7 +33,7 @@ const PROJECT_DATA: ProjectData[] = [
   },
   {
     title: "Creative Portfolio Website",
-    image: "/project/creativeportfoliowebsite1.png",
+    image: "/project/creativeportfoliowebsite1.webp",
     category: "Creative Tech",
     year: "2025",
     description: "Immersive 3D portfolio with WebGL shaders.",
@@ -41,7 +41,7 @@ const PROJECT_DATA: ProjectData[] = [
   },
   {
     title: "SNBTIn Platform",
-    image: "/project/snbtinplatformpersiapansnbt20251.png",
+    image: "/project/snbtinplatformpersiapansnbt20251.webp",
     category: "EdTech",
     year: "2025",
     description: "Leading e-learning platform for SNBT preparation.",
@@ -49,7 +49,7 @@ const PROJECT_DATA: ProjectData[] = [
   },
   {
     title: "Terraflow Platform",
-    image: "/project/terraflowplatform1.png",
+    image: "/project/terraflowplatform1.webp",
     category: "IoT & Embedded",
     year: "2025",
     description: "Enterprise IoT solution for precision agriculture.",
