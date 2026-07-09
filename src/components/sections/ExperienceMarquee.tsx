@@ -142,7 +142,7 @@ function ParallaxText({ children, baseVelocity = 100, isLowPowerMode = false }: 
 }
 
 const GalleryItem = ({ exp }: { exp: Experience }) => {
-    const logoSrc = exp.logo ? `${exp.logo}?v=1` : "/assets/placeholder.png";
+    const logoSrc = exp.logo ? `${exp.logo}?v=1` : "/assets/placeholder.webp";
 
     return (
         <div className="relative shrink-0 w-[clamp(140px,30vw,200px)] h-[clamp(80px,15vw,120px)] md:w-[280px] md:h-[160px] flex items-center justify-center group cursor-pointer">

@@ -13,8 +13,8 @@ import {
 import { portfolioData } from "@/data/portfolio";
 
 const fallbackUrls = [
-  "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=100&h=100&fit=crop", // coding image
-  "https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?w=100&h=100&fit=crop" // abstract tech image
+  "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=100&h=100&fit=crop&fm=webp", // coding image
+  "https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?w=100&h=100&fit=crop&fm=webp" // abstract tech image
 ];
 
 const iconConfigs = [

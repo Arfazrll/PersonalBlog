@@ -28,9 +28,9 @@ interface DomeGalleryProps {
 }
 
 const DEFAULT_IMAGES: ImageItem[] = [
-    { src: 'https://images.unsplash.com/photo-1755331039789-7e5680e26e8f?q=80&w=774&auto=format&fit=crop', alt: 'Abstract art' },
-    { src: 'https://images.unsplash.com/photo-1755569309049-98410b94f66d?q=80&w=772&auto=format&fit=crop', alt: 'Modern sculpture' },
-    { src: 'https://images.unsplash.com/photo-1755497595318-7e5e3523854f?q=80&w=774&auto=format&fit=crop', alt: 'Digital artwork' }
+    { src: 'https://images.unsplash.com/photo-1755331039789-7e5680e26e8f?q=80&w=774&auto=format&fit=crop&fm=webp', alt: 'Abstract art' },
+    { src: 'https://images.unsplash.com/photo-1755569309049-98410b94f66d?q=80&w=772&auto=format&fit=crop&fm=webp', alt: 'Modern sculpture' },
+    { src: 'https://images.unsplash.com/photo-1755497595318-7e5e3523854f?q=80&w=774&auto=format&fit=crop&fm=webp', alt: 'Digital artwork' }
 ];
 
 const AUTO_ROTATE_SPEED_DEG_PER_MS = 0.008;

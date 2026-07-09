@@ -7,16 +7,16 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 const certificates = [
-  "/certificate/Data Analytics on Google Cloud.png",
-  "/certificate/Deep Learning Beginner.jpg",
-  "/certificate/Docker, Kubernetes dan DevOps.jpg",
-  "/certificate/Fullstack Programming Untuk Pemula.jpg",
-  "/certificate/Introduction to Generative AI.png",
-  "/certificate/Machine Learning Foundations.png",
-  "/certificate/Mastering Smart Contract.jpg",
-  "/certificate/Started with Databases.png",
-  "/certificate/Supervised Machine Learning Regression and Classification.jpeg",
-  "/certificate/elevAIte with Dicoding Program 2025.png",
+  "/certificate/Data Analytics on Google Cloud.webp",
+  "/certificate/Deep Learning Beginner.webp",
+  "/certificate/Docker, Kubernetes dan DevOps.webp",
+  "/certificate/Fullstack Programming Untuk Pemula.webp",
+  "/certificate/Introduction to Generative AI.webp",
+  "/certificate/Machine Learning Foundations.webp",
+  "/certificate/Mastering Smart Contract.webp",
+  "/certificate/Started with Databases.webp",
+  "/certificate/Supervised Machine Learning Regression and Classification.webp",
+  "/certificate/elevAIte with Dicoding Program 2025.webp",
 ];
 
 function ScrambleButton({ href }: { href: string }) {

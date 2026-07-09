@@ -44,7 +44,7 @@ export default function ExperienceStickyScroll({ isLowPowerMode = false }: { isL
                         {/* Background Logo */}
                         <div className="absolute inset-0">
                             <Image
-                                src="/assets/TelkomUniversityLogo.png?v=3"
+                                src="/assets/TelkomUniversityLogo.webp?v=3"
                                 alt="Telkom University"
                                 fill
                                 className="object-cover opacity-20 dark:opacity-30 blur-[2px] scale-125 group-hover:scale-110 transition-transform duration-700"
@@ -106,7 +106,7 @@ export default function ExperienceStickyScroll({ isLowPowerMode = false }: { isL
                          {/* Background Logo */}
                          <div className="absolute inset-0">
                             <Image
-                                src="/assets/sman88logo.png"
+                                src="/assets/sman88logo.webp"
                                 alt="SMAN 88 Jakarta"
                                 fill
                                 className="object-cover opacity-10 dark:opacity-15 blur-sm scale-125 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700"

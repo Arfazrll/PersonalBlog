@@ -39,7 +39,7 @@ const showcaseMembers = [
         role: exp.position.replace(' (Contract-Based)', ''),
         description: exp.description,
         period: "August 2025 - Present",
-        image: "/journey/researchassistant2.jpg",
+        image: "/journey/researchassistant2.webp",
         social: exp.externalLink ? { website: exp.externalLink } : undefined
     })),
     // 2. HUMIC Engineering
@@ -49,7 +49,7 @@ const showcaseMembers = [
         role: exp.position,
         description: exp.description,
         period: "September 2025 - December 2025",
-        image: "/journey/aideveloperintern1.jpg",
+        image: "/journey/aideveloperintern1.webp",
         social: exp.externalLink ? { website: exp.externalLink } : undefined
     })),
     // 3. Informatics Laboratory, Telkom University
@@ -59,7 +59,7 @@ const showcaseMembers = [
         role: exp.position.replace(' (Contract-Based)', ''),
         description: exp.description,
         period: "September 2025 - January 2026",
-        image: "/journey/computernetworkpracticumassistant2.jpg",
+        image: "/journey/computernetworkpracticumassistant2.webp",
         social: exp.externalLink ? { website: exp.externalLink } : undefined
     })),
     // 4. Digistar Club by Telkom Indonesia
@@ -69,7 +69,7 @@ const showcaseMembers = [
         role: exp.position,
         description: exp.description,
         period: "October 2025 - December 2025",
-        image: "/journey/chiefcommittee1.jpg",
+        image: "/journey/chiefcommittee1.webp",
         social: exp.externalLink ? { website: exp.externalLink } : undefined
     })),
     // 5. Food and Agriculture Office of Bandung City
@@ -79,7 +79,7 @@ const showcaseMembers = [
         role: exp.position,
         description: exp.description,
         period: "July - September 2025",
-        image: "/journey/dataentryassistant1.jpg",
+        image: "/journey/dataentryassistant1.webp",
         social: exp.externalLink ? { website: exp.externalLink } : undefined
     })),
     // 6. View more
@@ -93,21 +93,21 @@ const showcaseMembers = [
 ];
 
 const GALLERY_IMAGES = [
-    "/gallery/Foto Utama.jpeg",
-    "/gallery/FotoSC1.jpeg",
-    "/gallery/FotoSC2.jpeg",
-    "/gallery/FotoSC3.jpeg",
-    "/gallery/FotoSC4.jpeg",
-    "/gallery/FotoSC5.jpeg",
-    "/gallery/academicaffairsdivision1.jpg",
-    "/gallery/computernetworkpracticumassistant2.jpg",
-    "/gallery/dataentryassistant1.jpg",
-    "/gallery/delegateaiesecfutureleaders20241.jpg",
-    "/gallery/environmentalhygieneteam1.jpg",
-    "/gallery/environmentalhygieneteam2.jpg",
-    "/gallery/logisticsoperatorcampusexpo20242.jpg",
-    "/gallery/researchassistant1.jpg",
-    "/gallery/researchassistant2.jpg"
+    "/gallery/Foto Utama.webp",
+    "/gallery/FotoSC1.webp",
+    "/gallery/FotoSC2.webp",
+    "/gallery/FotoSC3.webp",
+    "/gallery/FotoSC4.webp",
+    "/gallery/FotoSC5.webp",
+    "/gallery/academicaffairsdivision1.webp",
+    "/gallery/computernetworkpracticumassistant2.webp",
+    "/gallery/dataentryassistant1.webp",
+    "/gallery/delegateaiesecfutureleaders20241.webp",
+    "/gallery/environmentalhygieneteam1.webp",
+    "/gallery/environmentalhygieneteam2.webp",
+    "/gallery/logisticsoperatorcampusexpo20242.webp",
+    "/gallery/researchassistant1.webp",
+    "/gallery/researchassistant2.webp"
 ];
 
 const AboutLeadInImageStack = () => {
@@ -436,14 +436,14 @@ const AuditFunnel = () => {
 
     useEffect(() => {
         const galleryItems = [
-            "/feature/icons/image1.png",
-            "/feature/icons/image2.png",
-            "/feature/icons/image3.png",
-            "/feature/icons/image4.png",
-            "/feature/icons/image5.png",
-            "/feature/icons/image6.png",
-            "/feature/icons/image7.png",
-            "/feature/icons/image8.png"
+            "/feature/icons/image1.webp",
+            "/feature/icons/image2.webp",
+            "/feature/icons/image3.webp",
+            "/feature/icons/image4.webp",
+            "/feature/icons/image5.webp",
+            "/feature/icons/image6.webp",
+            "/feature/icons/image7.webp",
+            "/feature/icons/image8.webp"
         ];
         // Shuffle and pick 8 random images for the trail to avoid overwhelming the DOM
         const shuffled = [...galleryItems].sort(() => 0.5 - Math.random());
