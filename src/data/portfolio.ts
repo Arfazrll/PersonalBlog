@@ -6,7 +6,7 @@ export const portfolioData: PortfolioData = {
         title: 'AI Engineer',
         subtitle: 'AI Engineer • Software Engineer | Bridging Technical Innovation with Strategic Execution',
         bio: 'An Information Technology student at Telkom University with a distinctive profile that fuses deep technical expertise in Artificial Intelligence with proven strategic leadership. Through hands-on experience as an AI Researcher at the Cyber Physical System Laboratory, I develop complex technical solutions from architecting IoT systems and designing software blueprints to engineering advanced Machine Learning models. Currently exploring AI Agents and Blockchain/Web3 technologies. Driven to leverage this integrated skill set to build initiatives that bridge technical innovation with effective execution.',
-        avatar: '/about/arfazrll.jpeg',
+        avatar: '/about/arfazrll.webp',
         location: 'DKI Jakarta, Indonesia',
         email: 'azril4974@gmail.com',
         phone: '+6281511463282',
@@ -1876,7 +1876,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Remote',
             type: 'freelance',
-            logo: '/assets/dicodinglogo.png?v=2',
+            logo: '/assets/dicodinglogo.webp?v=2',
             externalLink: 'https://github.com/Arfazrll/Dicoding-Reviews-Submission',
         },
         {
@@ -1896,7 +1896,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Remote',
             type: 'freelance',
-            logo: '/assets/dicodinglogo.png?v=2',
+            logo: '/assets/dicodinglogo.webp?v=2',
             externalLink: 'https://docs.google.com/presentation/d/13gNI6ttgW3eMXgZS8G3LzEbzOVwQ3Ot4HVWER0hpUgI/edit?usp=sharing',
         },
         {
@@ -1916,7 +1916,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Hybrid',
             type: 'internship',
-            logo: '/assets/HumicLogo.png',
+            logo: '/assets/HumicLogo.webp',
             externalLink: 'https://github.com/Arfazrll/Security-Automation-GenAI',
         },
         {
@@ -1936,7 +1936,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'On-site',
             type: 'internship',
-            logo: '/assets/logocps.png',
+            logo: '/assets/logocps.webp',
             externalLink: 'https://medium.com/@cpslaboratory2324/dmouv-sistem-smart-motion-detection-berbasis-internet-of-things-8f26ef2427f1',
         },
         {
@@ -1956,7 +1956,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Remote',
             type: 'internship',
-            logo: '/assets/aselablogo.png',
+            logo: '/assets/aselablogo.webp',
             externalLink: 'https://github.com/Arfazrll/Voices-Unheard-ASE',
         },
         {
@@ -1976,7 +1976,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Hybrid',
             type: 'contract',
-            logo: '/assets/iflablogo.png',
+            logo: '/assets/iflablogo.webp',
             externalLink: '',
         },
         {
@@ -1995,7 +1995,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: true,
             location: 'Hybrid',
             type: 'contract',
-            logo: '/assets/logocps.png',
+            logo: '/assets/logocps.webp',
         },
         {
             id: 'prof-8',
@@ -2014,7 +2014,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'On-site',
             type: 'internship',
-            logo: '/assets/dinas-pangan-dan-pertanian-kota-bandung.png',
+            logo: '/assets/dinas-pangan-dan-pertanian-kota-bandung.webp',
             externalLink: 'https://riibse.center.telkomuniversity.ac.id/e-selamat/',
         },
 
@@ -2035,7 +2035,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: true,
             location: 'Hybrid',
             type: 'contract',
-            logo: '/assets/logocps.png',
+            logo: '/assets/logocps.webp',
             externalLink: 'https://cpslaboratory.com/',
         },
         {
@@ -2055,7 +2055,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Indonesia',
             type: 'contract',
-            logo: '/assets/logodigistar.png',
+            logo: '/assets/logodigistar.webp',
         },
         {
             id: 'lead-3',
@@ -2073,7 +2073,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: true,
             location: 'Indonesia',
             type: 'contract',
-            logo: '/assets/logodigistar.png',
+            logo: '/assets/logodigistar.webp',
             externalLink: 'https://www.digistartelkom.id/',
         },
         {
@@ -2093,7 +2093,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Bandung',
             type: 'volunteer',
-            logo: '/assets/HMITlogo.png?v=1',
+            logo: '/assets/HMITlogo.webp?v=1',
         },
         {
             id: 'lead-5',
@@ -2112,7 +2112,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'West Java',
             type: 'contract',
-            logo: '/assets/youth-ranger-indonesia.png',
+            logo: '/assets/youth-ranger-indonesia.webp',
             externalLink: 'https://youthrangerindonesia.com/',
         },
 
@@ -2134,7 +2134,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Bandung',
             type: 'volunteer',
-            logo: '/assets/logobei.png',
+            logo: '/assets/logobei.webp',
             externalLink: 'https://www.gibeitelkomuniversity.site/',
         },
         {
@@ -2154,7 +2154,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Bandung',
             type: 'volunteer',
-            logo: '/assets/HMITlogo.png?v=1',
+            logo: '/assets/HMITlogo.webp?v=1',
         },
         {
             id: 'vol-3',
@@ -2173,7 +2173,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Bandung',
             type: 'volunteer',
-            logo: '/assets/yotlogo.jpg',
+            logo: '/assets/yotlogo.webp',
         },
         {
             id: 'vol-4',
@@ -2192,7 +2192,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Jakarta',
             type: 'volunteer',
-            logo: '/assets/sman88logo.png',
+            logo: '/assets/sman88logo.webp',
         },
 
         // 4. CERTIFICATIONS & PROFESSIONAL DEVELOPMENT
@@ -2213,7 +2213,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Indonesia',
             type: 'apprenticeship',
-            logo: '/assets/DBSLogo.png?v=1',
+            logo: '/assets/DBSLogo.webp?v=1',
             externalLink: 'https://mail.google.com/mail/u/0/#search/DBS/FMfcgzQbfxpgnbGGdbWztHKKvfbDfgjx',
         },
         {
@@ -2233,7 +2233,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Indonesia',
             type: 'apprenticeship',
-            logo: '/assets/indosat-ooredoo-hutchison-digital-camp.png',
+            logo: '/assets/indosat-ooredoo-hutchison-digital-camp.webp',
             externalLink: 'https://idcamp.ioh.co.id/',
         },
         {
@@ -2253,7 +2253,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Bandung',
             type: 'apprenticeship',
-            logo: '/assets/aieseclogo.png',
+            logo: '/assets/aieseclogo.webp',
             externalLink: 'https://www.instagram.com/aiesecbandung/',
         },
         {
@@ -2273,7 +2273,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: false,
             location: 'Bandung',
             type: 'contract',
-            logo: '/assets/logocps.png',
+            logo: '/assets/logocps.webp',
         },
         {
             id: 'cert-5',
@@ -2291,7 +2291,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             isOngoing: true,
             location: 'Bandung',
             type: 'contract',
-            logo: '/assets/logogdsc.jpg',
+            logo: '/assets/logogdsc.webp',
             externalLink: 'https://g.dev/Arfazrll',
         },
     ],
@@ -2404,7 +2404,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             date: '2025-02-01',
             credentialUrl: 'https://www.credly.com/badges/ccd9ad7a-f4b9-41e7-8589-f845d50c67f1/linked_in_profile',
             category: 'certification',
-            image: '/certificate/Started with Databases.png',
+            image: '/certificate/Started with Databases.webp',
         },
         {
             id: 'cert-7',
@@ -2414,7 +2414,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'JEZL7ZL9SADP',
             credentialUrl: 'https://www.coursera.org/account/accomplishments/verify/JEZL7ZL9SADP',
             category: 'certification',
-            image: '/certificate/Supervised Machine Learning Regression and Classification.jpeg',
+            image: '/certificate/Supervised Machine Learning Regression and Classification.webp',
         },
         {
             id: 'cert-8',
@@ -2423,7 +2423,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             date: '2025-01-01',
             credentialUrl: 'https://learn.microsoft.com/en-us/users/arfazrlll-6195/achievements/8752dbgw',
             category: 'certification',
-            image: '/certificate/elevAIte with Dicoding Program 2025.png',
+            image: '/certificate/elevAIte with Dicoding Program 2025.webp',
         },
         {
             id: 'cert-9',
@@ -2433,7 +2433,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '13612507',
             credentialUrl: 'https://www.skills.google/public_profiles/241d7451-f9ad-4c87-81e0-affa9d6fed28/badges/13612507?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share',
             category: 'certification',
-            image: '/certificate/Data Analytics on Google Cloud.png',
+            image: '/certificate/Data Analytics on Google Cloud.webp',
         },
         {
             id: 'cert-10',
@@ -2471,7 +2471,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'fedcea5d-b7d5-425d-b6b5-fd9d24b7c918',
             credentialUrl: 'https://www.credly.com/badges/fedcea5d-b7d5-425d-b6b5-fd9d24b7c918/linked_in_profile',
             category: 'certification',
-            image: '/certificate/Introduction to Generative AI.png',
+            image: '/certificate/Introduction to Generative AI.webp',
         },
         {
             id: 'cert-14',
@@ -2481,7 +2481,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'UC-7dff40d7-4bif-4213-8928-653d07e72315',
             credentialUrl: 'https://www.udemy.com/certificate/UC-7dff40d7-4b1f-42f3-8928-653d07e7a315/',
             category: 'certification',
-            image: '/certificate/Deep Learning Beginner.jpg',
+            image: '/certificate/Deep Learning Beginner.webp',
         },
         {
             id: 'cert-15',
@@ -2491,7 +2491,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: '4fc1c551-1f68-47cc-b371-d2785495ae61',
             credentialUrl: 'https://www.credly.com/badges/60d0828f-021d-4b73-8fef-705eddd8069a/linked_in_profile',
             category: 'certification',
-            image: '/certificate/Machine Learning Foundations.png',
+            image: '/certificate/Machine Learning Foundations.webp',
         },
         {
             id: 'cert-16',
@@ -2521,7 +2521,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'IOC-8DeTb',
             credentialUrl: 'https://nwtbe-6iaaa-aaaak-qiqca-cai.icp0.io/student-dashboard/my-certificates',
             category: 'certification',
-            image: '/certificate/Mastering Smart Contract.jpg',
+            image: '/certificate/Mastering Smart Contract.webp',
         },
         {
             id: 'cert-19',
@@ -2583,7 +2583,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'UC-306a5eba-5acd-4d0d-9fe8-cdd4259d8027',
             credentialUrl: 'https://www.udemy.com/certificate/UC-306a5eba-5acd-4d0d-9fe8-cdd4259d8027/',
             category: 'certification',
-            image: '/certificate/Docker, Kubernetes dan DevOps.jpg',
+            image: '/certificate/Docker, Kubernetes dan DevOps.webp',
         },
         {
             id: 'cert-25',
@@ -2603,7 +2603,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             credentialId: 'UC-3c8cd3d2-a39f-4e63-8bca-25c1901a1b06',
             credentialUrl: 'https://www.udemy.com/certificate/UC-3c8cd3d2-a39f-4e63-8bca-25c1901a1b06/',
             category: 'certification',
-            image: '/certificate/Fullstack Programming Untuk Pemula.jpg',
+            image: '/certificate/Fullstack Programming Untuk Pemula.webp',
         },
         {
             id: 'cert-27',
@@ -2746,11 +2746,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'The Future of AI Agents in Enterprise',
             excerpt: 'How autonomous agents are redefining software architecture and decision-making processes.',
             content: 'Detailed exploration of AI agents...',
-            image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-03-20',
             category: 'applied-ai',
             tags: ['AI', 'Agents', 'Enterprise'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '5'
         },
         {
@@ -2759,11 +2759,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Overcoming Web3 UX Challenges',
             excerpt: 'Strategies for building decentralized applications that feel as smooth as Web2.',
             content: 'UX in Web3 is critical...',
-            image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-03-15',
             category: 'more',
             tags: ['Web3', 'Blockchain', 'UX'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '4'
         },
         {
@@ -2772,11 +2772,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Mastering Next.js Performance',
             excerpt: 'Advanced techniques for optimizing Core Web Vitals in modern React applications.',
             content: 'Performance optimization...',
-            image: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-03-05',
             category: 'software-development',
             tags: ['Next.js', 'React', 'Performance'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '6'
         },
         {
@@ -2785,11 +2785,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'AI-Driven Cybersecurity',
             excerpt: 'Using deep learning to detect and prevent modern network intrusion.',
             content: 'Cybersecurity with AI...',
-            image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-02-28',
             category: 'applied-ai',
             tags: ['AI', 'Security', 'Deep Learning'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '7'
         },
         {
@@ -2798,11 +2798,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Fine-Tuning LLMs locally',
             excerpt: 'A guide to optimizing open-source models using Ollama and LoRA techniques.',
             content: 'Local LLM fine-tuning...',
-            image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-02-15',
             category: 'applied-ai',
             tags: ['LLM', 'Python', 'Ollama'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '8'
         },
         {
@@ -2811,11 +2811,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Smart Contract Audit Patterns',
             excerpt: 'Common vulnerabilities and how to prevent them in Solidity.',
             content: 'Audit patterns...',
-            image: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-02-01',
             category: 'more',
             tags: ['Solidity', 'Ethereum', 'Security'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '5'
         },
         {
@@ -2824,11 +2824,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Modern State Management in React',
             excerpt: 'Comparing Zustand, Redux Toolkit, and React Context for large-scale apps.',
             content: 'State management...',
-            image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-01-25',
             category: 'software-development',
             tags: ['React', 'Zustand', 'Architecture'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '4'
         },
         {
@@ -2837,11 +2837,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'Edge Computing with ESP32',
             excerpt: 'Implementing real-time data processing at the edge for industrial IoT.',
             content: 'Edge computing...',
-            image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-01-10',
             category: 'software-development',
             tags: ['IoT', 'ESP32', 'Edge'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '6'
         },
         {
@@ -2850,11 +2850,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: 'AI Transformation in Healthcare',
             excerpt: 'How computer vision is assisting in medical diagnostics and data analysis.',
             content: 'Healthcare AI...',
-            image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-01-05',
             category: 'applied-ai',
             tags: ['Healthcare', 'AI', 'Ethics'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '7'
         },
         {
@@ -2863,11 +2863,11 @@ WAKATIME_API_KEY=your_wakatime_key`
             title: "Digital Garden: The Architect's Manifesto",
             excerpt: "Reflecting on my journey as an AI Engineer and the philosophy behind building intelligent, scalable systems.",
             content: "My journey into the world of technology hasn't been just about code...",
-            image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2000&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2000&auto=format&fit=crop&fm=webp',
             date: '2026-03-31',
             category: 'about-me',
             tags: ['Philosophy', 'Engineering', 'About Me'],
-            author: { name: 'Azril', avatar: '/about/arfazrll.jpeg' },
+            author: { name: 'Azril', avatar: '/about/arfazrll.webp' },
             readTime: '5'
         }
     ],
@@ -2878,7 +2878,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             description: 'Deep Learning research workshop at Cyber Physical System Laboratory.',
             date: '2025-01-20',
             type: 'image',
-            url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2000&auto=format&fit=crop',
+            url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2000&auto=format&fit=crop&fm=webp',
             category: 'research'
         },
         {
@@ -2888,7 +2888,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             date: '2024-12-15',
             type: 'video',
             url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder video
-            thumbnail: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop',
+            thumbnail: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop&fm=webp',
             category: 'event'
         },
         {
@@ -2897,7 +2897,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             description: 'Custom visualization of a Convolutional Neural Network architecture.',
             date: '2024-11-30',
             type: 'image',
-            url: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2000&auto=format&fit=crop',
+            url: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2000&auto=format&fit=crop&fm=webp',
             category: 'technical'
         },
         {
@@ -2906,7 +2906,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             description: 'Building decentralized finance solutions in 48 hours.',
             date: '2024-10-25',
             type: 'image',
-            url: 'https://images.unsplash.com/photo-1516245834210-c4c142787335?q=80&w=2000&auto=format&fit=crop',
+            url: 'https://images.unsplash.com/photo-1516245834210-c4c142787335?q=80&w=2000&auto=format&fit=crop&fm=webp',
             category: 'event'
         },
         {
@@ -2916,7 +2916,7 @@ WAKATIME_API_KEY=your_wakatime_key`
             date: '2024-09-15',
             type: 'video',
             url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-            thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop',
+            thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop&fm=webp',
             category: 'technical'
         }
     ],

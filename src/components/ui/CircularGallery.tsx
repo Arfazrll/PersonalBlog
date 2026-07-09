@@ -424,12 +424,12 @@ class GalleryApp {
 
     createMedias(items: any[] | undefined, bend: number, textColor: string, borderRadius: number, font: string) {
         const defaultItems = [
-            { image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop', text: 'AI & Machine Learning' },
-            { image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=600&fit=crop', text: 'Full Stack Development' },
-            { image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop', text: 'Data Science' },
-            { image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=600&fit=crop', text: 'Web3 & Blockchain' },
-            { image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop', text: 'Cloud Computing' },
-            { image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop', text: 'Cybersecurity' },
+            { image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop&fm=webp', text: 'AI & Machine Learning' },
+            { image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=600&fit=crop&fm=webp', text: 'Full Stack Development' },
+            { image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&fm=webp', text: 'Data Science' },
+            { image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=600&fit=crop&fm=webp', text: 'Web3 & Blockchain' },
+            { image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop&fm=webp', text: 'Cloud Computing' },
+            { image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop&fm=webp', text: 'Cybersecurity' },
         ];
         const galleryItems = items && items.length ? items : defaultItems;
         this.mediasImages = galleryItems.concat(galleryItems);

@@ -14,7 +14,7 @@ export const ParallaxScrollFeatureSection = () => {
             title: "Intelligence Systems",
             subtitle: "AI & DATA SCIENCE",
             description: "Specializing in architecting autonomous systems and intelligence-driven platforms. From fine-tuning LLMs and engineering RAG architectures to developing deep learning models for Computer Vision and NLP.",
-            imageUrl: '/feature/feature1.jpg',
+            imageUrl: '/feature/feature1.webp',
             reverse: false,
             skills: ["LLM Fine-tuning", "RAG Systems", "Deep Learning", "Computer Vision", "MLOps", "Data Analytics"]
         },
@@ -23,7 +23,7 @@ export const ParallaxScrollFeatureSection = () => {
             title: "Scalable Systems",
             subtitle: "SOFTWARE DEVELOPMENT",
             description: "Building the foundation for resilient digital ecosystems. I engineer full-stack solutions with a focus on system architecture, modular design, and high-performance backends using Go, Next.js, and Python.",
-            imageUrl: '/feature/feature2.jpg',
+            imageUrl: '/feature/feature2.webp',
             reverse: true,
             skills: ["System Architecture", "Full-Stack Dev", "Docker & K8s", "API Design", "DevOps", "Software Design"]
         },
@@ -32,7 +32,7 @@ export const ParallaxScrollFeatureSection = () => {
             title: "Strategic Innovation",
             subtitle: "SOFT SKILLS & LEADERSHIP",
             description: "Translating complex technical requirements into impactful business solutions through systemic thinking, strategic leadership, and clear communication within cross-functional teams.",
-            imageUrl: '/feature/feature3.jpg',
+            imageUrl: '/feature/feature3.webp',
             reverse: false,
             skills: ["Systemic Thinking", "Leadership", "Problem Solving", "Teamwork", "Communication", "Research"]
         }

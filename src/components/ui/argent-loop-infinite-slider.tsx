@@ -17,7 +17,7 @@ interface ProjectData {
 const PROJECT_DATA: ProjectData[] = [
   {
     title: "Browser Automation Agent",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop&fm=webp",
     category: "AI & Automation",
     year: "2026",
     description: "AI-driven browser interaction & testing engine.",

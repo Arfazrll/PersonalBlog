@@ -33,7 +33,7 @@ export default function Hero() {
               alt="image"
               className="grayscale-0"
               fill
-              src={"https://images.cnippet.dev/image/upload/v1770400411/img_23001.png"}
+              src={"https://images.cnippet.dev/image/upload/v1770400411/img_23001.webp"}
               style={{ objectFit: "cover" }}
               sizes="(max-width: 768px) 100vw, 100vw"
             />

@@ -18,7 +18,7 @@ export async function getJourneyImages(slug: string): Promise<string[]> {
     const validImages: string[] = [];
 
     for (let i = 1; i <= 4; i++) {
-        const filename = `${slug}${i}.jpg`;
+        const filename = `${slug}${i}.webp`;
         const filePath = path.join(journeyDir, filename);
 
         // 2. Extra Safety: Ensure the resolved path is actually inside journeyDir
