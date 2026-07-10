@@ -469,14 +469,20 @@ function CollapsibleExperienceCard({ exp, idx, isLowPowerMode }: { exp: Experien
             initial={{ opacity: 0, y: isLowPowerMode ? 0 : 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: isLowPowerMode ? 0 : idx * 0.1 }}
-            className={`group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2rem] transition-all duration-500 overflow-hidden ${isExpanded ? 'shadow-2xl dark:shadow-neutral-900/50 ring-1 ring-neutral-200 dark:ring-neutral-700' : 'hover:shadow-2xl dark:hover:shadow-neutral-900/50 hover:-translate-y-1'}`}
+            className={cn(
+                "group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2rem] transition-all duration-500 overflow-hidden",
+                "hover:-translate-y-2 hover:scale-[1.02] hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)] dark:hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)] hover:border-blue-500/50 dark:hover:border-blue-400/50 hover:z-10",
+                isExpanded ? "shadow-2xl ring-1 ring-neutral-200 dark:ring-neutral-700" : ""
+            )}
         >
-            <div className="p-6 md:p-8 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+            {/* Animated Inner Glow Effect on Hover */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-700 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent" />
+            
+            <div className="p-6 md:p-8 cursor-pointer relative z-10" onClick={() => setIsExpanded(!isExpanded)}>
                 <div className="flex gap-4 md:gap-6 items-start">
-                    {/* Logo (Left Side) - Always visible */}
-                    <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-black rounded-2xl flex items-center justify-center shrink-0 border border-neutral-100 dark:border-neutral-800 p-2 shadow-sm">
+                    <div className={cn("w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center shrink-0 border border-neutral-100 dark:border-neutral-800 overflow-hidden relative shadow-sm transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 group-hover:shadow-lg", exp.logoBg || "bg-white")}>
                         {exp.logo ? (
-                            <Image src={exp.logo} alt={exp.company} width={48} height={48} className="object-contain" unoptimized loading="lazy" />
+                            <Image src={exp.logo} alt={exp.company} fill className="object-contain" unoptimized loading="lazy" />
                         ) : (
                             <Briefcase className="w-8 h-8 text-neutral-300" />
                         )}
@@ -503,7 +509,7 @@ function CollapsibleExperienceCard({ exp, idx, isLowPowerMode }: { exp: Experien
                         {/* Metadata Row (Reference Style) */}
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-neutral-500 dark:text-neutral-500 font-medium">
                             <span className="text-neutral-700 dark:text-neutral-300">
-                                {formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : t('present')}
+                                {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : t('present')}
                             </span>
                             <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
                             <span className="text-neutral-400 dark:text-neutral-600">
@@ -525,8 +531,8 @@ function CollapsibleExperienceCard({ exp, idx, isLowPowerMode }: { exp: Experien
 
                         {/* Show Detail Action (Collapsed Only) */}
                         {!isExpanded && (
-                            <div className="pt-2 flex items-center gap-1 text-sm font-medium text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
-                                <ChevronRight className="w-4 h-4" />
+                            <div className="pt-2 flex items-center gap-1 text-sm font-medium text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                                 <span>{t('showDetail')}</span>
                             </div>
                         )}
@@ -651,7 +657,7 @@ const LinkPreviewCard = ({ url, title, id, logo }: { url: string; title?: string
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            layoutId={`${id}-link-card`}
+            layoutId={`${id}-link-card-${url}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
@@ -673,8 +679,8 @@ const LinkPreviewCard = ({ url, title, id, logo }: { url: string; title?: string
                     </p>
                 </div>
                 {logo && (
-                    <div className="shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 overflow-hidden p-2">
-                        <Image src={logo} alt="Logo" width={64} height={64} className="w-full h-full object-contain lowercase" unoptimized loading="lazy" />
+                    <div className="shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 overflow-hidden relative shadow-sm">
+                        <Image src={logo} alt="Logo" fill className="object-contain" unoptimized loading="lazy" />
                     </div>
                 )}
             </div>
@@ -692,7 +698,7 @@ const LinkPreviewCard = ({ url, title, id, logo }: { url: string; title?: string
     );
 };
 
-function TimelineGallery({ images, id, title, externalLink, logo }: { images: string[]; id: string; title?: string; externalLink?: string; logo?: string }) {
+function TimelineGallery({ images, id, title, externalLink, logo }: { images: string[]; id: string; title?: string; externalLink?: string | string[]; logo?: string }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
@@ -739,9 +745,11 @@ function TimelineGallery({ images, id, title, externalLink, logo }: { images: st
     const allImages = verifiedImages.map((src, i) => ({ src, index: i, type: 'image' as const }));
     const validImages = allImages.filter(img => !failedImages.has(img.index));
 
+    const externalLinksArray = Array.isArray(externalLink) ? externalLink : (externalLink ? [externalLink] : []);
+
     const galleryItems = [
         ...validImages,
-        ...(externalLink ? [{ type: 'link' as const, src: externalLink, index: validImages.length }] : [])
+        ...externalLinksArray.map((link, idx) => ({ type: 'link' as const, src: link, index: validImages.length + idx }))
     ];
 
     const visibleItems = isExpanded ? galleryItems.slice(0, 4) : galleryItems.slice(0, 2);
@@ -777,7 +785,7 @@ function TimelineGallery({ images, id, title, externalLink, logo }: { images: st
                             </motion.div>
                         ) : (
                             <LinkPreviewCard
-                                key={`${id}-link-preview`}
+                                key={`${id}-link-preview-${item.index}`}
                                 url={item.src}
                                 title={title}
                                 id={id}
@@ -883,14 +891,14 @@ function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                             </div>
                         </div>
 
-                        <p className="text-neutral-600 dark:text-neutral-300 mb-6 leading-relaxed text-sm md:text-base">
+                        <p className="text-neutral-600 dark:text-neutral-300 mb-6 leading-relaxed text-sm md:text-base text-justify">
                             {exp.description}
                         </p>
 
                         {exp.responsibilities && (
                             <ul className="mb-8 space-y-3">
                                 {exp.responsibilities.slice(0, 3).map((resp, i) => (
-                                    <li key={i} className="flex items-start gap-2.5 text-xs md:text-sm text-neutral-500 dark:text-neutral-400">
+                                    <li key={i} className="flex items-start gap-2.5 text-xs md:text-sm text-neutral-500 dark:text-neutral-400 text-justify">
                                         <div className="w-1.5 h-1.5 rounded-full bg-primary/40 mt-1.5 shrink-0" />
                                         <span>{resp}</span>
                                     </li>
@@ -900,7 +908,7 @@ function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
 
                         <div className="flex flex-wrap gap-2 mb-8">
                             {exp.skills.map((skill, i) => (
-                                <span key={i} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400">
+                                <span key={i} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white transition-all duration-300 hover:-translate-y-0.5 cursor-default shadow-sm hover:shadow-md">
                                     {skill}
                                 </span>
                             ))}
