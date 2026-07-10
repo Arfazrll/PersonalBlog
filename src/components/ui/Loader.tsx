@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { 
-  Brain, Network, Cpu, Database, Fingerprint, Zap, 
+import {
+  Brain, Network, Cpu, Database, Fingerprint, Zap,
   Server, Code, Terminal, Layers, Shield, Workflow,
   Lightbulb, Users, MessageSquare, Target, Compass, Briefcase
 } from 'lucide-react';
@@ -97,7 +97,7 @@ const Loader = ({ type = 'default' }: LoaderProps) => {
   return (
     <div className="relative w-full h-full min-h-[400px] flex items-center justify-center overflow-hidden bg-transparent" style={{ perspective: 1500 }}>
       {/* Background Dots */}
-      <div 
+      <div
         className="absolute inset-0 opacity-10 pointer-events-none dark:hidden"
         style={{
           backgroundImage: 'radial-gradient(#000000 1px, transparent 1px)',
@@ -139,7 +139,7 @@ const Loader = ({ type = 'default' }: LoaderProps) => {
 
 function Face({ icon: Icon, label, color, transform }: { icon: any, label: string, color: string, transform: string }) {
   return (
-    <div 
+    <div
       className="absolute w-full h-full border-[5px] border-black box-border flex flex-col items-center justify-center overflow-hidden"
       style={{
         background: color,

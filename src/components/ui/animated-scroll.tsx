@@ -276,19 +276,19 @@ function BlendedVisual({ src, component, side }: { src?: string, component?: Rea
                 </motion.div>
             ) : null}
             {/* Horizontal Blend (Masked to avoid WebKit transparent color interpolation bug) */}
-            <div 
+            <div
                 className="absolute inset-0 pointer-events-none z-10 bg-background dark:bg-black"
                 style={{
-                    WebkitMaskImage: side === 'left' 
-                        ? 'linear-gradient(to right, transparent, black)' 
+                    WebkitMaskImage: side === 'left'
+                        ? 'linear-gradient(to right, transparent, black)'
                         : 'linear-gradient(to left, transparent, black)',
-                    maskImage: side === 'left' 
-                        ? 'linear-gradient(to right, transparent, black)' 
+                    maskImage: side === 'left'
+                        ? 'linear-gradient(to right, transparent, black)'
                         : 'linear-gradient(to left, transparent, black)'
                 }}
             />
             {/* Vertical Blend (Masked to avoid WebKit transparent color interpolation bug) */}
-            <div 
+            <div
                 className="absolute inset-0 pointer-events-none z-10 bg-background dark:bg-black opacity-40"
                 style={{
                     WebkitMaskImage: 'linear-gradient(to bottom, black, transparent, black)',

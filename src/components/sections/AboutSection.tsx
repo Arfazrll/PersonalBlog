@@ -40,7 +40,7 @@ const showcaseMembers = [
         description: exp.description,
         period: "August 2025 - Present",
         image: "/journey/researchassistant2.webp",
-        social: exp.externalLink ? { website: exp.externalLink } : undefined
+        social: exp.externalLink ? { website: Array.isArray(exp.externalLink) ? exp.externalLink[0] : exp.externalLink } : undefined
     })),
     // 2. HUMIC Engineering
     ...portfolioData.experiences.filter(exp => exp.id === 'prof-3').map(exp => ({
@@ -50,7 +50,7 @@ const showcaseMembers = [
         description: exp.description,
         period: "September 2025 - December 2025",
         image: "/journey/aideveloperintern1.webp",
-        social: exp.externalLink ? { website: exp.externalLink } : undefined
+        social: exp.externalLink ? { website: Array.isArray(exp.externalLink) ? exp.externalLink[0] : exp.externalLink } : undefined
     })),
     // 3. Informatics Laboratory, Telkom University
     ...portfolioData.experiences.filter(exp => exp.id === 'prof-6').map(exp => ({
@@ -60,7 +60,7 @@ const showcaseMembers = [
         description: exp.description,
         period: "September 2025 - January 2026",
         image: "/journey/computernetworkpracticumassistant2.webp",
-        social: exp.externalLink ? { website: exp.externalLink } : undefined
+        social: exp.externalLink ? { website: Array.isArray(exp.externalLink) ? exp.externalLink[0] : exp.externalLink } : undefined
     })),
     // 4. Digistar Club by Telkom Indonesia
     ...portfolioData.experiences.filter(exp => exp.id === 'lead-2').map(exp => ({
@@ -70,7 +70,7 @@ const showcaseMembers = [
         description: exp.description,
         period: "October 2025 - December 2025",
         image: "/journey/chiefcommittee1.webp",
-        social: exp.externalLink ? { website: exp.externalLink } : undefined
+        social: exp.externalLink ? { website: Array.isArray(exp.externalLink) ? exp.externalLink[0] : exp.externalLink } : undefined
     })),
     // 5. Food and Agriculture Office of Bandung City
     ...portfolioData.experiences.filter(exp => exp.id === 'prof-8').map(exp => ({
@@ -80,7 +80,7 @@ const showcaseMembers = [
         description: exp.description,
         period: "July - September 2025",
         image: "/journey/dataentryassistant1.webp",
-        social: exp.externalLink ? { website: exp.externalLink } : undefined
+        social: exp.externalLink ? { website: Array.isArray(exp.externalLink) ? exp.externalLink[0] : exp.externalLink } : undefined
     })),
     // 6. View more
     {
@@ -573,7 +573,8 @@ const ScrollHijackSection = () => {
     );
 };
 
-export default function AboutSection() { console.log('SHOWCASE MEMBERS:', showcaseMembers.map(m => m.id));
+export default function AboutSection() {
+    console.log('SHOWCASE MEMBERS:', showcaseMembers.map(m => m.id));
     const containerRef = useRef<HTMLElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,

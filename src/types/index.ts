@@ -39,9 +39,10 @@ export interface Experience {
     location?: string;
     type: 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance' | 'volunteer' | 'apprenticeship' | 'self-employed';
     logo?: string;
+    logoBg?: string;
     link?: string;
     galleryImages?: string[];
-    externalLink?: string;
+    externalLink?: string | string[];
     keyLearnings?: string[];
     impact?: string[];
 }

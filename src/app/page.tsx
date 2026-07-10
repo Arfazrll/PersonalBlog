@@ -58,12 +58,12 @@ const MetricCTAHijack = () => {
                 <div className="sticky top-0 z-0 overflow-hidden">
                     <StatsSection showOnly="bottom" />
                 </div>
-                
+
                 {/* Layer 2: The CTA Section (Slides Over) */}
                 <div className="relative z-20 bg-background dark:bg-black">
                     {/* Top shadow element to prevent downward bleeding into footer */}
                     <div className="absolute top-0 left-0 w-full h-10 dark:shadow-[0_-50px_150px_rgba(0,0,0,0.8)] -z-10" />
-                    
+
                     <div className="h-[10vh]" />
                     <CTASection />
                     <div className="h-20" />
