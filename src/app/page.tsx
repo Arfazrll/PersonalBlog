@@ -15,6 +15,7 @@ import { TextPressure } from '@/components/ui/TextPressure';
 import { portfolioData } from '@/data/portfolio';
 import { cn } from "@/lib/utils";
 import { SocialCorner } from '@/components/layout/SocialCorner';
+import { DeferredMount } from '@/components/ui/DeferredMount';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
@@ -153,12 +154,12 @@ export default function HomePage() {
                 <HeroVisual isExiting={isExiting || !isLoading} />
 
                 {!isLoading && (
-                    <>
+                    <DeferredMount>
                         <ExpertiseSection />
                         <AboutSection />
                         <MetricCTAHijack />
                         <SocialCorner className="fixed bottom-12 right-12 z-[30]" />
-                    </>
+                    </DeferredMount>
                 )}
             </motion.main>
         </>

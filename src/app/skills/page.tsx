@@ -15,6 +15,7 @@ const HardSkills = dynamic(() => import('@/components/sections/skills/HardSkills
 const ToolsSection = dynamic(() => import('@/components/sections/skills/ToolsSection').then(mod => mod.ToolsSection), { ssr: true });
 import FeatureSection from '@/components/ui/stack-feature-section';
 import { cn } from '@/lib/utils';
+import { DeferredMount } from '@/components/ui/DeferredMount';
 
 const techLogos: Record<string, string> = {
     'TypeScript': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg',
@@ -188,10 +189,12 @@ export default function SkillsPage() {
                     className="absolute inset-0 z-0"
                     style={{ y: yHeroSpline, scale: scaleSpline, willChange: 'transform' }}
                 >
-                    <SplineScene
-                        scene="https://prod.spline.design/qVnpleqGGhqRlQYK/scene.splinecode"
-                        className="w-full h-full opacity-60 md:opacity-100"
-                    />
+                    <DeferredMount fallback={<div className="w-full h-full opacity-10 bg-zinc-800 animate-pulse" />}>
+                        <SplineScene
+                            scene="https://prod.spline.design/qVnpleqGGhqRlQYK/scene.splinecode"
+                            className="w-full h-full opacity-60 md:opacity-100"
+                        />
+                    </DeferredMount>
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background pointer-events-none" />
                 </motion.div>
 
@@ -297,63 +300,65 @@ export default function SkillsPage() {
                 <VaporFog className="opacity-30" />
             </div>
 
-            <HorizontalScrollCarousel />
-            <HardSkills />
-            <section className="pt-12 pb-48 px-8 relative overflow-hidden bg-background">
-                <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
-                </div>
-
-                <div className="max-w-7xl mx-auto relative z-10 w-full mt-12 md:mt-16">
-                    <div className="relative w-full flex flex-col justify-center items-center mb-0">
-                        <ArchedTechIconsInteractive
-                            key="arched-tech-icons-interactive"
-                            icons={portfolioData.techStack.map(t => techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`))}
-                        />
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ margin: "-100px", once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="text-center space-y-4 max-w-3xl mx-auto px-4 relative z-10 pointer-events-auto -mt-[30px] sm:-mt-[50px] md:-mt-[70px]"
-                        >
-                            <motion.span
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ margin: "-100px", once: true }}
-                                transition={{ duration: 0.5, delay: 0.2 }}
-                                className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
-                            >
-                                CORE TECHNOLOGIES
-                            </motion.span>
-                            <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-foreground">
-                                The Engineering Foundation
-                            </h2>
-                            <p className="text-sm md:text-base text-muted-foreground leading-relaxed pt-2">
-                                Building scalable architectures using modern languages and frameworks optimized for high-performance execution.
-                            </p>
-                        </motion.div>
+            <DeferredMount>
+                <HorizontalScrollCarousel />
+                <HardSkills />
+                <section className="pt-12 pb-48 px-8 relative overflow-hidden bg-background">
+                    <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
                     </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ margin: "-100px", once: true }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="mt-16 sm:mt-20 md:mt-24 w-full"
-                    >
-                        <KineticTechGrid
-                            items={portfolioData.techStack.map(t => ({
-                                name: t.name,
-                                icon: techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`)
-                            }))}
-                        />
-                    </motion.div>
-                </div>
-            </section>
+                    <div className="max-w-7xl mx-auto relative z-10 w-full mt-12 md:mt-16">
+                        <div className="relative w-full flex flex-col justify-center items-center mb-0">
+                            <ArchedTechIconsInteractive
+                                key="arched-tech-icons-interactive"
+                                icons={portfolioData.techStack.map(t => techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`))}
+                            />
 
-            <ToolsSection />
-            <FeatureSection />
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ margin: "-100px", once: true }}
+                                transition={{ duration: 0.6 }}
+                                className="text-center space-y-4 max-w-3xl mx-auto px-4 relative z-10 pointer-events-auto -mt-[30px] sm:-mt-[50px] md:-mt-[70px]"
+                            >
+                                <motion.span
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ margin: "-100px", once: true }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                    className="text-[10px] font-mono uppercase tracking-[0.5em] text-primary/80 font-bold block"
+                                >
+                                    CORE TECHNOLOGIES
+                                </motion.span>
+                                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-foreground">
+                                    The Engineering Foundation
+                                </h2>
+                                <p className="text-sm md:text-base text-muted-foreground leading-relaxed pt-2">
+                                    Building scalable architectures using modern languages and frameworks optimized for high-performance execution.
+                                </p>
+                            </motion.div>
+                        </div>
+
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ margin: "-100px", once: true }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="mt-16 sm:mt-20 md:mt-24 w-full"
+                        >
+                            <KineticTechGrid
+                                items={portfolioData.techStack.map(t => ({
+                                    name: t.name,
+                                    icon: techLogos[t.name] || (t.icon?.includes('http') ? t.icon : `https://cdn.simpleicons.org/${t.name.toLowerCase().replace(/[\s.]/g, '')}`)
+                                }))}
+                            />
+                        </motion.div>
+                    </div>
+                </section>
+
+                <ToolsSection />
+                <FeatureSection />
+            </DeferredMount>
 
         </div>
     );

@@ -103,11 +103,11 @@ export default async function RootLayout({
                     <I18nProvider locale={locale} messages={messages}>
                         <SmoothScrollProvider>
                             <ThemeAwareClickSpark>
-                                <ConditionalNavigation>
-                                    <ArcPreloaderWrapper>
+                                <ArcPreloaderWrapper>
+                                    <ConditionalNavigation>
                                         {children}
-                                    </ArcPreloaderWrapper>
-                                </ConditionalNavigation>
+                                    </ConditionalNavigation>
+                                </ArcPreloaderWrapper>
                                 <ChatBot headless />
                             </ThemeAwareClickSpark>
                         </SmoothScrollProvider>

@@ -33,6 +33,7 @@ const ExperienceMarquee = dynamic(() => import('../../components/sections/Experi
 const ExperienceStickyScroll = dynamic(() => import('../../components/sections/ExperienceStickyScroll'), { ssr: true });
 import { Timeline } from '@/components/ui/timeline';
 import { InnovativeExperienceHero } from '@/components/sections/InnovativeExperienceHero';
+import { DeferredMount } from '@/components/ui/DeferredMount';
 
 type TabType = 'education' | 'journey' | 'experience';
 
@@ -423,25 +424,27 @@ export default function ExperiencePage() {
                 />
             </div>
 
-            {/* 1. Work Experience Gallery Marquee */}
-            <motion.div
-                initial={{ opacity: 0, y: isLowPowerMode ? 0 : 60 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-                className="w-full relative z-10 pt-20 mb-20 -mt-10 md:-mt-20 overflow-hidden"
-            >
-                <ExperienceMarquee />
-            </motion.div>
+            <DeferredMount>
+                {/* 1. Work Experience Gallery Marquee */}
+                <motion.div
+                    initial={{ opacity: 0, y: isLowPowerMode ? 0 : 60 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                    className="w-full relative z-10 pt-20 mb-20 -mt-10 md:-mt-20 overflow-hidden"
+                >
+                    <ExperienceMarquee />
+                </motion.div>
 
-            <motion.div
-                initial={{ opacity: 0, y: isLowPowerMode ? 0 : 60 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-                className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
-            >
-                {/* 2. Tab Slider Section (Testimonial-style UI) */}
-                <ExperienceTabSlider isLowPowerMode={isLowPowerMode} />
-            </motion.div>
+                <motion.div
+                    initial={{ opacity: 0, y: isLowPowerMode ? 0 : 60 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+                >
+                    {/* 2. Tab Slider Section (Testimonial-style UI) */}
+                    <ExperienceTabSlider isLowPowerMode={isLowPowerMode} />
+                </motion.div>
+            </DeferredMount>
         </motion.div>
     );
 }

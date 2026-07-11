@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 
 import CardNav from '@/components/ui/CardNav';
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
+import { usePreloadState } from '@/components/ui/arc-preloader-hero';
 
 function Clock() {
     const [time, setTime] = useState<string>('');
@@ -71,7 +72,9 @@ export function Navbar() {
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
     const [currentLocale, setCurrentLocale] = useState('en');
-    const [isPreloadActive, setIsPreloadActive] = useState(true); // Default true so it doesn't flash before the event fires
+    
+    // Consume preload state directly from context
+    const { isPreloading: isPreloadActive } = usePreloadState();
 
     const isDark = resolvedTheme === 'dark';
 
@@ -79,19 +82,6 @@ export function Navbar() {
         setMounted(true);
         const locale = document.cookie.split('; ').find(row => row.startsWith('locale='))?.split('=')[1] || 'en';
         setCurrentLocale(locale);
-
-        // Listen to preload state
-        const handlePreloadState = (e: any) => {
-            setIsPreloadActive(e.detail);
-        };
-        window.addEventListener('preload-state-change', handlePreloadState);
-
-        // If the preload event already fired before this mounted, we can fallback to checking body overflow
-        if (document.body.style.overflow !== 'hidden') {
-            setIsPreloadActive(false);
-        }
-
-        return () => window.removeEventListener('preload-state-change', handlePreloadState);
     }, []);
 
     // Lock body scroll when menu is open
