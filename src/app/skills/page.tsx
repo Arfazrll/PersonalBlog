@@ -209,57 +209,67 @@ export default function SkillsPage() {
                         style={{ willChange: 'transform, opacity', y: yHeroText, opacity: opacityHero }}
                         className="flex flex-col items-center"
                     >
-                        {/* REFINED: Titanium Solid Typography with Crystalline Sheen */}
-                        <div className="relative group px-10">
+                        {/* REFINED: Sleek Minimalist Typography with Elegant Hover */}
+                        <motion.div 
+                            className="relative group px-10 cursor-default pointer-events-auto"
+                            initial="rest"
+                            whileHover="hover"
+                            animate="rest"
+                        >
                             <motion.h1
-                                className="relative text-[10vw] md:text-[8vw] font-black italic uppercase leading-none tracking-tighter text-foreground drop-shadow-[0_0_20px_rgba(var(--foreground),0.15)] select-none pointer-events-none"
+                                variants={{
+                                    rest: { scale: 1, textShadow: "0px 0px 0px rgba(255,255,255,0)" },
+                                    hover: { scale: 1.02, textShadow: "0px 0px 25px rgba(255,255,255,0.2)" }
+                                }}
+                                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                                className="relative z-10 text-[9vw] md:text-[7vw] font-semibold uppercase leading-[0.9] tracking-tight text-zinc-800 dark:text-zinc-400 group-hover:text-black dark:group-hover:text-white select-none transition-colors duration-500"
                             >
                                 SKILLS & TOOLS
 
-                                {/* Crystalline Sheen (Refined Elliptical Pulse) */}
+                                {/* Crystalline Sheen (Subtle) */}
                                 <div className="absolute inset-x-0 inset-y-0 flex justify-center pointer-events-none overflow-hidden">
                                     {/* Left-ward Sheen */}
                                     <motion.div
                                         animate={{
                                             left: ["50%", "2%"],
-                                            opacity: [0, 0.5, 0],
+                                            opacity: [0, 0.15, 0],
                                             scale: [0.8, 1.1, 0.8]
                                         }}
                                         transition={{
-                                            duration: 4,
+                                            duration: 5,
                                             repeat: Infinity,
-                                            repeatDelay: 3,
+                                            repeatDelay: 4,
                                             ease: "easeInOut"
                                         }}
-                                        className="absolute top-0 bottom-0 w-[40%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.4)_0%,transparent_70%)] blur-md rounded-[100%]"
+                                        className="absolute top-0 bottom-0 w-[40%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-md rounded-[100%]"
                                     />
                                     {/* Right-ward Sheen */}
                                     <motion.div
                                         animate={{
                                             left: ["50%", "98%"],
-                                            opacity: [0, 0.5, 0],
+                                            opacity: [0, 0.15, 0],
                                             scale: [0.8, 1.1, 0.8]
                                         }}
                                         transition={{
-                                            duration: 4,
+                                            duration: 5,
                                             repeat: Infinity,
-                                            repeatDelay: 3,
+                                            repeatDelay: 4,
                                             ease: "easeInOut"
                                         }}
                                         style={{ translateX: "-100%" }}
-                                        className="absolute top-0 bottom-0 w-[40%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.4)_0%,transparent_70%)] blur-md rounded-[100%]"
+                                        className="absolute top-0 bottom-0 w-[40%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-md rounded-[100%]"
                                     />
                                 </div>
                             </motion.h1>
-                        </div>
+                        </motion.div>
 
-                        {/* Subtitle - exactly as in Gambar 1 & 2 but MAX visibility */}
+                        {/* Subtitle - Modern Minimalist */}
                         <motion.p
                             initial={{ opacity: 0, y: 15 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, delay: 0.3 }}
-                            className="max-w-4xl mx-auto mt-4 text-foreground font-mono leading-relaxed uppercase tracking-[0.5em] md:tracking-[1em] text-[10px] md:text-[13px] font-black pointer-events-auto shadow-sm"
+                            className="max-w-4xl mx-auto mt-6 text-muted-foreground font-mono leading-relaxed uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-[11px] font-medium pointer-events-auto"
                         >
                             {t('subtitle')}
                         </motion.p>

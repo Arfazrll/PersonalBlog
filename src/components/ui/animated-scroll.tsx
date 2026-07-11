@@ -309,7 +309,7 @@ function EditorialContent({ content, index }: { content: any, index: number }) {
                     </span>
                     <div className="h-[1px] w-12 bg-primary/20" />
                 </div>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tighter leading-tight text-foreground font-sans">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tighter leading-tight text-foreground font-sans transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:translate-x-6 hover:text-foreground/50 pointer-events-auto cursor-default origin-left">
                     {content.heading}
                 </h2>
                 <p className="text-xl md:text-2xl text-muted-foreground font-medium leading-tight max-w-lg">

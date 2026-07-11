@@ -9,61 +9,31 @@ import {
   useTransform,
 } from "motion/react";
 import { cn } from "@/lib/utils";
-
-/* ── types ───────────────────────────────────────────────────── */
+import { usePathname } from "next/navigation";
 
 export type ArcRevealGreeting = {
-  /** Greeting text in the target script */
   text: string;
-  /** Optional `lang` attribute applied to the span (helps screen readers / font rendering) */
   lang?: string;
 };
 
 export interface ArcRevealHeroProps {
-  /** Greetings cycled before the arc reveal. */
   greetings?: ArcRevealGreeting[];
-  /** How long each greeting is held on screen (ms). */
   greetingHold?: number;
-  /** Duration of the curved curtain reveal (ms). */
   revealDuration?: number;
-  /** Outer wrapper class. */
   className?: string;
-  /** Class for the intro (pre-reveal) overlay surface. */
   introClassName?: string;
-  /** Class for the cycled greeting `<span>`. */
   greetingClassName?: string;
-  /** Class for the wrapper around `children` (the revealed content). */
   revealClassName?: string;
-  /**
-   * Optional `sessionStorage` key — when set, the intro plays only once per
-   * session for the same key. Leave unset to replay on every mount.
-   */
   storageKey?: string;
-  /** Content shown after the curtain reveal (the "landing"). */
   children?: React.ReactNode;
 }
 
-/* ── defaults ────────────────────────────────────────────────── */
-
-const DEFAULT_GREETINGS: ArcRevealGreeting[] = [
-  { text: "Quiet." },
-  { text: "Sharp." },
-  { text: "Calm." },
-  { text: "Crafted." },
-  { text: "Considered." },
-  { text: "Composed." },
-  { text: "Honest." },
-  { text: "Ready." },
-];
-
-type Phase = "intro" | "reveal" | "done";
-
-/* ── component ───────────────────────────────────────────────── */
+type Phase = "intro" | "text" | "reveal" | "done";
 
 export function ArcRevealHero({
-  greetings = DEFAULT_GREETINGS,
-  greetingHold = 620,
-  revealDuration = 1500,
+  greetings,
+  greetingHold = 800,
+  revealDuration = 800,
   className,
   introClassName,
   greetingClassName,
@@ -71,73 +41,177 @@ export function ArcRevealHero({
   storageKey,
   children,
 }: ArcRevealHeroProps) {
-  /* Check reduced motion preference manually (avoids SSR issues) */
-  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
+  const pathname = usePathname();
 
   const [phase, setPhase] = React.useState<Phase>("intro");
   const [index, setIndex] = React.useState(0);
+  const [prevPathname, setPrevPathname] = React.useState(pathname);
 
-  // Drive the arc shape from a single 0→1 progress.
+  // Progress from 0 to 2
+  // 0 -> 1: Black curve rises from bottom
+  // 1: Text appears (held by greetingHold)
+  // 1 -> 2: Black curve lifts up to reveal page
   const progress = useMotionValue(0);
-  const arcPath = useTransform(progress, (p: number) => {
-    const edge = 110 - p * 140;
-    const control = edge + 25;
-    return `M 0 ${edge} Q 50 ${control} 100 ${edge} L 100 110 L 0 110 Z`;
-  });
 
-  // Check reduced motion on mount
+  // Synchronously handle route change during render! 
+  // This PREVENTS the new page from appearing BEFORE the preloader animation starts!
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setPhase("intro");
+    setIndex(0);
+    progress.set(0);
+  }
+
+  // Optimization: Defer rendering the NEW page until the screen is fully covered by the black preloader.
+  // This prevents heavy components (like Three.js/Spline) from freezing the JS thread during the intro animation!
+  const isInitialSSR = React.useRef(true);
+  const [renderedChildren, setRenderedChildren] = React.useState(children);
+
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-      if (mq.matches) {
-        setPrefersReducedMotion(true);
-        setPhase("done");
-      }
-    }
+    isInitialSSR.current = false;
   }, []);
 
-  // Greeting cycle.
   React.useEffect(() => {
-    if (phase !== "intro" || prefersReducedMotion) return;
-    const isLast = index >= greetings.length - 1;
-    if (isLast) {
-      const t = window.setTimeout(() => setPhase("reveal"), greetingHold + 220);
-      return () => window.clearTimeout(t);
+    // Only update the actual rendered page when the screen is fully covered (text/reveal) or animation is done.
+    if (phase === "text" || phase === "reveal" || phase === "done" || isInitialSSR.current) {
+      setRenderedChildren(children);
     }
-    const t = window.setTimeout(() => setIndex((i) => i + 1), greetingHold);
-    return () => window.clearTimeout(t);
-  }, [phase, index, greetingHold, greetings.length, prefersReducedMotion]);
+  }, [phase, children]);
 
-  // Drive the curtain reveal.
+  // Generate title from pathname if greetings is not provided
+  const title = React.useMemo(() => {
+      if (pathname === '/') return 'Home';
+      const parts = pathname.split('/').filter(Boolean);
+      if (parts.length > 0) {
+          return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+      }
+      return 'Loading';
+  }, [pathname]);
+
+  const activeGreetings = greetings || [{ text: title }];
+
+
+
+  const arcPath = useTransform(progress, (p: number) => {
+    if (p <= 1) {
+      // Rise phase (0 to 1)
+      const topEdge = 110 - p * 110;
+      // Convex upwards curve
+      const control = topEdge - 30 * Math.sin(p * Math.PI);
+      return `M 0 ${topEdge} Q 50 ${control} 100 ${topEdge} L 100 110 L 0 110 Z`;
+    } else {
+      // Reveal phase (1 to 2)
+      const t = p - 1;
+      const bottomEdge = 110 - t * 110;
+      // Concave upwards curve
+      const control = bottomEdge - 30 * Math.sin(t * Math.PI);
+      return `M 0 0 L 100 0 L 100 ${bottomEdge} Q 50 ${control} 0 ${bottomEdge} Z`;
+    }
+  });
+
+  // Scroll lock and global event
   React.useEffect(() => {
-    if (phase !== "reveal") return;
+    const isPreloading = phase !== "done";
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('preload-state-change', { detail: isPreloading }));
+    }
+
+    if (isPreloading) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+    return () => {
+        document.body.style.overflow = '';
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('preload-state-change', { detail: false }));
+        }
+    };
+  }, [phase]);
+
+  // Check initial load overrides
+  React.useEffect(() => {
+    // For homepage first load, if the original hello loader will run, skip this one
+    if (pathname === '/' && typeof window !== 'undefined') {
+        const isLoaded = sessionStorage.getItem('portfolioLoaded');
+        if (!isLoaded) {
+            setPhase("done");
+            return;
+        }
+    }
+
+    if (storageKey && typeof window !== "undefined") {
+      try {
+        if (window.sessionStorage.getItem(storageKey) === "done") {
+          setPhase("done");
+          return;
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }, []); // Run only once on mount
+
+  // Phase: Intro -> Text
+  React.useEffect(() => {
+    if (phase !== "intro") return;
+    
     const controls = animate(progress, 1, {
       duration: revealDuration / 1000,
-      ease: [0.85, 0, 0.15, 1],
+      ease: [0.7, 0, 0.3, 1], // Smooth snappy curve
       onComplete: () => {
-        // Temporarily disabled for testing:
-        // if (storageKey && typeof window !== "undefined") {
-        //   try {
-        //     window.sessionStorage.setItem(storageKey, "done");
-        //   } catch {
-        //     /* ignore */
-        //   }
-        // }
-        setPhase("done");
-      },
+        setPhase("text");
+      }
     });
+    
+    return () => controls.stop();
+  }, [phase, progress, revealDuration]);
+
+  // Phase: Text hold -> Reveal
+  React.useEffect(() => {
+    if (phase !== "text") return;
+    
+    const t = window.setTimeout(() => {
+      setPhase("reveal");
+    }, greetingHold);
+    
+    return () => window.clearTimeout(t);
+  }, [phase, greetingHold]);
+
+  // Phase: Reveal -> Done
+  React.useEffect(() => {
+    if (phase !== "reveal") return;
+    
+    const controls = animate(progress, 2, {
+      duration: revealDuration / 1000,
+      ease: [0.7, 0, 0.3, 1],
+      onComplete: () => {
+        setPhase("done");
+        if (storageKey && typeof window !== "undefined") {
+          try {
+            window.sessionStorage.setItem(storageKey, "done");
+          } catch {
+            // ignore
+          }
+        }
+      }
+    });
+    
     return () => controls.stop();
   }, [phase, progress, revealDuration, storageKey]);
 
   const showOverlay = phase !== "done";
-  const current = greetings[Math.min(index, greetings.length - 1)];
+  const current = activeGreetings[Math.min(index, activeGreetings.length - 1)];
 
   return (
-    <div className={cn("relative", className)}>
-      {/* Page content — always rendered underneath */}
-      <div className={cn("relative z-0", revealClassName)}>{children}</div>
+    <div
+      className={cn(
+        "relative isolate min-h-screen w-full bg-background text-foreground",
+        className,
+      )}
+    >
+      <div className={cn("relative z-0", revealClassName)}>{renderedChildren}</div>
 
-      {/* Full-screen overlay — fixed to viewport */}
       <AnimatePresence>
         {showOverlay && (
           <motion.div
@@ -146,27 +220,25 @@ export function ArcRevealHero({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
             className={cn(
-              "fixed inset-0 z-[9999] overflow-hidden",
+              "fixed inset-0 z-[999] h-screen w-full overflow-hidden", // changed w-screen to w-full
               introClassName,
             )}
-            style={{ backgroundColor: "hsl(var(--foreground))" }}
           >
-            {/* Cycled greeting */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            {/* The text layer */}
+            <div className="absolute inset-0 flex items-center justify-center z-10">
               <AnimatePresence mode="wait">
-                {phase === "intro" && current && (
+                {phase === "text" && current && (
                   <motion.span
                     key={`${index}-${current.text}`}
                     lang={current.lang}
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                     className={cn(
-                      "select-none px-6 text-center text-5xl font-semibold tracking-tight sm:text-6xl md:text-7xl",
+                      "select-none px-6 text-center text-5xl font-semibold tracking-tight text-white",
                       greetingClassName,
                     )}
-                    style={{ color: "hsl(var(--background))" }}
                   >
                     {current.text}
                   </motion.span>
@@ -174,17 +246,19 @@ export function ArcRevealHero({
               </AnimatePresence>
             </div>
 
-            {/* Rising curved curtain — reveals background color */}
+            {/* The background curves layer */}
             <svg
-              className="pointer-events-none absolute inset-0 h-full w-full"
+              className="pointer-events-none absolute inset-0 h-full w-full z-0"
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
               aria-hidden
             >
-              <motion.path
-                d={arcPath}
-                style={{ fill: "hsl(var(--background))" }}
-              />
+              {/* Solid background covering the underlying page initially, removed when reveal starts */}
+              {(phase === "intro" || phase === "text") && (
+                <rect width="100" height="100" className="fill-background" />
+              )}
+              {/* The animating arc: black in light mode, dark gray in dark mode */}
+              <motion.path d={arcPath} className="fill-foreground dark:fill-[#262626]" />
             </svg>
           </motion.div>
         )}
@@ -192,5 +266,3 @@ export function ArcRevealHero({
     </div>
   );
 }
-
-export default ArcRevealHero;

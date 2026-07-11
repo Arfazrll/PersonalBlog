@@ -71,6 +71,7 @@ export function Navbar() {
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
     const [currentLocale, setCurrentLocale] = useState('en');
+    const [isPreloadActive, setIsPreloadActive] = useState(true); // Default true so it doesn't flash before the event fires
 
     const isDark = resolvedTheme === 'dark';
 
@@ -78,6 +79,19 @@ export function Navbar() {
         setMounted(true);
         const locale = document.cookie.split('; ').find(row => row.startsWith('locale='))?.split('=')[1] || 'en';
         setCurrentLocale(locale);
+
+        // Listen to preload state
+        const handlePreloadState = (e: any) => {
+            setIsPreloadActive(e.detail);
+        };
+        window.addEventListener('preload-state-change', handlePreloadState);
+
+        // If the preload event already fired before this mounted, we can fallback to checking body overflow
+        if (document.body.style.overflow !== 'hidden') {
+            setIsPreloadActive(false);
+        }
+
+        return () => window.removeEventListener('preload-state-change', handlePreloadState);
     }, []);
 
     // Lock body scroll when menu is open
@@ -151,7 +165,7 @@ export function Navbar() {
             <motion.nav
                 variants={navVariants}
                 initial="hidden"
-                animate={isVisible || isMenuOpen ? 'visible' : 'hidden'}
+                animate={!isPreloadActive && (isVisible || isMenuOpen) ? 'visible' : 'hidden'}
                 transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                 className="fixed top-0 left-0 right-0 z-[100]"
             >

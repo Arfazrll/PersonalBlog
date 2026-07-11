@@ -4,10 +4,11 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 // import { portfolioData } from "@/data/portfolio";
-import { X, Play, Maximize2, ChevronLeft, ChevronRight, Minimize2, ListFilter, ArrowDownUp, ImageIcon, Video, ArrowRight, LayoutGrid, StretchHorizontal } from "lucide-react";
+import { X, Play, Maximize2, ChevronLeft, ChevronRight, Minimize2, ListFilter, ArrowDownUp, ImageIcon, Video, ArrowRight, LayoutGrid, StretchHorizontal, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAllGalleryImages, GalleryImage } from "@/app/actions/getGalleryImages";
 import MagneticEffect from "@/components/ui/MagneticEffect";
+import { InfiniteImageField } from "@/components/ui/infinite-image-field";
 
 type FilterType = 'all' | 'image' | 'video';
 // type SortType = 'newest' | 'oldest';
@@ -18,8 +19,7 @@ type FilterType = 'all' | 'image' | 'video';
 export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boolean }) {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [filter, setFilter] = useState<FilterType>('all');
-    // const [sort, setSort] = useState<SortType>('newest'); // Removed sort state
-    const [viewMode, setViewMode] = useState<'rows' | 'grid'>('grid'); // Default grid
+    const [viewMode, setViewMode] = useState<'rows' | 'grid' | 'infinite'>('grid'); // Default grid
     const [isLightboxMaximized, setIsLightboxMaximized] = useState(false);
     const [visibleCount, setVisibleCount] = useState(12);
     const [galleryItems, setGalleryItems] = useState<any[]>([]);
@@ -152,10 +152,10 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
 
                 {/* Title */}
                 <div className="flex-1">
-                    <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground block mb-2">
+                    <span className="text-[11px] md:text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/80 block mb-3 transition-colors duration-300">
                         Exhibition Space
                     </span>
-                    <h2 className="text-3xl md:text-4xl font-serif text-foreground">
+                    <h2 className="text-3xl md:text-5xl font-sans tracking-tight text-foreground/90 font-medium leading-tight transition-colors duration-300">
                         Selected Works
                     </h2>
                 </div>
@@ -164,16 +164,16 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                 <div className="flex flex-wrap items-center gap-4 md:gap-8 w-full md:w-auto">
 
                     {/* Filter Tabs */}
-                    <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-full border border-neutral-300 dark:border-white/10">
+                    <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-full backdrop-blur-md border border-black/5 dark:border-white/5 shadow-inner transition-colors duration-300">
                         {(['all', 'image', 'video'] as FilterType[]).map((f) => (
                             <button
                                 key={f}
                                 onClick={() => setFilter(f)}
                                 className={cn(
-                                    "px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all",
+                                    "px-5 py-2 rounded-full text-xs font-medium tracking-wide transition-all duration-300",
                                     filter === f
-                                        ? "bg-background text-foreground shadow-sm"
-                                        : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                                        ? "bg-white dark:bg-neutral-800 text-foreground shadow-md ring-1 ring-black/5 dark:ring-white/10"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-white/10"
                                 )}
                             >
                                 {f === 'all' ? 'All' : f === 'image' ? 'Photos' : 'Videos'}
@@ -185,14 +185,14 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                     <div className="w-px h-8 bg-neutral-500 dark:bg-white/20 hidden md:block" />
 
                     {/* View Toggle */}
-                    <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-full border border-neutral-300 dark:border-white/10">
+                    <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-full backdrop-blur-md border border-black/5 dark:border-white/5 shadow-inner transition-colors duration-300">
                         <button
                             onClick={() => setViewMode('rows')}
                             className={cn(
-                                "p-2 rounded-full transition-all",
+                                "p-2.5 rounded-full transition-all duration-300",
                                 viewMode === 'rows'
-                                    ? "bg-background text-foreground shadow-sm"
-                                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                                    ? "bg-white dark:bg-neutral-800 text-foreground shadow-md ring-1 ring-black/5 dark:ring-white/10"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-white/10"
                             )}
                             title="Rows View"
                         >
@@ -201,14 +201,26 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                         <button
                             onClick={() => setViewMode('grid')}
                             className={cn(
-                                "p-2 rounded-full transition-all",
+                                "p-2.5 rounded-full transition-all duration-300",
                                 viewMode === 'grid'
-                                    ? "bg-background text-foreground shadow-sm"
-                                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                                    ? "bg-white dark:bg-neutral-800 text-foreground shadow-md ring-1 ring-black/5 dark:ring-white/10"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-white/10"
                             )}
                             title="Grid View"
                         >
                             <LayoutGrid className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('infinite')}
+                            className={cn(
+                                "p-2.5 rounded-full transition-all duration-300",
+                                viewMode === 'infinite'
+                                    ? "bg-white dark:bg-neutral-800 text-foreground shadow-md ring-1 ring-black/5 dark:ring-white/10"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-white/10"
+                            )}
+                            title="Infinite Preview"
+                        >
+                            <Sparkles className="w-4 h-4" />
                         </button>
                     </div>
 
@@ -440,6 +452,12 @@ export default function CleanFilmGrid({ isLowPowerMode }: { isLowPowerMode?: boo
                                     </MagneticEffect>
                                 </div>
                             )}
+                        </div>
+                    )}
+                    {/* Infinite View Mode */}
+                    {viewMode === 'infinite' && (
+                        <div className="w-full relative h-[800px] mt-2">
+                            <InfiniteImageField images={galleryItems.map(item => item.url)} />
                         </div>
                     )}
 

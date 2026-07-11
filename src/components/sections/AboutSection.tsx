@@ -185,9 +185,20 @@ const AboutLeadIn = () => {
         <div className="w-full max-w-[1650px] mx-auto px-6 py-6 flex justify-center items-center">
             {/* The Reference Card Container (Gambar 1 Style with Dark/Light Support) */}
             <motion.div
-                initial="rest"
+                initial="hidden"
+                whileInView="show"
                 whileHover="hover"
-                className="relative w-full bg-white dark:bg-black border border-red-600/20 dark:border-red-600/40 p-6 md:p-12 lg:p-16 overflow-hidden shadow-xl dark:shadow-2xl transition-colors duration-500"
+                viewport={{ once: false, amount: 0.2 }}
+                variants={{
+                    hidden: { opacity: 0, y: 80, scale: 0.96 },
+                    show: { 
+                        opacity: 1, 
+                        y: 0, 
+                        scale: 1, 
+                        transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } 
+                    }
+                }}
+                className="relative w-full bg-white dark:bg-black border border-red-600/20 dark:border-red-600/40 p-6 md:p-12 lg:p-16 overflow-hidden shadow-xl dark:shadow-2xl transition-colors duration-500 group"
             >
 
                 {/* 1. Grid Background Overlay (Dynamic Colors) */}
@@ -203,7 +214,8 @@ const AboutLeadIn = () => {
                 <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
                     <motion.div
                         variants={{
-                            rest: { left: "-150%" },
+                            hidden: { left: "-150%" },
+                            show: { left: "-150%" },
                             hover: { left: "150%" }
                         }}
                         transition={{ duration: 1.5, ease: [0.4, 0, 0.2, 1] }}
@@ -220,12 +232,7 @@ const AboutLeadIn = () => {
                     </div>
 
                     {/* Massive Typography - Quote Style */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                        className="mb-8 md:mb-14 relative cursor-default"
-                    >
+                    <div className="mb-8 md:mb-14 relative cursor-default">
                         {/* Original Text with glow */}
                         <h2 className="text-[32px] sm:text-[48px] md:text-[64px] lg:text-[76px] xl:text-[88px] font-bold tracking-tight leading-[0.92] text-zinc-900 dark:text-white transition-all duration-700 group-hover:drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                             <span className="text-zinc-300 dark:text-zinc-700 mr-2 transition-colors duration-700 group-hover:text-zinc-400 dark:group-hover:text-zinc-500">"</span>
@@ -233,7 +240,7 @@ const AboutLeadIn = () => {
                             <span className="font-serif italic font-normal text-zinc-900 dark:text-white lowercase opacity-90 transition-opacity duration-700 group-hover:opacity-100">{t('leadIn.headlineSoftware')}</span>
                             <span className="text-zinc-300 dark:text-zinc-700 ml-1 transition-colors duration-700 group-hover:text-zinc-400 dark:group-hover:text-zinc-500">."</span>
                         </h2>
-                    </motion.div>
+                    </div>
 
                     {/* Detail Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 border-t border-zinc-100 dark:border-zinc-900 pt-8 md:pt-12">
