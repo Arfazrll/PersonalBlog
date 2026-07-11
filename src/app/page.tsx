@@ -88,10 +88,12 @@ const CTASection = dynamic(() => import("@/components/sections/CTASection"), {
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isExiting, setIsExiting] = useState(false);
+    const [skipAnimation, setSkipAnimation] = useState(false);
 
     useEffect(() => {
         const hasLoaded = sessionStorage.getItem('portfolioLoaded');
         if (hasLoaded) {
+            setSkipAnimation(true);
             setIsLoading(false);
             setIsExiting(true);
         }
@@ -138,9 +140,9 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={isExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
                 transition={{
-                    duration: 1.4,
-                    ease: [0.16, 1, 0.3, 1], // Expo out for snappy yet smooth feel
-                    opacity: { duration: 0.8 }
+                    duration: skipAnimation ? 0 : 1.4,
+                    ease: skipAnimation ? "linear" : [0.16, 1, 0.3, 1], // Expo out for snappy yet smooth feel
+                    opacity: { duration: skipAnimation ? 0 : 0.8 }
                 }}
                 className="relative overflow-x-clip will-change-transform will-change-opacity"
             >

@@ -226,10 +226,10 @@ export default function CardNav({
     }, []);
 
     const aboutItem = items.find(i => i.label === "About") || items[0];
-
+    const allHrefs = ['/projects', '/experience', '/skills', '/achievements', '/blog', '/gallery', '/resume'];
     const isActive = useMemo(() => {
-        return aboutItem.links.some(link => pathname === link.href || pathname.startsWith(`${link.href}/`));
-    }, [pathname, aboutItem.links]);
+        return allHrefs.some(href => pathname === href || pathname.startsWith(`${href}/`));
+    }, [pathname]);
 
     return (
         <div ref={containerRef} className="relative">
@@ -237,7 +237,7 @@ export default function CardNav({
                 onMouseEnter={() => setIsExpanded(true)}
                 onClick={() => setIsExpanded(!isExpanded)}
                 className={cn(
-                    "relative px-6 py-2.5 text-sm font-bold transition-all duration-300 rounded-full flex items-center gap-2 group",
+                    "relative px-5 py-2 text-sm font-bold transition-all duration-300 rounded-full flex items-center gap-2 group",
                     isActive
                         ? (theme === 'dark' ? "text-white bg-white/10" : "text-black bg-black/5")
                         : (theme === 'dark' ? "text-white/70 hover:text-white" : "text-black/70 hover:text-black")
@@ -245,7 +245,7 @@ export default function CardNav({
             >
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
                 <span className="relative z-10 flex items-center gap-2">
-                    {isActive && (
+                    {isActive && isExpanded && (
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}

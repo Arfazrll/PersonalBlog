@@ -19,22 +19,26 @@ const Meteors = dynamic(() => import('@/components/ui/meteors').then(mod => mod.
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = false }: { items: any[], direction?: 'left' | 'right', speed?: number, isLowPowerMode?: boolean }) {
+    // 8x duplication ensures enough width to cover large screens twice over, allowing -50% translation without empty gaps on the right edge.
+    const multipliedItems = [...items, ...items, ...items, ...items, ...items, ...items, ...items, ...items];
+
     return (
         <div className="flex overflow-hidden relative w-full group/ticker py-4 select-none">
             <motion.div
-                className="flex gap-4 flex-nowrap hover:[animation-play-state:paused]"
+                className="flex flex-nowrap hover:[animation-play-state:paused]"
                 initial={{ x: direction === 'left' ? 0 : '-50%' }}
                 animate={isLowPowerMode ? { x: direction === 'left' ? 0 : '-50%' } : { x: direction === 'left' ? '-50%' : 0 }}
                 transition={{
                     ease: "linear",
-                    duration: speed,
+                    duration: speed * 4, // 4x duration because 8x duplication travels 4x further than 2x duplication
                     repeat: Infinity,
                 }}
                 style={{ width: "max-content" }}
             >
-                {/* 2x Duplication (Optimized from 4x) */}
-                {[...items, ...items].map((item, idx) => (
-                    <SocialCard key={`${item.platform}-${idx}`} item={item} />
+                {multipliedItems.map((item, idx) => (
+                    <div key={`${item.name}-${idx}`} className="pr-4">
+                        <SocialCard item={item} />
+                    </div>
                 ))}
             </motion.div>
 
