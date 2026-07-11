@@ -11,6 +11,10 @@ import {
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
+export type PreloadPhase = "intro" | "text" | "reveal" | "done";
+export const PreloadContext = React.createContext<{ isPreloading: boolean, phase: PreloadPhase }>({ isPreloading: true, phase: "intro" });
+export const usePreloadState = () => React.useContext(PreloadContext);
+
 export type ArcRevealGreeting = {
   text: string;
   lang?: string;
@@ -28,7 +32,7 @@ export interface ArcRevealHeroProps {
   children?: React.ReactNode;
 }
 
-type Phase = "intro" | "text" | "reveal" | "done";
+// Using exported PreloadPhase
 
 export function ArcRevealHero({
   greetings,
@@ -43,7 +47,7 @@ export function ArcRevealHero({
 }: ArcRevealHeroProps) {
   const pathname = usePathname();
 
-  const [phase, setPhase] = React.useState<Phase>("intro");
+  const [phase, setPhase] = React.useState<PreloadPhase>("intro");
   const [index, setIndex] = React.useState(0);
   const [prevPathname, setPrevPathname] = React.useState(pathname);
 
@@ -210,7 +214,9 @@ export function ArcRevealHero({
         className,
       )}
     >
-      <div className={cn("relative z-0", revealClassName)}>{renderedChildren}</div>
+      <PreloadContext.Provider value={{ isPreloading: showOverlay, phase }}>
+        <div className={cn("relative z-0", revealClassName)}>{renderedChildren}</div>
+      </PreloadContext.Provider>
 
       <AnimatePresence>
         {showOverlay && (

@@ -17,6 +17,7 @@ const DynamicScrollVelocity = dynamic(() => import('@/components/ui/ScrollVeloci
 const Meteors = dynamic(() => import('@/components/ui/meteors').then(mod => mod.Meteors), { ssr: false });
 
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { DeferredMount } from '@/components/ui/DeferredMount';
 
 function SocialTicker({ items, direction = 'left', speed = 30, isLowPowerMode = false }: { items: any[], direction?: 'left' | 'right', speed?: number, isLowPowerMode?: boolean }) {
     // 8x duplication ensures enough width to cover large screens twice over, allowing -50% translation without empty gaps on the right edge.
@@ -337,9 +338,11 @@ export default function ContactPage() {
             {/* 2. HEADER & BACKGROUNDS */}
             <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none z-0" />
             <div className="fixed inset-0 bg-background/60 backdrop-blur-[2px] pointer-events-none z-0" />
-            <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
-                {!isLowPowerMode && <Meteors number={50} />}
-            </div>
+            <DeferredMount>
+                <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
+                    {!isLowPowerMode && <Meteors number={50} />}
+                </div>
+            </DeferredMount>
 
             {/* 3. MAIN CONTENT: (Header + Form + Lanyard) */}
             <motion.div
@@ -374,21 +377,23 @@ export default function ContactPage() {
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 md:w-64 lg:w-96 h-2 bg-gradient-to-r from-transparent via-foreground/20 to-transparent blur-[2px] rounded-full z-30 mt-[-1px]" />
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 md:w-32 lg:w-48 h-[3px] bg-gradient-to-r from-transparent via-foreground/40 to-transparent rounded-full z-30" />
 
-                            <div className="w-full h-full pointer-events-auto overflow-visible">
-                                {!isLowPowerMode ? (
-                                    <ErrorBoundary fallback={<div className="w-full h-full flex items-center justify-center opacity-50">Interactive Card Unavailable</div>}>
-                                        <Lanyard position={[0, 0, 15]} gravity={[0, -40, 0]} isLowPowerMode={isLowPowerMode} />
-                                    </ErrorBoundary>
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center p-8">
-                                        <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-primary/5">
-                                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 italic font-serif">
-                                                Archive ID // Static
+                            <DeferredMount fallback={<div className="w-full h-full flex items-center justify-center opacity-50"><Loader2 className="w-8 h-8 animate-spin" /></div>}>
+                                <div className="w-full h-full pointer-events-auto overflow-visible">
+                                    {!isLowPowerMode ? (
+                                        <ErrorBoundary fallback={<div className="w-full h-full flex items-center justify-center opacity-50">Interactive Card Unavailable</div>}>
+                                            <Lanyard position={[0, 0, 15]} gravity={[0, -40, 0]} isLowPowerMode={isLowPowerMode} />
+                                        </ErrorBoundary>
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center p-8">
+                                            <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-primary/5">
+                                                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 italic font-serif">
+                                                    Archive ID // Static
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
+                                    )}
+                                </div>
+                            </DeferredMount>
                         </div>
 
                         {/* RIGHT COLUMN: Content Stack */}

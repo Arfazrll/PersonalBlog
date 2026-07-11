@@ -18,6 +18,7 @@ import CertificateHeroScroll from '@/components/sections/CertificateHeroScroll';
 import { usePerformance } from '@/hooks/usePerformance';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useLenis } from 'lenis/react';
+import { DeferredMount } from '@/components/ui/DeferredMount';
 
 const staggerContainer = {
     hidden: { opacity: 0 },
@@ -802,7 +803,8 @@ export default function AchievementsPage() {
             </div>
 
             {/* CONTINUOUS CURTAIN LAYER: Covers the fixed hero */}
-            <div className="relative z-50 bg-background">
+            <DeferredMount>
+                <div className="relative z-50 bg-background">
 
                 {/* Main Two-Panel Layout */}
                 <div className="flex flex-col lg:flex-row relative items-start">
@@ -1056,6 +1058,7 @@ export default function AchievementsPage() {
                     </div>
                 </motion.section>
             </div>
+            </DeferredMount>
 
             {/* Modal */}
             <AnimatePresence>

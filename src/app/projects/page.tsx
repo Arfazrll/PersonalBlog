@@ -21,6 +21,7 @@ const ProjectStats = dynamic(() => import('@/components/sections/ProjectStats').
 
 import { usePerformance } from '@/hooks/usePerformance';
 import { ProjectPlaceholder, getPlaceholderImageUrl } from '@/components/projects/ProjectPlaceholder';
+import { DeferredMount } from '@/components/ui/DeferredMount';
 
 import { getProjectImages } from '@/app/actions/getProjectImages';
 
@@ -1134,10 +1135,12 @@ export default function ProjectsPage() {
 
     return (
         <div className="min-h-screen bg-background relative overflow-hidden" style={{ position: 'relative' }}>
-            <HeroParallax products={products} isLowPowerMode={isLowPowerMode} />
+            <DeferredMount>
+                <HeroParallax products={products} isLowPowerMode={isLowPowerMode} />
 
-            {/* Project Stats - Impressive Metrics */}
-            <ProjectStats isLowPowerMode={isLowPowerMode} />
+                {/* Project Stats - Impressive Metrics */}
+                <ProjectStats isLowPowerMode={isLowPowerMode} />
+
 
             <div id="project-archive" className="container-creative relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
                 {/* Search & Filter Control Bar */}
@@ -1343,7 +1346,7 @@ export default function ProjectsPage() {
                 {/* Contact Section */}
                 <ProjectContact isLowPowerMode={isLowPowerMode} />
             </div >
-
+            </DeferredMount>
         </div >
 
 

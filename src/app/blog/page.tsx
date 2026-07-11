@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 
 import { usePerformance } from '@/hooks/usePerformance';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { DeferredMount } from '@/components/ui/DeferredMount';
 
 import FlowingMenu from '@/components/ui/flowing-menu';
 
@@ -173,7 +174,9 @@ function BlogContent() {
 
                 {/* 2. BENTO HERO (Scrolls over the sticky header) */}
                 <div className="relative z-10 pb-32">
-                    <BentoHero isLowPowerMode={isLowPowerMode} />
+                    <DeferredMount>
+                        <BentoHero isLowPowerMode={isLowPowerMode} />
+                    </DeferredMount>
                 </div>
 
                 {/* 3. TRANSPARENT SPACER 
@@ -445,9 +448,11 @@ function BlogContent() {
             </div>
 
             <div className="w-full h-20" />
-            <ErrorBoundary fallback={<div className="h-40 bg-background" />}>
-                <MarqueeClosing isLowPowerMode={isLowPowerMode} />
-            </ErrorBoundary>
+            <DeferredMount>
+                <ErrorBoundary fallback={<div className="h-40 bg-background" />}>
+                    <MarqueeClosing isLowPowerMode={isLowPowerMode} />
+                </ErrorBoundary>
+            </DeferredMount>
         </main>
     );
 }
