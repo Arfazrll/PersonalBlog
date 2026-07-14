@@ -29,8 +29,8 @@ import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 import { Experience, Education } from '@/types';
 
-const ExperienceMarquee = dynamic(() => import('../../components/sections/ExperienceMarquee'), { ssr: true });
-const ExperienceStickyScroll = dynamic(() => import('../../components/sections/ExperienceStickyScroll'), { ssr: true });
+import ExperienceMarquee from '../../components/sections/ExperienceMarquee';
+import ExperienceStickyScroll from '../../components/sections/ExperienceStickyScroll';
 import { Timeline } from '@/components/ui/timeline';
 import { InnovativeExperienceHero } from '@/components/sections/InnovativeExperienceHero';
 import { DeferredMount } from '@/components/ui/DeferredMount';
@@ -480,7 +480,7 @@ function CollapsibleExperienceCard({ exp, idx, isLowPowerMode }: { exp: Experien
         >
             {/* Animated Inner Glow Effect on Hover */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-700 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent" />
-            
+
             <div className="p-6 md:p-8 cursor-pointer relative z-10" onClick={() => setIsExpanded(!isExpanded)}>
                 <div className="flex gap-4 md:gap-6 items-start">
                     <div className={cn("w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center shrink-0 border border-neutral-100 dark:border-neutral-800 overflow-hidden relative shadow-sm transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 group-hover:shadow-lg", exp.logoBg || "bg-white")}>
@@ -874,9 +874,45 @@ function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
         title: group.title,
         content: (
             <div className="space-y-12">
-                {group.experiences.map((exp) => (
-                    <div key={exp.id} className="relative pl-8 border-l-2 border-neutral-200 dark:border-neutral-800">
+                {group.experiences.map((exp) => {
+                    const logoSrc = exp.logo || "";
+                    const needsInvertInDarkMode = logoSrc.includes("McKinsey") || 
+                                                logoSrc.includes("TelkomUniversity") || 
+                                                logoSrc.includes("softagelogo") || 
+                                                logoSrc.includes("dinas-pangan") ||
+                                                logoSrc.includes("yotlogo") ||
+                                                logoSrc.includes("youth-ranger") ||
+                                                logoSrc.includes("aiesec") ||
+                                                logoSrc.includes("microsot") ||
+                                                logoSrc.includes("dicoding") ||
+                                                logoSrc.includes("cisometric");
+                    
+                    const needsWhiteBgRemovalInDarkMode = logoSrc.includes("logobei") || logoSrc.includes("birulangit");
+                    const needsInvertInLightMode = logoSrc.includes("flyrank") || logoSrc.includes("FlyRank");
+
+                    let specificClasses = "";
+                    if (needsInvertInDarkMode) specificClasses = "dark:invert";
+                    if (needsWhiteBgRemovalInDarkMode) specificClasses = "dark:invert dark:hue-rotate-180";
+                    if (needsInvertInLightMode) specificClasses = "invert dark:invert-0";
+
+                    return (
+                    <div key={exp.id} className="relative pl-8 border-l-2 border-neutral-200 dark:border-neutral-800 group/timeline">
                         <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-neutral-200 dark:bg-neutral-800 border-2 border-white dark:border-black" />
+
+                        {/* HOVER LOGO ON THE LEFT */}
+                        {exp.logo && (
+                            <div className="absolute top-0 right-full mr-6 w-32 h-10 md:w-40 md:h-16 opacity-0 group-hover/timeline:opacity-100 transition-all duration-300 pointer-events-none flex items-center justify-end -translate-x-4 group-hover/timeline:translate-x-0 hidden md:flex">
+                                <div className="relative w-full h-full">
+                                    <Image 
+                                        src={exp.logo} 
+                                        alt={`${exp.company} Logo`} 
+                                        fill 
+                                        unoptimized
+                                        className={`object-contain object-right ${specificClasses}`}
+                                    />
+                                </div>
+                            </div>
+                        )}
 
                         <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div>
@@ -926,7 +962,8 @@ function ExperienceTimeline({ isLowPowerMode }: { isLowPowerMode: boolean }) {
                             logo={exp.logo}
                         />
                     </div>
-                ))}
+                );
+                })}
             </div>
         )
     }));

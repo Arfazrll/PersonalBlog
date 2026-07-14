@@ -283,7 +283,7 @@
   }
 
   .container-creative {
-    @apply max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative;
+    @apply max-w-[105rem] mx-auto px-6 md:px-12 lg:px-20 relative;
   }
 
   .heading-xl {

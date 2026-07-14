@@ -141,19 +141,33 @@ function ParallaxText({ children, baseVelocity = 100, isLowPowerMode = false }: 
     );
 }
 
-const GalleryItem = ({ exp }: { exp: Experience }) => {
-    const logoSrc = exp.logo ? `${exp.logo}?v=1` : "/assets/placeholder.webp";
+const GalleryItem = ({ logoSrc }: { logoSrc: string }) => {
+    // Only invert logos that are purely black text on transparent backgrounds in dark mode.
+    const needsInvertInDarkMode = logoSrc.includes("McKinsey") ||
+        logoSrc.includes("TelkomUniversity") ||
+        logoSrc.includes("softagelogo") ||
+        logoSrc.includes("dinas-pangan");
+
+    const needsWhiteBgRemovalInDarkMode = logoSrc.includes("logobei") || logoSrc.includes("birulangit");
+
+    // FlyRank is a white text logo, so it's invisible on light backgrounds. We invert it in Light Mode.
+    const needsInvertInLightMode = logoSrc.includes("flyrank") || logoSrc.includes("FlyRank");
+
+    let specificClasses = "";
+    if (needsInvertInDarkMode) specificClasses = "dark:invert";
+    if (needsWhiteBgRemovalInDarkMode) specificClasses = "dark:invert dark:hue-rotate-180";
+    if (needsInvertInLightMode) specificClasses = "invert dark:invert-0";
 
     return (
-        <div className="relative shrink-0 w-[clamp(140px,30vw,200px)] h-[clamp(80px,15vw,120px)] md:w-[280px] md:h-[160px] flex items-center justify-center group cursor-pointer">
+        <div className="relative shrink-0 w-[clamp(140px,30vw,200px)] h-[clamp(80px,15vw,120px)] md:w-[280px] md:h-[160px] flex items-center justify-center group cursor-pointer transition-all duration-300 hover:scale-105">
             <Image
                 src={logoSrc}
-                alt={exp.company}
+                alt="Partner Logo"
                 fill
                 sizes="(max-width: 768px) 160px, 280px"
                 priority
                 unoptimized
-                className="object-contain grayscale hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300 scale-90 md:scale-100"
+                className={`object-contain grayscale hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300 scale-90 md:scale-100 ${specificClasses}`}
             />
         </div>
     );
@@ -161,19 +175,37 @@ const GalleryItem = ({ exp }: { exp: Experience }) => {
 
 export default function ExperienceMarquee() {
     const { isLowPowerMode } = usePerformance();
-    const experiences = portfolioData.experiences;
+    const allLogos = [
+        "/assets/DBSLogo.webp",
+        "/assets/HMITlogo.webp",
+        "/assets/HumicLogo.webp",
+        "/assets/McKinseylogo.webp",
+        "/assets/TelkomUniversityLogo.webp",
+        "/assets/aieseclogo.webp",
+        "/assets/aselablogo.webp",
+        "/assets/birulangitlogo.webp",
+        "/assets/cisometriclogo.webp",
+        "/assets/dicodinglogo.webp",
+        "/assets/dinas-pangan-dan-pertanian-kota-bandung.webp",
+        "/assets/flyrankailogo.webp",
+        "/assets/iflablogo.webp",
+        "/assets/indosat-ooredoo-hutchison-digital-camp.webp",
+        "/assets/logobei.webp",
+        "/assets/logocps.webp",
+        "/assets/logodigistar.webp",
+        "/assets/logogdsc.webp",
+        "/assets/microsotlogo.webp",
+        "/assets/sman88logo.webp",
+        "/assets/softagelogo.webp",
+        "/assets/yotlogo.webp",
+        "/assets/youth-ranger-indonesia.webp"
+    ];
 
-    const topIds = ["prof-1", "prof-3", "prof-4", "prof-5", "prof-6", "lead-5"];
-    const bottomIds = ["lead-2", "lead-4", "cert-1", "cert-3", "cert-5", "vol-1"];
+    // Balance rows: 12 in row 1, 11 in row 2
+    const row1 = allLogos.slice(0, 12);
+    const row2 = allLogos.slice(12);
 
-    const row1 = experiences.filter((exp: Experience) =>
-        topIds.includes(exp.id)
-    );
-    const row2 = experiences.filter((exp: Experience) =>
-        bottomIds.includes(exp.id)
-    );
-
-    const ensureLength = (items: Experience[]) => {
+    const ensureLength = (items: string[]) => {
         let repeated = [...items];
         while (repeated.length < 12) {
             repeated = [...repeated, ...items];
@@ -190,15 +222,15 @@ export default function ExperienceMarquee() {
             <div className="flex flex-col gap-2">
                 {/* Row 1: LEFT → RIGHT */}
                 <ParallaxText baseVelocity={40} isLowPowerMode={isLowPowerMode}>
-                    {ensureLength(row1).map((exp: Experience, idx: number) => (
-                        <GalleryItem key={`r1-${idx}`} exp={exp} />
+                    {ensureLength(row1).map((logo, idx) => (
+                        <GalleryItem key={`r1-${idx}`} logoSrc={logo} />
                     ))}
                 </ParallaxText>
 
                 {/* Row 2: RIGHT → LEFT */}
                 <ParallaxText baseVelocity={-40} isLowPowerMode={isLowPowerMode}>
-                    {ensureLength(row2).map((exp: Experience, idx: number) => (
-                        <GalleryItem key={`r2-${idx}`} exp={exp} />
+                    {ensureLength(row2).map((logo, idx) => (
+                        <GalleryItem key={`r2-${idx}`} logoSrc={logo} />
                     ))}
                 </ParallaxText>
             </div>

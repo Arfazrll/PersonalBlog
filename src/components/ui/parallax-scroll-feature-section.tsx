@@ -127,7 +127,7 @@ export const ParallaxScrollFeatureSection = () => {
                                             <span
                                                 key={skill}
                                                 className={cn(
-                                                    "text-[11px] md:text-xs font-bold uppercase tracking-widest text-zinc-400 border border-zinc-200 dark:border-zinc-800 px-5 py-2.5 rounded-full transition-all duration-300 cursor-default bg-transparent",
+                                                    "text-[11px] md:text-xs font-extrabold uppercase tracking-widest text-black dark:text-white border border-zinc-200 dark:border-zinc-800 px-5 py-2.5 rounded-full transition-all duration-300 cursor-default bg-transparent",
                                                     colors[i % colors.length]
                                                 )}
                                             >
@@ -152,7 +152,7 @@ export const ParallaxScrollFeatureSection = () => {
                                 )}
                             >
                                 <div
-                                    className="relative w-full h-full group overflow-hidden bg-transparent"
+                                    className="relative w-full h-full group overflow-hidden bg-white dark:bg-transparent"
                                 >
                                     <Image
                                         src={section.imageUrl}
@@ -163,11 +163,11 @@ export const ParallaxScrollFeatureSection = () => {
                                         sizes="(max-width: 1024px) 100vw, 600px"
                                     />
                                     {/* Replace expensive maskImage with radial gradient overlays */}
-                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,hsl(var(--background))_90%)] dark:bg-[radial-gradient(circle_at_center,transparent_30%,#000000_90%)] pointer-events-none" />
+                                    <div className="absolute inset-0 hidden dark:block bg-[radial-gradient(circle_at_center,transparent_30%,hsl(var(--background))_90%)] dark:bg-[radial-gradient(circle_at_center,transparent_30%,#000000_90%)] pointer-events-none" />
                                     
                                     {/* Seamless blending gradients */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background dark:from-black dark:to-black pointer-events-none opacity-80" />
-                                    <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background dark:from-black dark:to-black pointer-events-none opacity-60" />
+                                    <div className="absolute inset-0 hidden dark:block bg-gradient-to-t from-background via-transparent to-background dark:from-black dark:to-black pointer-events-none opacity-80" />
+                                    <div className="absolute inset-0 hidden dark:block bg-gradient-to-r from-background via-transparent to-background dark:from-black dark:to-black pointer-events-none opacity-60" />
                                 </div>
                             </motion.div>
                         </div>

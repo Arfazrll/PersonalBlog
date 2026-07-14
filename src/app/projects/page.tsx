@@ -14,10 +14,8 @@ import { HeroParallax } from '@/components/ui/hero-parallax';
 import { LogoTimeline, LogoItem } from '@/components/ui/logo-timeline';
 import { Icons } from '@/components/icons';
 import { Meteors } from '@/components/ui/meteors';
-import dynamic from 'next/dynamic';
-
-const ProjectContact = dynamic(() => import('@/components/sections/ProjectContact').then(mod => mod.ProjectContact), { ssr: true });
-const ProjectStats = dynamic(() => import('@/components/sections/ProjectStats').then(mod => mod.ProjectStats), { ssr: true });
+import { ProjectContact } from '@/components/sections/ProjectContact';
+import { ProjectStats } from '@/components/sections/ProjectStats';
 
 import { usePerformance } from '@/hooks/usePerformance';
 import { ProjectPlaceholder, getPlaceholderImageUrl } from '@/components/projects/ProjectPlaceholder';
@@ -607,18 +605,18 @@ function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Pr
 
 // Curated badge color palette — vibrant but balanced for both light & dark modes
 const BADGE_COLORS = [
-    { border: 'rgba(168, 85, 247, 0.5)',  bg: 'rgba(168, 85, 247, 0.12)',  text: 'rgb(168, 85, 247)' },   // purple
-    { border: 'rgba(59, 130, 246, 0.5)',   bg: 'rgba(59, 130, 246, 0.12)',  text: 'rgb(59, 130, 246)' },    // blue
-    { border: 'rgba(16, 185, 129, 0.5)',   bg: 'rgba(16, 185, 129, 0.12)',  text: 'rgb(16, 185, 129)' },    // emerald
-    { border: 'rgba(245, 158, 11, 0.5)',   bg: 'rgba(245, 158, 11, 0.12)',  text: 'rgb(245, 158, 11)' },    // amber
-    { border: 'rgba(236, 72, 153, 0.5)',   bg: 'rgba(236, 72, 153, 0.12)', text: 'rgb(236, 72, 153)' },    // pink
-    { border: 'rgba(6, 182, 212, 0.5)',    bg: 'rgba(6, 182, 212, 0.12)',   text: 'rgb(6, 182, 212)' },     // cyan
-    { border: 'rgba(239, 68, 68, 0.5)',    bg: 'rgba(239, 68, 68, 0.12)',   text: 'rgb(239, 68, 68)' },     // red
-    { border: 'rgba(34, 197, 94, 0.5)',    bg: 'rgba(34, 197, 94, 0.12)',   text: 'rgb(34, 197, 94)' },     // green
-    { border: 'rgba(251, 146, 60, 0.5)',   bg: 'rgba(251, 146, 60, 0.12)', text: 'rgb(251, 146, 60)' },    // orange
-    { border: 'rgba(99, 102, 241, 0.5)',   bg: 'rgba(99, 102, 241, 0.12)', text: 'rgb(99, 102, 241)' },    // indigo
-    { border: 'rgba(20, 184, 166, 0.5)',   bg: 'rgba(20, 184, 166, 0.12)', text: 'rgb(20, 184, 166)' },    // teal
-    { border: 'rgba(217, 70, 239, 0.5)',   bg: 'rgba(217, 70, 239, 0.12)', text: 'rgb(217, 70, 239)' },    // fuchsia
+    { border: 'rgba(168, 85, 247, 0.5)', bg: 'rgba(168, 85, 247, 0.12)', text: 'rgb(168, 85, 247)' },   // purple
+    { border: 'rgba(59, 130, 246, 0.5)', bg: 'rgba(59, 130, 246, 0.12)', text: 'rgb(59, 130, 246)' },    // blue
+    { border: 'rgba(16, 185, 129, 0.5)', bg: 'rgba(16, 185, 129, 0.12)', text: 'rgb(16, 185, 129)' },    // emerald
+    { border: 'rgba(245, 158, 11, 0.5)', bg: 'rgba(245, 158, 11, 0.12)', text: 'rgb(245, 158, 11)' },    // amber
+    { border: 'rgba(236, 72, 153, 0.5)', bg: 'rgba(236, 72, 153, 0.12)', text: 'rgb(236, 72, 153)' },    // pink
+    { border: 'rgba(6, 182, 212, 0.5)', bg: 'rgba(6, 182, 212, 0.12)', text: 'rgb(6, 182, 212)' },     // cyan
+    { border: 'rgba(239, 68, 68, 0.5)', bg: 'rgba(239, 68, 68, 0.12)', text: 'rgb(239, 68, 68)' },     // red
+    { border: 'rgba(34, 197, 94, 0.5)', bg: 'rgba(34, 197, 94, 0.12)', text: 'rgb(34, 197, 94)' },     // green
+    { border: 'rgba(251, 146, 60, 0.5)', bg: 'rgba(251, 146, 60, 0.12)', text: 'rgb(251, 146, 60)' },    // orange
+    { border: 'rgba(99, 102, 241, 0.5)', bg: 'rgba(99, 102, 241, 0.12)', text: 'rgb(99, 102, 241)' },    // indigo
+    { border: 'rgba(20, 184, 166, 0.5)', bg: 'rgba(20, 184, 166, 0.12)', text: 'rgb(20, 184, 166)' },    // teal
+    { border: 'rgba(217, 70, 239, 0.5)', bg: 'rgba(217, 70, 239, 0.12)', text: 'rgb(217, 70, 239)' },    // fuchsia
 ];
 
 // Deterministic color from string — same string always gets same color, but varied across badges
@@ -1142,210 +1140,210 @@ export default function ProjectsPage() {
                 <ProjectStats isLowPowerMode={isLowPowerMode} />
 
 
-            <div id="project-archive" className="container-creative relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
-                {/* Search & Filter Control Bar */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="mb-10 sm:mb-12 md:mb-16"
-                >
-                    <div className="flex flex-col gap-6 p-0 sm:p-2 rounded-3xl bg-transparent">
+                <div id="project-archive" className="max-w-[1536px] mx-auto relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
+                    {/* Search & Filter Control Bar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="mb-10 sm:mb-12 md:mb-16"
+                    >
+                        <div className="flex flex-col gap-6 p-0 sm:p-2 rounded-3xl bg-transparent">
 
-                        {/* Top Partition: Header & Search */}
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
-                            {/* Title & Count */}
-                            <div className="flex items-center gap-3">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-muted-foreground">
-                                    Projects Archive
-                                </h2>
-                                <span className="px-2 py-0.5 rounded-md bg-white/5 text-[10px] font-mono text-muted-foreground border border-white/5">
-                                    {String(filteredProjects.length).padStart(2, '0')}
-                                </span>
-                            </div>
+                            {/* Top Partition: Header & Search */}
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
+                                {/* Title & Count */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-muted-foreground">
+                                        Projects Archive
+                                    </h2>
+                                    <span className="px-2 py-0.5 rounded-md bg-white/5 text-[10px] font-mono text-muted-foreground border border-white/5">
+                                        {String(filteredProjects.length).padStart(2, '0')}
+                                    </span>
+                                </div>
 
-                            {/* Search Input - Compact */}
-                            <div className="relative group w-full md:w-80">
-                                <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-primary/20 via-primary/10 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-                                <div className="relative flex items-center bg-transparent rounded-xl hover:bg-white/5 overflow-hidden transition-colors">
-                                    <Search className="absolute left-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search projects..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full pl-9 pr-8 py-2.5 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-                                    />
-                                    {searchQuery && (
-                                        <button
-                                            onClick={() => setSearchQuery('')}
-                                            className="absolute right-2 p-1 rounded-sm hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
-                                        >
-                                            <X className="w-3 h-3" />
-                                        </button>
-                                    )}
+                                {/* Search Input - Compact */}
+                                <div className="relative group w-full md:w-80">
+                                    <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-primary/20 via-primary/10 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                                    <div className="relative flex items-center bg-transparent rounded-xl hover:bg-white/5 overflow-hidden transition-colors">
+                                        <Search className="absolute left-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                        <input
+                                            type="text"
+                                            placeholder="Search projects..."
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            className="w-full pl-9 pr-8 py-2.5 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+                                        />
+                                        {searchQuery && (
+                                            <button
+                                                onClick={() => setSearchQuery('')}
+                                                className="absolute right-2 p-1 rounded-sm hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Divider - REMOVED */}
+                            {/* Divider - REMOVED */}
 
-                        {/* Bottom Partition: Controls */}
-                        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 xl:gap-4">
+                            {/* Bottom Partition: Controls */}
+                            <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 xl:gap-4">
 
-                            {/* Categories - Horizontal Scroll */}
-                            <div className="w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0 no-scrollbar">
-                                <div className="flex items-center gap-1.5 min-w-max px-2">
-                                    {categories.map((cat) => {
-                                        const Icon = cat.icon;
-                                        const isActive = selectedCategory === cat.id;
+                                {/* Categories - Horizontal Scroll */}
+                                <div className="w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0 no-scrollbar">
+                                    <div className="flex items-center gap-1.5 min-w-max px-2">
+                                        {categories.map((cat) => {
+                                            const Icon = cat.icon;
+                                            const isActive = selectedCategory === cat.id;
 
-                                        return (
+                                            return (
+                                                <button
+                                                    key={cat.id}
+                                                    onClick={() => setSelectedCategory(cat.id)}
+                                                    className={cn(
+                                                        "relative group flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300",
+                                                        isActive
+                                                            ? "bg-primary/10 text-primary border border-primary/20"
+                                                            : "bg-transparent text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent"
+                                                    )}
+                                                >
+                                                    <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+                                                    <span>{cat.label}</span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Filters & View Toggle */}
+                                <div className="flex items-center gap-3 px-2 self-end xl:self-auto">
+                                    {/* Status Filters */}
+                                    <div className="flex items-center p-1 bg-foreground/5 dark:bg-white/5 rounded-xl border border-foreground/10 dark:border-white/10">
+                                        {filters.map((f) => (
                                             <button
-                                                key={cat.id}
-                                                onClick={() => setSelectedCategory(cat.id)}
+                                                key={f.key}
+                                                onClick={() => setFilter(f.key)}
                                                 className={cn(
-                                                    "relative group flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300",
-                                                    isActive
-                                                        ? "bg-primary/10 text-primary border border-primary/20"
-                                                        : "bg-transparent text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent"
+                                                    'relative px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-all duration-300',
+                                                    filter === f.key
+                                                        ? 'bg-foreground text-background shadow-sm'
+                                                        : 'text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10'
                                                 )}
                                             >
-                                                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
-                                                <span>{cat.label}</span>
+                                                {f.label}
                                             </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                                        ))}
+                                    </div>
 
-                            {/* Filters & View Toggle */}
-                            <div className="flex items-center gap-3 px-2 self-end xl:self-auto">
-                                {/* Status Filters */}
-                                <div className="flex items-center p-1 bg-foreground/5 dark:bg-white/5 rounded-xl border border-foreground/10 dark:border-white/10">
-                                    {filters.map((f) => (
+                                    {/* View Switcher */}
+                                    <div className="flex items-center p-1 bg-foreground/5 dark:bg-white/5 rounded-xl border border-foreground/10 dark:border-white/10 gap-0.5">
                                         <button
-                                            key={f.key}
-                                            onClick={() => setFilter(f.key)}
+                                            onClick={() => setViewMode('list')}
                                             className={cn(
-                                                'relative px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-all duration-300',
-                                                filter === f.key
-                                                    ? 'bg-foreground text-background shadow-sm'
-                                                    : 'text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10'
+                                                "p-1.5 rounded-lg transition-all duration-200",
+                                                viewMode === 'list'
+                                                    ? "bg-foreground text-background shadow-sm"
+                                                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10"
                                             )}
+                                            title="List View"
                                         >
-                                            {f.label}
+                                            <List className="w-4 h-4" />
                                         </button>
-                                    ))}
+                                        <button
+                                            onClick={() => setViewMode('grid')}
+                                            className={cn(
+                                                "p-1.5 rounded-lg transition-all duration-200",
+                                                viewMode === 'grid'
+                                                    ? "bg-foreground text-background shadow-sm"
+                                                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10"
+                                            )}
+                                            title="Grid View"
+                                        >
+                                            <LayoutGrid className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </div>
 
-                                {/* View Switcher */}
-                                <div className="flex items-center p-1 bg-foreground/5 dark:bg-white/5 rounded-xl border border-foreground/10 dark:border-white/10 gap-0.5">
-                                    <button
-                                        onClick={() => setViewMode('list')}
-                                        className={cn(
-                                            "p-1.5 rounded-lg transition-all duration-200",
-                                            viewMode === 'list'
-                                                ? "bg-foreground text-background shadow-sm"
-                                                : "text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10"
-                                        )}
-                                        title="List View"
-                                    >
-                                        <List className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        onClick={() => setViewMode('grid')}
-                                        className={cn(
-                                            "p-1.5 rounded-lg transition-all duration-200",
-                                            viewMode === 'grid'
-                                                ? "bg-foreground text-background shadow-sm"
-                                                : "text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10"
-                                        )}
-                                        title="Grid View"
-                                    >
-                                        <LayoutGrid className="w-4 h-4" />
-                                    </button>
-                                </div>
                             </div>
-
                         </div>
+                    </motion.div >
+
+                    {/* Projects List Layout */}
+                    <div className="space-y-0 mb-8 sm:mb-10 md:mb-12">
+
+                        {viewMode === 'list' ? (
+                            <div className="border-t border-white/5">
+                                <AnimatePresence mode="popLayout">
+                                    {filteredProjects.slice(0, visibleCount).map((project, index) => (
+                                        <ProjectListItem
+                                            key={project.id}
+                                            project={project}
+                                            onClick={() => {
+                                                sessionStorage.setItem('projects-last-clicked', project.slug);
+                                                sessionStorage.setItem('projects-visible-count', String(visibleCount));
+                                                sessionStorage.setItem('projects-view-mode', viewMode);
+                                                router.push(`/projects/${project.slug}`);
+                                            }}
+                                            index={index}
+                                            isLowPowerMode={isLowPowerMode}
+                                        />
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16 md:gap-y-24">
+                                <AnimatePresence mode="popLayout">
+                                    {filteredProjects.slice(0, visibleCount).map((project, index) => (
+                                        <ProjectCard
+                                            key={project.id}
+                                            project={project}
+                                            onClick={() => {
+                                                sessionStorage.setItem('projects-last-clicked', project.slug);
+                                                sessionStorage.setItem('projects-visible-count', String(visibleCount));
+                                                sessionStorage.setItem('projects-view-mode', viewMode);
+                                                router.push(`/projects/${project.slug}`);
+                                            }}
+                                            index={index}
+                                        />
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+                        )}
                     </div>
-                </motion.div >
 
-                {/* Projects List Layout */}
-                <div className="space-y-0 mb-8 sm:mb-10 md:mb-12">
-
-                    {viewMode === 'list' ? (
-                        <div className="border-t border-white/5">
-                            <AnimatePresence mode="popLayout">
-                                {filteredProjects.slice(0, visibleCount).map((project, index) => (
-                                    <ProjectListItem
-                                        key={project.id}
-                                        project={project}
-                                        onClick={() => {
-                                            sessionStorage.setItem('projects-last-clicked', project.slug);
-                                            sessionStorage.setItem('projects-visible-count', String(visibleCount));
-                                            sessionStorage.setItem('projects-view-mode', viewMode);
-                                            router.push(`/projects/${project.slug}`);
-                                        }}
-                                        index={index}
-                                        isLowPowerMode={isLowPowerMode}
-                                    />
-                                ))}
-                            </AnimatePresence>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16 md:gap-y-24">
-                            <AnimatePresence mode="popLayout">
-                                {filteredProjects.slice(0, visibleCount).map((project, index) => (
-                                    <ProjectCard
-                                        key={project.id}
-                                        project={project}
-                                        onClick={() => {
-                                            sessionStorage.setItem('projects-last-clicked', project.slug);
-                                            sessionStorage.setItem('projects-visible-count', String(visibleCount));
-                                            sessionStorage.setItem('projects-view-mode', viewMode);
-                                            router.push(`/projects/${project.slug}`);
-                                        }}
-                                        index={index}
-                                    />
-                                ))}
-                            </AnimatePresence>
-                        </div>
-                    )}
-                </div>
-
-                {/* View All Button — Magnetic Fill-Invert */}
-                {
-                    filteredProjects.length > 10 && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            className="flex justify-center mt-12 sm:mt-16 pb-12"
-                        >
-                            <MagneticFillButton
-                                onClick={() => setVisibleCount(visibleCount < filteredProjects.length ? filteredProjects.length : 10)}
-                                showArrowFlip={visibleCount >= filteredProjects.length}
+                    {/* View All Button — Magnetic Fill-Invert */}
+                    {
+                        filteredProjects.length > 10 && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="flex justify-center mt-12 sm:mt-16 pb-12"
                             >
-                                {visibleCount < filteredProjects.length ? 'View All Projects' : 'View Less'}
-                            </MagneticFillButton>
-                        </motion.div>
-                    )
-                }
+                                <MagneticFillButton
+                                    onClick={() => setVisibleCount(visibleCount < filteredProjects.length ? filteredProjects.length : 10)}
+                                    showArrowFlip={visibleCount >= filteredProjects.length}
+                                >
+                                    {visibleCount < filteredProjects.length ? 'View All Projects' : 'View Less'}
+                                </MagneticFillButton>
+                            </motion.div>
+                        )
+                    }
 
-                {
-                    filteredProjects.length === 0 && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-                            <Layers className="w-16 h-16 mx-auto text-white/20 mb-4" />
-                            <p className="text-lg text-white/50">No projects found</p>
-                        </motion.div>
-                    )
-                }
-                {/* Contact Section */}
-                <ProjectContact isLowPowerMode={isLowPowerMode} />
-            </div >
+                    {
+                        filteredProjects.length === 0 && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+                                <Layers className="w-16 h-16 mx-auto text-white/20 mb-4" />
+                                <p className="text-lg text-white/50">No projects found</p>
+                            </motion.div>
+                        )
+                    }
+                    {/* Contact Section */}
+                    <ProjectContact isLowPowerMode={isLowPowerMode} />
+                </div >
             </DeferredMount>
         </div >
 

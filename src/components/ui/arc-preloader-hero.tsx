@@ -10,6 +10,7 @@ import {
 } from "motion/react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { useLenis } from 'lenis/react';
 
 export type PreloadPhase = "intro" | "text" | "reveal" | "done";
 export const PreloadContext = React.createContext<{ isPreloading: boolean, phase: PreloadPhase }>({ isPreloading: true, phase: "intro" });
@@ -46,6 +47,7 @@ export function ArcRevealHero({
   children,
 }: ArcRevealHeroProps) {
   const pathname = usePathname();
+  const lenis = useLenis();
 
   const [phase, setPhase] = React.useState<PreloadPhase>("intro");
   const [index, setIndex] = React.useState(0);
@@ -60,10 +62,16 @@ export function ArcRevealHero({
   // Synchronously handle route change during render! 
   // This PREVENTS the new page from appearing BEFORE the preloader animation starts!
   if (pathname !== prevPathname) {
+    const isBackToProjects = prevPathname.startsWith('/projects/') && pathname === '/projects';
+    const isBackToBlog = prevPathname.startsWith('/blog/') && pathname === '/blog';
     setPrevPathname(pathname);
-    setPhase("intro");
-    setIndex(0);
-    progress.set(0);
+    
+    // Skip preloader if navigating back to the main listing page from a detail page
+    if (!isBackToProjects && !isBackToBlog) {
+        setPhase("intro");
+        setIndex(0);
+        progress.set(0);
+    }
   }
 
   // Optimization: Defer rendering the NEW page until the screen is fully covered by the black preloader.
@@ -86,6 +94,15 @@ export function ArcRevealHero({
   const title = React.useMemo(() => {
       if (pathname === '/') return 'Home';
       const parts = pathname.split('/').filter(Boolean);
+      
+      if ((parts[0] === 'projects' || parts[0] === 'blog') && parts.length > 1) {
+          // Format slug (e.g., browser-automation-agent -> Browser Automation Agent)
+          return parts[1]
+              .split('-')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+      }
+      
       if (parts.length > 0) {
           return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
       }
@@ -122,16 +139,23 @@ export function ArcRevealHero({
 
     if (isPreloading) {
         document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        window.scrollTo(0, 0); // Force scroll to top while preloading
+        if (lenis) lenis.stop();
     } else {
         document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        if (lenis) lenis.start();
     }
     return () => {
         document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        if (lenis) lenis.start();
         if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('preload-state-change', { detail: false }));
         }
     };
-  }, [phase]);
+  }, [phase, lenis]);
 
   // Check initial load overrides
   React.useEffect(() => {

@@ -3,7 +3,21 @@
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-export default function MagneticEffect({ children }: { children: React.ReactNode }) {
+interface MagneticEffectProps {
+    children: React.ReactNode;
+    strength?: number;
+    stiffness?: number;
+    damping?: number;
+    mass?: number;
+}
+
+export default function MagneticEffect({ 
+    children, 
+    strength = 0.35, 
+    stiffness = 150, 
+    damping = 15, 
+    mass = 0.1 
+}: MagneticEffectProps) {
     const ref = useRef<HTMLDivElement>(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
 
@@ -17,7 +31,6 @@ export default function MagneticEffect({ children }: { children: React.ReactNode
             const distanceX = clientX - centerX;
             const distanceY = clientY - centerY;
             
-            const strength = 0.35;
             setPosition({ x: distanceX * strength, y: distanceY * strength });
         }
     };
@@ -34,7 +47,7 @@ export default function MagneticEffect({ children }: { children: React.ReactNode
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             animate={{ x, y }}
-            transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+            transition={{ type: "spring", stiffness, damping, mass }}
             className="inline-block"
         >
             {children}

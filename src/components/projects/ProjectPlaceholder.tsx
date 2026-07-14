@@ -44,11 +44,14 @@ export function ProjectPlaceholder({ className, title = "No Preview Available" }
             className
         )}>
             {imageUrl && (
-                <img 
-                    src={imageUrl} 
-                    alt={title} 
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700" 
-                />
+                <>
+                    <img 
+                        src={imageUrl} 
+                        alt={title} 
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700" 
+                    />
+                    <div className="absolute inset-0 bg-black/5 dark:bg-black/40 transition-colors duration-500 pointer-events-none" />
+                </>
             )}
         </div>
     );

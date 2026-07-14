@@ -36,7 +36,7 @@ export function LoadingScreen({ onComplete, onExitStart, duration }: LoadingScre
                             ease: [0.7, 0, 0.3, 1]
                         }
                     }}
-                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background overflow-hidden will-change-transform"
+                    className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-background overflow-hidden will-change-transform"
                 >
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}

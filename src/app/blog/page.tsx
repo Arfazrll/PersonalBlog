@@ -7,11 +7,7 @@ import { useTranslations } from 'next-intl';
 import { portfolioData } from '@/data/portfolio';
 import { BlogCard } from '@/components/ui/BlogCard';
 import { BentoHero } from '@/components/sections/blog/BentoHero';
-import dynamic from 'next/dynamic';
-
-const MarqueeClosing = dynamic(() => import('@/components/sections/blog/MarqueeClosing').then(m => m.MarqueeClosing), {
-    ssr: false,
-});
+import { MarqueeClosing } from '@/components/sections/blog/MarqueeClosing';
 import { Search, SortDesc, SortAsc, LayoutGrid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

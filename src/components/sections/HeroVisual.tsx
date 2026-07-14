@@ -142,7 +142,7 @@ export function HeroVisual({ isExiting = false }: { isExiting?: boolean }) {
         />
       </div>
 
-      <main className="relative flex-1 flex flex-col justify-center pt-40 pb-20 z-10">
+      <main className="relative flex-1 flex flex-col justify-center pt-40 pb-20 z-10 max-w-[105rem] w-full mx-auto">
         <div className="flex relative gap-4 px-6 md:items-center w-full flex-col justify-center">
 
           {/* Follow-Cursor Tooltip */}
@@ -314,53 +314,51 @@ export function HeroVisual({ isExiting = false }: { isExiting?: boolean }) {
             </Link>
           </div>
         </div>
-
-
-
-        {/* Award/Badge Vertical - MOVED TO LEFT */}
-        <div
-          className="absolute left-0 top-1/2 z-50 hidden md:flex items-center transform -translate-y-1/2 group/container"
-          onMouseEnter={() => setShowProfile(true)}
-          onMouseLeave={() => setShowProfile(false)}
-        >
-          {/* The Badge Trigger */}
-          <div className="relative z-50">
-            <motion.div
-              whileHover={{ x: 10 }}
-              className="bg-white text-black py-10 px-4 text-[10px] font-black uppercase tracking-[0.5em] shadow-2xl rounded-r-3xl border-r border-y border-zinc-200 cursor-pointer"
-            >
-              <span className="rotate-0 [writing-mode:vertical-rl]">
-                AVAILABLE FOR OPPORTUNITY
-              </span>
-            </motion.div>
-          </div>
-
-          {/* Profile Card Sidebar/Drawer Effect - Connected to avoid gap */}
-          <AnimatePresence>
-            {showProfile && (
-              <motion.div
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -20, opacity: 0 }}
-                transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="pl-4 pointer-events-auto"
-                style={{ width: 'max-content' }}
-              >
-                <ProfileCard
-                  name={personal.name}
-                  title="AI Engineer & Software Engineer"
-                  description={`${personal.name} is a dedicated AI & Software Engineer focused on building scalable, intelligent systems and robust software architectures. He specializes in bridging technical innovation with high-performance execution to deliver meaningful and impactful digital solutions.`}
-                  imageUrl={personal.avatar}
-                  githubUrl={personal.socialLinks.find(s => s.platform === 'GitHub')?.url}
-                  linkedinUrl={personal.socialLinks.find(s => s.platform === 'LinkedIn')?.url}
-                  instagramUrl={personal.socialLinks.find(s => s.platform === 'Instagram')?.url}
-                  className="!max-w-4xl scale-[0.8] origin-left"
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
       </main>
+
+      {/* Award/Badge Vertical - MOVED TO LEFT */}
+      <div
+        className="absolute left-0 top-1/2 z-50 hidden md:flex items-center transform -translate-y-1/2 group/container"
+        onMouseEnter={() => setShowProfile(true)}
+        onMouseLeave={() => setShowProfile(false)}
+      >
+        {/* The Badge Trigger */}
+        <div className="relative z-50">
+          <motion.div
+            whileHover={{ x: 10 }}
+            className="bg-white text-black py-10 px-4 text-[10px] font-black uppercase tracking-[0.5em] shadow-2xl rounded-r-3xl border-r border-y border-zinc-200 cursor-pointer"
+          >
+            <span className="rotate-0 [writing-mode:vertical-rl]">
+              AVAILABLE FOR OPPORTUNITY
+            </span>
+          </motion.div>
+        </div>
+
+        {/* Profile Card Sidebar/Drawer Effect - Connected to avoid gap */}
+        <AnimatePresence>
+          {showProfile && (
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -20, opacity: 0 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="pl-4 pointer-events-auto"
+              style={{ width: 'max-content' }}
+            >
+              <ProfileCard
+                name={personal.name}
+                title="AI Engineer & Software Engineer"
+                description={`${personal.name} is a dedicated AI & Software Engineer focused on building scalable, intelligent systems and robust software architectures. He specializes in bridging technical innovation with high-performance execution to deliver meaningful and impactful digital solutions.`}
+                imageUrl={personal.avatar}
+                githubUrl={personal.socialLinks.find(s => s.platform === 'GitHub')?.url}
+                linkedinUrl={personal.socialLinks.find(s => s.platform === 'LinkedIn')?.url}
+                instagramUrl={personal.socialLinks.find(s => s.platform === 'Instagram')?.url}
+                className="!max-w-4xl scale-[0.8] origin-left"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }
