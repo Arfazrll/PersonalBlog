@@ -142,7 +142,8 @@ export const portfolioData: PortfolioData = {
             id: 'project-2',
             slug: 'swarm-agent-orchestrator',
             title: 'Swarm AI Blog Writer',
-            description: 'Production-grade multi-agent blog generation engine powered by Pydantic AI and Groq (Llama 3.3 70B).',
+            image: '/project/swarmaiblogwriter1.webp',
+            description: 'Intelligent multi-agent system built with Vue 3, integrating multiple LLMs for automated, high-quality blog generation.',
             longDescription: 'Swarm AI Blog Writer is a production-grade, multi-agent blog generation engine where multiple specialized AI agents orchestrate in a synchronized pipeline to create long-form, research-backed blog posts exported as professional PDF reports. Powered by Pydantic AI structured validation and Groq\'s Llama 3.3 70B, the system features a Planner, Researcher, Writer, and Editor agent working in harmony. A premium SaaS-grade Vue.js 3 frontend with GSAP animations and a bento-grid layout delivers the interaction layer, while a serverless Flask backend handles AI inference and PDF generation.',
 
             techStack: ['Vue.js 3', 'Vite 5', 'TypeScript', 'Tailwind CSS 3', 'GSAP 3', 'Python', 'Flask', 'Pydantic v2', 'Groq API', 'Llama 3.3 70B', 'FPDF2'],
@@ -239,6 +240,7 @@ export const portfolioData: PortfolioData = {
             id: 'project-3',
             slug: 'creative-portfolio-website',
             title: 'Creative Portfolio Website',
+            image: '/project/creativeportfoliowebsite1.webp',
             description: 'Modern, animated portfolio with 3D elements and smooth animations.',
             longDescription: 'A production-grade creative portfolio engineered to demonstrate high-level proficiency in Artificial Intelligence, Blockchain, and Modern Web Architectures. This platform transcends traditional static websites by offering a high-performance interactive experience powered by advanced WebGL shaders, physics-based simulations, and real-time data integration. It serves as a living laboratory for experimenting with cutting-edge frontend technologies while maintaing strict accessibility and SEO standards.',
 
@@ -331,7 +333,8 @@ WAKATIME_API_KEY=your_wakatime_key`
             id: 'project-4',
             slug: 'snbtin-platform',
             title: 'SNBTIn - Platform Persiapan SNBT 2025',
-            description: 'Platform e-learning #1 di Indonesia untuk persiapan SNBT bagi siswa SMA.',
+            image: '/project/snbtinplatformpersiapansnbt20251.webp',
+            description: 'Platform edukasi berbasis AI dengan 6 modul utama untuk persiapan UTBK-SNBT.',
             longDescription: 'SNBTIn adalah platform persiapan SNBT (Seleksi Nasional Berbasis Tes) terpercaya yang dirancang khusus untuk siswa SMA di Indonesia. Menyediakan ekosistem pembelajaran komprehensif dengan materi berkualitas, latihan soal, forum diskusi, dan fitur-fitur interaktif yang membantu siswa mempersiapkan diri secara optimal. Dengan lebih dari 10,000 siswa aktif dan tingkat kelulusan 85%, platform ini menjadi solusi utama untuk menembus PTN impian.',
 
             techStack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS'],
@@ -420,7 +423,8 @@ WAKATIME_API_KEY=your_wakatime_key`
             id: 'project-5',
             slug: 'terraflow-platform',
             title: 'Terraflow Platform',
-            description: 'Enterprise-grade IoT solution for precision agriculture.',
+            image: '/project/terraflowplatform1.webp',
+            description: 'Sistem Deteksi Risiko Longsor secara Real-Time terintegrasi dengan sensor satelit dan prediksi cuaca.',
             longDescription: 'TerraFlow Platform is an intelligent IoT solution designed for precision agriculture and environmental monitoring. It features a robust Direct-to-Cloud architecture where ESP32 sensor nodes communicate directly with Firebase Realtime Database, ensuring instant data synchronization. The system combines a high-performance Go (Gin) backend for configuration management with a modern Next.js 14 frontend for real-time visualization and remote control of actuators like pumps and servos.',
 
             techStack: ['Next.js', 'Go', 'Gin', 'Firebase', 'Docker', 'ESP32', 'C++', 'React', 'Tailwind CSS'],

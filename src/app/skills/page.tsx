@@ -6,13 +6,11 @@ import { useTranslations } from 'next-intl';
 import { portfolioData } from '@/data/portfolio';
 import { SplineScene } from '@/components/ui/SplineScene';
 import { TextPressure } from '@/components/ui/TextPressure';
-import dynamic from 'next/dynamic';
-
-const KineticTechGrid = dynamic(() => import('@/components/ui/KineticTechGrid').then(mod => mod.KineticTechGrid), { ssr: true });
-const ArchedTechIconsInteractive = dynamic(() => import('@/components/ui/ArchedTechIcons').then(mod => mod.ArchedTechIconsInteractive), { ssr: true });
-const HorizontalScrollCarousel = dynamic(() => import('@/components/ui/horizontal-scroll-carousel').then(mod => mod.HorizontalScrollCarousel), { ssr: true });
-const HardSkills = dynamic(() => import('@/components/sections/skills/HardSkills').then(mod => mod.HardSkills), { ssr: true });
-const ToolsSection = dynamic(() => import('@/components/sections/skills/ToolsSection').then(mod => mod.ToolsSection), { ssr: true });
+import { KineticTechGrid } from '@/components/ui/KineticTechGrid';
+import { ArchedTechIconsInteractive } from '@/components/ui/ArchedTechIcons';
+import { HorizontalScrollCarousel } from '@/components/ui/horizontal-scroll-carousel';
+import { HardSkills } from '@/components/sections/skills/HardSkills';
+import { ToolsSection } from '@/components/sections/skills/ToolsSection';
 import FeatureSection from '@/components/ui/stack-feature-section';
 import { cn } from '@/lib/utils';
 import { DeferredMount } from '@/components/ui/DeferredMount';

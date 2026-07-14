@@ -179,14 +179,18 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const handleExit = () => {
-        router.push('/projects', { scroll: false });
+        if (typeof window !== 'undefined' && document.referrer.includes('/projects')) {
+            router.back();
+        } else {
+            router.push('/projects');
+        }
     };
 
-    // Get random other projects for "More Projects" section
+    // Get other projects for "More Projects" section
     const otherProjects = useMemo(() => {
         const others = portfolioData.projects.filter(p => p.id !== project.id);
-        const shuffled = [...others].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, 5);
+        // We take the first 5 projects. We avoid Math.random() here to prevent SSR hydration mismatch!
+        return others.slice(0, 5);
     }, [project.id]);
 
     return (
@@ -255,7 +259,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in"
                         />
                     ) : (
-                        <ProjectPlaceholder className="rounded-none border-0 bg-transparent pb-0 [&>div.z-10]:scale-125" title="No Image Available" />
+                        <ProjectPlaceholder className="rounded-none border-0 bg-transparent pb-0 [&>div.z-10]:scale-125" title={project.title} />
                     )}
 
                     {/* Overlay Gradient */}
@@ -550,7 +554,7 @@ export function ProjectPageContent({ project, isLowPowerMode }: { project: Proje
                                 {p.image ? (
                                     <img src={p.image} alt={p.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                                 ) : (
-                                    <ProjectPlaceholder className="absolute inset-0" title="No Preview" />
+                                    <ProjectPlaceholder className="absolute inset-0" title={p.title} />
                                 )}
 
                                 {/* Gradient Overlay */}

@@ -11,6 +11,7 @@ import {
   SiFlask, SiJavascript, SiVercel
 } from "react-icons/si";
 import { portfolioData } from "@/data/portfolio";
+import MagneticEffect from "@/components/ui/MagneticEffect";
 
 const fallbackUrls = [
   "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=100&h=100&fit=crop&fm=webp", // coding image
@@ -44,22 +45,31 @@ export default function FeatureSection() {
 
   return (
     <section className="relative w-full max-w-[1500px] mx-auto px-4 sm:px-6 my-16 md:my-32 z-10">
-      <div className="flex flex-col md:flex-row items-center justify-between min-h-[auto] md:min-h-[35rem] border border-gray-200 dark:border-white/10 bg-white dark:bg-black overflow-hidden rounded-[2.5rem] shadow-sm relative">
+      <div className="group flex flex-col md:flex-row items-center justify-between min-h-[auto] md:min-h-[35rem] border border-gray-200 dark:border-white/10 bg-white dark:bg-black overflow-hidden rounded-[2.5rem] shadow-sm relative transition-all duration-700 hover:shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(255,255,255,0.05)] hover:border-gray-300 dark:hover:border-white/20">
+        
+        {/* Shine overlay that triggers on group-hover */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden rounded-[2.5rem]">
+          <div className="absolute inset-0 -translate-x-[150%] w-1/2 bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent group-hover:shine-effect" />
+        </div>
         {/* Left side: Heading and Text */}
-        <div className="w-full md:w-[55%] z-10 p-6 sm:p-8 md:p-14 lg:p-20">
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 text-gray-900 dark:text-white tracking-tight leading-[1.1]">
+        <div className="w-full md:w-[55%] z-20 p-6 sm:p-8 md:p-14 lg:p-20 group/text">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 text-gray-900 dark:text-white tracking-tight leading-[1.1] transition-all duration-500 group-hover/text:tracking-[0.05em] group-hover/text:drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:group-hover/text:drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
             Engineering <br className="hidden md:block" /> the Future
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-10 max-w-xl text-base md:text-lg leading-relaxed">
+          <p className="text-gray-500 dark:text-gray-400 mb-10 max-w-xl text-base md:text-lg leading-relaxed transition-colors duration-500 group-hover/text:text-gray-900 dark:group-hover/text:text-gray-200">
             {portfolioData.personal.subtitle}
           </p>
-          <div className="flex flex-wrap items-center gap-3 md:gap-4">
-            <Button variant="default" asChild className="rounded-full px-6 md:px-8 py-5 md:py-6 font-semibold text-sm md:text-base bg-primary text-primary-foreground hover:bg-primary/90 transition-all w-full sm:w-auto text-center justify-center">
-              <Link href="/projects">View Projects</Link>
-            </Button>
-            <Button variant="outline" asChild className="rounded-full px-6 md:px-8 py-5 md:py-6 font-semibold text-sm md:text-base dark:border-white/20 dark:hover:bg-white/10 text-foreground transition-all w-full sm:w-auto text-center justify-center">
-              <Link href="/resume">My Resume</Link>
-            </Button>
+          <div className="flex flex-wrap items-center gap-3 md:gap-4 relative z-30">
+            <MagneticEffect strength={0.8} stiffness={120} damping={10}>
+              <Button variant="default" asChild className="rounded-full px-6 md:px-8 py-5 md:py-6 font-semibold text-sm md:text-base bg-primary text-primary-foreground border border-transparent hover:!bg-white hover:!text-black dark:hover:!bg-black dark:hover:!text-white hover:!border-black dark:hover:!border-white transition-all duration-300 w-full sm:w-auto text-center justify-center">
+                <Link href="/projects">View Projects</Link>
+              </Button>
+            </MagneticEffect>
+            <MagneticEffect strength={0.8} stiffness={120} damping={10}>
+              <Button variant="outline" asChild className="rounded-full px-6 md:px-8 py-5 md:py-6 font-semibold text-sm md:text-base bg-transparent border border-gray-200 dark:border-white/20 text-foreground hover:!bg-black hover:!text-white dark:hover:!bg-white dark:hover:!text-black transition-all duration-300 w-full sm:w-auto text-center justify-center">
+                <Link href="/resume">My Resume</Link>
+              </Button>
+            </MagneticEffect>
           </div>
         </div>
 
@@ -146,6 +156,15 @@ export default function FeatureSection() {
         .center-spin {
           animation: stack-orbit-spin 15s linear infinite !important;
           will-change: transform;
+        }
+
+        @keyframes card-shine {
+          0% { transform: translateX(-150%) skewX(-15deg); }
+          100% { transform: translateX(250%) skewX(-15deg); }
+        }
+        
+        .shine-effect {
+          animation: card-shine 2s infinite ease-in-out;
         }
 
         .orbit-0 { animation: stack-orbit-spin 30s linear infinite !important; will-change: transform; }

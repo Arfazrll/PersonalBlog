@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useTransform, useSpring, easeOut, easeInOut, circOut } from "framer-motion";
+import { motion, useTransform, useSpring, easeOut, easeInOut, circOut, useMotionValueEvent } from "framer-motion";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -12,6 +12,42 @@ import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import MagneticEffect from "@/components/ui/MagneticEffect";
 
+const BlurInUpText = ({ text, animate }: { text: string; animate: boolean }) => {
+    const words = text.split(" ");
+    return (
+        <motion.span
+            initial="hidden"
+            animate={animate ? "visible" : "hidden"}
+            transition={{ staggerChildren: 0.01 }}
+            aria-label={text}
+        >
+            {words.map((word, wordIndex) => (
+                <span key={wordIndex} className="inline-block whitespace-pre">
+                    {word.split("").map((char, charIndex) => (
+                        <motion.span
+                            key={charIndex}
+                            variants={{
+                                hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
+                                visible: { 
+                                    opacity: 1, 
+                                    y: 0, 
+                                    filter: "blur(0px)", 
+                                    transition: { type: "spring", bounce: 0, duration: 0.5 } 
+                                }
+                            }}
+                            className="inline-block"
+                            style={{ willChange: "filter, opacity, transform" }}
+                        >
+                            {char}
+                        </motion.span>
+                    ))}
+                    {wordIndex < words.length - 1 && <span className="inline-block">&nbsp;</span>}
+                </span>
+            ))}
+        </motion.span>
+    );
+};
+
 interface IdentitySequenceProps {
     scrollYProgress: any; // Parent scroll progress [0, 1]
     isVisible: boolean;
@@ -20,6 +56,7 @@ interface IdentitySequenceProps {
 export const IdentitySequence = ({ scrollYProgress, isVisible }: IdentitySequenceProps) => {
     const t = useTranslations("about");
     const [isHovered, setIsHovered] = React.useState(false);
+    const [isTextAnimated, setIsTextAnimated] = React.useState(false);
 
     // Map the parent's scroll progress (0.4 to 0.85) to local progress (0 to 1).
     // This leaves 0.85 to 1.0 (approx 90vh) as a "pause" where the user can just read the Tech Stack before it scrolls away.
@@ -39,6 +76,12 @@ export const IdentitySequence = ({ scrollYProgress, isVisible }: IdentitySequenc
     const cardContentOpacity = useTransform(localProgress, [0.1, 0.3], [0, 1]);
     const photoScale = useTransform(localProgress, [0.3, 0.8], [1.15, 1], { ease: easeInOut });
     const textOpacity = useTransform(localProgress, [0.85, 1], [0, 1]);
+
+    useMotionValueEvent(localProgress, "change", (latest) => {
+        if (latest > 0.85 && !isTextAnimated) {
+            setIsTextAnimated(true);
+        }
+    });
 
     // 4. Background Color Transition (Smoothing the exit)
     const cardBg = useTransform(
@@ -230,7 +273,10 @@ export const IdentitySequence = ({ scrollYProgress, isVisible }: IdentitySequenc
                             {/* Paragraph Right */}
                             <div className="md:col-span-5 pt-1">
                                 <p className="text-[13px] md:text-[15px] text-zinc-500 dark:text-zinc-400 leading-relaxed font-normal">
-                                    {t("profile.narrative")} {t("profile.narrative2")}
+                                    <BlurInUpText 
+                                        text={`${t("profile.narrative")} ${t("profile.narrative2")}`} 
+                                        animate={isTextAnimated} 
+                                    />
                                 </p>
                             </div>
                         </div>

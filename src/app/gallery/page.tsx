@@ -1,10 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import CleanFilmGrid from "@/components/sections/gallery/CleanFilmGrid";
 import ManifestoHero from "@/components/sections/gallery/ManifestoHero";
-const CleanFilmGrid = dynamic(() => import("@/components/sections/gallery/CleanFilmGrid"), {
-    ssr: false,
-});
+import dynamic from "next/dynamic";
 import ImpactSection from "@/components/ui/impact-section";
 import { usePerformance } from "@/hooks/usePerformance";
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';

@@ -98,7 +98,7 @@ const Loader = ({ type = 'default' }: LoaderProps) => {
     <div className="relative w-full h-full min-h-[400px] flex items-center justify-center overflow-hidden bg-transparent" style={{ perspective: 1500 }}>
       {/* Background Dots */}
       <div
-        className="absolute inset-0 opacity-10 pointer-events-none dark:hidden"
+        className="absolute inset-0 opacity-10 pointer-events-none hidden"
         style={{
           backgroundImage: 'radial-gradient(#000000 1px, transparent 1px)',
           backgroundSize: '15px 15px'

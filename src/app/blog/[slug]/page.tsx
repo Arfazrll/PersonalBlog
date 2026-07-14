@@ -7,18 +7,27 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { portfolioData } from '@/data/portfolio';
 import { Clock, Copy, Linkedin, Github, BookOpen, Link as LinkIcon, ArrowLeft, Check } from 'lucide-react';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
     const t = useTranslations('blog');
+    const router = useRouter();
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(window.location.href);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleBack = () => {
+        if (typeof window !== 'undefined' && window.history.length > 2) {
+            router.back();
+        } else {
+            router.push('/blog');
+        }
     };
 
     const implementedSlugs = [
@@ -52,10 +61,10 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                 >
                     <div className="flex items-center gap-4 mb-6">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium hover:text-primary transition-colors">
-                            <Link href="/blog" className="flex items-center gap-2">
+                            <button onClick={handleBack} className="flex items-center gap-2 focus:outline-none">
                                 <ArrowLeft className="w-4 h-4" />
                                 <span>Back</span>
-                            </Link>
+                            </button>
                         </div>
                     </div>
 
