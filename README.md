@@ -1,3 +1,5 @@
+
+
 <div align="center">
 
 <img src="public/Arfazrll_light.svg" alt="Project Logo" width="80" height="80" />
@@ -133,6 +135,9 @@ The application implements a `usePerformance` hook to evaluate client hardware c
    WAKATIME_API_KEY=your_wakatime_key
    GROQ_API_KEY=your_groq_key
    GEMINI_API_KEY=your_gemini_key
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_APP_PASSWORD=your_gmail_app_password
+   KAGGLE_API_TOKEN=your_kaggle_api_token
    ```
 
 4. **Initialize Development Server:**
