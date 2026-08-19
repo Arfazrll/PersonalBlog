@@ -1,461 +1,204 @@
 'use client';
 
-import { useState, useRef, useEffect, Suspense } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, animate } from 'framer-motion';
+import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Search, SortAsc, SortDesc } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { portfolioData } from '@/data/portfolio';
-import { BlogCard } from '@/components/ui/BlogCard';
-import { BentoHero } from '@/components/sections/blog/BentoHero';
-import { MarqueeClosing } from '@/components/sections/blog/MarqueeClosing';
-import { Search, SortDesc, SortAsc, LayoutGrid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-import { usePerformance } from '@/hooks/usePerformance';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import { DeferredMount } from '@/components/ui/DeferredMount';
+const INITIAL_BATCH = 12;
+const LOAD_MORE_BATCH = 8;
 
-import FlowingMenu from '@/components/ui/flowing-menu';
-
-function BlogContent() {
-    const t = useTranslations('blog');
+export default function BlogPage() {
     const searchParams = useSearchParams();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
-    const [currentPage, setCurrentPage] = useState(1);
     const [sortBy, setSortBy] = useState<'latest' | 'oldest'>('latest');
-    const [isHoveringSort, setIsHoveringSort] = useState(false);
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const { isLowPowerMode } = usePerformance();
-    const POSTS_PER_PAGE = 9;
+    const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
+    const sentinelRef = useRef<HTMLDivElement>(null);
 
-    // Master Hover State for perfect synchronization
-    const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
-    const mousePosRef = useRef({ x: 0, y: 0 });
-
-    // Framer Motion Values for high-performance tracking
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const cursorOpacity = useMotionValue(0);
-
-    // Spring configuration for smooth but extremely responsive movement
-    const springConfig = { stiffness: 1000, damping: 50, mass: 0.1 };
-    const springX = useSpring(mouseX, springConfig);
-    const springY = useSpring(mouseY, springConfig);
-
-    const gridRef = useRef<HTMLDivElement>(null);
-    const categories = ['all', 'applied-ai', 'software-development', 'about-me', 'more'];
-
-    const filteredPosts = portfolioData.blogs
-        .filter((post) => {
-            const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-
-            const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
-
-            return matchesSearch && matchesCategory;
-        })
-        .sort((a, b) => {
-            if (sortBy === 'latest') {
-                return new Date(b.date).getTime() - new Date(a.date).getTime();
-            } else {
-                return new Date(a.date).getTime() - new Date(b.date).getTime();
-            }
-        });
-
-    const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
-    const paginatedPosts = filteredPosts.slice(
-        (currentPage - 1) * POSTS_PER_PAGE,
-        currentPage * POSTS_PER_PAGE
+    const categories = useMemo(
+        () => ['all', ...Array.from(new Set(portfolioData.blogs.map((post) => post.category)))],
+        [],
     );
 
-    // Handle URL parameters for search
     useEffect(() => {
         const q = searchParams.get('q');
         if (q) {
             setSearchQuery(q);
-            // Optional: reset category if searching via URL tags
             setSelectedCategory('all');
         }
     }, [searchParams]);
 
-    // Reset pagination when category or search changes
+    const filteredPosts = useMemo(() => {
+        const query = searchQuery.trim().toLowerCase();
+
+        return portfolioData.blogs
+            .filter((post) => {
+                const matchesSearch = !query ||
+                    post.title.toLowerCase().includes(query) ||
+                    post.excerpt.toLowerCase().includes(query) ||
+                    post.tags.some((tag) => tag.toLowerCase().includes(query));
+                const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+                return matchesSearch && matchesCategory;
+            })
+            .sort((a, b) => {
+                const aDate = new Date(a.date).getTime();
+                const bDate = new Date(b.date).getTime();
+                return sortBy === 'latest' ? bDate - aDate : aDate - bDate;
+            });
+    }, [searchQuery, selectedCategory, sortBy]);
+
     useEffect(() => {
-        setCurrentPage(1);
-    }, [selectedCategory, searchQuery]);
+        setVisibleCount(INITIAL_BATCH);
+    }, [searchQuery, selectedCategory, sortBy]);
 
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        // Smooth scroll to grid top
-        gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-
-    // Master Hover Controller: Synchronizes cursor and card expansion
     useEffect(() => {
-        if (isLowPowerMode) return;
+        const sentinel = sentinelRef.current;
+        if (!sentinel) return;
 
-        const updateHoverTarget = (x: number, y: number) => {
-            const element = document.elementFromPoint(x, y);
-            const card = element?.closest('[data-blog-id]');
-            const id = card?.getAttribute('data-blog-id') || null;
-            setHoveredCardId(id);
-        };
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0]?.isIntersecting) {
+                    setVisibleCount((current) => Math.min(current + LOAD_MORE_BATCH, filteredPosts.length));
+                }
+            },
+            { rootMargin: '500px 0px' },
+        );
 
-        const handleMouseMove = (e: MouseEvent) => {
-            mouseX.set(e.clientX);
-            mouseY.set(e.clientY);
-            mousePosRef.current = { x: e.clientX, y: e.clientY };
-            updateHoverTarget(e.clientX, e.clientY);
-        };
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [filteredPosts.length]);
 
-        const handleScroll = () => {
-            // Continually update the hover target as the page moves under the mouse
-            updateHoverTarget(mousePosRef.current.x, mousePosRef.current.y);
-        };
-
-        window.addEventListener('mousemove', handleMouseMove, { passive: true });
-        window.addEventListener('scroll', handleScroll, { passive: true });
-
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [isLowPowerMode, mouseX, mouseY]);
-
-    // Couple cursor visibility to the master hover state
-    useEffect(() => {
-        if (hoveredCardId) {
-            animate(cursorOpacity, 1, { duration: 0.3 });
-        } else {
-            animate(cursorOpacity, 0, { duration: 0.2 });
-        }
-    }, [hoveredCardId, cursorOpacity]);
+    const visiblePosts = filteredPosts.slice(0, visibleCount);
+    const hasMore = visibleCount < filteredPosts.length;
 
     return (
-        <main className="min-h-screen bg-background selection:bg-primary/30">
-            {/* STICKY PARALLAX WRAPPER */}
-            <div className="relative z-10 w-full pt-[25vh]">
-                
-                {/* 1. STICKY HEADER (Sits in background, gets covered by BentoHero, then re-emerges at the bottom to replace DOCS & Blueprints) */}
-                <header className="sticky top-[25vh] z-0 pb-12 flex flex-col items-center justify-center pointer-events-auto h-auto">
-                    <div className="relative z-10 max-w-5xl mx-auto text-center px-4">
-                        <motion.h1
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, type: "spring", stiffness: 400, damping: 20 }}
-                            className="text-4xl md:text-6xl lg:text-[5.5rem] font-black text-foreground leading-tight tracking-[-0.04em] uppercase whitespace-nowrap cursor-pointer group"
-                        >
-                            <span className="relative inline-block">
-                                <span>FEATURE &</span>{' '}
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground to-foreground/20">
-                                    DOCS
-                                </span>
-                                {/* Animated underline on hover */}
-                                <span className="absolute -bottom-1 left-0 w-full h-[4px] bg-foreground scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
+        <main className="min-h-screen bg-background text-foreground selection:bg-primary/30">
+            <section className="mx-auto w-full max-w-[100rem] px-6 pb-24 pt-32 md:px-12 md:pt-40 lg:px-24">
+                <div className="mb-14 flex flex-col gap-10 border-b border-foreground/10 pb-8 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <div className="mb-5 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.35em] text-muted-foreground">
+                            <span className="h-2 w-2 rounded-full bg-primary" />
+                            <span>Publications Archive</span>
+                            <span className="rounded-md border border-foreground/10 px-2 py-1 text-[10px] tracking-normal">
+                                {filteredPosts.length}
                             </span>
-                        </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="mt-6 text-[11px] md:text-sm font-medium text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed tracking-wide"
-                        >
-                            A dedicated space for documenting technical blueprints, architectural patterns, and engineering reflections. This archive serves as a living knowledge base where innovation meets practical execution.
-                        </motion.p>
-                    </div>
-                </header>
+                        </div>
 
-                {/* 2. BENTO HERO (Scrolls over the sticky header) */}
-                <div className="relative z-10 pb-32">
-                    <DeferredMount>
-                        <BentoHero isLowPowerMode={isLowPowerMode} />
-                    </DeferredMount>
-                </div>
-
-                {/* 3. TRANSPARENT SPACER 
-                    Reduced to 20vh to eliminate the huge black void.
-                    After BentoHero scrolls past, this spacer keeps the wrapper alive just enough 
-                    to reveal the title before the Filters section smoothly picks it up.
-                */}
-                <div className="relative z-10 h-[20vh] pointer-events-none" />
-            </div>
-
-            {/* SECTION 2: Blog Cards Content */}
-            <div className="relative z-20 pt-12 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-background via-background/80 to-background dark:from-black dark:via-black dark:to-black">
-                {/* Background Effects */}
-                {!isLowPowerMode && (
-                    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary/5 blur-[200px] rounded-full opacity-40 dark:opacity-0 -translate-y-1/2 translate-x-1/2" />
-                        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 blur-[200px] rounded-full opacity-30 dark:opacity-0 translate-y-1/2 -translate-x-1/2" />
-                    </div>
-                )}
-
-                <div className="container mx-auto relative z-10">
-                    {/* Filters & Search - Modern Minimalist Editorial */}
-                    <div className="flex flex-col md:flex-row gap-10 mb-16 items-end justify-between border-b border-foreground/5 pb-8">
-                        <div className="flex flex-wrap gap-x-12 gap-y-6">
-                            {categories.map((cat) => {
-                                const count = cat === 'all'
-                                    ? portfolioData.blogs.length
-                                    : portfolioData.blogs.filter(b => b.category === cat).length;
+                        <div className="flex flex-wrap gap-x-8 gap-y-4">
+                            {categories.map((category) => {
+                                const active = selectedCategory === category;
+                                const label = category === 'all'
+                                    ? 'All Publications'
+                                    : category.replaceAll('-', ' ');
 
                                 return (
                                     <button
-                                        key={cat}
-                                        onClick={() => setSelectedCategory(cat)}
+                                        key={category}
+                                        type="button"
+                                        onClick={() => setSelectedCategory(category)}
                                         className={cn(
-                                            "group relative py-2 text-[15px] font-bold uppercase tracking-[0.2em] transition-all duration-500 flex items-start",
-                                            selectedCategory === cat
-                                                ? "text-primary opacity-100"
-                                                : "text-muted-foreground/40 hover:text-foreground hover:opacity-100"
+                                            'relative py-1 text-sm font-medium capitalize transition-colors',
+                                            active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                                         )}
                                     >
-                                        <span className="relative">
-                                            {cat === 'all' ? 'All Publications' : t(`categories.${cat}`)}
-
-                                            {/* Animated Underline Indicator */}
-                                            {selectedCategory === cat && (
-                                                <motion.div
-                                                    layoutId="active-category"
-                                                    className="absolute -bottom-2 left-0 right-0 h-[2px] bg-primary"
-                                                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                                                />
-                                            )}
-                                        </span>
-
-                                        {/* Dynamic Count Indicator */}
-                                        <span
-                                            className={cn(
-                                                "ml-1 text-[13px] transition-all duration-300 font-bold",
-                                                selectedCategory === cat
-                                                    ? "text-primary opacity-100 translate-y-0"
-                                                    : "opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 text-foreground/60"
-                                            )}
-                                        >
-                                            {count}
-                                        </span>
+                                        {label}
+                                        {active && (
+                                            <motion.span
+                                                layoutId="active-blog-category"
+                                                className="absolute -bottom-2 left-0 h-px w-full bg-foreground"
+                                            />
+                                        )}
                                     </button>
                                 );
                             })}
                         </div>
+                    </div>
 
-                        <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto">
-                            <div className="flex items-center gap-3">
-                                {/* View Mode Toggle */}
-                                <div className="flex bg-foreground/5 p-1 rounded-xl border border-foreground/10">
-                                    <button
-                                        onClick={() => setViewMode('grid')}
-                                        className={cn(
-                                            "p-2 rounded-lg transition-all duration-300",
-                                            viewMode === 'grid'
-                                                ? "bg-foreground text-background shadow-md"
-                                                : "text-muted-foreground hover:text-foreground hover:bg-foreground/10"
-                                        )}
-                                        aria-label="Grid View"
-                                    >
-                                        <LayoutGrid size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => setViewMode('list')}
-                                        className={cn(
-                                            "p-2 rounded-lg transition-all duration-300",
-                                            viewMode === 'list'
-                                                ? "bg-foreground text-background shadow-md"
-                                                : "text-muted-foreground hover:text-foreground hover:bg-foreground/10"
-                                        )}
-                                        aria-label="List View"
-                                    >
-                                        <List size={18} />
-                                    </button>
-                                </div>
-
-                                {/* Sort Badge */}
-                                <div className="relative group">
-                                    <AnimatePresence>
-                                        {isHoveringSort && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 10, x: '-50%' }}
-                                                animate={{ opacity: 1, y: 0, x: '-50%' }}
-                                                exit={{ opacity: 0, y: 5, x: '-50%' }}
-                                                className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-foreground text-background text-[10px] font-bold tracking-widest rounded shadow-xl whitespace-nowrap pointer-events-none z-50 uppercase"
-                                            >
-                                                {sortBy}
-                                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-
-                                    <button
-                                        onClick={() => setSortBy(prev => prev === 'latest' ? 'oldest' : 'latest')}
-                                        onMouseEnter={() => setIsHoveringSort(true)}
-                                        onMouseLeave={() => setIsHoveringSort(false)}
-                                        className={cn(
-                                            "relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-500",
-                                            "bg-foreground/5 hover:bg-foreground text-muted-foreground hover:text-background",
-                                            "border border-foreground/10 hover:border-foreground shadow-sm hover:shadow-xl"
-                                        )}
-                                    >
-                                        {sortBy === 'latest' ? (
-                                            <SortDesc size={20} strokeWidth={1.5} />
-                                        ) : (
-                                            <SortAsc size={20} strokeWidth={1.5} />
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="relative flex-1 md:w-80 group">
-                                <input
-                                    type="text"
-                                    placeholder="SEARCH ARCHIVE"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-transparent border-b border-foreground/10 focus:border-primary/60 outline-none py-3 text-[14px] font-bold tracking-[0.1em] text-foreground transition-all placeholder:text-muted-foreground/20 uppercase"
-                                />
-                                <div className="absolute right-0 bottom-3 opacity-20 group-focus-within:opacity-100 transition-opacity">
-                                    <Search size={14} />
-                                </div>
-                            </div>
+                    <div className="flex w-full flex-col gap-4 sm:flex-row lg:w-auto lg:items-center">
+                        <div className="relative min-w-0 flex-1 sm:min-w-72">
+                            <Search className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <input
+                                type="search"
+                                value={searchQuery}
+                                onChange={(event) => setSearchQuery(event.target.value)}
+                                placeholder="Search publications..."
+                                className="w-full border-b border-foreground/10 bg-transparent py-3 pl-7 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-foreground/40"
+                            />
                         </div>
-                    </div>
 
-                    <div
-                        ref={gridRef}
-                        className="max-w-screen-2xl mx-auto pt-10 relative"
-                    >
-                        {/* High-Performance Framer Motion Cursor */}
-                        <motion.div
-                            className="pointer-events-none fixed left-0 top-0 z-[100] flex items-center justify-center mix-blend-exclusion"
-                            style={{
-                                x: springX,
-                                y: springY,
-                                opacity: cursorOpacity,
-                                position: 'fixed',
-                                top: 0,
-                                left: 0,
-                            }}
-                            initial={{ scale: 0.8 }}
-                            animate={{
-                                scale: !!hoveredCardId ? 1 : 0.8,
-                            }}
-                            transition={{
-                                scale: { duration: 0.4, ease: 'backOut' }
-                            }}
+                        <button
+                            type="button"
+                            onClick={() => setSortBy((current) => current === 'latest' ? 'oldest' : 'latest')}
+                            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-foreground/10 px-4 text-sm text-muted-foreground transition-colors hover:border-foreground/25 hover:text-foreground"
+                            aria-label={sortBy === 'latest' ? 'Sort oldest first' : 'Sort latest first'}
                         >
-                            <div className="flex flex-col items-center text-center -translate-x-1/2 -translate-y-1/2 leading-[1.1]">
-                                <span className="text-[35px] font-black text-white uppercase tracking-[0.2em] drop-shadow-md">
-                                    Read
-                                </span>
-                                <span className="text-[35px] font-black text-white uppercase tracking-[0.2em] drop-shadow-md">
-                                    Detail
-                                </span>
-                            </div>
-                        </motion.div>
+                            {sortBy === 'latest' ? <SortDesc className="h-4 w-4" /> : <SortAsc className="h-4 w-4" />}
+                            <span>{sortBy === 'latest' ? 'Latest' : 'Oldest'}</span>
+                        </button>
+                    </div>
+                </div>
 
-                        {viewMode === 'grid' ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                                <AnimatePresence mode="popLayout">
-                                    {paginatedPosts.map((post, idx) => (
-                                        <BlogCard
-                                            key={post.id}
-                                            post={post}
-                                            index={idx}
-                                            isHovered={hoveredCardId === post.id}
-                                            isLowPowerMode={isLowPowerMode}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </div>
-                        ) : (
-                            <div style={{ height: '800px', position: 'relative' }} className="w-full overflow-hidden">
-                                <FlowingMenu
-                                    items={paginatedPosts.map(post => ({
-                                        link: `/blog/${post.slug}`,
-                                        text: post.title,
-                                        image: post.image,
-                                        category: t(`categories.${post.category}`),
-                                        date: new Date(post.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()
-                                    }))}
-                                />
-                            </div>
-                        )}
-
-                        {/* Pagination - Modern Minimalist Editorial */}
-                        {totalPages > 1 && (
-                            <div className="mt-24 border-t border-foreground/5 pt-12 flex items-center justify-between">
-                                <button
-                                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                                    disabled={currentPage === 1}
-                                    className="text-[18px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-foreground disabled:opacity-0 transition-all duration-300"
-                                >
-                                    PREV
-                                </button>
-
-                                <div className="flex items-center gap-8">
-                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                        <button
-                                            key={page}
-                                            onClick={() => handlePageChange(page)}
-                                            className={cn(
-                                                "relative py-1 text-[20px] font-bold transition-all duration-300",
-                                                currentPage === page
-                                                    ? "text-primary"
-                                                    : "text-muted-foreground/40 hover:text-foreground"
-                                            )}
-                                        >
-                                            {page.toString().padStart(2, '0')}
-                                            {currentPage === page && (
-                                                <motion.div
-                                                    layoutId="active-page"
-                                                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-primary"
-                                                />
-                                            )}
-                                        </button>
-                                    ))}
+                <div className="divide-y divide-foreground/10 border-y border-foreground/10">
+                    {visiblePosts.map((post, index) => (
+                        <motion.article
+                            key={post.id}
+                            initial={{ opacity: 0, y: 18 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-40px' }}
+                            transition={{ duration: 0.45, delay: Math.min(index, 5) * 0.035 }}
+                        >
+                            <Link
+                                href={`/blog/${post.slug}`}
+                                className="group grid min-h-32 grid-cols-1 gap-5 py-7 transition-colors hover:bg-foreground/[0.02] md:grid-cols-[1fr_auto] md:items-center md:px-4 md:py-9"
+                            >
+                                <div className="min-w-0">
+                                    <h2 className="text-xl font-medium tracking-tight transition-transform duration-300 group-hover:translate-x-1 md:text-2xl lg:text-3xl">
+                                        {post.title}
+                                    </h2>
+                                    {post.excerpt && (
+                                        <p className="mt-2 max-w-4xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                                            {post.excerpt}
+                                        </p>
+                                    )}
                                 </div>
 
-                                <button
-                                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                                    disabled={currentPage === totalPages}
-                                    className="text-[18px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-foreground disabled:opacity-0 transition-all duration-300"
-                                >
-                                    NEXT
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* No Results */}
-                    {filteredPosts.length === 0 && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="py-32 text-center"
-                        >
-                            <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground opacity-50">
-                                {t('noResults')}
-                            </p>
-                        </motion.div>
-                    )}
+                                <div className="flex shrink-0 items-end gap-5 text-right font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:flex-col md:gap-1">
+                                    <span>{post.category.replaceAll('-', ' ')}</span>
+                                    <time dateTime={post.date}>
+                                        {new Intl.DateTimeFormat('en', {
+                                            month: 'short',
+                                            day: '2-digit',
+                                            year: 'numeric',
+                                        }).format(new Date(post.date))}
+                                    </time>
+                                </div>
+                            </Link>
+                        </motion.article>
+                    ))}
                 </div>
-            </div>
 
-            <div className="w-full h-20" />
-            <DeferredMount>
-                <ErrorBoundary fallback={<div className="h-40 bg-background" />}>
-                    <MarqueeClosing isLowPowerMode={isLowPowerMode} />
-                </ErrorBoundary>
-            </DeferredMount>
+                {filteredPosts.length === 0 && (
+                    <div className="py-24 text-center text-sm text-muted-foreground">
+                        No publications match the selected filters.
+                    </div>
+                )}
+
+                <div ref={sentinelRef} className="flex min-h-32 items-center justify-center" aria-hidden="true">
+                    {hasMore ? (
+                        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/50">
+                            Loading archive...
+                        </div>
+                    ) : filteredPosts.length > 0 ? (
+                        <div className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted-foreground/40">
+                            End of archive
+                        </div>
+                    ) : null}
+                </div>
+            </section>
         </main>
-    );
-}
-export default function BlogPage() {
-    return (
-        <Suspense fallback={<div className="min-h-screen bg-background animate-pulse" />}>
-            <BlogContent />
-        </Suspense>
     );
 }
