@@ -1,1352 +1,247 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
-import { gsap } from 'gsap';
-import { useLenis } from 'lenis/react';
-import { useTranslations } from 'next-intl';
-import { Search, X, Layers, ArrowRight, ArrowUpRight, Sparkles, Code2, Zap, Brain, Cpu, Wifi, Blocks, Globe, Database, LayoutGrid, List } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { ArrowRight, ArrowUpRight, Search } from 'lucide-react';
+
 import { portfolioData } from '@/data/portfolio';
-import { Project } from '@/types';
-import { HeroParallax } from '@/components/ui/hero-parallax';
-import { LogoTimeline, LogoItem } from '@/components/ui/logo-timeline';
-import { Icons } from '@/components/icons';
-import { Meteors } from '@/components/ui/meteors';
-import { ProjectContact } from '@/components/sections/ProjectContact';
-import { ProjectStats } from '@/components/sections/ProjectStats';
-
-import { usePerformance } from '@/hooks/usePerformance';
-import { ProjectPlaceholder, getPlaceholderImageUrl } from '@/components/projects/ProjectPlaceholder';
-import { DeferredMount } from '@/components/ui/DeferredMount';
-
-import { getProjectImages } from '@/app/actions/getProjectImages';
+import { cn } from '@/lib/utils';
+import type { Project } from '@/types';
 
 type FilterType = 'all' | 'ongoing' | 'completed';
 
-// ─── Magnetic Fill-Invert Button ─────────────────────────────────────────────
-function MagneticFillButton({
-    children,
-    onClick,
-    showArrowFlip = false,
-}: {
-    children: React.ReactNode;
-    onClick: () => void;
-    showArrowFlip?: boolean;
-}) {
-    const btnRef = useRef<HTMLButtonElement>(null);
-    const [isHovered, setIsHovered] = useState(false);
-    const [fillProgress, setFillProgress] = useState(0); // 0→1 fill left-to-right
-
-    // Magnetic tracking
-    const magnetX = useMotionValue(0);
-    const magnetY = useMotionValue(0);
-    const springX = useSpring(magnetX, { stiffness: 300, damping: 22 });
-    const springY = useSpring(magnetY, { stiffness: 300, damping: 22 });
-
-    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-        if (!btnRef.current) return;
-        const rect = btnRef.current.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        // Magnetic pull: max 14px offset
-        magnetX.set((e.clientX - cx) * 0.35);
-        magnetY.set((e.clientY - cy) * 0.35);
-    }, [magnetX, magnetY]);
-
-    const handleMouseEnter = () => {
-        setIsHovered(true);
-        setFillProgress(1);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-        setFillProgress(0);
-        magnetX.set(0);
-        magnetY.set(0);
-    };
-
-    return (
-        <motion.button
-            ref={btnRef}
-            onClick={onClick}
-            onMouseMove={handleMouseMove}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            style={{ x: springX, y: springY }}
-            className={cn(
-                "relative overflow-hidden px-8 py-3 rounded-full font-semibold text-sm",
-                "outline-none focus-visible:ring-2 focus-visible:ring-foreground/50",
-                // Light mode: black bg, white text  |  Dark: white bg, black text
-                "bg-foreground text-background",
-                "border border-foreground",
-                "transition-colors duration-0"
-            )}
-        >
-            {/* Fill layer: slides in from left on hover */}
-            {/* Light mode fill = white; Dark mode fill = black  (using `bg-background`) */}
-            <motion.span
-                aria-hidden
-                className="absolute inset-0 bg-background rounded-full pointer-events-none"
-                initial={{ scaleX: 0, originX: 0 }}
-                animate={{ scaleX: fillProgress, originX: 0 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            />
-
-            {/* Label */}
-            <span className={cn(
-                "relative z-10 flex items-center gap-2 transition-colors duration-300",
-                isHovered ? "text-foreground" : "text-background"
-            )}>
-                {children}
-                <ArrowRight className={cn("w-4 h-4 transition-transform duration-300", showArrowFlip && "rotate-180")} />
-            </span>
-        </motion.button>
-    );
-}
-
 function ProjectListItem({
     project,
-    onClick,
     index,
-    isLowPowerMode
+    onClick,
 }: {
     project: Project;
-    onClick: () => void;
     index: number;
-    isLowPowerMode?: boolean;
+    onClick: () => void;
 }) {
-    const itemRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const cursorX = useMotionValue(0);
-    const cursorY = useMotionValue(0);
-
     const isOngoing = project.status === 'ongoing';
     const displayIndex = String(index + 1).padStart(2, '0');
 
-    const rafRef = useRef<number | null>(null);
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if (!itemRef.current) return;
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-        const rect = itemRef.current.getBoundingClientRect();
-
-        rafRef.current = requestAnimationFrame(() => {
-            mouseX.set(e.clientX - rect.left);
-            mouseY.set(e.clientY - rect.top);
-            cursorX.set(e.clientX);
-            cursorY.set(e.clientY);
-        });
-    };
-
-    const handleMouseEnter = (e: React.MouseEvent) => {
-        // Synchronously update coordinates to prevent the (0,0) render bug
-        cursorX.set(e.clientX);
-        cursorY.set(e.clientY);
-
-        if (itemRef.current) {
-            const rect = itemRef.current.getBoundingClientRect();
-            mouseX.set(e.clientX - rect.left);
-            mouseY.set(e.clientY - rect.top);
-        }
-
-        setIsHovered(true);
-    };
-
-    useEffect(() => {
-        return () => {
-            if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        };
-    }, []);
-
-    const techText = project.techStack.join(' • ');
-    const bgGradient = useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(255, 255, 255, 0.03), transparent 40%)`;
-
-    return (
-        <motion.div
-            ref={itemRef}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.08 }}
-            className="group relative"
-            data-project-slug={project.slug}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={() => setIsHovered(false)}
-            onMouseMove={handleMouseMove}
-            onClick={onClick}
-        >
-            <motion.div
-                className={cn(
-                    "relative cursor-pointer overflow-hidden rounded-xl border-b border-white/5 transition-all duration-300",
-                    isHovered ? "bg-white/[0.02]" : "hover:bg-white/[0.01]"
-                )}
-                whileHover={{ scale: 1.002 }} /* Micro interaction */
-            >
-                {/* Spotlight */}
-                {!isLowPowerMode && (
-                    <motion.div
-                        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
-                        style={{
-                            opacity: isHovered ? 1 : 0,
-                            background: bgGradient
-                        }}
-                    />
-                )}
-
-                {/* Content */}
-                <div className="relative z-10 flex items-center gap-4 sm:gap-8 py-6 sm:py-10 px-4 sm:px-8">
-                    {/* Index */}
-                    <motion.span
-                        className={cn(
-                            "text-2xl sm:text-4xl md:text-5xl font-black tabular-nums transition-colors duration-500",
-                            isHovered
-                                ? (isOngoing ? "text-emerald-500 dark:text-emerald-400" : "text-blue-500 dark:text-blue-400")
-                                : "text-muted-foreground/20"
-                        )}
-                        animate={{ scale: isHovered ? 1.1 : 1, x: isHovered ? 5 : 0 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        {displayIndex}
-                    </motion.span>
-
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 sm:gap-4 mb-2">
-                            <motion.h3
-                                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground truncate"
-                                animate={{ x: isHovered ? 8 : 0 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                {project.title}
-                            </motion.h3>
-                            <span className={cn(
-                                "shrink-0 px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider",
-                                isOngoing
-                                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 dark:border-emerald-500/20"
-                                    : "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30 dark:border-blue-500/20"
-                            )}>
-                                {isOngoing ? 'ongoing' : 'done'}
-                            </span>
-                        </div>
-                        <p className="text-muted-foreground text-sm sm:text-base truncate max-w-2xl hidden sm:block">
-                            {project.description}
-                        </p>
-                        <p className="text-muted-foreground text-xs line-clamp-1 sm:hidden">
-                            {project.description}
-                        </p>
-                    </div>
-
-                    {/* Arrow */}
-                    <motion.div
-                        className="shrink-0 hidden sm:flex items-center gap-2"
-                        animate={{ x: isHovered ? -5 : 0, opacity: isHovered ? 1 : 0.4 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">view</span>
-                        <motion.div animate={{ x: isHovered ? 5 : 0 }} transition={{ duration: 0.3 }}>
-                            <ArrowRight className={cn("w-5 h-5 transition-colors", isHovered ? (isOngoing ? "text-emerald-500 dark:text-emerald-400" : "text-blue-500 dark:text-blue-400") : "text-muted-foreground")} />
-                        </motion.div>
-                    </motion.div>
-                    <ArrowUpRight className="w-5 h-5 text-muted-foreground sm:hidden" />
-                </div>
-
-                {/* Tech Marquee on Hover */}
-                {!isLowPowerMode && (
-                    <AnimatePresence>
-                        {isHovered && (
-                            <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3, ease: 'easeInOut' }}
-                                className="overflow-hidden border-t border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02]"
-                            >
-                                <div className="relative py-3 overflow-hidden">
-                                    <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
-                                    <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent z-10" />
-                                    <motion.div
-                                        className="flex whitespace-nowrap"
-                                        animate={{ x: [0, -500] }}
-                                        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                                    >
-                                        {[...Array(4)].map((_, i) => (
-                                            <span key={i} className={cn("mx-4 text-sm font-mono tracking-wider", isOngoing ? "text-emerald-600/60 dark:text-emerald-400/60" : "text-blue-600/60 dark:text-blue-400/60")}>
-                                                {techText} •
-                                            </span>
-                                        ))}
-                                    </motion.div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                )}
-            </motion.div>
-
-            {/* Floating Preview */}
-            {!isLowPowerMode && (
-                <AnimatePresence>
-                    {isHovered && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            transition={{ duration: 0.3, exit: { duration: 0.1 }, ease: [0.16, 1, 0.3, 1] }}
-                            className="fixed pointer-events-none z-50 hidden lg:block"
-                            style={{
-                                left: cursorX,
-                                top: cursorY,
-                                x: "-50%",
-                                y: "-50%"
-                            }}
-                        >
-                            <div className={cn(
-                                "w-[500px] h-[300px] rounded-none overflow-hidden backdrop-blur-xl flex items-center justify-center relative shadow-2xl transition-all duration-300",
-                                "bg-zinc-950"
-                            )}>
-                                {project.image ? (
-                                    <img
-                                        src={project.image}
-                                        alt={project.title}
-                                        loading="lazy"
-                                        className="absolute inset-0 w-full h-full object-cover opacity-90 block transition-transform duration-500 hover:scale-105"
-                                    />
-                                ) : (
-                                    <ProjectPlaceholder className="pb-0" title={project.title} />
-                                )}
-
-                                {/* Overlay Gradient */}
-                                {project.image && <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />}
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            )}
-        </motion.div>
-    );
-}
-
-function FeaturedCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean }) {
-    const cardRef = useRef<HTMLDivElement>(null);
-    const [isHovered, setIsHovered] = useState(false);
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const pixelX = useMotionValue(0);
-    const pixelY = useMotionValue(0);
-
-    const rafRef = useRef<number | null>(null);
-
-    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [8, -8]), { stiffness: 300, damping: 30 });
-    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], isLowPowerMode ? [0, 0] : [-8, 8]), { stiffness: 300, damping: 30 });
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!cardRef.current) return;
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-        const rect = cardRef.current.getBoundingClientRect();
-
-        rafRef.current = requestAnimationFrame(() => {
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            mouseX.set(x);
-            mouseY.set(y);
-            pixelX.set(e.clientX - rect.left);
-            pixelY.set(e.clientY - rect.top);
-        });
-    };
-
-    const handleMouseLeave = () => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        mouseX.set(0);
-        mouseY.set(0);
-        setIsHovered(false);
-    };
-
-    useEffect(() => {
-        return () => {
-            if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        };
-    }, []);
-
-    const isOngoing = project.status === 'ongoing';
-    const bgGradient = useMotionTemplate`radial-gradient(800px circle at ${pixelX}px ${pixelY}px, ${isOngoing ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}, transparent 40%)`;
-
     return (
         <motion.article
-            initial={{ opacity: 0, y: isLowPowerMode ? 40 : 80, scale: isLowPowerMode ? 1 : 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: isLowPowerMode ? 0.6 : 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="md:col-span-2 group cursor-pointer perspective-1000"
-            onClick={onClick}
-        >
-            <motion.div
-                ref={cardRef}
-                className="relative h-full min-h-[450px] sm:min-h-[550px] rounded-3xl overflow-hidden"
-                style={isLowPowerMode ? {} : { rotateX, rotateY, transformStyle: 'preserve-3d' }}
-                onMouseMove={handleMouseMove}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={handleMouseLeave}
-                whileHover={isLowPowerMode ? {} : { scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-            >
-                {/* Animated Gradient Border */}
-                {!isLowPowerMode && (
-                    <motion.div
-                        className="absolute -inset-[2px] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0"
-                        style={{
-                            background: isOngoing
-                                ? 'linear-gradient(135deg, #10b981, #06b6d4, #3b82f6, #10b981)'
-                                : 'linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6)',
-                            backgroundSize: '300% 300%',
-                        }}
-                        animate={{ backgroundPosition: isHovered ? ['0% 50%', '100% 50%', '0% 50%'] : '0% 50%' }}
-                        transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                    />
-                )}
-
-                {/* Main Card Body */}
-                <div className="relative h-full bg-white/50 dark:bg-black/40 backdrop-blur-2xl rounded-3xl overflow-hidden border border-black/5 dark:border-white/10 transition-colors duration-500">
-
-                    {/* Spotlight Effect */}
-                    {!isLowPowerMode && (
-                        <motion.div
-                            className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-500"
-                            style={{
-                                opacity: isHovered ? 1 : 0,
-                                background: bgGradient
-                            }}
-                        />
-                    )}
-
-                    {/* Meteors Effect */}
-                    {!isLowPowerMode && (
-                        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-                            <Meteors number={10} isLowPowerMode={isLowPowerMode} />
-                        </div>
-                    )}
-                    {/* Meteors on Hover */}
-                    {!isLowPowerMode && (
-                        <AnimatePresence>
-                            {isHovered && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="absolute inset-0 z-10 overflow-hidden mix-blend-screen"
-                                >
-                                    <Meteors number={12} minDuration={3} maxDuration={8} isLowPowerMode={isLowPowerMode} />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    )}
-
-                    {/* Floating Orbs - Subtle Blending */}
-                    {!isLowPowerMode && (
-                        <>
-                            <motion.div
-                                className={cn(
-                                    "absolute w-40 h-40 rounded-full blur-[80px] z-0 opacity-40",
-                                    isOngoing ? "bg-emerald-500/20" : "bg-blue-500/20"
-                                )}
-                                style={{ top: '10%', right: '15%' }}
-                                animate={{
-                                    scale: isHovered ? [1, 1.4, 1] : 1,
-                                    x: isHovered ? [0, 30, 0] : 0,
-                                    y: isHovered ? [0, -20, 0] : 0,
-                                }}
-                                transition={{ duration: 4, repeat: Infinity }}
-                            />
-                            <motion.div
-                                className="absolute w-32 h-32 rounded-full bg-violet-500/20 blur-[60px] z-0 opacity-40"
-                                style={{ bottom: '20%', left: '10%' }}
-                                animate={{
-                                    scale: isHovered ? [1, 1.3, 1] : 1,
-                                    x: isHovered ? [0, -20, 0] : 0,
-                                }}
-                                transition={{ duration: 5, repeat: Infinity, delay: 0.5 }}
-                            />
-                        </>
-                    )}
-
-                    {/* Grid Pattern - Very Subtle */}
-                    {!isLowPowerMode && (
-                        <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style={{
-                            backgroundImage: `linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)`,
-                            backgroundSize: '40px 40px'
-                        }} />
-                    )}
-
-                    {/* Floating Initial Letter */}
-                    {!isLowPowerMode && (
-                        <motion.div
-                            className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
-                            animate={{
-                                scale: isHovered ? 1.15 : 1,
-                                rotate: isHovered ? 8 : 0,
-                                y: isHovered ? -10 : 0,
-                            }}
-                            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            <span className="text-[14rem] sm:text-[18rem] md:text-[22rem] font-black text-black/[0.02] dark:text-white/[0.025] select-none leading-none">
-                                {project.title.charAt(0)}
-                            </span>
-                        </motion.div>
-                    )}
-
-                    {/* Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-10 md:p-14 z-30">
-                        {/* Sparkle Icon + Status */}
-                        <motion.div
-                            className="flex items-center gap-3 mb-5"
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 }}
-                        >
-                            <motion.div
-                                animate={{ rotate: isHovered ? 360 : 0 }}
-                                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                            >
-                                <Sparkles className={cn("w-5 h-5", isOngoing ? "text-emerald-400" : "text-blue-400")} />
-                            </motion.div>
-                            <span className={cn(
-                                "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-md",
-                                isOngoing
-                                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"
-                                    : "bg-blue-500/15 text-blue-400 border border-blue-500/25"
-                            )}>
-                                <span className={cn(
-                                    "w-2 h-2 rounded-full",
-                                    isOngoing ? "bg-emerald-400 animate-pulse" : "bg-blue-400"
-                                )} />
-                                {isOngoing ? 'In Development' : 'Completed'}
-                            </span>
-                        </motion.div>
-
-                        {/* Title with underline effect */}
-                        <motion.h2
-                            className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4"
-                            animate={{ x: isHovered ? 6 : 0 }}
-                        >
-                            {project.title}
-                            <motion.div
-                                className={cn(
-                                    "absolute -bottom-1 left-0 h-1 rounded-full",
-                                    isOngoing ? "bg-gradient-to-r from-emerald-400 to-cyan-400" : "bg-gradient-to-r from-blue-400 to-violet-400"
-                                )}
-                                initial={{ width: 0 }}
-                                animate={{ width: isHovered ? '60%' : '0%' }}
-                                transition={{ duration: 0.4 }}
-                            />
-                        </motion.h2>
-
-                        {/* Description */}
-                        <p className="text-zinc-600 dark:text-zinc-400 text-base sm:text-lg md:text-xl mb-6 max-w-2xl line-clamp-2">
-                            {project.description}
-                        </p>
-
-                        {/* Tech Stack with stagger */}
-                        <div className="flex flex-wrap gap-2 mb-8">
-                            {project.techStack.slice(0, 6).map((tech, i) => (
-                                <motion.span
-                                    key={tech}
-                                    className="px-3 py-1.5 rounded-xl text-sm font-medium bg-black/5 dark:bg-white/5 text-zinc-700 dark:text-zinc-300 border border-black/5 dark:border-white/10 backdrop-blur-sm"
-                                    initial={{ opacity: 0, y: 15, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                                    transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
-                                >
-                                    {tech}
-                                </motion.span>
-                            ))}
-                            {project.techStack.length > 6 && (
-                                <motion.span
-                                    className={cn(
-                                        "px-3 py-1.5 rounded-xl text-sm font-medium border backdrop-blur-sm",
-                                        isOngoing
-                                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                            : "bg-blue-500/10 text-blue-400 border-blue-500/20"
-                                    )}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.6 }}
-                                >
-                                    +{project.techStack.length - 6} more
-                                </motion.span>
-                            )}
-                        </div>
-
-                        {/* CTA Button */}
-                        <motion.div
-                            className={cn(
-                                "inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300",
-                                isOngoing
-                                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
-                                    : "bg-blue-500/15 text-blue-400 border border-blue-500/30 hover:bg-blue-500/25"
-                            )}
-                            animate={{ x: isHovered ? 8 : 0 }}
-                        >
-                            <Zap className="w-4 h-4" />
-                            <span>Explore Project</span>
-                            <ArrowRight className={cn(
-                                "w-5 h-5 transition-transform duration-300",
-                                "group-hover:translate-x-1"
-                            )} />
-                        </motion.div>
-                    </div>
-                </div>
-            </motion.div>
-        </motion.article>
-    );
-}
-
-// Curated badge color palette — vibrant but balanced for both light & dark modes
-const BADGE_COLORS = [
-    { border: 'rgba(168, 85, 247, 0.5)', bg: 'rgba(168, 85, 247, 0.12)', text: 'rgb(168, 85, 247)' },   // purple
-    { border: 'rgba(59, 130, 246, 0.5)', bg: 'rgba(59, 130, 246, 0.12)', text: 'rgb(59, 130, 246)' },    // blue
-    { border: 'rgba(16, 185, 129, 0.5)', bg: 'rgba(16, 185, 129, 0.12)', text: 'rgb(16, 185, 129)' },    // emerald
-    { border: 'rgba(245, 158, 11, 0.5)', bg: 'rgba(245, 158, 11, 0.12)', text: 'rgb(245, 158, 11)' },    // amber
-    { border: 'rgba(236, 72, 153, 0.5)', bg: 'rgba(236, 72, 153, 0.12)', text: 'rgb(236, 72, 153)' },    // pink
-    { border: 'rgba(6, 182, 212, 0.5)', bg: 'rgba(6, 182, 212, 0.12)', text: 'rgb(6, 182, 212)' },     // cyan
-    { border: 'rgba(239, 68, 68, 0.5)', bg: 'rgba(239, 68, 68, 0.12)', text: 'rgb(239, 68, 68)' },     // red
-    { border: 'rgba(34, 197, 94, 0.5)', bg: 'rgba(34, 197, 94, 0.12)', text: 'rgb(34, 197, 94)' },     // green
-    { border: 'rgba(251, 146, 60, 0.5)', bg: 'rgba(251, 146, 60, 0.12)', text: 'rgb(251, 146, 60)' },    // orange
-    { border: 'rgba(99, 102, 241, 0.5)', bg: 'rgba(99, 102, 241, 0.12)', text: 'rgb(99, 102, 241)' },    // indigo
-    { border: 'rgba(20, 184, 166, 0.5)', bg: 'rgba(20, 184, 166, 0.12)', text: 'rgb(20, 184, 166)' },    // teal
-    { border: 'rgba(217, 70, 239, 0.5)', bg: 'rgba(217, 70, 239, 0.12)', text: 'rgb(217, 70, 239)' },    // fuchsia
-];
-
-// Deterministic color from string — same string always gets same color, but varied across badges
-function getBadgeColor(label: string, cardIndex: number) {
-    let hash = 0;
-    for (let i = 0; i < label.length; i++) {
-        hash = label.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const idx = Math.abs(hash + cardIndex * 7) % BADGE_COLORS.length;
-    return BADGE_COLORS[idx];
-}
-
-function ProjectCard({ project, onClick, index, isLowPowerMode }: { project: Project; onClick: () => void; index: number; isLowPowerMode?: boolean; }) {
-    const isOngoing = project.status === 'ongoing';
-    const cardRef = useRef<HTMLElement>(null);
-    const innerRef = useRef<HTMLDivElement>(null);
-    const imageBoxRef = useRef<HTMLDivElement>(null);
-    const contentBoxRef = useRef<HTMLDivElement>(null);
-    const [isHovered, setIsHovered] = useState(false);
-    const isHoveredRef = useRef(false);
-    const isScrollingRef = useRef(false);
-    const lastClientPos = useRef<{ x: number; y: number } | null>(null);
-
-    // Use Lenis to detect scroll velocity — when scrolling, disable tilt
-    useLenis((lenis) => {
-        if (isLowPowerMode) return;
-        const velocity = Math.abs(lenis.velocity);
-        const wasScrolling = isScrollingRef.current;
-        isScrollingRef.current = velocity > 0.5;
-
-        // When scroll starts while hovered, smoothly reset tilt to neutral
-        if (isScrollingRef.current && isHoveredRef.current && !wasScrolling) {
-            gsap.to(innerRef.current, {
-                rotateX: 0,
-                rotateY: 0,
-                scale: 1.02,
-                duration: 0.4,
-                ease: 'power2.out',
-                overwrite: 'auto',
-            });
-            gsap.to(imageBoxRef.current, {
-                z: 0,
-                duration: 0.4,
-                ease: 'power2.out',
-                overwrite: 'auto',
-            });
-            gsap.to(contentBoxRef.current, {
-                z: 0,
-                duration: 0.4,
-                ease: 'power2.out',
-                overwrite: 'auto',
-            });
-        }
-
-        // When scroll stops and still hovered, recalculate tilt from last known position
-        if (!isScrollingRef.current && wasScrolling && isHoveredRef.current && lastClientPos.current) {
-            requestAnimationFrame(() => {
-                if (isHoveredRef.current && lastClientPos.current && cardRef.current) {
-                    applyTilt(lastClientPos.current.x, lastClientPos.current.y);
-                }
-            });
-        }
-    });
-
-    const applyTilt = (clientX: number, clientY: number) => {
-        if (!cardRef.current || !innerRef.current || isLowPowerMode || isScrollingRef.current) return;
-        const rect = cardRef.current.getBoundingClientRect();
-        const x = (clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
-        const y = (clientY - rect.top) / rect.height - 0.5;
-        const clampedX = Math.max(-0.5, Math.min(0.5, x));
-        const clampedY = Math.max(-0.5, Math.min(0.5, y));
-
-        gsap.to(innerRef.current, {
-            rotateX: -clampedY * 24, // 12 deg max each direction
-            rotateY: clampedX * 24,
-            scale: 1.02,
-            duration: 0.5,
-            ease: 'power2.out',
-            overwrite: 'auto',
-        });
-        gsap.to(imageBoxRef.current, {
-            z: 30,
-            duration: 0.5,
-            ease: 'power2.out',
-            overwrite: 'auto',
-        });
-        gsap.to(contentBoxRef.current, {
-            z: 15,
-            duration: 0.5,
-            ease: 'power2.out',
-            overwrite: 'auto',
-        });
-    };
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-        if (isLowPowerMode) return;
-        lastClientPos.current = { x: e.clientX, y: e.clientY };
-        if (!isScrollingRef.current) {
-            applyTilt(e.clientX, e.clientY);
-        }
-    };
-
-    const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
-        isHoveredRef.current = true;
-        lastClientPos.current = { x: e.clientX, y: e.clientY };
-        setIsHovered(true);
-        if (!isLowPowerMode && !isScrollingRef.current) {
-            applyTilt(e.clientX, e.clientY);
-        }
-    };
-
-    const handleMouseLeave = () => {
-        isHoveredRef.current = false;
-        lastClientPos.current = null;
-        setIsHovered(false);
-        if (!isLowPowerMode) {
-            gsap.to(innerRef.current, {
-                rotateX: 0,
-                rotateY: 0,
-                scale: 1,
-                duration: 0.6,
-                ease: 'power3.out',
-                overwrite: 'auto',
-            });
-            gsap.to(imageBoxRef.current, {
-                z: 0,
-                duration: 0.6,
-                ease: 'power3.out',
-                overwrite: 'auto',
-            });
-            gsap.to(contentBoxRef.current, {
-                z: 0,
-                duration: 0.6,
-                ease: 'power3.out',
-                overwrite: 'auto',
-            });
-        }
-    };
-
-    // Set initial GSAP transforms
-    useEffect(() => {
-        if (isLowPowerMode) return;
-        if (innerRef.current) {
-            gsap.set(innerRef.current, { transformStyle: 'preserve-3d', transformPerspective: 1000 });
-        }
-        if (imageBoxRef.current) {
-            gsap.set(imageBoxRef.current, { z: 0 });
-        }
-        if (contentBoxRef.current) {
-            gsap.set(contentBoxRef.current, { z: 0 });
-        }
-    }, [isLowPowerMode]);
-
-    return (
-        <motion.article
-            ref={cardRef}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-30px" }}
-            transition={{ duration: 0.6, delay: 0.1 * (index % 2) }}
-            className="group cursor-pointer"
-            style={{ perspective: 1000 }}
-            onClick={onClick}
-            onMouseMove={handleMouseMove}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-        >
-            <div
-                ref={innerRef}
-                className="flex flex-col gap-6 h-full"
-                style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
-            >
-                {/* Top Image Box */}
-                <div
-                    ref={imageBoxRef}
-                    className="relative w-full aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden bg-secondary/10 border border-foreground/5 dark:border-white/10 shadow-sm group-hover:shadow-2xl dark:shadow-none shadow-black/5"
-                    style={{ willChange: 'transform' }}
-                >
-                    {project.image ? (
-                        <img
-                            src={project.image}
-                            alt={project.title}
-                            loading="lazy"
-                            className="w-full h-full object-cover"
-                            draggable={false}
-                        />
-                    ) : (
-                        <ProjectPlaceholder className="absolute inset-0" title={project.title} />
-                    )}
-
-                    {/* Subtle overlay on hover */}
-                    <div className="absolute inset-0 bg-foreground/5 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                </div>
-
-                {/* Bottom Content Box */}
-                <div
-                    ref={contentBoxRef}
-                    className="flex flex-col flex-grow px-1 md:px-0"
-                    style={{ willChange: 'transform' }}
-                >
-                    {/* Title & Badge Row */}
-                    <div className="flex items-start justify-between gap-4 mb-3">
-                        <h3 className="text-3xl sm:text-4xl font-serif-elegant text-foreground group-hover:text-primary transition-colors tracking-tight">
-                            {project.title}
-                        </h3>
-                        <div className="shrink-0 mt-1 sm:mt-2">
-                            {(() => {
-                                const categoryText = project.category || (isOngoing ? 'In Development' : 'Completed');
-                                const color = getBadgeColor(categoryText, index);
-                                return (
-                                    <span
-                                        className="px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-mono tracking-wide border transition-all duration-300 uppercase"
-                                        style={{
-                                            borderColor: isHovered ? color.border : undefined,
-                                            backgroundColor: isHovered ? color.bg : 'transparent',
-                                            color: isHovered ? color.text : undefined,
-                                        }}
-                                    >
-                                        {categoryText}
-                                    </span>
-                                );
-                            })()}
-                        </div>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-muted-foreground/80 md:text-lg leading-relaxed mb-6 line-clamp-3">
-                        {project.description}
-                    </p>
-
-                    {/* Footer Tech Badges */}
-                    <div className="mt-auto flex flex-wrap gap-2 sm:gap-2.5 items-center">
-                        {project.techStack.slice(0, 4).map((tech, techIdx) => {
-                            const Icon = Icons[getIconKey(tech)];
-                            const color = getBadgeColor(tech, index + techIdx);
-                            return (
-                                <div
-                                    key={tech}
-                                    className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border text-[11px] sm:text-xs font-medium transition-all duration-300"
-                                    style={{
-                                        borderColor: isHovered ? color.border : undefined,
-                                        backgroundColor: isHovered ? color.bg : 'transparent',
-                                        color: isHovered ? color.text : undefined,
-                                    }}
-                                >
-                                    {Icon ? <Icon className="w-3.5 h-3.5" /> : <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: isHovered ? color.text : undefined }} />}
-                                    {tech}
-                                </div>
-                            );
-                        })}
-                        {project.techStack.length > 4 && (
-                            <span className="text-xs font-mono text-muted-foreground opacity-60 ml-1">
-                                +{project.techStack.length - 4}
-                            </span>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </motion.article>
-    );
-}
-
-function CompactCard({ project, onClick, index }: { project: Project; onClick: () => void; index: number }) {
-    const [isHovered, setIsHovered] = useState(false);
-    const isOngoing = project.status === 'ongoing';
-
-    return (
-        <motion.article
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.06 }}
-            className="group cursor-pointer"
-            onClick={onClick}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.45, delay: Math.min(index * 0.05, 0.25) }}
+            className="group relative border-b border-black/10 dark:border-white/10"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <motion.div
-                className="relative p-5 rounded-xl bg-zinc-900/50 border border-white/5 h-full backdrop-blur-sm overflow-hidden"
-                whileHover={{ y: -4, scale: 1.02, borderColor: isOngoing ? 'rgba(16, 185, 129, 0.3)' : 'rgba(59, 130, 246, 0.3)' }}
-                transition={{ duration: 0.25 }}
+            <button
+                type="button"
+                onClick={onClick}
+                className="relative flex w-full items-center gap-4 overflow-hidden px-4 py-7 text-left transition-colors duration-300 hover:bg-black/[0.025] dark:hover:bg-white/[0.025] sm:gap-8 sm:px-8 sm:py-10"
             >
-                {/* Subtle spotlight */}
-                <motion.div
-                    className="absolute inset-0 z-0"
-                    style={{
-                        opacity: isHovered ? 0.5 : 0,
-                        background: `radial-gradient(200px circle at 50% 0%, ${isOngoing ? 'rgba(16, 185, 129, 0.08)' : 'rgba(59, 130, 246, 0.08)'}, transparent)`
-                    }}
-                />
-
-                {/* Status Dot */}
-                <motion.div
+                <motion.span
+                    animate={{ x: isHovered ? 5 : 0, scale: isHovered ? 1.06 : 1 }}
+                    transition={{ duration: 0.25 }}
                     className={cn(
-                        "absolute top-4 right-4 w-2 h-2 rounded-full z-10",
-                        isOngoing ? "bg-emerald-400" : "bg-blue-400"
-                    )}
-                    animate={{ scale: isOngoing ? [1, 1.3, 1] : 1 }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                />
-
-                {/* Title */}
-                <motion.h4
-                    className={cn(
-                        "text-base font-semibold text-white mb-2 pr-6 line-clamp-1 transition-colors duration-300 z-10 relative",
-                        isHovered && (isOngoing ? "text-emerald-400" : "text-blue-400")
+                        'shrink-0 font-black tabular-nums transition-colors duration-300',
+                        'text-3xl sm:text-4xl md:text-5xl',
+                        isHovered
+                            ? isOngoing
+                                ? 'text-emerald-500 dark:text-emerald-400'
+                                : 'text-blue-500 dark:text-blue-400'
+                            : 'text-muted-foreground/20'
                     )}
                 >
-                    {project.title}
-                </motion.h4>
+                    {displayIndex}
+                </motion.span>
 
-                {/* Description */}
-                <p className="text-zinc-500 text-sm line-clamp-2 mb-3 z-10 relative">
-                    {project.description}
-                </p>
+                <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex flex-wrap items-center gap-3 sm:gap-4">
+                        <motion.h2
+                            animate={{ x: isHovered ? 8 : 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl lg:text-4xl"
+                        >
+                            {project.title}
+                        </motion.h2>
 
-                {/* Tech Preview */}
-                <div className="flex items-center gap-2 text-xs text-zinc-600 z-10 relative">
-                    <Code2 className="w-3.5 h-3.5" />
-                    <span className="line-clamp-1">{project.techStack.slice(0, 2).join(' • ')}</span>
+                        <span
+                            className={cn(
+                                'shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider sm:text-xs',
+                                isOngoing
+                                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                                    : 'border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                            )}
+                        >
+                            {isOngoing ? 'ongoing' : 'done'}
+                        </span>
+                    </div>
+
+                    <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">
+                        {project.description}
+                    </p>
+
+                    <p
+                        className={cn(
+                            'mt-4 hidden font-mono text-xs tracking-wide sm:block',
+                            isOngoing
+                                ? 'text-emerald-600/60 dark:text-emerald-400/60'
+                                : 'text-blue-600/60 dark:text-blue-400/60'
+                        )}
+                    >
+                        {project.techStack.join(' • ')}
+                    </p>
                 </div>
-            </motion.div>
+
+                <motion.div
+                    animate={{ x: isHovered ? 5 : 0, opacity: isHovered ? 1 : 0.45 }}
+                    transition={{ duration: 0.25 }}
+                    className="hidden shrink-0 items-center gap-2 sm:flex"
+                >
+                    <span className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-foreground">
+                        view
+                    </span>
+                    <ArrowRight
+                        className={cn(
+                            'h-5 w-5 transition-colors',
+                            isHovered
+                                ? isOngoing
+                                    ? 'text-emerald-500 dark:text-emerald-400'
+                                    : 'text-blue-500 dark:text-blue-400'
+                                : 'text-muted-foreground'
+                        )}
+                    />
+                </motion.div>
+
+                <ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground sm:hidden" />
+            </button>
         </motion.article>
     );
 }
 
-const getIconKey = (name: string): keyof typeof Icons => {
-    const lower = name.toLowerCase().replace('.', '').replace(/\s+/g, '');
-    if (lower.includes('react')) return 'react';
-    if (lower.includes('next')) return 'react';
-    if (lower.includes('node')) return 'ts';
-    if (lower.includes('typescript')) return 'ts';
-    if (lower.includes('tailwind')) return 'tailwind';
-    if (lower.includes('github')) return 'gitHub';
-    if (lower.includes('git')) return 'gitHub';
-    return (Object.keys(Icons).find(k => lower.includes(k.toLowerCase())) as keyof typeof Icons) || 'unknown';
-};
-
 export default function ProjectsPage() {
-    const t = useTranslations('projects');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filter, setFilter] = useState<FilterType>('all');
-    const [visibleCount, setVisibleCount] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const saved = sessionStorage.getItem('projects-visible-count');
-            if (saved) return Math.max(10, parseInt(saved, 10));
-        }
-        return 10;
-    });
-    const { isLowPowerMode } = usePerformance();
-
     const router = useRouter();
-    const pathname = usePathname();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState<FilterType>('all');
+    const [categoryFilter, setCategoryFilter] = useState('all');
 
-    const products = useMemo(() => {
-        const techImages = [
-            "/project/parallax/image1.webp",
-            "/project/parallax/image2.webp",
-            "/project/parallax/image3.webp",
-            "/project/parallax/image4.webp",
-            "/project/parallax/image5.webp",
-            "/project/parallax/image6.webp",
-            "/project/parallax/image7.webp",
-            "/project/parallax/image8.webp",
-            "/project/parallax/image9.webp",
-            "/project/parallax/image10.webp",
-        ];
+    const projects = portfolioData.projects;
 
-        const baseProducts = portfolioData.projects.map((p, i) => ({
-            title: p.title,
-            link: p.repoUrl || p.demoUrl || '#',
-            thumbnail: techImages[i % techImages.length]
-        }));
-        return [...baseProducts, ...baseProducts, ...baseProducts].slice(0, 10);
-    }, []);
-
-    // Generate Timeline Items - delay is calculated in component based on index
-    const timelineItems: LogoItem[] = useMemo(() => {
-        const tech = portfolioData.techStack.map(t => t.name);
-        const tools = portfolioData.tools ? portfolioData.tools.map(t => t.name) : [];
-        const allItems = [...tech, ...tools];
-
-        // Distribute across 7 rows
-        const rowCount = 7;
-
-        return allItems.map((name, index) => {
-            const row = (index % rowCount) + 1;
-            const duration = 22 + (row * 2); // 24s, 26s, 28s, 30s, 32s, 34s, 36s - varied speeds
-
-            return {
-                label: name,
-                icon: getIconKey(name),
-                animationDelay: 0, // Calculated in component
-                animationDuration: duration,
-                row: row
-            };
-        });
-    }, []);
-
-    const [selectedCategory, setSelectedCategory] = useState('All');
-
-    const categories = [
-        { id: 'All', label: 'All Realms', icon: Globe },
-        { id: 'AI & Machine Learning', label: 'Artificial Intelligence', icon: Brain },
-        { id: 'Software Engineering', label: 'Software Architecture', icon: Database },
-        { id: 'More', label: 'More', icon: Layers },
-    ];
-
-    const [projects, setProjects] = useState(portfolioData.projects);
-
-    useEffect(() => {
-        const loadImages = async () => {
-            const updatedProjects = await Promise.all(
-                portfolioData.projects.map(async (project) => {
-                    // Try to find dynamic images
-                    try {
-                        const images = await getProjectImages(project.slug, project.title);
-                        if (images.length > 0) {
-                            return { ...project, image: images[0] }; // Use first image as cover
-                        }
-                    } catch (e) {
-                        console.error("Failed to load images for", project.title, e);
-                    }
-
-                    // Preload the placeholder image if no dynamic image is found
-                    const img = new Image();
-                    img.src = getPlaceholderImageUrl(project.title);
-
-                    return project;
-                })
-            );
-            setProjects(updatedProjects);
-        };
-        loadImages();
-    }, []);
+    const categories = useMemo(() => {
+        const unique = Array.from(
+            new Set(projects.map((project) => project.category).filter(Boolean) as string[])
+        );
+        return ['all', ...unique];
+    }, [projects]);
 
     const filteredProjects = useMemo(() => {
-        let currentProjects = [...projects];
+        const query = searchQuery.trim().toLowerCase();
 
-        // Category Filter
-        if (selectedCategory !== 'All') {
-            if (selectedCategory === 'More') {
-                currentProjects = currentProjects.filter(p => p.category && ['IoT & Embedded', 'Blockchain', 'Creative Tech'].includes(p.category));
-            } else {
-                currentProjects = currentProjects.filter(p => p.category === selectedCategory);
-            }
-        }
+        return projects.filter((project) => {
+            const matchesSearch =
+                !query ||
+                project.title.toLowerCase().includes(query) ||
+                project.description.toLowerCase().includes(query) ||
+                project.techStack.some((tech) => tech.toLowerCase().includes(query));
 
-        // Search Filter
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            currentProjects = currentProjects.filter((p) => p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query) || p.techStack.some((t) => t.toLowerCase().includes(query)));
-        }
+            const matchesStatus =
+                statusFilter === 'all' || project.status === statusFilter;
 
-        // Status Filter
-        if (filter !== 'all') currentProjects = currentProjects.filter((p) => p.status === filter);
-        return currentProjects;
-    }, [searchQuery, filter, selectedCategory, projects]);
+            const matchesCategory =
+                categoryFilter === 'all' || project.category === categoryFilter;
 
-    const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
-        if (typeof window !== 'undefined') {
-            const saved = sessionStorage.getItem('projects-view-mode');
-            if (saved === 'list' || saved === 'grid') return saved;
-        }
-        return 'list';
-    });
-
-    const lenis = useLenis();
-
-    const hasRestoredScroll = useRef(false);
-
-    // Scroll restoration: runs BEFORE browser paint so user never sees wrong position
-    useLayoutEffect(() => {
-        if (hasRestoredScroll.current) return;
-
-        const savedSlug = sessionStorage.getItem('projects-last-clicked');
-        if (!savedSlug || !lenis) return;
-
-        // Mark as handled so strict mode re-run won't interfere
-        hasRestoredScroll.current = true;
-        sessionStorage.removeItem('projects-last-clicked');
-        sessionStorage.removeItem('projects-visible-count');
-        sessionStorage.removeItem('projects-view-mode');
-
-        // Stop Lenis, scroll natively, then restart
-        lenis.stop();
-
-        const el = document.querySelector(`[data-project-slug="${savedSlug}"]`);
-        if (el) {
-            const rect = el.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            // Fixed offset from top of viewport (120px accounts for navbar)
-            // Avoids centering issue where project #1 was pushed above the archive section
-            const targetY = scrollTop + rect.top - 120;
-            window.scrollTo(0, Math.max(0, targetY));
-        }
-
-        // Restart Lenis on next frame
-        requestAnimationFrame(() => lenis.start());
-    }, [lenis]);
-
-    // Reset pagination only when filters actually change (not on mount)
-    const prevFilters = useRef({ searchQuery, filter, selectedCategory });
-    useEffect(() => {
-        const prev = prevFilters.current;
-        prevFilters.current = { searchQuery, filter, selectedCategory };
-
-        if (prev.searchQuery !== searchQuery || prev.filter !== filter || prev.selectedCategory !== selectedCategory) {
-            setVisibleCount(10);
-        }
-    }, [searchQuery, filter, selectedCategory]);
-
-    const filters: { key: FilterType; label: string }[] = [{ key: 'all', label: t('filters.all') }, { key: 'ongoing', label: t('filters.ongoing') }, { key: 'completed', label: t('filters.completed') }];
+            return matchesSearch && matchesStatus && matchesCategory;
+        });
+    }, [projects, searchQuery, statusFilter, categoryFilter]);
 
     return (
-        <div className="min-h-screen bg-background relative overflow-hidden" style={{ position: 'relative' }}>
-            <DeferredMount>
-                <HeroParallax products={products} isLowPowerMode={isLowPowerMode} />
-
-                {/* Project Stats - Impressive Metrics */}
-                <ProjectStats isLowPowerMode={isLowPowerMode} />
-
-
-                <div id="project-archive" className="max-w-[1536px] mx-auto relative z-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8">
-                    {/* Search & Filter Control Bar */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="mb-10 sm:mb-12 md:mb-16"
-                    >
-                        <div className="flex flex-col gap-6 p-0 sm:p-2 rounded-3xl bg-transparent">
-
-                            {/* Top Partition: Header & Search */}
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
-                                {/* Title & Count */}
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                    <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-muted-foreground">
-                                        Projects Archive
-                                    </h2>
-                                    <span className="px-2 py-0.5 rounded-md bg-white/5 text-[10px] font-mono text-muted-foreground border border-white/5">
-                                        {String(filteredProjects.length).padStart(2, '0')}
-                                    </span>
-                                </div>
-
-                                {/* Search Input - Compact */}
-                                <div className="relative group w-full md:w-80">
-                                    <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-primary/20 via-primary/10 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-                                    <div className="relative flex items-center bg-transparent rounded-xl hover:bg-white/5 overflow-hidden transition-colors">
-                                        <Search className="absolute left-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                        <input
-                                            type="text"
-                                            placeholder="Search projects..."
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="w-full pl-9 pr-8 py-2.5 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-                                        />
-                                        {searchQuery && (
-                                            <button
-                                                onClick={() => setSearchQuery('')}
-                                                className="absolute right-2 p-1 rounded-sm hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
-                                            >
-                                                <X className="w-3 h-3" />
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
+        <main className="min-h-screen bg-background text-foreground">
+            <section className="mx-auto w-full max-w-[110rem] px-4 pb-20 pt-28 sm:px-6 md:px-12 md:pt-32">
+                <header className="mb-10 border-b border-black/10 pb-8 dark:border-white/10 md:mb-14">
+                    <div className="mb-8 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+                        <div>
+                            <div className="mb-6 flex items-center gap-3">
+                                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                                <p className="font-mono text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">
+                                    Projects Archive
+                                </p>
+                                <span className="rounded-md border border-black/10 px-2 py-1 font-mono text-[10px] text-muted-foreground dark:border-white/10">
+                                    {projects.length}
+                                </span>
                             </div>
 
-                            {/* Divider - REMOVED */}
+                            <nav className="flex max-w-5xl flex-wrap gap-x-7 gap-y-3" aria-label="Project categories">
+                                {categories.map((category) => (
+                                    <button
+                                        key={category}
+                                        type="button"
+                                        onClick={() => setCategoryFilter(category)}
+                                        className={cn(
+                                            'border-b pb-2 text-sm transition-colors',
+                                            categoryFilter === category
+                                                ? 'border-foreground font-semibold text-foreground'
+                                                : 'border-transparent text-muted-foreground hover:text-foreground'
+                                        )}
+                                    >
+                                        {category === 'all' ? 'All Projects' : category}
+                                    </button>
+                                ))}
+                            </nav>
+                        </div>
 
-                            {/* Bottom Partition: Controls */}
-                            <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 xl:gap-4">
+                        <div className="flex w-full flex-col gap-4 lg:w-auto lg:min-w-[420px]">
+                            <label className="relative block">
+                                <Search className="pointer-events-none absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                    type="search"
+                                    value={searchQuery}
+                                    onChange={(event) => setSearchQuery(event.target.value)}
+                                    placeholder="Search projects..."
+                                    className="w-full border-b border-black/10 bg-transparent py-3 pl-7 pr-2 text-sm outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-foreground dark:border-white/10 lg:min-w-[320px]"
+                                />
+                            </label>
 
-                                {/* Categories - Horizontal Scroll */}
-                                <div className="w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0 no-scrollbar">
-                                    <div className="flex items-center gap-1.5 min-w-max px-2">
-                                        {categories.map((cat) => {
-                                            const Icon = cat.icon;
-                                            const isActive = selectedCategory === cat.id;
-
-                                            return (
-                                                <button
-                                                    key={cat.id}
-                                                    onClick={() => setSelectedCategory(cat.id)}
-                                                    className={cn(
-                                                        "relative group flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300",
-                                                        isActive
-                                                            ? "bg-primary/10 text-primary border border-primary/20"
-                                                            : "bg-transparent text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent"
-                                                    )}
-                                                >
-                                                    <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
-                                                    <span>{cat.label}</span>
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-
-                                {/* Filters & View Toggle */}
-                                <div className="flex items-center gap-3 px-2 self-end xl:self-auto">
-                                    {/* Status Filters */}
-                                    <div className="flex items-center p-1 bg-foreground/5 dark:bg-white/5 rounded-xl border border-foreground/10 dark:border-white/10">
-                                        {filters.map((f) => (
-                                            <button
-                                                key={f.key}
-                                                onClick={() => setFilter(f.key)}
-                                                className={cn(
-                                                    'relative px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-all duration-300',
-                                                    filter === f.key
-                                                        ? 'bg-foreground text-background shadow-sm'
-                                                        : 'text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10'
-                                                )}
-                                            >
-                                                {f.label}
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    {/* View Switcher */}
-                                    <div className="flex items-center p-1 bg-foreground/5 dark:bg-white/5 rounded-xl border border-foreground/10 dark:border-white/10 gap-0.5">
-                                        <button
-                                            onClick={() => setViewMode('list')}
-                                            className={cn(
-                                                "p-1.5 rounded-lg transition-all duration-200",
-                                                viewMode === 'list'
-                                                    ? "bg-foreground text-background shadow-sm"
-                                                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10"
-                                            )}
-                                            title="List View"
-                                        >
-                                            <List className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => setViewMode('grid')}
-                                            className={cn(
-                                                "p-1.5 rounded-lg transition-all duration-200",
-                                                viewMode === 'grid'
-                                                    ? "bg-foreground text-background shadow-sm"
-                                                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/10 dark:hover:bg-white/10"
-                                            )}
-                                            title="Grid View"
-                                        >
-                                            <LayoutGrid className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
-
+                            <div className="flex flex-wrap rounded-xl border border-black/10 p-1 dark:border-white/10">
+                                {(['all', 'ongoing', 'completed'] as FilterType[]).map((filter) => (
+                                    <button
+                                        key={filter}
+                                        type="button"
+                                        onClick={() => setStatusFilter(filter)}
+                                        className={cn(
+                                            'rounded-lg px-4 py-2 text-xs font-medium capitalize transition-colors sm:text-sm',
+                                            statusFilter === filter
+                                                ? 'bg-foreground text-background'
+                                                : 'text-muted-foreground hover:text-foreground'
+                                        )}
+                                    >
+                                        {filter}
+                                    </button>
+                                ))}
                             </div>
                         </div>
-                    </motion.div >
-
-                    {/* Projects List Layout */}
-                    <div className="space-y-0 mb-8 sm:mb-10 md:mb-12">
-
-                        {viewMode === 'list' ? (
-                            <div className="border-t border-white/5">
-                                <AnimatePresence mode="popLayout">
-                                    {filteredProjects.slice(0, visibleCount).map((project, index) => (
-                                        <ProjectListItem
-                                            key={project.id}
-                                            project={project}
-                                            onClick={() => {
-                                                sessionStorage.setItem('projects-last-clicked', project.slug);
-                                                sessionStorage.setItem('projects-visible-count', String(visibleCount));
-                                                sessionStorage.setItem('projects-view-mode', viewMode);
-                                                router.push(`/projects/${project.slug}`);
-                                            }}
-                                            index={index}
-                                            isLowPowerMode={isLowPowerMode}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16 md:gap-y-24">
-                                <AnimatePresence mode="popLayout">
-                                    {filteredProjects.slice(0, visibleCount).map((project, index) => (
-                                        <ProjectCard
-                                            key={project.id}
-                                            project={project}
-                                            onClick={() => {
-                                                sessionStorage.setItem('projects-last-clicked', project.slug);
-                                                sessionStorage.setItem('projects-visible-count', String(visibleCount));
-                                                sessionStorage.setItem('projects-view-mode', viewMode);
-                                                router.push(`/projects/${project.slug}`);
-                                            }}
-                                            index={index}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </div>
-                        )}
                     </div>
+                </header>
 
-                    {/* View All Button — Magnetic Fill-Invert */}
-                    {
-                        filteredProjects.length > 10 && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="flex justify-center mt-12 sm:mt-16 pb-12"
-                            >
-                                <MagneticFillButton
-                                    onClick={() => setVisibleCount(visibleCount < filteredProjects.length ? filteredProjects.length : 10)}
-                                    showArrowFlip={visibleCount >= filteredProjects.length}
-                                >
-                                    {visibleCount < filteredProjects.length ? 'View All Projects' : 'View Less'}
-                                </MagneticFillButton>
-                            </motion.div>
-                        )
-                    }
-
-                    {
-                        filteredProjects.length === 0 && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-                                <Layers className="w-16 h-16 mx-auto text-white/20 mb-4" />
-                                <p className="text-lg text-white/50">No projects found</p>
-                            </motion.div>
-                        )
-                    }
-                    {/* Contact Section */}
-                    <ProjectContact isLowPowerMode={isLowPowerMode} />
-                </div >
-            </DeferredMount>
-        </div >
-
-
+                <section aria-label="Projects list" className="border-t border-black/10 dark:border-white/10">
+                    {filteredProjects.length > 0 ? (
+                        filteredProjects.map((project, index) => (
+                            <ProjectListItem
+                                key={project.id}
+                                project={project}
+                                index={index}
+                                onClick={() => router.push(`/projects/${project.slug}`)}
+                            />
+                        ))
+                    ) : (
+                        <div className="py-24 text-center">
+                            <p className="text-lg font-medium text-foreground">No projects found</p>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Try another search term or filter.
+                            </p>
+                        </div>
+                    )}
+                </section>
+            </section>
+        </main>
     );
 }
